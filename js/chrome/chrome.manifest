@@ -1,0 +1,4 @@
+overlay	chrome://browser/content/browser.xul	chrome://ec2ui/content/ec2ui_overlay.xul
+content	ec2ui	content/
+skin	ec2ui	classic/1.0	skin/
+locale	ec2ui	en-US	locale/en-US/

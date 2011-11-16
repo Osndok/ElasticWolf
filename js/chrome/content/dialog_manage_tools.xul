@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+
+<dialog id="ec2ui.dialog.managetools" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    buttons="accept" ondialogaccept="return saveDialog()" onload="return initDialog();" title="Manage EC2 Tools" buttonlabelcancel="Close">
+
+    <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/preferences.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+    <script type="application/x-javascript">
+   function initDialog() {
+      ec2ui_prefs.init();
+      document.getElementById("ec2ui.tools.home").value = ec2ui_prefs.getHome() + " or " + ec2ui_prefs.getUserHome();
+      document.getElementById("ec2ui.tools.ssh.command").value = ec2ui_prefs.getSSHCommand();
+      document.getElementById("ec2ui.tools.ssh.args").value = ec2ui_prefs.getSSHArgs();
+      document.getElementById("ec2ui.tools.ssh.user").value = ec2ui_prefs.getSSHUser();
+      document.getElementById("ec2ui.tools.rdp.command").value = ec2ui_prefs.getRDPCommand();
+      document.getElementById("ec2ui.tools.rdp.args").value = ec2ui_prefs.getRDPArgs();
+      document.getElementById("ec2ui.tools.openssl.command").value = ec2ui_prefs.getOpenSSLCommand();
+      document.getElementById("ec2ui.tools.debug").checked = ec2ui_prefs.isDebugEnabled();
+      return true;
+   }
+
+   function saveDialog() {
+      ec2ui_prefs.setSSHCommand(document.getElementById("ec2ui.tools.ssh.command").value.toString());
+      ec2ui_prefs.setSSHArgs(document.getElementById("ec2ui.tools.ssh.args").value.toString());
+      ec2ui_prefs.setSSHUser(document.getElementById("ec2ui.tools.ssh.user").value.toString());
+      ec2ui_prefs.setRDPCommand(document.getElementById("ec2ui.tools.rdp.command").value.toString());
+      ec2ui_prefs.setRDPArgs(document.getElementById("ec2ui.tools.rdp.args").value.toString());
+      ec2ui_prefs.setOpenSSLCommand(document.getElementById("ec2ui.tools.openssl.command").value.toString());
+      ec2ui_prefs.setDebugEnabled(document.getElementById("ec2ui.tools.debug").checked);
+      return true;
+   }
+    </script>
+
+    <vbox flex="1">
+        <grid>
+            <columns>
+                <column />
+                <column />
+            </columns>
+            <rows>
+                <row>
+                    <label control="ec2ui.tools.home" value="Your home directory:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.home" size="80" readonly="true" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.ssh.command" value="SSH Command:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.ssh.command" size="80" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.ssh.args" value="SSH Arguments:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.ssh.args" size="80" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.ssh.user" value="SSH User:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.ssh.user" size="20" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.openssl.command" value="OPENSSL Command:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.openssl.command" size="80" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.rdp.command" value="RDP Command:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.rdp.command" size="80" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.rdp.args" value="RDP Arguments:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.rdp.args" size="80" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.debug" value="Enable debug output:" />
+                    <hbox>
+                        <checkbox id="ec2ui.tools.debug" />
+                    </hbox>
+                </row>
+            </rows>
+        </grid>
+        <hbox>
+            <description>${home} - Your home directory.</description>
+        </hbox>
+        <hbox>
+            <description>${keyname} - The EC2 keypair name the instance was launched with.</description>
+        </hbox>
+        <hbox>
+            <description>${host} - The public DNS name / IP address of the EC2 instance.</description>
+        </hbox>
+        <hbox>
+            <description>${publicDnsName} - The public DNS name of the EC2 instance.</description>
+        </hbox>
+        <hbox>
+            <description>${privateDnsName} - The private DNS name of the EC2 instance.</description>
+        </hbox>
+        <hbox>
+            <description>${privateIpAddress} - The private IP address name of the EC2 instance.</description>
+        </hbox>
+        <hbox>
+            <description>${name} - The "Name" tag of the EC2 instance.</description>
+        </hbox>
+        <hbox>
+            <description>${login} - The configured SSH user name.</description>
+        </hbox>
+        <hbox>
+            <description>${key} - The (interpolated) EC2 private key template.</description>
+        </hbox>
+        <hbox>
+            <description>${user} - The configured account name.</description>
+        </hbox>
+        <hbox>
+            <description>${pass} - The Administrator password for a Windows instance.</description>
+        </hbox>
+    </vbox>
+
+</dialog>
+

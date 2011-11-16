@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<?xul-overlay href="chrome://ec2ui/content/tab_instances_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_images_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_keypairs_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_accesskeys_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_certs_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_security_groups_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_availzone_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_eip_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_volumes_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_bundle_tasks_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_leases_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_vpcs_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_vpns_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/tab_loadbalancer_overlay.xul"?>
+
+<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<window id="ec2ui-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml" title="" orient="vertical"
+  persist="width height screenX screenY sizemode" onload="ec2ui_session.initialize()">
+
+  <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/client.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/controller.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/session.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/preferences.js" />
+
+  <script type="application/x-javascript" src="chrome://ec2ui/content/manager_accountid.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/manager_credential.js" />
+
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_keypairs.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_accesskeys.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_certs.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_instances.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_securitygroups.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_permissions.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_azone.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_eip.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_baseimages.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_amis.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_volumes.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_snapshots.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_leaseofferings.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_reservedinstances.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_bundletasks.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_vpcs.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_subnets.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_dhcpoptions.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_vpngateways.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_customergateways.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_vpnconnections.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_vpnattachments.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_loadbalancer.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_instancehealth.js" />
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="ec2ui.properties.bundle" src="chrome://ec2ui/locale/ec2ui.properties" />
+  </stringbundleset>
+
+  <vbox flex="1">
+    <toolbar style="padding: 0px 1px; -moz-box-align: center">
+      <toolbarbutton label="&ec2ui.endpoints.manage.label;"  image="images/regions.png"  oncommand="ec2ui_session.manageEndpoints();"  tooltiptext="&ec2ui.endpoints.tip;" />
+      <menulist id="ec2ui.active.endpoints.list" style="min-width: 15em" label=" "  oncommand="ec2ui_session.switchEndpoints();">
+        <menupopup />
+      </menulist>
+      <toolbarbutton label="&ec2ui.credentials.manage.label;" image="images/credentials.png" oncommand="ec2ui_session.manageCredentials();" tooltiptext="&ec2ui.credentials.tip;" />
+      <menulist id="ec2ui.active.credentials.list" style="min-width: 30em" label=" "  oncommand="ec2ui_session.switchCredentials();">
+        <menupopup />
+      </menulist>
+      <toolbarbutton label="&ec2ui.accountids.manage.label;" image="images/accountids.png" oncommand="ec2ui_session.manageAccountIds();"  tooltiptext="&ec2ui.accountids.tip;" />
+      <toolbarseparator />
+      <spacer flex="10" />
+      <toolbarbutton label="&ec2ui.tools.manage.label;" image="images/tools.png" oncommand="ec2ui_session.manageTools();"  tooltiptext="&ec2ui.tools.tip;" />
+      <toolbarbutton label="&ec2ui.about.label;" image="images/about.png" oncommand="ec2ui_session.displayAbout();" tooltiptext="&ec2ui.about.tip;" />
+    </toolbar>
+
+    <spacer style="height: 4px" />
+
+    <tabbox id="ec2ui.primary.tabs" flex="1">
+      <tabs id="ec2ui.tabs" onselect="ec2ui_session.tabSelectionChanged(event);" style="font-size:x-small;">
+        <tab label="&ec2ui.tabs.instances.label;" />
+        <tab label="&ec2ui.tabs.images.label;" />
+        <tab label="&ec2ui.tabs.keypairs.label;" />
+        <tab label="&ec2ui.tabs.accesskeys.label;" />
+        <tab label="&ec2ui.tabs.certs.label;" />
+        <tab label="&ec2ui.tabs.secgroups.label;" />
+        <tab label="&ec2ui.tabs.eips.label;" />
+        <tab label="&ec2ui.tabs.volumes.label;" />
+        <tab label="&ec2ui.tabs.loadbalancer.label;" id="ec2ui.tabs.loadbalancer" />
+        <tab label="&ec2ui.tabs.bundleTasks.label;" />
+        <tab label="&ec2ui.tabs.leases.label;" />
+        <tab label="&ec2ui.tabs.vpcs.label;" />
+        <tab label="&ec2ui.tabs.vpns.label;" />
+        <tab label="&ec2ui.tabs.availzones.label;" />
+      </tabs>
+      <tabpanels flex="1">
+        <tabpanel id="instances_tab"/>
+        <tabpanel id="images_tab"/>
+        <tabpanel id="keypairs_tab"/>
+        <tabpanel id="accesskeys_tab"/>
+        <tabpanel id="certs_tab"/>
+        <tabpanel id="security_groups_tab"/>
+        <tabpanel id="eip_tab"/>
+        <tabpanel id="volumes_tab"/>
+        <tabpanel id="loadbalancer_tab"/>
+        <tabpanel id="bundle_tasks_tab"/>
+        <tabpanel id="leases_tab"/>
+        <tabpanel id="vpcs_tab"/>
+        <tabpanel id="vpns_tab"/>
+        <tabpanel id="availzones_tab"/>
+      </tabpanels>
+    </tabbox>
+  </vbox>
+</window>
