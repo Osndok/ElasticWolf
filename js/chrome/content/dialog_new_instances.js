@@ -24,20 +24,13 @@ var ec2_InstanceLauncher = {
         this.retVal.tag = document.getElementById("ec2ui.newinstances.tag").value.trim();
         this.retVal.securityGroups = this.used;
 
-        var useVpc = document.getElementById("ec2ui.newinstances.usevpc").checked;
-        if (useVpc) {
-            var subnet = document.getElementById("ec2ui.newinstances.subnetId").selectedItem;
-            if (!subnet) {
-                alert("No subnet selected. Please select a subnet to continue.");
-                return false;
-            }
-            this.retVal.subnetId = subnet.value;
-            this.retVal.securityGroups = null;
-            this.retVal.ipAddress = document.getElementById("ec2ui.newinstances.ipAddress").value.trim();
-        } else {
-            this.retVal.subnetId = null;
-            this.retVal.ipAddress = null;
+        var subnet = document.getElementById("ec2ui.newinstances.subnetId").value;
+        if (subnet == "" && this.vpcMenu.value != "") {
+            alert("No subnet selected for VPC. Please select a subnet to continue.");
+            return false;
         }
+        this.retVal.subnetId = subnet;
+        this.retVal.ipAddress = document.getElementById("ec2ui.newinstances.ipAddress").value.trim();
 
         // This will be an empty string if <none> is selected
         this.retVal.keyName = document.getElementById("ec2ui.newinstances.keypairlist").selectedItem.value;

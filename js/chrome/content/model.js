@@ -170,10 +170,13 @@ function AvailabilityZone(name, state) {
     this.state = state;
 }
 
-function AddressMapping(address, instanceid, tag) {
+function AddressMapping(address, instanceid, allocId, assocId, domain, tag) {
     this.address = address;
     this.instanceid = instanceid;
-    if (tag) this.tag = tag;
+    this.allocationId = allocId || ""
+    this.associationId = assocId || ""
+    this.domain = domain || ""
+    this.tag = tag || ""
 }
 
 function BundleTask(id, instanceId, state, startTime, updateTime, s3bucket, s3prefix, errorMsg) {

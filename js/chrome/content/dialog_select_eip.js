@@ -1,13 +1,13 @@
 var ec2_EIPSelector = {
   ec2ui_session : null,
   instanceId : null,
+  instance: null,
   retVal : null,
   eipList : null,
 
   attach : function() {
     var eipMenu = document.getElementById("ec2ui.selectEIP.eip");
     var selected = eipMenu.selectedIndex;
-
     var eipSel = this.eipList[selected];
 
     if (eipSel.instanceid != null && eipSel.instanceid != '') {
@@ -16,38 +16,31 @@ var ec2_EIPSelector = {
             return false;
         }
     }
-
-    eipSel.instanceid = this.instanceId;
-
-    this.retVal.ok = true;
+    eipSel.instanceid = this.instance.id;
     this.retVal.eipMap = eipSel;
+    this.retVal.ok = true;
     return true;
   },
 
   init : function() {
     this.ec2ui_session = window.arguments[0];
-    this.instanceId = window.arguments[1];
+    this.instance = window.arguments[1];
     this.retVal = window.arguments[2];
 
     var eips = this.ec2ui_session.model.getAddresses();
     this.eipList = new Array();
 
     // volume id
-    document.getElementById("ec2ui.selectEIP.instanceId").value = this.instanceId;
+    document.getElementById("ec2ui.selectEIP.instanceId").value = this.instance.id;
     // instances
     var eipMenu = document.getElementById("ec2ui.selectEIP.eip");
-    var eip = null;
-    var label = null;
-    var tag = null;
     for(var i in eips) {
-        eip = eips[i];
-        label = eip.address;
+        var eip = eips[i];
+        if ((isVpc(this.instance) && eip.domain != "vpc") || (!isVpc(this.instance) && eip.domain == "vpc")) {
+            continue
+        }
         if (!eip.instanceid) {
-            tag = eip.tag;
-            if (tag && tag.length) {
-                label = label + ":" + tag;
-            }
-            eipMenu.appendItem(label);
+            eipMenu.appendItem(eip.address + (eip.tag ? ": " + eip.tag : ""));
             this.eipList.push(eip);
         }
     }

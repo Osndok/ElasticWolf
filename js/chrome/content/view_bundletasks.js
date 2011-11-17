@@ -172,7 +172,7 @@ var ec2ui_BundleTasksTreeView = {
             return;
         }
 
-        window.openDialog("chrome://ec2ui/content/dialog_bundle_task_details.xul", null, "chrome,centerscreen,modal", task);
+        window.openDialog("chrome://ec2ui/content/dialog_bundle_task_details.xul", null, "chrome,centerscreen,modal,resizable", task);
     },
 
     pendingBundleTasks : function() {

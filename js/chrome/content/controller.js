@@ -901,7 +901,7 @@ var ec2ui_controller = {
             params.push([ "KeyName", keyName ]);
         }
         for (var i in securityGroups) {
-            params.push([ "SecurityGroupId." + (i + 1), typeof securityGroup[i] == "object" ? securityGroups[i].id : securityGroup[i] ]);
+            params.push([ "SecurityGroupId." + (i + 1), typeof securityGroups[i] == "object" ? securityGroups[i].id : securityGroups[i] ]);
         }
         if (userData != null) {
             var b64str = "Base64:";
@@ -1840,7 +1840,7 @@ var ec2ui_controller = {
 
     deleteSecurityGroup : function(group, callback)
     {
-        var params = group.id && group.id != "" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group.name ] ]
+        var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
         ec2_httpclient.queryEC2("DeleteSecurityGroup", params, this, true, "onCompleteDeleteSecurityGroup", callback);
     },
 
@@ -1851,7 +1851,7 @@ var ec2ui_controller = {
 
     authorizeSourceCIDR : function(group, ipProtocol, fromPort, toPort, cidrIp, callback)
     {
-        var params = group.id && group.id != "" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group.name ] ]
+        var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
         params.push([ "IpProtocol", ipProtocol ]);
         params.push([ "FromPort", fromPort ]);
         params.push([ "ToPort", toPort ]);
@@ -1861,7 +1861,7 @@ var ec2ui_controller = {
 
     revokeSourceCIDR : function(group, ipProtocol, fromPort, toPort, cidrIp, callback)
     {
-        var params = group.id && group.id != "" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group.name ] ]
+        var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
         params.push([ "IpProtocol", ipProtocol ]);
         params.push([ "FromPort", fromPort ]);
         params.push([ "ToPort", toPort ]);
@@ -1871,7 +1871,7 @@ var ec2ui_controller = {
 
     authorizeSourceGroup : function(group, ipProtocol, fromPort, toPort, srcGroup, callback)
     {
-        var params = group.id && group.id != "" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group.name ] ]
+        var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
         params.push([ "IpPermissions.1.IpProtocol", ipProtocol ]);
         params.push([ "IpPermissions.1.FromPort", fromPort ]);
         params.push([ "IpPermissions.1.ToPort", toPort ]);
@@ -1981,7 +1981,10 @@ var ec2ui_controller = {
         for ( var i = 0; i < items.length; i++) {
             var publicIp = getNodeValueByName(items[i], "publicIp");
             var instanceid = getNodeValueByName(items[i], "instanceId");
-            list.push(new AddressMapping(publicIp, instanceid));
+            var allocId = getNodeValueByName(items[i], "allocationId");
+            var assocId = getNodeValueByName(items[i], "associationId");
+            var domain = getNodeValueByName(items[i], "domain");
+            list.push(new AddressMapping(publicIp, instanceid, allocId, assocId, domain));
         }
 
         this.addResourceTags(list, ec2ui_session.model.resourceMap.eips, "address");
@@ -1989,9 +1992,10 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback(list);
     },
 
-    allocateAddress : function(callback)
+    allocateAddress : function(vpc, callback)
     {
-        ec2_httpclient.queryEC2("AllocateAddress", [], this, true, "onCompleteAllocateAddress", callback);
+        var params = vpc ? [["Domain", "vpc"]] : []
+        ec2_httpclient.queryEC2("AllocateAddress", params, this, true, "onCompleteAllocateAddress", callback);
     },
 
     onCompleteAllocateAddress : function(objResponse)
@@ -2003,9 +2007,10 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback(address);
     },
 
-    releaseAddress : function(address, callback)
+    releaseAddress : function(eip, callback)
     {
-        ec2_httpclient.queryEC2("ReleaseAddress", [ [ 'PublicIp', address ] ], this, true, "onCompleteReleaseAddress", callback);
+        var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.address ]]
+        ec2_httpclient.queryEC2("ReleaseAddress", params, this, true, "onCompleteReleaseAddress", callback);
     },
 
     onCompleteReleaseAddress : function(objResponse)
@@ -2013,9 +2018,11 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    associateAddress : function(address, instanceid, callback)
+    associateAddress : function(eip, instanceid, callback)
     {
-        ec2_httpclient.queryEC2("AssociateAddress", [ [ 'PublicIp', address ], [ 'InstanceId', instanceid ] ], this, true, "onCompleteAssociateAddress", callback);
+        var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.address ]]
+        params.push([ 'InstanceId', instanceid ])
+        ec2_httpclient.queryEC2("AssociateAddress", params, this, true, "onCompleteAssociateAddress", callback);
     },
 
     onCompleteAssociateAddress : function(objResponse)
@@ -2023,9 +2030,10 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    disassociateAddress : function(address, callback)
+    disassociateAddress : function(eip, callback)
     {
-        ec2_httpclient.queryEC2("DisassociateAddress", [ [ 'PublicIp', address ] ], this, true, "onCompleteDisassociateAddress", callback);
+        var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.address ]]
+        ec2_httpclient.queryEC2("DisassociateAddress", params, this, true, "onCompleteDisassociateAddress", callback);
     },
 
     onCompleteDisassociateAddress : function(objResponse)

@@ -12,7 +12,7 @@ var ec2_httpclient = {
     errorCount: 0,
     timers : {},
 
-    VERSION: "1.0.7",
+    VERSION: "1.0.8",
     API_VERSION : "2011-07-15",
     OLD_API_VERSION: "2010-11-15",
     ELB_API_VERSION : "2011-04-05",
@@ -159,7 +159,7 @@ var ec2_httpclient = {
 
     errorDialog : function(msg, code, rId, fStr) {
         var retry = {value:null};
-        window.openDialog("chrome://ec2ui/content/dialog_retry_cancel.xul", null, "chrome,centerscreen,modal", msg, code, rId, fStr, retry);
+        window.openDialog("chrome://ec2ui/content/dialog_retry_cancel.xul", null, "chrome,centerscreen,modal,resizable", msg, code, rId, fStr, retry);
         return retry.value;
     },
 

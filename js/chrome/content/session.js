@@ -401,7 +401,7 @@ var ec2ui_session = {
 
     manageEndpoints : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_manage_endpoints.xul", null, "chrome,centerscreen,modal", this.endpointmap);
+        window.openDialog("chrome://ec2ui/content/dialog_manage_endpoints.xul", null, "chrome,centerscreen,modal,resizable", this.endpointmap);
         this.loadEndpointMap();
     },
 
@@ -646,13 +646,13 @@ var ec2ui_session = {
 
     manageCredentials : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal", ec2ui_session);
+        window.openDialog("chrome://ec2ui/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ec2ui_session);
         this.loadCredentials();
     },
 
     manageTools : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_manage_tools.xul", null, "chrome,centerscreen,modal");
+        window.openDialog("chrome://ec2ui/content/dialog_manage_tools.xul", null, "chrome,centerscreen,modal, resizable");
     },
 
     loadAccountIdMap : function()
@@ -662,7 +662,7 @@ var ec2ui_session = {
 
     manageAccountIds : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_manage_accountids.xul", null, "chrome,centerscreen,modal", this.accountidmap);
+        window.openDialog("chrome://ec2ui/content/dialog_manage_accountids.xul", null, "chrome,centerscreen,modal,resizable", this.accountidmap);
         this.loadAccountIdMap();
     },
 
@@ -679,7 +679,7 @@ var ec2ui_session = {
 
     displayAbout : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_about.xul", null, "chrome,centerscreen,modal", this.client);
+        window.openDialog("chrome://ec2ui/content/dialog_about.xul", null, "chrome,centerscreen,modal,resizable", this.client);
     },
 
     showBusyCursor : function(fShow)
@@ -720,16 +720,22 @@ var ec2ui_session = {
 
         // Create private and cert files
         ec2ui_prefs.setEnv("OPENSSL_CONF", conffile);
-        var rc = this.launchProcess(openssl, [ "req", "-new", "-x509", "-nodes", "-sha1", "-days", "730", "-newkey", "rsa:1024", "-keyout", keyfile, "-out", certfile, "-config", conffile ], true);
-        FileIO.remove(conffile);
-        if (!FileIO.exists(keyfile) || !FileIO.exists(certfile)) {
-            debug("ERROR: no certificate generated")
+        this.launchProcess(openssl, [ "genrsa", "-out", keyfile, "1024" ], true);
+        if (!FileIO.exists(keyfile)) {
+            debug("ERROR: no private key generated")
             return 0
         }
         FileIO.open(keyfile).permissions = 0600;
 
+        this.launchProcess(openssl, [ "req", "-new", "-x509", "-nodes", "-sha1", "-days", "730", "-key", keyfile, "-out", certfile, "-config", conffile ], true);
+        FileIO.remove(conffile);
+        if (!FileIO.exists(certfile)) {
+            debug("ERROR: no certificate generated")
+            return 0
+        }
+
         // Create public file
-        this.launchProcess(openssl, [ "rsa", "-in", keyfile, "-pubout", "-out", pubfile ])
+        this.launchProcess(openssl, [ "rsa", "-in", keyfile, "-pubout", "-out", pubfile ], true)
 
         return FileIO.toString(certfile)
     },

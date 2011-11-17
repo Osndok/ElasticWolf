@@ -4,10 +4,17 @@
 
 <dialog id="ec2ui.dialog.eip.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept" ondialogaccept="return true;"
-  onload="ec2_ElasticIPDetails.init();" title="ElasticIP Details">
+  onload="init();" title="ElasticIP Details">
 
-  <script type="application/x-javascript" src="chrome://ec2ui/content/dialog_eip_details.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+  <script>
+   function init() {
+      var eip = window.arguments[0];
+      document.getElementById("ec2ui.eip.address").value = eip.address;
+      document.getElementById("ec2ui.eip.instanceid").value = eip.instanceid;
+      document.getElementById("ec2ui.eip.tag").value = eip.tag || "";
+   }
+  </script>
 
   <vbox flex="1">
     <grid flex="1">

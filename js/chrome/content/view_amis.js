@@ -140,6 +140,8 @@ var ec2ui_AMIsTreeView = {
     newInstanceCallback : function(list)
     {
         var tag = ec2ui_AMIsTreeView.newInstanceTag;
+        debug("Tag:" + tag)
+
         // Reset the saved tag
         ec2ui_AMIsTreeView.newInstance = "";
         if (tag && tag.length > 0) {
@@ -151,12 +153,10 @@ var ec2ui_AMIsTreeView = {
                 __tagging2ec2__([ inst.id ], ec2ui_session, tag);
             }
         }
-        if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-            ec2ui_InstancesTreeView.refresh();
-            ec2ui_InstancesTreeView.selectByInstanceIds(list);
-            var tabPanel = document.getElementById("ec2ui.primary.tabs");
-            tabPanel.selectedIndex = 0;
-        }
+        ec2ui_InstancesTreeView.refresh();
+        ec2ui_InstancesTreeView.selectByInstanceIds(list);
+        var tabPanel = document.getElementById("ec2ui.primary.tabs");
+        tabPanel.selectedIndex = 0;
     },
 
     launchNewInstances : function()
@@ -168,7 +168,7 @@ var ec2ui_AMIsTreeView = {
         };
         this.newInstanceTag = null;
 
-        window.openDialog("chrome://ec2ui/content/dialog_new_instances.xul", null, "chrome,centerscreen,modal", image, ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_new_instances.xul", null, "chrome,centerscreen,modal,resizable", image, ec2ui_session, retVal);
 
         if (retVal.ok) {
             this.newInstanceTag = retVal.tag || "";
@@ -198,7 +198,7 @@ var ec2ui_AMIsTreeView = {
             ok : null,
             manifestPath : null
         };
-        window.openDialog("chrome://ec2ui/content/dialog_register_image.xul", null, "chrome,centerscreen,modal", ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_register_image.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
 
         if (retVal.ok) {
             var s3bucket = retVal.manifestPath.split('/')[0];
@@ -255,7 +255,7 @@ var ec2ui_AMIsTreeView = {
             return;
         }
 
-        window.openDialog("chrome://ec2ui/content/dialog_migrate_ami.xul", null, "chrome,centerscreen,modal", image, ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_migrate_ami.xul", null, "chrome,centerscreen,modal,resizable", image, ec2ui_session, retVal);
 
         if (retVal.ok) {
             this.currentlyMigrating = true;
@@ -302,7 +302,7 @@ var ec2ui_AMIsTreeView = {
             var retVal = {
                 ok : null
             };
-            window.openDialog("chrome://ec2ui/content/dialog_delete_ami.xul", null, "chrome,centerscreen,modal", ec2ui_session, image.location, retVal);
+            window.openDialog("chrome://ec2ui/content/dialog_delete_ami.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, image.location, retVal);
 
             if (retVal.ok) {
                 // Keys have been deleted. Let's deregister this image

@@ -50,7 +50,7 @@ var ec2ui_VpnConnectionTreeView = {
     saveConnectionConfiguration : function (name, config) {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-        var fWin = navigator.platform.match(/^Win/);
+        var fWin = isWindows(navigator.platform);
         fp.init(window, "Save VPN Connection Configuration", nsIFilePicker.modeSave);
         if (fWin) {
             fp.appendFilter("Text Documents","*.txt");
@@ -94,7 +94,7 @@ var ec2ui_VpnConnectionTreeView = {
 
         window.openDialog("chrome://ec2ui/content/dialog_vpn_connection_config.xul",
                           null,
-                          "chrome,centerscreen,modal",
+                          "chrome,centerscreen,modal,resizable",
                           ec2ui_session,
                           retVal,
                           ec2_httpclient);
@@ -130,7 +130,7 @@ var ec2ui_VpnConnectionTreeView = {
 
     createVpnConnection : function(cgwid, vgwid) {
         var retVal = {ok:null, vgwid: vgwid, cgwid: cgwid, type:null}
-        window.openDialog("chrome://ec2ui/content/dialog_create_vpn_connection.xul", null, "chrome,centerscreen,modal", ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_create_vpn_connection.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
 
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);

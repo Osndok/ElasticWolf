@@ -79,7 +79,7 @@ var ec2ui_CertTreeView = {
         viewDetails : function(event) {
             var item = this.getSelected();
             if (item) {
-                window.openDialog("chrome://ec2ui/content/dialog_cert_details.xul", null, "chrome,centerscreen,modal", item);
+                window.openDialog("chrome://ec2ui/content/dialog_cert_details.xul", null, "chrome,centerscreen,modal,resizable", item);
             }
         },
 

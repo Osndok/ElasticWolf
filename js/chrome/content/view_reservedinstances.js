@@ -46,7 +46,7 @@ var ec2ui_ReservedInstancesTreeView = {
         if (image == null) return;
         window.openDialog("chrome://ec2ui/content/dialog_reserved_instances_details.xul",
                           null,
-                          "chrome,centerscreen,modal",
+                          "chrome,centerscreen,modal,resizable",
                           image);
     },
 

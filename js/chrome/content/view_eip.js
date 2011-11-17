@@ -1,13 +1,11 @@
 var ec2ui_ElasticIPTreeView = {
-    COLNAMES : ['eip.address','eip.instanceid','eip.instanceName'],
+    COLNAMES : ['eip.address','eip.instanceid','eip.instanceName','eip.allocationId','eip.associationId','eip.domain','eip.tag'],
     treeBox : null,
     selection : null,
     eipList : new Array(),
     registered : false,
     imageIdRegex : new RegExp("^\\d+\\.\\d+\\.\\d+\\.\\d+"),
-
     get rowCount() { return this.eipList.length; },
-
     setTree     : function(treeBox)         { this.treeBox = treeBox; },
     getCellText : function(idx, column) {
         if (idx >= this.rowCount) return "";
@@ -18,18 +16,12 @@ var ec2ui_ElasticIPTreeView = {
     isContainer: function(idx)         { return false;},
     isSeparator: function(idx)         { return false; },
     isSorted: function()               { return false; },
-
     getImageSrc: function(idx, column) { return ""; },
     getProgressMode : function(idx,column) {},
     getCellValue: function(idx, column) {},
     cycleHeader: function(col) {
         var eip = this.getSelectedEip();
-        cycleHeader(
-            col,
-            document,
-            this.COLNAMES,
-            this.eipList
-            );
+        cycleHeader(col, document, this.COLNAMES, this.eipList);
         if (eip) {
             log(eip.address + ": Select this eip post sort");
             this.selectByAddress(eip.address);
@@ -72,6 +64,19 @@ var ec2ui_ElasticIPTreeView = {
         this.invalidate();
     },
 
+    displayEIPs : function (eipList) {
+        if (!eipList) { eipList = []; }
+
+        this.treeBox.rowCountChanged(0, -this.eipList.length);
+        this.eipList = eipList;
+        this.treeBox.rowCountChanged(0, this.eipList.length);
+        this.sort();
+        this.selection.clearSelection();
+        if (eipList.length > 0) {
+           this.selection.select(0);
+        }
+    },
+
     viewDetails : function(event) {
         var selected = new Array();
         for(var i in this.eipList) {
@@ -81,7 +86,7 @@ var ec2ui_ElasticIPTreeView = {
         }
         if (selected.length != 1) return;
 
-        window.openDialog("chrome://ec2ui/content/dialog_eip_details.xul", null, "chrome,centerscreen,modal", selected[0]);
+        window.openDialog("chrome://ec2ui/content/dialog_eip_details.xul", null, "chrome,centerscreen,modal,resizable", selected[0]);
     },
 
     enableOrDisableItems : function() {
@@ -121,14 +126,13 @@ var ec2ui_ElasticIPTreeView = {
     },
 
     allocateAddress : function() {
+        var vpc = confirm("Is this Elastic IP to be used for VPC?");
         var me = this;
         var wrap = function(address) {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-                me.selectByAddress(address);
-            }
+            me.refresh();
+            me.selectByAddress(address);
         }
-        ec2ui_session.controller.allocateAddress(wrap);
+        ec2ui_session.controller.allocateAddress(vpc, wrap);
     },
 
     releaseAddress : function() {
@@ -140,11 +144,9 @@ var ec2ui_ElasticIPTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
-        ec2ui_session.controller.releaseAddress(eip.address, wrap);
+        ec2ui_session.controller.releaseAddress(eip, wrap);
     },
 
     getUnassociatedInstanceIds : function() {
@@ -198,11 +200,9 @@ var ec2ui_ElasticIPTreeView = {
     },
 
     associateAddress : function(eip) {
-        // If an elastic IP hasn't been passed in to be persisted to
-        // EC2, create a mapping between the Address and Instance.
+        // If an elastic IP hasn't been passed in to be persisted to EC2, create a mapping between the Address and Instance.
         if (eip == null) {
             eip = this.getSelectedEip();
-
             if (eip == null) return;
 
             if (eip.instanceid != null && eip.instanceid != '') {
@@ -213,34 +213,21 @@ var ec2ui_ElasticIPTreeView = {
 
             var instanceIds = this.getUnassociatedInstanceIds();
 
-            var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                .getService(Components.interfaces.nsIPromptService);
+            var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
             var selected = {};
-
-            var result = prompts.select(
-                null,
-                "Associate Address with Instance",
-                "Which Instance would you like to associate "+ eip.address +" with?",
-                instanceIds.length,
-                instanceIds,
-                selected
-                );
-
+            var result = prompts.select(null, "Associate Address with Instance", "Which Instance would you like to associate "+ eip.address +" with?", instanceIds.length, instanceIds,selected);
             if (!result) {
                 return;
             }
-
             eip.instanceid = instanceIds[selected.value].split(":")[0];
         }
 
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-                me.selectByAddress(eip.address);
-            }
+            me.refresh();
+            me.selectByAddress(eip.address);
         }
-        ec2ui_session.controller.associateAddress(eip.address, eip.instanceid, wrap);
+        ec2ui_session.controller.associateAddress(eip, eip.instanceid, wrap);
         return true;
     },
 
@@ -255,11 +242,9 @@ var ec2ui_ElasticIPTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
-        ec2ui_session.controller.disassociateAddress(eip.address, wrap);
+        ec2ui_session.controller.disassociateAddress(eip, wrap);
     },
 
     tag : function() {
@@ -290,20 +275,8 @@ var ec2ui_ElasticIPTreeView = {
         if (!publicDnsName) { return; }
 
         copyToClipboard(publicDnsName);
-    },
-
-    displayEIPs : function (eipList) {
-        if (!eipList) { eipList = []; }
-
-        this.treeBox.rowCountChanged(0, -this.eipList.length);
-        this.eipList = eipList;
-        this.treeBox.rowCountChanged(0, this.eipList.length);
-        this.sort();
-        this.selection.clearSelection();
-        if (eipList.length > 0) {
-           this.selection.select(0);
-        }
     }
+
 };
 
 ec2ui_ElasticIPTreeView.register();

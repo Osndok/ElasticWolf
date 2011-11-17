@@ -47,7 +47,7 @@ var ec2ui_CustomerGatewayTreeView = {
 
     createCustomerGateway : function () {
         var retVal = {ok:null,type:null, ipaddress:null, bgpasn:null}
-        window.openDialog("chrome://ec2ui/content/dialog_create_customer_gateway.xul", null, "chrome,centerscreen,modal", ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_create_customer_gateway.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
 
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);

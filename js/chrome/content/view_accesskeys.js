@@ -6,7 +6,7 @@ var ec2ui_AccessKeyTreeView = {
             var key = this.getSelected();
             if (key == null) return;
             key.secret = this.getAccessKeySecret(key.name)
-            window.openDialog("chrome://ec2ui/content/dialog_accesskey_details.xul", null, "chrome,centerscreen,modal", key);
+            window.openDialog("chrome://ec2ui/content/dialog_accesskey_details.xul", null, "chrome,centerscreen,modal,resizable", key);
         },
 
         createAccessKey : function () {

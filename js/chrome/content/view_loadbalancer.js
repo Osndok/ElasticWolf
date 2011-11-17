@@ -122,7 +122,7 @@ var ec2ui_LoadbalancerTreeView = {
         window.openDialog(
             "chrome://ec2ui/content/dialog_loadbalancer_details.xul",
             null,
-            "chrome,centerscreen,modal",
+            "chrome,centerscreen,modal,resizable",
             loadbalancer);
     },
     
@@ -131,7 +131,7 @@ var ec2ui_LoadbalancerTreeView = {
         window.openDialog(
             "chrome://ec2ui/content/dialog_create_loadbalancer.xul",
             null,
-            "chrome,centerscreen,modal",
+            "chrome,centerscreen,modal,resizable",
             ec2ui_session,
             retVal,
             null
@@ -166,7 +166,7 @@ var ec2ui_LoadbalancerTreeView = {
         window.openDialog(
             "chrome://ec2ui/content/dialog_configure_healthcheck.xul",
             null,
-            "chrome,centerscreen,modal",
+            "chrome,centerscreen,modal,resizable",
             loadbalancer,
             ec2ui_session,
             retVal            
@@ -189,7 +189,7 @@ var ec2ui_LoadbalancerTreeView = {
          window.openDialog(
             "chrome://ec2ui/content/dialog_register_lbinstances.xul",
             null,
-            "chrome,centerscreen,modal",
+            "chrome,centerscreen,modal,resizable",
             ec2ui_session,
             retVal,
             loadbalancer
@@ -221,7 +221,7 @@ var ec2ui_LoadbalancerTreeView = {
          window.openDialog(
             "chrome://ec2ui/content/dialog_deregister_lbinstances.xul",
             null,
-            "chrome,centerscreen,modal",
+            "chrome,centerscreen,modal,resizable",
             ec2ui_session,
             retVal,
             loadbalancer
@@ -253,7 +253,7 @@ var ec2ui_LoadbalancerTreeView = {
         window.openDialog(
             "chrome://ec2ui/content/dialog_enable_lbazone.xul",
             null,
-            "chrome,centerscreen,modal",
+            "chrome,centerscreen,modal,resizable",
             ec2ui_session,
             retVal,
             loadbalancer
@@ -285,7 +285,7 @@ var ec2ui_LoadbalancerTreeView = {
         window.openDialog(
             "chrome://ec2ui/content/dialog_disable_lbazone.xul",
             null,
-            "chrome,centerscreen,modal",
+            "chrome,centerscreen,modal,resizable",
             ec2ui_session,
             retVal,
             loadbalancer

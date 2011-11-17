@@ -35,7 +35,6 @@ var ec2ui_InstancesTreeView = {
                                 // refreshes, etc
 
     get rowCount() { return this.instanceList.length; },
-
     setTree     : function(treeBox)     { this.treeBox = treeBox; },
     getCellText : function(idx, column) {
         if (idx >= this.rowCount) return "";
@@ -159,7 +158,7 @@ var ec2ui_InstancesTreeView = {
             // Need to call describe Image
             ec2ui_session.controller.describeImage(instance.imageId);
         }
-        window.openDialog("chrome://ec2ui/content/dialog_instance_details.xul", null, "chrome,centerscreen,modeless", ec2ui_session, instance);
+        window.openDialog("chrome://ec2ui/content/dialog_instance_details.xul", null, "chrome,centerscreen,modeless,resizable", ec2ui_session, instance);
     },
 
     getSearchText: function() {
@@ -238,7 +237,7 @@ var ec2ui_InstancesTreeView = {
 
         do {
             var bucketReg = null;
-            window.openDialog("chrome://ec2ui/content/dialog_bundle_instance.xul", null, "chrome,centerscreen,modal", instance.id, ec2ui_session, retVal);
+            window.openDialog("chrome://ec2ui/content/dialog_bundle_instance.xul", null, "chrome,centerscreen,modal,resizable", instance.id, ec2ui_session, retVal);
 
             ec2ui_session.showBusyCursor(true);
             if (retVal.ok) {
@@ -287,7 +286,7 @@ var ec2ui_InstancesTreeView = {
                 ec2ui_BundleTasksTreeView.refresh();
                 ec2ui_BundleTasksTreeView.selectByBundleId(list[0].id);
                 var tabPanel = document.getElementById("ec2ui.primary.tabs");
-                tabPanel.selectedIndex = 6;
+                tabPanel.selectedIndex = 9;
             }
 
             ec2ui_session.controller.bundleInstance(instance.id, retVal.bucketName, retVal.prefix, ec2ui_session.getActiveCredential(), wrap);
@@ -301,7 +300,7 @@ var ec2ui_InstancesTreeView = {
 
         window.openDialog("chrome://ec2ui/content/dialog_create_image.xul",
                           null,
-                          "chrome,centerscreen,modal",
+                          "chrome,centerscreen,modal,resizable",
                           instance.id,
                           ec2ui_session,
                           retVal);
@@ -372,15 +371,7 @@ var ec2ui_InstancesTreeView = {
         }
 
         var retVal = {ok:null, volumeId:null, device:null};
-        window.openDialog(
-            "chrome://ec2ui/content/dialog_attach_ebs_volume.xul",
-            null,
-            "chrome,centerscreen,modal",
-            ec2ui_session,
-            instance,
-            retVal
-            );
-
+        window.openDialog("chrome://ec2ui/content/dialog_attach_ebs_volume.xul",null, "chrome,centerscreen,modal,resizable", ec2ui_session, instance, retVal);
         if (retVal.ok) {
             log(instance.id + " to be associated with " + retVal.volumeId);
 
@@ -395,7 +386,7 @@ var ec2ui_InstancesTreeView = {
                 ec2ui_VolumeTreeView.refresh();
             }
             var tabPanel = document.getElementById("ec2ui.primary.tabs");
-            tabPanel.selectedIndex = 5;
+            tabPanel.selectedIndex = 7;
             ec2ui_VolumeTreeView.selectByImageId(retVal.volumeId);
         }
     },
@@ -417,35 +408,17 @@ var ec2ui_InstancesTreeView = {
             var fAddEIP = confirm ("Would you like to create a new Elastic IP to associate with this instance?");
             if (fAddEIP) {
                 var tabPanel = document.getElementById("ec2ui.primary.tabs");
-                tabPanel.selectedIndex = 4;
+                tabPanel.selectedIndex = 6;
                 ec2ui_ElasticIPTreeView.allocateAddress();
             }
             return;
         }
 
         var retVal = {ok:null,eipMap:null};
-        window.openDialog(
-            "chrome://ec2ui/content/dialog_select_eip.xul",
-            null,
-            "chrome,centerscreen,modal",
-            ec2ui_session,
-            instance.id,
-            retVal
-            );
-
+        window.openDialog("chrome://ec2ui/content/dialog_select_eip.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, instance, retVal);
         if (retVal.ok) {
             log(retVal.eipMap.address + " to be associated with " + retVal.eipMap.instanceId);
-
             ec2ui_ElasticIPTreeView.associateAddress(retVal.eipMap);
-
-            // Navigate to the Elastic IP tab
-            /*
-             * if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-             * ec2ui_ElasticIPTreeView.refresh();
-             * ec2ui_ElasticIPTreeView.selectByAddress(retVal.eipMap.address);
-             * var tabPanel = document.getElementById("ec2ui.primary.tabs");
-             * tabPanel.selectedIndex = 4; }
-             */
         }
     },
 
@@ -1046,11 +1019,11 @@ var ec2ui_InstancesTreeView = {
     },
 
     showConsoleOutput : function(id, timestamp, output) {
-        window.openDialog("chrome://ec2ui/content/dialog_console_output.xul", null, "chrome,centerscreen,modal", id, timestamp, output);
+        window.openDialog("chrome://ec2ui/content/dialog_console_output.xul", null, "chrome,centerscreen,modal,resizable", id, timestamp, output);
     },
 
     showInstancesSummary : function() {
-        window.openDialog("chrome://ec2ui/content/dialog_summary.xul", null, "chrome,centerscreen,modal", this.instanceList, ec2ui_session.getActiveEndpoint().name);
+        window.openDialog("chrome://ec2ui/content/dialog_summary.xul", null, "chrome,centerscreen,modal,resizable", this.instanceList, ec2ui_session.getActiveEndpoint().name);
     },
 
     copyToClipBoard : function(fieldName) {
@@ -1062,11 +1035,11 @@ var ec2ui_InstancesTreeView = {
         copyToClipboard(instance[fieldName]);
     },
 
-    authorizeProtocolForGroup : function(name, transport, protocol, instGroups) {
-        this.authorizeProtocolPortForGroup(name,transport,protocol,protPortMap[protocol],instGroups);
+    authorizeProtocolForGroup : function(transport, protocol, groups) {
+        this.authorizeProtocolPortForGroup(transport,protocol,protPortMap[protocol],groups);
     },
 
-    authorizeProtocolPortForGroup : function (name, transport, protocol, port, instGroups) {
+    authorizeProtocolPortForGroup : function (transport, protocol, port, groups) {
         if (!ec2ui_prefs.getOpenConnectionPort()) {
             return;
         }
@@ -1083,10 +1056,12 @@ var ec2ui_InstancesTreeView = {
         ec2ui_session.client.queryCheckIP("block", result);
         var networkCIDR = result.ipAddress.trim();
 
+        debug("Host: " + hostCIDR + ", net:" + networkCIDR)
+
         var permissions = null;
-        for (var j in instGroups) {
-            if (instGroups[j])
-                permissions = instGroups[j].permissions;
+        for (var j in groups) {
+            if (groups[j])
+                permissions = groups[j].permissions;
             else
                 continue;
 
@@ -1103,15 +1078,11 @@ var ec2ui_InstancesTreeView = {
                     // 2. The CIDR for the permission matches either
                     // the host's CIDR or the network's CIDR or
                     // the Firewall has been opened to the world
-                    log(perm.fromPort + "," + perm.toPort + "," + perm.ipRanges);
                     var fromPort = parseInt(perm.fromPort);
                     var toPort = parseInt(perm.toPort);
                     port = parseInt(port);
-                    if ((perm.fromPort == port || perm.toPort == port ||
-                         (perm.fromPort <= port && perm.toPort >= port)) &&
-                        (perm.ipRanges == openCIDR ||
-                         perm.ipRanges == hostCIDR ||
-                         perm.ipRanges == networkCIDR)) {
+                    if ((perm.fromPort == port || perm.toPort == port || (perm.fromPort <= port && perm.toPort >= port)) &&
+                        (perm.cidrIp == openCIDR || perm.cidrIp == hostCIDR || perm.cidrIp == networkCIDR)) {
                         // We have a match!
                         fAdd = false;
                         break;
@@ -1128,7 +1099,7 @@ var ec2ui_InstancesTreeView = {
             var result = false;
             if (ec2ui_prefs.getPromptForPortOpening()) {
                 port = port.toString();
-                var msg = ec2ui_prefs.getAppName() + " needs to open " + transport.toUpperCase() + " port " + port + " (" + protocol + ") in group '" + name + "' to continue. Click Ok to authorize this action";
+                var msg = ec2ui_prefs.getAppName() + " needs to open " + transport.toUpperCase() + " port " + port + " (" + protocol + ") to continue. Click Ok to authorize this action";
 
                 // default the checkbox to false
                 var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
@@ -1145,18 +1116,21 @@ var ec2ui_InstancesTreeView = {
             }
 
             if (result) {
+                result = false;
                 var wrap = function() {
                     ec2ui_SecurityGroupsTreeView.refresh();
                 }
-                var group
-                var groups = ec2ui_model.getSecurityGroups();
+                // Authorize first available group
                 for (var i in groups) {
-                    if (groups[i].name == instGrpName) {
-                        group = groups[i]
+                    if (groups[i]) {
+                        ec2ui_session.controller.authorizeSourceCIDR(groups[i],transport,port,port,hostCIDR,wrap);
+                        result = true
+                        break;
                     }
                 }
-
-                ec2ui_session.controller.authorizeSourceCIDR(group,transport,port,port,hostCIDR,wrap);
+            }
+            if (!result) {
+                alert("Could not authorize port " + port)
             }
         }
     },
@@ -1175,27 +1149,23 @@ var ec2ui_InstancesTreeView = {
         // Get the group in which this instance was launched
         var groups = ec2ui_model.getSecurityGroups();
         var instGroups = new Array(instance.groupList.length);
-outer:
         for (var j in instance.groupList) {
-            var instGrpName = instance.groupList[j];
+            instGroups[j] = null;
             for (var i in groups) {
-                if (groups[i].name == instGrpName) {
+                if (groups[i].id == instance.groupList[j]) {
                     instGroups[j] = groups[i];
-                    continue outer;
+                    break;
                 }
             }
-
-            // In the case that a group couldn't be found
-            instGroups[j] = null;
         }
 
         // If this is a Windows instance, we need to RDP instead
         if (isWindows(instance.platform)) {
             // Ensure that the RDP port is open in one of the instance's groups
-            this.authorizeProtocolForGroup(instGrpName, "tcp", "rdp", instGroups);
+            this.authorizeProtocolForGroup("tcp", "rdp", instGroups);
         } else {
             // Ensure that the SSH port is open in one of the instance's groups
-            this.authorizeProtocolForGroup(instGrpName, "tcp", "ssh", instGroups);
+            this.authorizeProtocolForGroup("tcp", "ssh", instGroups);
         }
     },
 

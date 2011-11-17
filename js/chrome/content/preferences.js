@@ -430,7 +430,7 @@ var ec2ui_prefs = {
     {
         var rdesktopargs = "-g 1440x900 -u administrator -p ${pass} -x l ${host}"
 
-        if (navigator.platform.match(/^Mac/)) {
+        if (isMacOS(navigator.platform)) {
             if (FileIO.exists("/Applications/Remote Desktop Connection.app")) {
                 return [ "/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection", "${host}" ];
             } else
@@ -439,7 +439,7 @@ var ec2ui_prefs = {
                 }
         } else
 
-            if (navigator.platform.match(/^Win/)) {
+            if (isWindows(navigator.platform)) {
                 return [ "c:\\Windows\\System32\\mstsc.exe", '/v ${host}' ];
             }
 
@@ -451,25 +451,46 @@ var ec2ui_prefs = {
     {
         var args = " -i ${key} ${login}@${host}"
 
-        if (navigator.platform.match(/^Mac/)) {
-            return [ "/usr/bin/ssh", args ];
+        if (isMacOS(navigator.platform)) {
+            var cmdline = [
+                    'on run argv',
+                    '  tell app "System Events" to set termOn to (exists process "Terminal")',
+                    '  set cmd to "ssh ' + args + '"',
+                    '  if (termOn) then',
+                    '    tell app "Terminal" to do script cmd',
+                    '  else',
+                    '    tell app "Terminal" to do script cmd in front window',
+                    '  end if',
+                    '  tell app "Terminal" to activate',
+                    'end run'];
+                // turn into -e 'line1' -e 'line2' etc.
+            cmdline = cmdline.map(function(s) { return "-e '" + s.replace(/^\s+/, '') + "'" }).join(" ");
+
+            return ["/usr/bin/osascript", cmdline];
         } else
 
-            if (navigator.platform.match(/^Win/)) {
-                cmd = this.getAppPath() + "\\ssh.exe"
-                if (FileIO.exists(cmd)) {
-                    return [ cmd, args ]
-                }
-                return [ "c:\\Program Files\\Putty\\putty.exe", args ];
+        if (isWindows(navigator.platform)) {
+            cmd = this.getAppPath() + '\\ssh.exe'
+            if (FileIO.exists(cmd)) {
+                cmd = '"set CYGWIN=nodosfilewarning&&set HOME=' + this.getHome().replace(/\s/g, "\\ ") + '&&' + cmd + args + '"'
+                return [ 'c:\\\Windows\\System32\\cmd.exe', '/K ' + cmd ]
             }
-        return [ "/usr/bin/xterm", '-e /usr/bin/ssh ' + args ];
+
+            cmd = this.getAppPath() + '"\\putty.exe'
+            if (FileIO.exists(cmd)) {
+                return [ cmd, args ]
+            }
+            return [ "", args ];
+        }
+
+        return [ '"/usr/bin/xterm', '-e /usr/bin/ssh ' + args ];
     },
 
     getDefaultOpenSSLCommand : function()
     {
         var cmd = "/usr/bin/openssl"
 
-        if (navigator.platform.match(/^Win/)) {
+        if (isWindows(navigator.platform)) {
             cmd = this.getAppPath() + "\\openssl.exe"
             if (FileIO.exists(cmd)) {
                 return cmd
@@ -480,17 +501,17 @@ var ec2ui_prefs = {
 
     getPrivateKeyFile : function(name)
     {
-        return this.getTemplateProcessed("${home}" + this.getDirSeparator() + this.getAppName() + this.getDirSeparator() + "PrivateKey_${keyname}.pem", [ [ "keyname", name ? name : this.getLastUsedAccount() ] ]);
+        return this.getTemplateProcessed("${home}" + this.getDirSeparator() + this.getAppName() + this.getDirSeparator() + "PrivateKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
     },
 
     getPublicKeyFile : function(name)
     {
-        return this.getTemplateProcessed("${home}" + this.getDirSeparator() + this.getAppName() + this.getDirSeparator() + "PublicKey_${keyname}.pem", [ [ "keyname", name ? name : this.getLastUsedAccount() ] ]);
+        return this.getTemplateProcessed("${home}" + this.getDirSeparator() + this.getAppName() + this.getDirSeparator() + "PublicKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
     },
 
     getCertificateFile : function(name)
     {
-        return this.getTemplateProcessed("${home}" + this.getDirSeparator() + this.getAppName() + this.getDirSeparator() + "X509Certificate_${keyname}.pem", [ [ "keyname", name ? name : this.getLastUsedAccount() ] ]);
+        return this.getTemplateProcessed("${home}" + this.getDirSeparator() + this.getAppName() + this.getDirSeparator() + "X509Certificate_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
     },
 
     getTemplateProcessed : function(file, args)
@@ -498,7 +519,7 @@ var ec2ui_prefs = {
         var keyname = null
         // Custom variables
         for ( var i = 0; args && i < args.length; i++) {
-            var val = sanitize(args[i][1])
+            var val = args[i][1]
             if (file.indexOf("${" + args[i][0] + "}") > -1) {
                 file = file.replace(new RegExp("\\${" + args[i][0] + "}", "g"), val);
             }
@@ -513,17 +534,14 @@ var ec2ui_prefs = {
             file = file.replace(/\${login}/g, this.getSSHUser());
         }
         if (file.indexOf("${home}") > -1) {
-            file = file.replace(/\${home}/g, this.getHome());
+            var home = this.getHome()
+            file = file.replace(/\${home}/g, isWindows(navigator.platform) ? home.replace(/\s/g, "\\ ") : home);
         }
         if (file.indexOf("${user}") > -1) {
-            file = file.replace(/\${user}/g, sanitize(this.getLastUsedAccount()));
+            file = file.replace(/\${user}/g, this.getLastUsedAccount());
         }
         if (file.indexOf("${key}") > -1) {
             file = file.replace(/\${key}/g, this.getPrivateKeyFile(keyname));
-        }
-
-        if (!isWindows(navigator.platform)) {
-            file = file.replace(/\s/g, "\\ ");
         }
         return file
     },
@@ -556,14 +574,14 @@ var ec2ui_prefs = {
     {
         var home = "";
         var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
-        if (env.exists('HOME')) {
-            home = env.get("HOME");
-        } else
+        if (isWindows(navigator.platform)) {
             if (env.exists("HOMEDRIVE") && env.exists("HOMEPATH")) {
                 home = env.get("HOMEDRIVE") + env.get("HOMEPATH");
-            } else {
-                home = this.getUserHome();
             }
+        }
+        if (home == "" && env.exists('HOME')) {
+            home = env.get("HOME");
+        }
         return home
     },
 
@@ -582,9 +600,7 @@ var ec2ui_prefs = {
         env.set(name, value);
     },
 
-    // These ones manage a pseudo-complex pref. This preference is a JSON
-    // encoded
-    // JavaScript "map" mapping account IDs to friendly names.
+    // These ones manage a pseudo-complex pref. This preference is a JSON encoded JavaScript "map" mapping account IDs to friendly names.
     setAccountIdMap : function(value)
     {
         this.setStringPreference(this.KNOWN_ACCOUNT_IDS, value.toJSONString());

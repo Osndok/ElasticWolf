@@ -53,7 +53,7 @@ var ec2ui_VpcTreeView = {
 
     createVpc : function () {
         var retVal = {ok:null,cidr:null,dhcpOptionsId:null}
-        window.openDialog("chrome://ec2ui/content/dialog_create_vpc.xul", null, "chrome,centerscreen,modal", ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_create_vpc.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
 
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);
@@ -91,7 +91,7 @@ var ec2ui_VpcTreeView = {
         if (vpc == null) return;
 
         var retVal = {ok:null, vpcId:vpc.id, dhcpOptionsId:null};
-        window.openDialog("chrome://ec2ui/content/dialog_associate_dhcp_options.xul", null, "chrome,centerscreen,modal", ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_associate_dhcp_options.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
 
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);

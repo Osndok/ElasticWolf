@@ -39,7 +39,7 @@ var ec2ui_PermissionsTreeView = {
     viewDetails : function(event) {
         var perm = this.getSelectedPermission();
         if (perm == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_permission_details.xul", null, "chrome,centerscreen,modal", perm);
+        window.openDialog("chrome://ec2ui/content/dialog_permission_details.xul", null, "chrome,centerscreen,modal,resizable", perm);
     },
 
     selectByPermission : function(perm) {
@@ -76,7 +76,7 @@ var ec2ui_PermissionsTreeView = {
         if (group == null) return;
 
         retVal = {ok:null};
-        window.openDialog("chrome://ec2ui/content/dialog_new_permission.xul", null, "chrome,centerscreen,modal", group, ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_new_permission.xul", null, "chrome,centerscreen,modal,resizable", group, ec2ui_session, retVal);
 
         if (retVal.ok) {
             var me = this;

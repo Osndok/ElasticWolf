@@ -5,7 +5,7 @@ var ec2ui_KeypairTreeView = {
     viewDetails : function(event) {
         var keypair = this.getSelected();
         if (keypair == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_keypair_details.xul", null, "chrome,centerscreen,modal", keypair);
+        window.openDialog("chrome://ec2ui/content/dialog_keypair_details.xul", null, "chrome,centerscreen,modal,resizable", keypair);
     },
 
 

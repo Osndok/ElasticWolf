@@ -59,7 +59,7 @@ var ec2ui_VpnGatewayTreeView = {
 
     createVpnGateway : function () {
         var retVal = {ok:null,type:null, az:null}
-        window.openDialog("chrome://ec2ui/content/dialog_create_vpn_gateway.xul", null, "chrome,centerscreen,modal", ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_create_vpn_gateway.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
 
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);

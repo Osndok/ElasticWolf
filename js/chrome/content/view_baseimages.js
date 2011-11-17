@@ -57,7 +57,7 @@ var BaseImagesView = {
     viewDetails : function(event) {
         var image = this.getSelectedImage();
         if (image == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_ami_details.xul", null, "chrome,centerscreen,modal", image);
+        window.openDialog("chrome://ec2ui/content/dialog_ami_details.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
     sort : function() {

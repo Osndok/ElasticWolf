@@ -75,7 +75,7 @@ var ec2ui_SnapshotTreeView = {
     viewDetails : function(event) {
         var image = this.getSelectedImage();
         if (image == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_snapshot_details.xul", null, "chrome,centerscreen,modal", image);
+        window.openDialog("chrome://ec2ui/content/dialog_snapshot_details.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
     deleteSnapshot : function () {
@@ -145,7 +145,7 @@ var ec2ui_SnapshotTreeView = {
 
         window.openDialog("chrome://ec2ui/content/dialog_register_image_from_snapshot.xul",
                           null,
-                          "chrome,centerscreen,modal",
+                          "chrome,centerscreen,modal,resizable",
                           image.id,
                           ec2ui_session,
                           retVal);

@@ -165,7 +165,7 @@ function trim(s) {
 }
 
 function sanitize(val) {
-    return trim(val).replace(/[ :/'"]+/g, "");
+    return trim(val).replace(/[ ]+/g, "");
 }
 
 function getProperty(name, defValue) {
@@ -814,6 +814,10 @@ function isWindows(platform) {
     return platform.match(ec2ui_utils.winRegex);
 }
 
+function isMacOS(platform) {
+    return platform.match(ec2ui_utils.macRegex);
+}
+
 function isEbsRootDeviceType(rootDeviceType) {
     return (rootDeviceType == 'ebs');
 }
@@ -941,6 +945,9 @@ var regExs = {
 // ec2ui_utils is akin to a static class
 var ec2ui_utils = {
 
+    winRegex : new RegExp(/^Win/i),
+    macRegex : new RegExp(/^Mac/),
+
     tagMultipleResources : function(list, session, attr) {
         if (!list || !session) return;
 
@@ -986,9 +993,6 @@ var ec2ui_utils = {
         __tagging2ec2__(resIds, session, tag, true);
     },
 
-    winRegex : new RegExp(/^Windows/i),
-    macRegex : new RegExp(/^Mac/),
-
     determineRegionFromString : function(str) {
         var region = "US-EAST-1";
         if (!str) {
@@ -1021,7 +1025,7 @@ var ec2ui_utils = {
         } catch(e) {
             return "";
         }
-    },
+    }
 };
 
 /* With due thanks to http://whytheluckystiff.net */
@@ -1348,7 +1352,7 @@ var FileIO = {
 
         create : function(file) {
             try {
-                file.create(0x00, 0664);
+                file.create(0x00, 0600);
                 return true;
             }
             catch(e) {
@@ -1388,13 +1392,14 @@ var FileIO = {
         },
 
         toString : function(path) {
+            var data = ""
             try {
                 var fp = this.open(path)
-                return this.read(fp)
+                var data = this.read(fp)
             }
             catch(e) {
-                return ""
             }
+            return data ? data : ""
         },
 
         fromUnicode : function(charset, data) {

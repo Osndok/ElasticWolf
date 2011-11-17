@@ -37,7 +37,7 @@ var ec2ui_SecurityGroupsTreeView = {
     viewDetails : function(event) {
         var group = this.getSelectedGroup();
         if (group == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_securitygroup_details.xul", null, "chrome,centerscreen,modal", group);
+        window.openDialog("chrome://ec2ui/content/dialog_securitygroup_details.xul", null, "chrome,centerscreen,modal,resizable", group);
     },
 
     sort : function() {
@@ -103,7 +103,7 @@ var ec2ui_SecurityGroupsTreeView = {
 
     createNewGroup : function () {
         var retVal = {ok:null,name:null,description:null,vpcId:null};
-        window.openDialog("chrome://ec2ui/content/dialog_create_security_group.xul", null, "chrome,centerscreen,modal", ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_create_security_group.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
 
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);
@@ -112,7 +112,7 @@ var ec2ui_SecurityGroupsTreeView = {
                 retVal.id = id
                 me.refresh();
                 me.selectByName(retVal.name);
-                this.authorizeCommonProtocolsByUserRequest(retVal);
+                me.authorizeCommonProtocolsByUserRequest(retVal);
             }
             ec2ui_session.controller.createSecurityGroup(retVal.name, retVal.description, retVal.vpcId, wrap);
             ec2ui_session.showBusyCursor(false);

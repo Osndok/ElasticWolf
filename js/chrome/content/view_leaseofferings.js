@@ -59,7 +59,7 @@ var ec2ui_LeaseOfferingsTreeView = {
         if (image == null) return;
         window.openDialog("chrome://ec2ui/content/dialog_offering_details.xul",
                           null,
-                          "chrome,centerscreen,modal",
+                          "chrome,centerscreen,modal,resizable",
                           image);
     },
 
@@ -74,7 +74,7 @@ var ec2ui_LeaseOfferingsTreeView = {
             // Hand off receiving user input to a dialog
             window.openDialog("chrome://ec2ui/content/dialog_purchase_offering.xul",
                               null,
-                              "chrome,centerscreen,modal",
+                              "chrome,centerscreen,modal,resizable",
                               image,
                               retVal);
 
