@@ -2,13 +2,53 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 
-<dialog id="ec2ui.dialog.selecteip" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    buttons="accept,cancel" ondialogaccept="return ec2_EIPSelector.attach();" ondialogcancel="return true;"
-    onload="ec2_EIPSelector.init();" title="Associate Address with Instance" buttonlabelaccept="Associate">
+<dialog id="ec2ui.dialog.selecteip" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" buttons="accept,cancel" ondialogaccept="return attach();" ondialogcancel="return true;" onload="init();"
+    title="Associate Address with Instance" buttonlabelaccept="Associate">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/dialog_select_eip.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
+    <script>
+        function attach() {
+            var eipMenu = document.getElementById("ec2ui.selectEIP.eip");
+            var selected = eipMenu.selectedIndex;
+            var eipSel = this.eipList[selected];
+
+            if (eipSel.instanceid != null &amp;&amp; eipSel.instanceid != '') {
+                if (!this.session.promptYesNo("Address " + eipSel.address + " is already mapped to an instance, are you sure?")) {
+                    return false;
+                }
+            }
+            eipSel.instanceid = this.instance.id;
+            this.retVal.eipMap = eipSel;
+            this.retVal.ok = true;
+            return true;
+        }
+
+        function init() {
+            this.session = window.arguments[0];
+            this.instance = window.arguments[1];
+            this.retVal = window.arguments[2];
+
+            var eips = this.session.model.getAddresses();
+            this.eipList = new Array();
+
+            // volume id
+            document.getElementById("ec2ui.selectEIP.instanceId").value = this.instance.id;
+            // instances
+            var eipMenu = document.getElementById("ec2ui.selectEIP.eip");
+            for(var i in eips) {
+                var eip = eips[i];
+                if ((isVpc(this.instance) &amp;&amp; eip.domain != "vpc") || (!isVpc(this.instance) &amp;&amp; eip.domain == "vpc")) {
+                    continue
+                }
+                if (!eip.instanceid) {
+                    eipMenu.appendItem(eip.address + (eip.tag ? ": " + eip.tag : ""));
+                    this.eipList.push(eip);
+                }
+            }
+            eipMenu.selectedIndex = 0;
+        }
+    </script>
 
     <vbox flex="1">
         <grid flex="1">
@@ -19,11 +59,11 @@
             <rows>
                 <row>
                     <label control="ec2ui.selectEIP.instanceId" value="&ec2ui.instances.id.label;" />
-                    <textbox id="ec2ui.selectEIP.instanceId" size="40" readonly="true"/>
+                    <textbox id="ec2ui.selectEIP.instanceId" size="40" readonly="true" />
                 </row>
                 <row>
                     <label control="ec2ui.selectEIP.eip" value="Address" />
-                    <menulist id="ec2ui.selectEIP.eip" editable="false" size="30"/>
+                    <menulist id="ec2ui.selectEIP.eip" editable="false" size="30" />
                 </row>
             </rows>
         </grid>
