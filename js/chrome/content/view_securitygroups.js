@@ -1,5 +1,5 @@
 var ec2ui_SecurityGroupsTreeView = {
-    COLNAMES : ['securitygroup.ownerId','securitygroup.name','securitygroup.vpcId','securitygroup.description'],
+    COLNAMES : ['securityGroup.id', 'securitygroup.ownerId','securitygroup.name','securitygroup.vpcId','securitygroup.description'],
     treeBox : null,
     selection : null,
     groupList : new Array(),

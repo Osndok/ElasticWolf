@@ -183,7 +183,7 @@ function Permission(protocol, fromPort, toPort, srcGroup, cidrIp)
     this.fromPort = fromPort;
     this.toPort = toPort;
     this.srcGroup = srcGroup;
-    this.group = srcGroup ? srcGroup.id + ":" + srcGroup.name + ":" + srcGroup.ownerId : ""
+    this.group = srcGroup ? srcGroup.id + ":" + srcGroup.name : ""
     this.cidrIp = cidrIp;
 }
 
