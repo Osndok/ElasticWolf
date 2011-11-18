@@ -10,7 +10,7 @@ var ec2_httpclient = {
     errorCount: 0,
     timers : {},
 
-    VERSION: "1.0.8",
+    VERSION: "1.0.9",
     API_VERSION : "2011-07-15",
     OLD_API_VERSION: "2010-11-15",
     ELB_API_VERSION : "2011-04-05",
@@ -28,6 +28,11 @@ var ec2_httpclient = {
 
     getUserAgent: function () {
         return this.getAppName() + "/" + this.VERSION;
+    },
+
+    isGovCloud : function()
+    {
+        return this.serviceURL.indexOf("ec2.us-gov") > -1;
     },
 
     getNsResolver : function() {
@@ -260,7 +265,7 @@ var ec2_httpclient = {
     },
 
     queryIAM : function (action, params, objActions, isSync, reqType, callback) {
-        return this.queryEC2(action, params, objActions, isSync, reqType, callback, this.serviceURL.indexOf("ec2.us-gov") > -1 ? this.IAM_GOV_URL : this.IAM_URL, this.IAM_API_VERSION);
+        return this.queryEC2(action, params, objActions, isSync, reqType, callback, this.isGovCloud() ? this.IAM_GOV_URL : this.IAM_URL, this.IAM_API_VERSION);
     },
 
     generateS3StringToSign : function(requestType, content, copySource, curTime, fileName) {

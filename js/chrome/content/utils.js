@@ -258,6 +258,15 @@ function getProperty(name, defValue)
     }
 }
 
+function getIPFromHostname(instance)
+{
+    if (instance.publicDnsName) {
+        var parts = instance.publicDnsName.split('-');
+        return parts[1] + "." + parts[2] + "." + parts[3] + "." + parseInt(parts[4]);
+    }
+    return ""
+}
+
 function readPublicKey(file)
 {
     var body = ""

@@ -126,7 +126,11 @@ var ec2ui_ElasticIPTreeView = {
     },
 
     allocateAddress : function() {
-        var vpc = ec2ui_session.promptYesNo("Is this Elastic IP to be used for VPC?");
+        if (!ec2ui_session.client.isGovCloud()) {
+            var vpc = ec2ui_session.promptYesNo("Is this Elastic IP to be used for VPC?");
+        } else {
+            var vpc = true
+        }
         var me = this;
         var wrap = function(address) {
             me.refresh();
@@ -232,7 +236,10 @@ var ec2ui_ElasticIPTreeView = {
     disassociateAddress : function() {
         var eip = this.getSelectedEip();
         if (eip == null) return;
-        if (eip.instanceid == null || eip.instanceid == '') return;
+        if (eip.instanceid == null || eip.instanceid == '') {
+            alert("This EIP is not associated")
+            return;
+        }
 
         var confirmed = confirm("Disassociate "+eip.address+" and instance "+eip.instanceid+"?");
         if (!confirmed)

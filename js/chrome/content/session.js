@@ -77,6 +77,12 @@ var ec2ui_session = {
         this.processURLArguments();
     },
 
+    quit: function()
+    {
+        var app = Components.classes['@mozilla.org/toolkit/app-startup;1'].getService(Components.interfaces.nsIAppStartup);
+        app.quit(Components.interfaces.nsIAppStartup.eForceQuit);
+    },
+
     parseURL : function()
     {
         var a = window.location.href.split("?");
@@ -140,7 +146,7 @@ var ec2ui_session = {
         var tabs = document.getElementById("ec2ui.tabs");
 
         var toCall = "invalidate()";
-        if (this.getActiveCredential() != null && ec2ui_prefs.isRefreshOnChangeEnabled()) {
+        if (this.getActiveCredential() != null) {
             toCall = "refresh()";
         }
 
@@ -283,21 +289,25 @@ var ec2ui_session = {
                 activeCredsMenu.selectedIndex = 0;
             }
             return this.credentials[activeCredsMenu.selectedIndex];
-        } else {
-            return null;
         }
+        return null;
     },
 
-    switchCredentials : function()
+    switchCredentials : function(cred)
     {
-        var activeCred = this.getActiveCredential();
+        if (!cred) {
+            cred = this.getActiveCredential();
+        } else {
+            document.getElementById("ec2ui.active.credentials.list").value = cred.name;
+        }
 
-        if (activeCred != null) {
-            ec2ui_prefs.setLastUsedAccount(activeCred.name);
-            this.client.setCredentials(activeCred.accessKey, activeCred.secretKey);
+        if (cred != null) {
+            debug("switch credentials to " + cred.name)
+            ec2ui_prefs.setLastUsedAccount(cred.name);
+            this.client.setCredentials(cred.accessKey, cred.secretKey);
 
-            if (activeCred.endPoint && activeCred.endPoint != "") {
-                var endpoint = new Endpoint("", activeCred.endPoint)
+            if (cred.endPoint && cred.endPoint != "") {
+                var endpoint = new Endpoint("", cred.endPoint)
                 this.client.setEndpoint(endpoint);
                 var activeEndpoints = document.getElementById("ec2ui.active.endpoints.list");
                 for ( var i = 0; i < activeEndpoints.itemCount; i++) {
@@ -315,17 +325,14 @@ var ec2ui_session = {
             }
             this.loadAllTags();
 
-            // Since we are switching creds, ensure that all the views are
-            // redrawn
+            // Since we are switching creds, ensure that all the views are redrawn
             this.model.invalidate();
 
             // Set the active tab to the last tab we were viewing
             document.getElementById("ec2ui.tabs").selectedIndex = ec2ui_prefs.getCurrentTab();
 
-            // The current tab's view needs to either be invalidated or
-            // refreshed
+            // The current tab's view needs to either be invalidated or refreshed
             this.tabSelectionChanged();
-        } else {
         }
     },
 
@@ -353,8 +360,7 @@ var ec2ui_session = {
             this.client.setEndpoint(activeEndpoint);
             this.loadAllTags();
 
-            // Since we are switching creds, ensure that
-            // all the views are redrawn
+            // Since we are switching creds, ensure that all the views are redrawn
             this.model.invalidate();
 
             // Set the active tab to the last tab we were viewing
@@ -383,12 +389,8 @@ var ec2ui_session = {
         this.endpointmap = ec2ui_prefs.getEndpointMap();
         var activeEndpointsMenu = document.getElementById("ec2ui.active.endpoints.list");
         activeEndpointsMenu.removeAllItems();
-
         var lastUsedEndpoint = ec2ui_prefs.getLastUsedEndpoint();
-        var endpointlist = this.endpointmap.toArray(function(k, v)
-        {
-            return new Endpoint(k, v.url)
-        });
+        var endpointlist = this.endpointmap.toArray(function(k, v) { return new Endpoint(k, v.url) });
 
         for ( var i in endpointlist) {
             activeEndpointsMenu.insertItemAt(i, endpointlist[i].name, endpointlist[i].name);
@@ -435,36 +437,36 @@ var ec2ui_session = {
         if (id.match(ec2ui_InstancesTreeView.instanceIdRegex)) {
             this.instanceTags.put(id, tag, "setInstanceTags");
         } else
-            if (id.match(ec2ui_AMIsTreeView.imageIdRegex)) {
-                this.imageTags.put(id, tag, "setImageTags");
-            } else
-                if (id.match(ec2ui_VolumeTreeView.imageIdRegex)) {
-                    this.volumeTags.put(id, tag, "setVolumeTags");
-                } else
-                    if (id.match(ec2ui_SnapshotTreeView.imageIdRegex)) {
-                        this.snapshotTags.put(id, tag, "setSnapshotTags");
-                    } else
-                        if (id.match(ec2ui_ElasticIPTreeView.imageIdRegex)) {
-                            this.eipTags.put(id, tag, "setEIPTags");
-                        } else
-                            if (id.match(ec2ui_VpcTreeView.imageIdRegex)) {
-                                this.vpcTags.put(id, tag, "setVpcTags");
-                            } else
-                                if (id.match(ec2ui_SubnetTreeView.imageIdRegex)) {
-                                    this.subnetTags.put(id, tag, "setSubnetTags");
-                                } else
-                                    if (id.match(ec2ui_DhcpoptsTreeView.imageIdRegex)) {
-                                        this.dhcpOptionsTags.put(id, tag, "setDhcpOptionsTags");
-                                    } else
-                                        if (id.match(ec2ui_VpnConnectionTreeView.imageIdRegex)) {
-                                            this.vpnTags.put(id, tag, "setVpnConnectionTags");
-                                        } else
-                                            if (id.match(ec2ui_VpnGatewayTreeView.imageIdRegex)) {
-                                                this.vgwTags.put(id, tag, "setVpnGatewayTags");
-                                            } else
-                                                if (id.match(ec2ui_CustomerGatewayTreeView.imageIdRegex)) {
-                                                    this.cgwTags.put(id, tag, "setCustomerGatewayTags");
-                                                }
+        if (id.match(ec2ui_AMIsTreeView.imageIdRegex)) {
+            this.imageTags.put(id, tag, "setImageTags");
+        } else
+        if (id.match(ec2ui_VolumeTreeView.imageIdRegex)) {
+            this.volumeTags.put(id, tag, "setVolumeTags");
+        } else
+        if (id.match(ec2ui_SnapshotTreeView.imageIdRegex)) {
+            this.snapshotTags.put(id, tag, "setSnapshotTags");
+        } else
+        if (id.match(ec2ui_ElasticIPTreeView.imageIdRegex)) {
+            this.eipTags.put(id, tag, "setEIPTags");
+        } else
+        if (id.match(ec2ui_VpcTreeView.imageIdRegex)) {
+            this.vpcTags.put(id, tag, "setVpcTags");
+        } else
+        if (id.match(ec2ui_SubnetTreeView.imageIdRegex)) {
+            this.subnetTags.put(id, tag, "setSubnetTags");
+        } else
+        if (id.match(ec2ui_DhcpoptsTreeView.imageIdRegex)) {
+            this.dhcpOptionsTags.put(id, tag, "setDhcpOptionsTags");
+        } else
+        if (id.match(ec2ui_VpnConnectionTreeView.imageIdRegex)) {
+            this.vpnTags.put(id, tag, "setVpnConnectionTags");
+        } else
+        if (id.match(ec2ui_VpnGatewayTreeView.imageIdRegex)) {
+            this.vgwTags.put(id, tag, "setVpnGatewayTags");
+        } else
+        if (id.match(ec2ui_CustomerGatewayTreeView.imageIdRegex)) {
+            this.cgwTags.put(id, tag, "setCustomerGatewayTags");
+        }
     },
 
     getResourceTag : function(id)
@@ -473,40 +475,39 @@ var ec2ui_session = {
         if (id.match(ec2ui_InstancesTreeView.instanceIdRegex)) {
             tag = this.instanceTags.get(id);
         } else
-            if (id.match(ec2ui_VolumeTreeView.imageIdRegex)) {
-                tag = this.volumeTags.get(id);
-            } else
-                if (id.match(ec2ui_SnapshotTreeView.imageIdRegex)) {
-                    tag = this.snapshotTags.get(id);
-                } else
-                    if (id.match(regExs["ami"])) {
-                        tag = this.imageTags.get(id);
-                    } else
-                        if (id.match(ec2ui_ElasticIPTreeView.imageIdRegex)) {
-                            tag = this.eipTags.get(id);
-                        } else
-                            if (id.match(ec2ui_VpcTreeView.imageIdRegex)) {
-                                tag = this.vpcTags.get(id);
-                            } else
-                                if (id.match(ec2ui_SubnetTreeView.imageIdRegex)) {
-                                    tag = this.subnetTags.get(id);
-                                } else
-                                    if (id.match(ec2ui_DhcpoptsTreeView.imageIdRegex)) {
-                                        tag = this.dhcpOptionsTags.get(id);
-                                    } else
-                                        if (id.match(ec2ui_VpnConnectionTreeView.imageIdRegex)) {
-                                            tag = this.vpnTags.get(id);
-                                        } else
-                                            if (id.match(ec2ui_VpnGatewayTreeView.imageIdRegex)) {
-                                                tag = this.vgwTags.get(id);
-                                            } else
-                                                if (id.match(ec2ui_CustomerGatewayTreeView.imageIdRegex)) {
-                                                    tag = this.cgwTags.get(id);
-                                                }
+        if (id.match(ec2ui_VolumeTreeView.imageIdRegex)) {
+            tag = this.volumeTags.get(id);
+        } else
+        if (id.match(ec2ui_SnapshotTreeView.imageIdRegex)) {
+            tag = this.snapshotTags.get(id);
+        } else
+        if (id.match(regExs["ami"])) {
+            tag = this.imageTags.get(id);
+        } else
+        if (id.match(ec2ui_ElasticIPTreeView.imageIdRegex)) {
+            tag = this.eipTags.get(id);
+        } else
+        if (id.match(ec2ui_VpcTreeView.imageIdRegex)) {
+            tag = this.vpcTags.get(id);
+        } else
+        if (id.match(ec2ui_SubnetTreeView.imageIdRegex)) {
+            tag = this.subnetTags.get(id);
+        } else
+        if (id.match(ec2ui_DhcpoptsTreeView.imageIdRegex)) {
+            tag = this.dhcpOptionsTags.get(id);
+        } else
+        if (id.match(ec2ui_VpnConnectionTreeView.imageIdRegex)) {
+            tag = this.vpnTags.get(id);
+        } else
+        if (id.match(ec2ui_VpnGatewayTreeView.imageIdRegex)) {
+            tag = this.vgwTags.get(id);
+        } else
+        if (id.match(ec2ui_CustomerGatewayTreeView.imageIdRegex)) {
+            tag = this.cgwTags.get(id);
+        }
 
-        if (tag)
-            return unescape(tag);
-        else return "";
+        if (tag) return unescape(tag);
+        return "";
     },
 
     getResourceTags : function(resourceType)

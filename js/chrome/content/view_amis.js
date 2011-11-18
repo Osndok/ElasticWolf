@@ -65,24 +65,25 @@ var ec2ui_AMIsTreeView = {
                 else this.rootDeviceType = "ebs";
             }
         } else
-            if (type.value == "amzn" || type.value == "amzn_rdt_ebs") {
-                this.ownerDisplayFilter = "amazon";
+        if (type.value == "amzn" || type.value == "amzn_rdt_ebs") {
+            this.ownerDisplayFilter = "amazon";
 
-                if (type.value == "amzn")
-                    this.rootDeviceType = "";
-                else this.rootDeviceType = "ebs";
-            } else
-                if (type.value == "rdt_ebs") {
-                    this.rootDeviceType = "ebs";
-                    this.imageIdRegex = regExs["all"];
-                } else
-                    if (type.value == "rdt_is") {
-                        this.rootDeviceType = "instance-store";
-                        this.imageIdRegex = regExs["all"];
-                    } else {
-                        this.imageIdRegex = regExs[type.value];
-                        this.rootDeviceType = "";
-                    }
+            if (type.value == "amzn")
+                this.rootDeviceType = "";
+            else
+                this.rootDeviceType = "ebs";
+        } else
+        if (type.value == "rdt_ebs") {
+            this.rootDeviceType = "ebs";
+            this.imageIdRegex = regExs["all"];
+        } else
+        if (type.value == "rdt_is") {
+            this.rootDeviceType = "instance-store";
+            this.imageIdRegex = regExs["all"];
+        } else {
+            this.imageIdRegex = regExs[type.value];
+            this.rootDeviceType = "";
+        }
 
         var images = ec2ui_model.images;
         images = this.filterRootDevice(images);

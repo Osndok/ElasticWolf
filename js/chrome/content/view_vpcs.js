@@ -7,9 +7,9 @@ var ec2ui_VpcTreeView = {
         return document.getElementById('ec2ui.vpcs.search').value;
     },
 
-    refresh : function() {
+    refresh : function(isSync) {
         ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeVpcs();
+        ec2ui_session.controller.describeVpcs(isSync);
         // For the attachment call
         ec2ui_session.controller.describeVpnGateways();
         ec2ui_session.showBusyCursor(false);
@@ -59,14 +59,11 @@ var ec2ui_VpcTreeView = {
             ec2ui_session.showBusyCursor(true);
             var me = this;
             var wrap = function(id) {
-                me.refresh();
+                me.refresh(true);
                 me.selectByImageId(id);
+                ec2ui_InternetGatewayTreeView.attachInternetGateway(id, null);
             }
-            ec2ui_session.controller.createVpc(
-                retVal.cidr,
-                wrap
-            );
-
+            ec2ui_session.controller.createVpc(retVal.cidr, wrap);
             ec2ui_session.showBusyCursor(false);
         }
     },
@@ -100,12 +97,7 @@ var ec2ui_VpcTreeView = {
                 me.refresh();
                 me.selectByImageId(id);
             }
-            ec2ui_session.controller.associateDhcpOptions(
-                retVal.dhcpOptionsId,
-                retVal.vpcId,
-                wrap
-            );
-
+            ec2ui_session.controller.associateDhcpOptions(retVal.dhcpOptionsId, retVal.vpcId, wrap);
             ec2ui_session.showBusyCursor(false);
         }
     },

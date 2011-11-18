@@ -4,9 +4,18 @@ var ec2ui_credentialManager = {
 
     initDialog : function() {
         this.session = window.arguments[0];
+
         document.getElementById("ec2ui.credentials.view").view = ec2ui_credentialsTreeView;
         this.credentials = this.session.getCredentials();
         ec2ui_credentialsTreeView.display(this.credentials);
+
+        var endpoints = this.session.preferences.getEndpointMap().toArray(function(k, v) { return new Endpoint(k, v.url) });
+        var menulist = document.getElementById("ec2ui.credentials.endpoint");
+        menulist.removeAllItems();
+        menulist.insertItemAt(i, "", "");
+        for (var i in endpoints) {
+            menulist.insertItemAt(i, endpoints[i].name, endpoints[i].url);
+        }
         document.getElementById("ec2ui.credentials.account").select();
     },
 
@@ -55,6 +64,16 @@ var ec2ui_credentialManager = {
         }
         this.session.saveCredentials(cred)
         ec2ui_credentialsTreeView.display(this.credentials);
+    },
+
+    switchAccount: function()
+    {
+        var sel = ec2ui_credentialsTreeView.getSelected();
+        if (!sel) {
+            alert("No credentials selected");
+            return;
+        }
+        this.session.switchCredentials(sel);
     },
 
     selectCredentials : function() {

@@ -65,8 +65,9 @@
           <toolbarbutton image="images/powerdown.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.terminateInstance();" tooltiptext="&ec2ui.instances.powerdown.tip;" />
           <toolbarseparator />
           <toolbarbutton image="images/get_console_output.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.fetchConsoleOutput();" tooltiptext="&ec2ui.instances.console.tip;" />
-          <toolbarbutton image="images/ssh.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances();" tooltiptext="&ec2ui.instances.connect.tip;" />
-          <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.tag();" tooltiptext="Edit EC2 Tag" />
+          <toolbarbutton image="images/key.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances();" tooltiptext="&ec2ui.instances.connect.tip;" />
+          <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.viewDetails();" tooltiptext="View Details" />
+          <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.tag();" tooltiptext="Edit EC2 Tag" />
           <button oncommand="ec2ui_InstancesTreeView.showInstancesSummary();" label="Summary" />
           <toolbarseparator />
           <checkbox id="ec2ui.instances.noterminated" label="Hide Terminated" checked="false" oncommand="ec2ui_InstancesTreeView.invalidate();"/>

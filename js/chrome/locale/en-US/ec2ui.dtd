@@ -3,6 +3,7 @@
 <!ENTITY ec2ui.tools.manage.label "Tools">
 <!ENTITY ec2ui.accountids.manage.label "Account IDs">
 <!ENTITY ec2ui.about.label "About">
+<!ENTITY ec2ui.quit.label "Quit">
 <!ENTITY ec2ui.description.label "Description">
 <!ENTITY ec2ui.createTag.label "Create Public Tag">
 <!ENTITY ec2ui.deleteTag.label "Delete Public Tag">
@@ -298,6 +299,7 @@
 <!ENTITY ec2ui.tools.tip "Manage local tools">
 <!ENTITY ec2ui.accountids.tip "Configure friendler names for known EC2 account IDs">
 <!ENTITY ec2ui.about.tip "All about this extension">
+<!ENTITY ec2ui.quit.tip "Quit the application">
 
 <!ENTITY ec2ui.refresh.tip "Refresh">
 <!ENTITY ec2ui.createvpc.tip "Create a new VPC">

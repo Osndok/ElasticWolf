@@ -27,7 +27,7 @@
                         <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_VpcTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
                         <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_VpcTreeView.createVpc()" tooltiptext="&ec2ui.createvpc.tip;" />
                         <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_VpcTreeView.deleteVpc()" tooltiptext="&ec2ui.deletevpc.tip;" />
-                        <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ec2ui_VpcTreeView.tag();" tooltiptext="Add Tag" />
+                        <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ec2ui_VpcTreeView.tag();" tooltiptext="Add Tag" />
                     </hbox>
                 </toolbar>
                 <tree id="ec2ui.vpcs.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_VpcTreeView.selectionChanged(event)" flex="1">
@@ -66,7 +66,7 @@
                         <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_SubnetTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
                         <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_SubnetTreeView.createSubnet()" tooltiptext="&ec2ui.createsubnet.tip;" />
                         <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_SubnetTreeView.deleteSubnet()" tooltiptext="&ec2ui.deletesubnet.tip;" />
-                        <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ec2ui_SubnetTreeView.tag();" tooltiptext="Add Tag" />
+                        <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ec2ui_SubnetTreeView.tag();" tooltiptext="Add Tag" />
                     </hbox>
                 </toolbar>
                 <tree id="ec2ui.subnets.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_SubnetTreeView.selectionChanged(event)" flex="1">
@@ -107,7 +107,7 @@
                         <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.createInternetGateway();" tooltiptext="&ec2ui.internetgateways.add.tip;" />
                         <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.deleteInternetGateway();" tooltiptext="&ec2ui.internetgateways.remove.tip;" />
                         <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.attachInternetGateway();" tooltiptext="&ec2ui.internetgateways.attach.tip;" />
-                        <toolbarbutton image="images/detach.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.detachInternetGateway();" tooltiptext="&ec2ui.internetgateways.detach.tip;" />
+                        <toolbarbutton image="images/stop.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.detachInternetGateway();" tooltiptext="&ec2ui.internetgateways.detach.tip;" />
                     </toolbar>
                     <tree id="ec2ui.internetgateways.view" seltype="single" enableColumnDrag="true" flex="1">
                         <treecols>
@@ -140,7 +140,7 @@
                             <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
                             <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.createDhcpOptions()" tooltiptext="&ec2ui.createdhcpoptions.tip;" />
                             <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.deleteDhcpOptions()" tooltiptext="&ec2ui.deletedhcpoptions.tip;" />
-                            <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.tag();" tooltiptext="Add Tag" />
+                            <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.tag();" tooltiptext="Add Tag" />
                         </hbox>
                     </toolbar>
                     <tree id="ec2ui.dhcpoptions.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_DhcpoptsTreeView.selectionChanged(event)" flex="1">

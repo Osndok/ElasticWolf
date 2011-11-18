@@ -221,10 +221,7 @@ var ec2ui_controller = {
     describeVpcs : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        if (!this.descVpcsInProgress) {
-            this.descVpcsInProgress = true;
-            ec2_httpclient.queryEC2("DescribeVpcs", [], this, isSync, "onCompleteDescribeVpcs", callback);
-        }
+        ec2_httpclient.queryEC2("DescribeVpcs", [], this, isSync, "onCompleteDescribeVpcs", callback);
     },
 
     onCompleteDescribeVpcs : function(objResponse)
@@ -242,7 +239,6 @@ var ec2ui_controller = {
 
         this.addResourceTags(list, ec2ui_session.model.resourceMap.vpcs, "id");
         ec2ui_model.updateVpcs(list);
-        this.descVpcsInProgress = false;
         if (objResponse.callback) objResponse.callback(list);
     },
 
@@ -253,7 +249,9 @@ var ec2ui_controller = {
 
     onCompleteCreateVpc : function(objResponse)
     {
-        if (objResponse.callback) objResponse.callback();
+        var xmlDoc = objResponse.xmlDoc;
+        var id = getNodeValueByName(xmlDoc, "vpcId");
+        if (objResponse.callback) objResponse.callback(id);
     },
 
     deleteVpc : function(id, callback)
@@ -269,10 +267,7 @@ var ec2ui_controller = {
     describeSubnets : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        if (!this.descSubnetsInProgress) {
-            this.descSubnetsInProgress = true;
-            ec2_httpclient.queryEC2("DescribeSubnets", [], this, isSync, "onCompleteDescribeSubnets", callback);
-        }
+        ec2_httpclient.queryEC2("DescribeSubnets", [], this, isSync, "onCompleteDescribeSubnets", callback);
     },
 
     onCompleteDescribeSubnets : function(objResponse)
@@ -292,7 +287,6 @@ var ec2ui_controller = {
 
         this.addResourceTags(list, ec2ui_session.model.resourceMap.subnets, "id");
         ec2ui_model.updateSubnets(list);
-        this.descSubnetsInProgress = false;
         if (objResponse.callback) objResponse.callback(list);
     },
 
@@ -319,10 +313,7 @@ var ec2ui_controller = {
     describeDhcpOptions : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        if (!this.descDhcpOptionsInProgress) {
-            this.descDhcpOptionsInProgress = true;
-            ec2_httpclient.queryEC2("DescribeDhcpOptions", [], this, isSync, "onCompleteDescribeDhcpOptions", callback);
-        }
+        ec2_httpclient.queryEC2("DescribeDhcpOptions", [], this, isSync, "onCompleteDescribeDhcpOptions", callback);
     },
 
     onCompleteDescribeDhcpOptions : function(objResponse)
@@ -358,7 +349,6 @@ var ec2ui_controller = {
 
         this.addResourceTags(list, ec2ui_session.model.resourceMap.dhcpOptions, "id");
         ec2ui_model.updateDhcpOptions(list);
-        this.descDhcpOptionsInProgress = false;
         if (objResponse.callback) objResponse.callback(list);
     },
 
@@ -406,10 +396,7 @@ var ec2ui_controller = {
     describeVpnGateways : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        if (!this.descVpnGatewaysInProgress) {
-            this.descVpnGatewaysInProgress = true;
-            ec2_httpclient.queryEC2("DescribeVpnGateways", [], this, isSync, "onCompleteDescribeVpnGateways", callback);
-        }
+        ec2_httpclient.queryEC2("DescribeVpnGateways", [], this, isSync, "onCompleteDescribeVpnGateways", callback);
     },
 
     onCompleteDescribeVpnGateways : function(objResponse)
@@ -436,7 +423,6 @@ var ec2ui_controller = {
 
         this.addResourceTags(list, ec2ui_session.model.resourceMap.vpnGateways, "id");
         ec2ui_model.updateVpnGateways(list);
-        this.descVpnGatewaysInProgress = false;
         if (objResponse.callback) objResponse.callback(list);
     },
 
@@ -463,10 +449,7 @@ var ec2ui_controller = {
     describeCustomerGateways : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        if (!this.descCustomerGatewaysInProgress) {
-            this.descCustomerGatewaysInProgress = true;
-            ec2_httpclient.queryEC2("DescribeCustomerGateways", [], this, isSync, "onCompleteDescribeCustomerGateways", callback);
-        }
+        ec2_httpclient.queryEC2("DescribeCustomerGateways", [], this, isSync, "onCompleteDescribeCustomerGateways", callback);
     },
 
     onCompleteDescribeCustomerGateways : function(objResponse)
@@ -485,7 +468,6 @@ var ec2ui_controller = {
 
         this.addResourceTags(list, ec2ui_session.model.resourceMap.customerGateways, "id");
         ec2ui_model.updateCustomerGateways(list);
-        this.descCustomerGatewaysInProgress = false;
         if (objResponse.callback) objResponse.callback(list);
     },
 
@@ -512,10 +494,7 @@ var ec2ui_controller = {
     describeInternetGateways : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        if (!this.descInternetGatewaysInProgress) {
-            this.descInternetGatewaysInProgress = true;
-            ec2_httpclient.queryEC2("DescribeInternetGateways", [], this, isSync, "onCompleteDescribeInternetGateways", callback);
-        }
+        ec2_httpclient.queryEC2("DescribeInternetGateways", [], this, isSync, "onCompleteDescribeInternetGateways", callback);
     },
 
     onCompleteDescribeInternetGateways : function(objResponse)
@@ -543,18 +522,19 @@ var ec2ui_controller = {
 
         this.addResourceTags(list, ec2ui_session.model.resourceMap.internetGateways, "id");
         ec2ui_model.updateInternetGateways(list);
-        this.descInternetGatewaysInProgress = false;
         if (objResponse.callback) objResponse.callback(list);
     },
 
-    createInternetGateway : function(type, ip, asn, callback)
+    createInternetGateway : function(callback)
     {
         ec2_httpclient.queryEC2("CreateInternetGateway", [], this, true, "onCompleteCreateInternetGateway", callback);
     },
 
     onCompleteCreateInternetGateway : function(objResponse)
     {
-        if (objResponse.callback) objResponse.callback();
+        var xmlDoc = objResponse.xmlDoc;
+        var id = getNodeValueByName(xmlDoc, "internetGatewayId");
+        if (objResponse.callback) objResponse.callback(id);
     },
 
     deleteInternetGateway : function(id, callback)
@@ -590,10 +570,7 @@ var ec2ui_controller = {
     describeVpnConnections : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        if (!this.descVpnConnectionsInProgress) {
-            this.descVpnConnectionsInProgress = true;
-            ec2_httpclient.queryEC2("DescribeVpnConnections", [], this, isSync, "onCompleteDescribeVpnConnections", callback);
-        }
+        ec2_httpclient.queryEC2("DescribeVpnConnections", [], this, isSync, "onCompleteDescribeVpnConnections", callback);
     },
 
     onCompleteDescribeVpnConnections : function(objResponse)
@@ -627,7 +604,6 @@ var ec2ui_controller = {
 
         this.addResourceTags(list, ec2ui_session.model.resourceMap.vpnConnections, "id");
         ec2ui_model.updateVpnConnections(list);
-        this.descVpnConnectionsInProgress = false;
         if (objResponse.callback) objResponse.callback(list);
     },
 

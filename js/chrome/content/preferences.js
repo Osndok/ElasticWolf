@@ -639,7 +639,7 @@ var ec2ui_prefs = {
     getEndpointMap : function()
     {
         var packedMap = this.getStringPreference(this.ENDPOINTS, null);
-        ;
+
         // Default regions
         var endpointmap = new Object();
         endpointmap['us-east-1'] = new Endpoint('us-east-1', 'https://ec2.us-east-1.amazonaws.com');

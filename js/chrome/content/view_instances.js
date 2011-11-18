@@ -347,6 +347,7 @@ var ec2ui_InstancesTreeView = {
         }
 
         if (instance.state != "running") {
+            alert("Instance should in running state")
             return;
         }
 
@@ -398,6 +399,7 @@ var ec2ui_InstancesTreeView = {
         }
 
         if (instance.state != "running") {
+            alert("Instance should in running state")
             return;
         }
 
@@ -1031,7 +1033,7 @@ var ec2ui_InstancesTreeView = {
         if (instance == null) {
             return;
         }
-        instance.publicIpAddress = this.getIPFromHostname(instance);
+        instance.publicIpAddress = getIPFromHostname(instance);
 
         copyToClipboard(instance[fieldName]);
     },
@@ -1170,19 +1172,11 @@ var ec2ui_InstancesTreeView = {
         }
     },
 
-    getIPFromHostname : function(instance) {
-        // extract the ip address from the public dns name
-        var parts = instance.publicDnsName.split('-');
-        return parts[1] + "." + parts[2] + "." + parts[3] + "." + parseInt(parts[4]);
-    },
-
     connectTo : function(instance) {
         ec2ui_session.showBusyCursor(true);
-        // build arguments string, doing param substitution the default values
-        // for the arguments and command are the SSH equivalents
         var args = ec2ui_prefs.getSSHArgs();
         var cmd = ec2ui_prefs.getSSHCommand();
-        var hostname = this.getIPFromHostname(instance);
+        var hostname = getIPFromHostname(instance);
 
         if (isVpc(instance)) {
            hostname = instance.privateIpAddress;
@@ -1193,9 +1187,8 @@ var ec2ui_InstancesTreeView = {
         if (isWindows(instance.platform)) {
             args = ec2ui_prefs.getRDPArgs();
             cmd = ec2ui_prefs.getRDPCommand();
-            if (navigator.platform.match(ec2ui_utils.macRegex)) {
-                // On Mac OS X, we use a totally different connection mechanism
-                // that isn't particularly extensible
+            if (isMac(navigator.platform)) {
+                // On Mac OS X, we use a totally different connection mechanism that isn't particularly extensible
                 this.getAdminPassword(false, instance);
                 this.rdpToMac(hostname, cmd);
                 return;

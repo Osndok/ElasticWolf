@@ -55,7 +55,7 @@
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
         <hbox>
-          <toolbarbutton image="images/authorize.png" style="-moz-box-pack:center;" oncommand="ec2ui_PermissionsTreeView.grantPermission();" tooltiptext="&ec2ui.permissions.authorize.tip;" />
+          <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ec2ui_PermissionsTreeView.grantPermission();" tooltiptext="&ec2ui.permissions.authorize.tip;" />
           <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ec2ui_PermissionsTreeView.revokePermission();" tooltiptext="&ec2ui.permissions.revoke.tip;" />
         </hbox>
       </toolbar>

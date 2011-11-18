@@ -20,15 +20,15 @@
             <rows flex="1">
                 <row>
                     <label control="ec2ui.newinstances.ami" value="AMI ID:" />
-                    <textbox id="ec2ui.newinstances.ami" size="40" value="1" readonly="true" />
+                    <label id="ec2ui.newinstances.ami" readonly="true" />
                 </row>
                 <row>
                     <label control="ec2ui.newinstances.ami.tag" value="AMI Tag:" />
-                    <textbox id="ec2ui.newinstances.ami.tag" size="40" value="1" readonly="true" />
+                    <label id="ec2ui.newinstances.ami.tag" readonly="true" />
                 </row>
                 <row>
                     <label control="ec2ui.newinstances.ami.location" value="AMI Manifest:" />
-                    <textbox id="ec2ui.newinstances.ami.location" size="40" value="1" readonly="true" />
+                    <label id="ec2ui.newinstances.ami.location" readonly="true" />
                 </row>
                 <row>
                     <label control="ec2ui.newinstances.aki" value="AKI ID:" />
@@ -59,8 +59,8 @@
                     <menulist id="ec2ui.newinstances.keypairlist" />
                 </row>
                 <row>
-                    <label control="ec2ui.newinstances.availabilityzonelist" value="Availability Zone:" />
-                    <menulist id="ec2ui.newinstances.availabilityzonelist" />
+                    <label control="ec2ui.newinstances.azId" value="Availability Zone:" />
+                    <menulist id="ec2ui.newinstances.azId" oncommand="ec2_InstanceLauncher.vpcIdSelected();" />
                 </row>
                 <row>
                     <label control="ec2ui.newinstances.properties" value="Additional Info:" />

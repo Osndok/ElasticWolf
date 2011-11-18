@@ -19,7 +19,7 @@
         <toolbarbutton image="images/refresh.png" tooltiptext="&ec2ui.refresh.tip;" oncommand="ec2ui_AccessKeyTreeView.refresh()" />
         <toolbarbutton image="images/add.png" tooltiptext="&ec2ui.accesskeys.create.tip;" oncommand="ec2ui_AccessKeyTreeView.createAccessKey();" />
         <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.accesskeys.delete.tip;" oncommand="ec2ui_AccessKeyTreeView.deleteSelected();" />
-        <toolbarbutton image="images/authorize.png" tooltiptext="&ec2ui.accesskeys.switch.tip;" oncommand="ec2ui_AccessKeyTreeView.switchCredentials();" />
+        <toolbarbutton image="images/attach.png" tooltiptext="&ec2ui.accesskeys.switch.tip;" oncommand="ec2ui_AccessKeyTreeView.switchCredentials();" />
       </toolbar>
       <tree enableColumnDrag="true" id="ec2ui.accesskeys.view" flex="1">
         <treecols>

@@ -6,6 +6,7 @@ var ec2_InstanceLauncher = {
     unusedSecGroupsList : null,
     usedSecGroupsList : null,
     vpcMenu : null,
+    azMenu : null,
     subnetMenu : null,
     unused : new Array(),
     used : new Array(),
@@ -36,10 +37,7 @@ var ec2_InstanceLauncher = {
         this.retVal.keyName = document.getElementById("ec2ui.newinstances.keypairlist").selectedItem.value;
 
         // This will be an empty string if <any> is selected
-        var a = document.getElementById("ec2ui.newinstances.availabilityzonelist").selectedItem.value;
-        this.retVal.placement = {
-            "availabilityZone" : document.getElementById("ec2ui.newinstances.availabilityzonelist").selectedItem.value
-        };
+        this.retVal.placement = { "availabilityZone" : this.azMenu.value };
 
         this.retVal.userData = document.getElementById("ec2ui.newinstances.userdata").value;
         if (this.retVal.userData == "") {
@@ -165,6 +163,7 @@ var ec2_InstanceLauncher = {
     vpcIdSelected : function()
     {
         var sel = this.vpcMenu.selectedItem;
+        var az = this.azMenu.value
 
         // Reset subnets
         this.subnetMenu.removeAllItems();
@@ -173,7 +172,7 @@ var ec2_InstanceLauncher = {
         if (sel.value != null && sel.value != '') {
             var subnets = this.ec2ui_session.model.getSubnets();
             for ( var i in subnets) {
-                if (subnets[i].vpcId == sel.value) {
+                if (subnets[i].vpcId == sel.value && (az == "" || az == subnets[i].availabilityZone)) {
                     this.subnetMenu.appendItem(subnets[i].cidr + (subnets[i].tag == null ? " (" : " [" + subnets[i].tag + "] (") + subnets[i].availableIp + " IPs available) - " + subnets[i].id, subnets[i].id)
                 }
             }
@@ -273,13 +272,13 @@ var ec2_InstanceLauncher = {
         textBox.focus();
 
         // availability zones
-        var availZoneMenu = document.getElementById("ec2ui.newinstances.availabilityzonelist");
-        availZoneMenu.appendItem("<any>", null);
+        this.azMenu = document.getElementById("ec2ui.newinstances.azId");
+        this.azMenu.appendItem("<any>", null);
         var availZones = this.ec2ui_session.model.getAvailabilityZones();
         for ( var i in availZones) {
-            availZoneMenu.appendItem(availZones[i].name + " (" + availZones[i].state + ")", availZones[i].name);
+            this.azMenu.appendItem(availZones[i].name + " (" + availZones[i].state + ")", availZones[i].name);
         }
-        availZoneMenu.selectedIndex = 0;
+        this.azMenu.selectedIndex = 0;
 
         // vpcs
         this.vpcMenu = document.getElementById("ec2ui.newinstances.vpcId");

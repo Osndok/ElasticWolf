@@ -15,7 +15,7 @@
         </menupopup>
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
-        <toolbarbutton image="images/refresh.png" oncommand="ec2ui_KeypairTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
+        <toolbarbutton image="images/refresh.png" tooltiptext="&ec2ui.refresh.tip;" oncommand="ec2ui_KeypairTreeView.refresh()" />
         <toolbarbutton image="images/add.png" tooltiptext="&ec2ui.keypairs.create.tip;" oncommand="ec2ui_KeypairTreeView.createKeypair();" />
         <toolbarbutton image="images/import.png" tooltiptext="&ec2ui.keypairs.import.tip;" oncommand="ec2ui_KeypairTreeView.importKeypair();" />
         <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.keypairs.delete.tip;" oncommand="ec2ui_KeypairTreeView.deleteSelected();" />
