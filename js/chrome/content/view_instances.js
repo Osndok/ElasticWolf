@@ -526,7 +526,7 @@ var ec2ui_InstancesTreeView = {
     promptForKeyFile : function(keyName) {
         var keyFile = ec2ui_session.promptForFile("Select the EC2 Private Key File for key: " + keyName);
         if (keyFile) {
-            if (confirm('Would you like to use "' + keyFile + '" as the default EC2 Private Key File for "' + ec2ui_session.getActiveCredential().name + '"?')) {
+            if (this.promptYesNo('Would you like to use "' + keyFile + '" as the default EC2 Private Key File for "' + ec2ui_session.getActiveCredential().name + '"?')) {
                 ec2ui_prefs.setLastEC2PKeyFile(keyFile);
             }
         }
@@ -1031,6 +1031,7 @@ var ec2ui_InstancesTreeView = {
         if (instance == null) {
             return;
         }
+        instance.publicIpAddress = this.getIPFromHostname(instance);
 
         copyToClipboard(instance[fieldName]);
     },

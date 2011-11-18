@@ -116,6 +116,13 @@ var ec2ui_VpcTreeView = {
 
         ec2ui_VpnAttachmentTreeView.attachToVpc(vpc.id, null);
     },
+
+    attachToInternetGateway : function() {
+        var vpc = this.getSelectedImage();
+        if (vpc == null) return;
+
+        ec2ui_InternetGatewayTreeView.attachInternetGateway(vpc.id, null);
+    },
 };
 
 // poor-man's inheritance

@@ -32,6 +32,12 @@
 <!ENTITY ec2ui.captions.newinstances.vpc.label "Virtual Private Cloud">
 <!ENTITY ec2ui.captions.newinstances.usevpc.label "Launch in VPC:">
 
+<!ENTITY ec2ui.captions.internetgateways.label "Internet Gateways">
+<!ENTITY ec2ui.internetgateways.add.tip "Add Gateway">
+<!ENTITY ec2ui.internetgateways.remove.tip "Delete Gateway">
+<!ENTITY ec2ui.internetgateways.attach.tip "Attach to VPC">
+<!ENTITY ec2ui.internetgateways.detach.tip "Detach from VPC">
+
 <!ENTITY ec2ui.images.id.label "ID">
 <!ENTITY ec2ui.images.manifest.label "Manifest">
 <!ENTITY ec2ui.images.state.label "State">
@@ -133,6 +139,7 @@
 
 <!ENTITY ec2ui.vpc.contextmenu.createsubnet.label "Create a Subnet in this VPC">
 <!ENTITY ec2ui.vpc.contextmenu.attachvpngw.label "Attach a VPN Gateway to this VPC">
+<!ENTITY ec2ui.vpc.contextmenu.attachigw.label "Attach a Internet Gateway to this VPC">
 <!ENTITY ec2ui.vpc.contextmenu.setdhcpoptions.label "Set DHCP Options on this VPC">
 <!ENTITY ec2ui.vpc.contextmenu.delete.label "Delete this VPC">
 <!ENTITY ec2ui.vpc.contextmenu.copyvpcid.label "Copy VPC ID to Clipboard">

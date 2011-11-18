@@ -51,19 +51,19 @@
                 <row>
                     <label control="ec2ui.tools.home" value="Your home directory:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.home" size="80" readonly="true" />
+                        <textbox id="ec2ui.tools.home" size="60" readonly="true" />
                     </hbox>
                 </row>
                 <row>
                     <label control="ec2ui.tools.ssh.command" value="SSH Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.ssh.command" size="80" />
+                        <textbox id="ec2ui.tools.ssh.command" size="60" />
                     </hbox>
                 </row>
                 <row>
                     <label control="ec2ui.tools.ssh.args" value="SSH Arguments:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.ssh.args" size="80" />
+                        <textbox id="ec2ui.tools.ssh.args" size="120" />
                     </hbox>
                 </row>
                 <row>
@@ -75,7 +75,7 @@
                 <row>
                     <label control="ec2ui.tools.openssl.command" value="OPENSSL Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.openssl.command" size="80" />
+                        <textbox id="ec2ui.tools.openssl.command" size="60" />
                     </hbox>
                 </row>
                 <row>

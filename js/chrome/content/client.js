@@ -1,5 +1,3 @@
-function empty() { } ;
-
 var ec2_httpclient = {
     handler : null,
     uri     : null,

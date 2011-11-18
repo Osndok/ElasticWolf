@@ -509,6 +509,84 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
+    describeInternetGateways : function(isSync, callback)
+    {
+        if (!isSync) isSync = false;
+        if (!this.descInternetGatewaysInProgress) {
+            this.descInternetGatewaysInProgress = true;
+            ec2_httpclient.queryEC2("DescribeInternetGateways", [], this, isSync, "onCompleteDescribeInternetGateways", callback);
+        }
+    },
+
+    onCompleteDescribeInternetGateways : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+        var list = new Array();
+        var items = xmlDoc.evaluate("/ec2:DescribeInternetGatewaysResponse/ec2:internetGatewaySet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        for ( var i = 0; i < items.snapshotLength; i++) {
+            var vpcs = [], tags = []
+            var id = getNodeValueByName(items.snapshotItem(i), "internetGatewayId");
+
+            var etags = items.snapshotItem(i).getElementsByTagName("attachmentSet")[0].getElementsByTagName("item");
+            for ( var j = 0; j < etags.length; j++) {
+                var vpcId = getNodeValueByName(etags[j], "vpcId");
+                vpcs.push(vpcId)
+            }
+            etags = items.snapshotItem(i).getElementsByTagName("tagSet")[0].getElementsByTagName("item");
+            for ( var j = 0; j < etags.length; j++) {
+                var key = getNodeValueByName(etags[j], "key");
+                var val = getNodeValueByName(etags[j], "value");
+                tags.push(new Tag(key, value))
+            }
+            list.push(new InternetGateway(id, vpcs, tags));
+        }
+
+        this.addResourceTags(list, ec2ui_session.model.resourceMap.internetGateways, "id");
+        ec2ui_model.updateInternetGateways(list);
+        this.descInternetGatewaysInProgress = false;
+        if (objResponse.callback) objResponse.callback(list);
+    },
+
+    createInternetGateway : function(type, ip, asn, callback)
+    {
+        ec2_httpclient.queryEC2("CreateInternetGateway", [], this, true, "onCompleteCreateInternetGateway", callback);
+    },
+
+    onCompleteCreateInternetGateway : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    deleteInternetGateway : function(id, callback)
+    {
+        ec2_httpclient.queryEC2("DeleteInternetGateway", [ [ "InternetGatewayId", id ] ], this, true, "onCompleteDeleteInternetGateway", callback);
+    },
+
+    onCompleteDeleteInternetGateway : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    attachInternetGateway : function(igwid, vpcid, callback)
+    {
+        ec2_httpclient.queryEC2("AttachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, true, "onCompleteAttachInternetGateway", callback);
+    },
+
+    onCompleteAttachInternetGateway : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    detachInternetGateway : function(igwid, vpcid, callback)
+    {
+        ec2_httpclient.queryEC2("DetachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, true, "onCompleteDetachInternetGateway", callback);
+    },
+
+    onCompleteDetachInternetGateway : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
     describeVpnConnections : function(isSync, callback)
     {
         if (!isSync) isSync = false;

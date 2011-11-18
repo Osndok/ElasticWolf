@@ -126,7 +126,7 @@ var ec2ui_ElasticIPTreeView = {
     },
 
     allocateAddress : function() {
-        var vpc = confirm("Is this Elastic IP to be used for VPC?");
+        var vpc = ec2ui_session.promptYesNo("Is this Elastic IP to be used for VPC?");
         var me = this;
         var wrap = function(address) {
             me.refresh();
@@ -138,9 +138,7 @@ var ec2ui_ElasticIPTreeView = {
     releaseAddress : function() {
         var eip = this.getSelectedEip();
         if (eip == null) return;
-        var confirmed = confirm("Release "+eip.address+"?");
-        if (!confirmed)
-            return;
+        if (!ec2ui_session.promptYesNo("Release "+eip.address+"?")) return;
 
         var me = this;
         var wrap = function() {

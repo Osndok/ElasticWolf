@@ -1,5 +1,5 @@
 var ec2_EIPSelector = {
-  ec2ui_session : null,
+  session : null,
   instanceId : null,
   instance: null,
   retVal : null,
@@ -11,8 +11,7 @@ var ec2_EIPSelector = {
     var eipSel = this.eipList[selected];
 
     if (eipSel.instanceid != null && eipSel.instanceid != '') {
-        var confirmed = confirm("Address " + eipSel.address + " is already mapped to an instance, are you sure?");
-        if (!confirmed) {
+        if (!this.session.promptYesNo("Address " + eipSel.address + " is already mapped to an instance, are you sure?")) {
             return false;
         }
     }
@@ -23,11 +22,11 @@ var ec2_EIPSelector = {
   },
 
   init : function() {
-    this.ec2ui_session = window.arguments[0];
+    this.session = window.arguments[0];
     this.instance = window.arguments[1];
     this.retVal = window.arguments[2];
 
-    var eips = this.ec2ui_session.model.getAddresses();
+    var eips = this.session.model.getAddresses();
     this.eipList = new Array();
 
     // volume id

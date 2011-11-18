@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<?xul-overlay href="chrome://ec2ui/content/tab_instances_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_images_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_keypairs_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_accesskeys_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_certs_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_security_groups_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_availzone_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_eip_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_volumes_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_bundle_tasks_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_leases_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_vpcs_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_vpns_overlay.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/tab_loadbalancer_overlay.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_instances.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_amis.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_keypairs.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_accesskeys.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_certs.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_securitygroups.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_azone.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_eip.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_volumes.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_bundletasks.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_leaseofferings.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_vpcs.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_vpns.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_loadbalancer.xul"?>
 
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 <window id="ec2ui-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -55,6 +55,7 @@
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_vpnattachments.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_loadbalancer.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_instancehealth.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_internetgateways.js" />
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="ec2ui.properties.bundle" src="chrome://ec2ui/locale/ec2ui.properties" />

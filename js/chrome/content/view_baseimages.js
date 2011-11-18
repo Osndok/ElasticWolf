@@ -20,11 +20,13 @@ var BaseImagesView = {
             var stateName = this.imageList[row].state.replace('-','_').toLowerCase();
             var aserv = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
             props.AppendElement(aserv.getAtom("image_"+stateName));
-        } else if (shortName == "isPublic") {
+        } else
+        if (shortName == "isPublic") {
             var vizName = this.imageList[row].isPublic.replace('-','_').toLowerCase();
             var aserv = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
             props.AppendElement(aserv.getAtom("image_"+vizName));
-        } else if (shortName == "ownerAlias" && this.imageList[row].owner == "amazon") {
+        } else
+        if (shortName == "ownerAlias" && this.imageList[row].owner == "amazon") {
             var aserv = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
             props.AppendElement(aserv.getAtom("owner_amazon"));
         }

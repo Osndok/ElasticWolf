@@ -55,6 +55,7 @@ var ec2ui_session = {
             document.getElementById("ec2ui.vpnconnections.view").view = ec2ui_VpnConnectionTreeView;
             document.getElementById("ec2ui.customergateways.view").view = ec2ui_CustomerGatewayTreeView;
             document.getElementById("ec2ui.vpnattachments.view").view = ec2ui_VpnAttachmentTreeView;
+            document.getElementById("ec2ui.internetgateways.view").view = ec2ui_InternetGatewayTreeView;
 
             // Enable about:blank to work if noscript is installed
             if ("@maone.net/noscript-service;1" in Components.classes) {
@@ -195,6 +196,7 @@ var ec2ui_session = {
             eval("ec2ui_VpcTreeView." + toCall);
             eval("ec2ui_SubnetTreeView." + toCall);
             eval("ec2ui_DhcpoptsTreeView." + toCall);
+            eval("ec2ui_InternetGatewayTreeView." + toCall);
             break;
         case "VPNC":
             eval("ec2ui_VpnConnectionTreeView." + toCall);
@@ -362,13 +364,10 @@ var ec2ui_session = {
             // be invalidated or refreshed
             this.tabSelectionChanged();
         } else {
-            // There are no endpoints in the system.
-            // Let's ask the user to enter them
+            // There are no endpoints in the system, let's ask the user to enter them
             var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
             var text = "Would you like to provide an EC2 Endpoint?";
-
-            // if the user says no, the return value will not be 0.
-            // in this case, just fall out.
+            // if the user says no, the return value will not be 0 in this case, just fall out.
             if (promptService.confirmEx(window, "EC2 Endpoint Needed", text, promptService.STD_YES_NO_BUTTONS | promptService.BUTTON_POS_0_DEFAULT, "", "", "", null, {})) {
                 // Reset the endpoint stored in the client and prefs
                 this.client.setEndpoint(new Endpoint());
@@ -777,6 +776,12 @@ var ec2ui_session = {
             return fp.file.path;
         }
         return null
+    },
+
+    promptYesNo : function(title, text)
+    {
+        var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+        return promptService.confirmEx(window, title, text, promptService.STD_YES_NO_BUTTONS| promptService.BUTTON_POS_0_DEFAULT, "", "", "", null, {}) == 0
     },
 
     savePassword : function(key, secret)

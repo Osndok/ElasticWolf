@@ -44,6 +44,7 @@
               <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('name');" label="&ec2ui.instances.contextmenu.copyname.label;" />
               <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('id');" label="&ec2ui.instances.contextmenu.copyid.label;" />
               <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('publicDnsName');" label="Public DNS Name" />
+              <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('publicIpAddress');" label="Public IP Address" />
               <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('privateDnsName');" label="Private DNS Name" />
               <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('privateIpAddress');" label="Private IP Address" />
             </menupopup>

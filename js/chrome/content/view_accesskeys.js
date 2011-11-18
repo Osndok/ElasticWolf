@@ -33,8 +33,7 @@ var ec2ui_AccessKeyTreeView = {
                 alert("You cannot delete current access key")
                 return;
             }
-            var confirmed = confirm("Delete access key "+key.name+"?");
-            if (!confirmed) return;
+            if (!ec2ui_session.promptYesNo("Delete access key "+key.name+"?")) return;
 
             var me = this;
             var wrap = function() {
@@ -53,8 +52,7 @@ var ec2ui_AccessKeyTreeView = {
                 return;
             }
 
-            var confirmed = confirm("Use access key "+key.name+" for authentication for user " + ec2ui_prefs.getLastUsedAccount() + "?, current access key/secret will be discarded.");
-            if (!confirmed) return;
+            if (!ec2ui_session.promptYesNo("Use access key "+key.name+" for authentication for user " + ec2ui_prefs.getLastUsedAccount() + "?, current access key/secret will be discarded.")) return;
             ec2ui_session.client.setCredentials(key.name, key.secret);
             ec2ui_session.updateCredentials(ec2ui_session.getActiveCredential(), key.name, key.secret);
             this.refresh();

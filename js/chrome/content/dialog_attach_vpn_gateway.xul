@@ -2,16 +2,44 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 
-<dialog id="ec2ui.dialog.attachvpngateway"
-    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    buttons="accept,cancel"
-    ondialogaccept="return ec2_VpnGatewayAttacher.attachVpnGateway();"
-    ondialogcancel="return true;" onload="ec2_VpnGatewayAttacher.init();"
-    title="Attach VPN Gateway to VPC" buttonlabelaccept="Attach">
+<dialog id="ec2ui.dialog.attachvpngateway" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" buttons="accept,cancel" ondialogaccept="return attach();"
+    ondialogcancel="return true;" onload="init();" title="Attach VPN Gateway to VPC" buttonlabelaccept="Attach">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/dialog_attach_vpn_gateway.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
 
+    <script>
+    function attach() {
+        this.retVal.vpcid = document.getElementById("ec2ui.attachvpngateway.vpcid").value.trim();
+        this.retVal.vgwid = document.getElementById("ec2ui.attachvpngateway.vgwid").value.trim();
+        this.retVal.ok = true;
+        return true;
+    }
+
+    function init() {
+        this.ec2ui_session = window.arguments[0];
+        this.retVal = window.arguments[1];
+
+        var vpcMenu = document.getElementById("ec2ui.attachvpngateway.vpcid");
+        var vpcs = this.ec2ui_session.model.getVpcs();
+        var selectvpc = 0;
+        for (var i in vpcs) {
+            vpcMenu.appendItem(vpcs[i].id + " (" + vpcs[i].cidr + ")" + (vpcs[i].tag == null ? '' : " [" + vpcs[i].tag + "]"), vpcs[i].id)
+            if (vpcs[i].id == this.retVal.vpcid)
+                selectvpc = i;
+        }
+        vpcMenu.selectedIndex = selectvpc;
+
+        var vgwMenu = document.getElementById("ec2ui.attachvpngateway.vgwid");
+        var vgws = this.ec2ui_session.model.getVpnGateways();
+        var selectvgw = 0;
+        for (var i in vgws) {
+            vgwMenu.appendItem(vgws[i].id + (vgws[i].tag == null ? '' : " [" + vgws[i].tag + "]"), vgws[i].id);
+            if (vgws[i].id == this.retVal.vgwid)
+                selectvgw = i;
+        }
+        vgwMenu.selectedIndex = selectvgw;
+    }
+    </script>
     <vbox flex="1">
         <grid flex="1">
             <columns>
@@ -21,19 +49,17 @@
             <rows>
                 <!-- VPC -->
                 <row>
-                    <label control="ec2ui.attachvpngateway.vpcid"
-                           value="Virtual Private Cloud: "/>
+                    <label control="ec2ui.attachvpngateway.vpcid" value="Virtual Private Cloud: " />
                     <hbox>
-                        <menulist id="ec2ui.attachvpngateway.vpcid"/>
+                        <menulist id="ec2ui.attachvpngateway.vpcid" />
                     </hbox>
-               </row>
+                </row>
 
-               <!-- VPN GW -->
+                <!-- VPN GW -->
                 <row>
-                    <label control="ec2ui.attachvpngateway.vgwid"
-                           value="VPN Gateway: "/>
+                    <label control="ec2ui.attachvpngateway.vgwid" value="VPN Gateway: " />
                     <hbox>
-                        <menulist id="ec2ui.attachvpngateway.vgwid"/>
+                        <menulist id="ec2ui.attachvpngateway.vgwid" />
                     </hbox>
                 </row>
             </rows>

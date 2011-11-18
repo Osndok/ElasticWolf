@@ -168,6 +168,7 @@ var ec2_InstanceLauncher = {
 
         // Reset subnets
         this.subnetMenu.removeAllItems();
+        document.getElementById("ec2ui.newinstances.ipAddress").disabled = true;
 
         if (sel.value != null && sel.value != '') {
             var subnets = this.ec2ui_session.model.getSubnets();
@@ -177,6 +178,7 @@ var ec2_InstanceLauncher = {
                 }
             }
             this.subnetMenu.selectedIndex = 0;
+            document.getElementById("ec2ui.newinstances.ipAddress").disabled = false;
         }
 
         this.buildGroupList();

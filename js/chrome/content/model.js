@@ -1,46 +1,62 @@
 // "Classes" representing objects like AMIs, Instances etc.
-function Credential(name, accessKey, secretKey, endPoint) {
+function Credential(name, accessKey, secretKey, endPoint)
+{
     this.name = name;
     this.accessKey = accessKey;
     this.secretKey = secretKey;
     this.endPoint = endPoint ? endPoint : "";
 
-    this.toStr = function() {
+    this.toStr = function()
+    {
         return this.accessKey + ";;" + this.secretKey + ";;" + this.endPoint;
     }
 }
 
-function AccountIdName(id, name) {
+function AccountIdName(id, name)
+{
     this.accountid = id;
     this.displayname = name;
 }
 
-function Endpoint(name, url) {
+function Tag(name, value)
+{
+    this.name = name || ""
+    this.value = value || ""
+    this.toStr = function()
+    {
+        return this.name + "=" + this.value
+    }
+}
+
+function Endpoint(name, url)
+{
     if (!name || name == "") {
-        this.name = url.replace(/(https?:\/\/|ec2|amazonaws|com|\.)/g,"")
+        this.name = url.replace(/(https?:\/\/|ec2|amazonaws|com|\.)/g, "")
     } else {
         this.name = name;
     }
     this.url = url;
 
-    this.toJSONString = function() {
+    this.toJSONString = function()
+    {
         var pairs = new Array();
         for (k in this) {
             if (this.hasOwnProperty(k)) {
                 v = this[k];
                 if (v != null && typeof v != "function") {
-                    log ("adding key toJSONString: " + k);
-                    pairs.push("'"+k+"':'"+v+"'");
+                    log("adding key toJSONString: " + k);
+                    pairs.push("'" + k + "':'" + v + "'");
                 }
             }
         }
-        return "({"+pairs.join(',')+"})";
+        return "({" + pairs.join(',') + "})";
     };
 
     return this;
 }
 
-function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, rootDeviceType, ownerAlias, name, description, snapshotId, tag) {
+function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, rootDeviceType, ownerAlias, name, description, snapshotId, tag)
+{
     this.id = id;
     this.location = location;
     this.state = state;
@@ -58,7 +74,8 @@ function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, roo
     this.snapshotId = snapshotId;
 }
 
-function Snapshot(id, volumeId, status, startTime, progress, volumeSize, description, owner, ownerAlias, tag) {
+function Snapshot(id, volumeId, status, startTime, progress, volumeSize, description, owner, ownerAlias, tag)
+{
     this.id = id;
     this.volumeId = volumeId;
     this.status = status;
@@ -75,7 +92,8 @@ function Snapshot(id, volumeId, status, startTime, progress, volumeSize, descrip
     }
 }
 
-function Volume(id, size, snapshotId, zone, status, createTime, instanceId, device, attachStatus, attachTime, tag) {
+function Volume(id, size, snapshotId, zone, status, createTime, instanceId, device, attachStatus, attachTime, tag)
+{
     this.id = id;
     this.size = size;
     this.snapshotId = snapshotId;
@@ -86,17 +104,16 @@ function Volume(id, size, snapshotId, zone, status, createTime, instanceId, devi
     this.device = device;
     this.attachStatus = attachStatus;
     if (attachStatus != "") {
-      this.attachTime = attachTime.strftime('%Y-%m-%d %H:%M:%S');
+        this.attachTime = attachTime.strftime('%Y-%m-%d %H:%M:%S');
     }
     if (tag) {
-      this.tag = tag;
-      __addNameTagToModel__(tag, this);
+        this.tag = tag;
+        __addNameTagToModel__(tag, this);
     }
 }
 
-function Instance(resId, ownerId, groupList, instanceId, imageId, kernelId,
-        ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason,
-        amiLaunchIdx, instanceType, launchTime, placement, platform, tag, vpcId, subnetId, rootDeviceType) {
+function Instance(resId, ownerId, groupList, instanceId, imageId, kernelId, ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, placement, platform, tag, vpcId, subnetId, rootDeviceType)
+{
     this.resId = resId;
     this.ownerId = ownerId;
     this.groupList = groupList;
@@ -130,24 +147,28 @@ function Instance(resId, ownerId, groupList, instanceId, imageId, kernelId,
     this.rootDeviceType = rootDeviceType;
 }
 
-function Certificate(name, body) {
+function Certificate(name, body)
+{
     this.name = name
     this.body = body
 }
 
-function KeyPair(name, fingerprint) {
+function KeyPair(name, fingerprint)
+{
     this.name = name;
     this.fingerprint = fingerprint;
 }
 
-function AccessKey(name, status, secret, current) {
+function AccessKey(name, status, secret, current)
+{
     this.name = name;
     this.status = status;
     this.secret = secret
     this.current = current
 }
 
-function SecurityGroup(id, ownerId, name, description, vpcId, permissions) {
+function SecurityGroup(id, ownerId, name, description, vpcId, permissions)
+{
     this.id = id
     this.ownerId = ownerId;
     this.name = name;
@@ -156,7 +177,8 @@ function SecurityGroup(id, ownerId, name, description, vpcId, permissions) {
     this.permissions = permissions;
 }
 
-function Permission(protocol, fromPort, toPort, srcGroup, cidrIp) {
+function Permission(protocol, fromPort, toPort, srcGroup, cidrIp)
+{
     this.protocol = protocol;
     this.fromPort = fromPort;
     this.toPort = toPort;
@@ -165,12 +187,14 @@ function Permission(protocol, fromPort, toPort, srcGroup, cidrIp) {
     this.cidrIp = cidrIp;
 }
 
-function AvailabilityZone(name, state) {
+function AvailabilityZone(name, state)
+{
     this.name = name;
     this.state = state;
 }
 
-function AddressMapping(address, instanceid, allocId, assocId, domain, tag) {
+function AddressMapping(address, instanceid, allocId, assocId, domain, tag)
+{
     this.address = address;
     this.instanceid = instanceid;
     this.allocationId = allocId || ""
@@ -179,7 +203,8 @@ function AddressMapping(address, instanceid, allocId, assocId, domain, tag) {
     this.tag = tag || ""
 }
 
-function BundleTask(id, instanceId, state, startTime, updateTime, s3bucket, s3prefix, errorMsg) {
+function BundleTask(id, instanceId, state, startTime, updateTime, s3bucket, s3prefix, errorMsg)
+{
     this.id = id;
     this.instanceId = instanceId;
     this.state = state;
@@ -190,7 +215,8 @@ function BundleTask(id, instanceId, state, startTime, updateTime, s3bucket, s3pr
     this.errorMsg = errorMsg;
 }
 
-function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc) {
+function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc)
+{
     this.id = id;
     this.instanceType = type;
     this.azone = az;
@@ -200,7 +226,8 @@ function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc) {
     this.description = desc;
 }
 
-function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state) {
+function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state)
+{
     this.id = id;
     this.instanceType = type;
     this.azone = az;
@@ -214,7 +241,8 @@ function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, 
     this.state = state;
 }
 
-function Vpc(id, cidr, state, dhcpOptionsId, tag) {
+function Vpc(id, cidr, state, dhcpOptionsId, tag)
+{
     this.id = id;
     this.cidr = cidr;
     this.state = state;
@@ -222,7 +250,8 @@ function Vpc(id, cidr, state, dhcpOptionsId, tag) {
     if (tag) this.tag = tag;
 }
 
-function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tag) {
+function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tag)
+{
     this.id = id;
     this.vpcId = vpcId;
     this.cidr = cidr;
@@ -232,13 +261,15 @@ function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tag) {
     if (tag) this.tag = tag;
 }
 
-function DhcpOptions(id, options, tag) {
+function DhcpOptions(id, options, tag)
+{
     this.id = id;
     this.options = options;
     if (tag) this.tag = tag;
 }
 
-function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tag) {
+function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tag)
+{
     this.id = id;
     this.vgwId = vgwId;
     this.cgwId = cgwId;
@@ -250,7 +281,29 @@ function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tag) 
     if (tag) this.tag = tag;
 }
 
-function VpnGateway(id, availabilityZone, state, type, attachments, tag) {
+function InternetGateway(id, vpcs, tags)
+{
+    this.id = id
+    this.vpcs = vpcs || []
+    this.tags = tags || []
+
+    this.toStr = function()
+    {
+        var text = this.id + " "
+        if (this.vpcs.length) {
+            text += "(" + this.vpcs + ")"
+        }
+        if (this.tags.length) {
+            for (var i in this.tags) {
+                text += ", " + this.tags[i].toStr()
+            }
+        }
+        return text
+    }
+}
+
+function VpnGateway(id, availabilityZone, state, type, attachments, tag)
+{
     this.id = id;
     this.availabilityZone = availabilityZone;
     this.state = state;
@@ -260,13 +313,15 @@ function VpnGateway(id, availabilityZone, state, type, attachments, tag) {
     if (tag) this.tag = tag;
 }
 
-function VpnGatewayAttachment(vpcId, vgwId, state) {
+function VpnGatewayAttachment(vpcId, vgwId, state)
+{
     this.vpcId = vpcId;
     this.vgwId = vgwId;
     this.state = state;
 }
 
-function CustomerGateway(id, ipAddress, bgpAsn, state, type, tag) {
+function CustomerGateway(id, ipAddress, bgpAsn, state, type, tag)
+{
     this.id = id;
     this.ipAddress = ipAddress;
     this.bgpAsn = bgpAsn;
@@ -276,10 +331,8 @@ function CustomerGateway(id, ipAddress, bgpAsn, state, type, tag) {
     if (tag) this.tag = tag;
 }
 
-function LoadBalancer(LoadBalancerName,CreatedTime,DNSName,Instances,
-                      Protocol,LoadBalancerPort,InstancePort,
-                      Interval,Timeout,HealthyThreshold,UnhealthyThreshold,Target,
-                      azone,CookieName,APolicyName,CookieExpirationPeriod,CPolicyName){
+function LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, azone, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName)
+{
     this.LoadBalancerName = LoadBalancerName;
     this.CreatedTime = CreatedTime;
     this.DNSName = DNSName;
@@ -299,61 +352,67 @@ function LoadBalancer(LoadBalancerName,CreatedTime,DNSName,Instances,
     this.CPolicyName = CPolicyName;
 }
 
-function InstanceHealth(Description,State,InstanceId,ReasonCode){
+function InstanceHealth(Description, State, InstanceId, ReasonCode)
+{
     this.Description = Description;
     this.State = State;
     this.InstanceId = InstanceId;
     this.ReasonCode = ReasonCode;
 }
 
-String.prototype.trim = function() {
-    return this.replace(/^\s+|\s+$/g,"");
+String.prototype.trim = function()
+{
+    return this.replace(/^\s+|\s+$/g, "");
 }
 
-// Global model: home to things like lists of data that need to be shared (known AMIs, keypairs etc)
+// Global model: home to things like lists of data that need to be shared (known
+// AMIs, keypairs etc)
 var ec2ui_model = {
-    components      : new Array(),
+    components : new Array(),
     componentInterests : new Object(),
 
-    volumes           : null,
-    images            : null,
-    snapshots         : null,
-    instances         : null,
-    keypairs          : null,
-    accesskeys        : null,
-    certs             : null,
-    azones            : null,
-    securityGroups    : null,
-    addresses         : null,
-    bundleTasks       : null,
-    offerings         : null,
+    volumes : null,
+    images : null,
+    snapshots : null,
+    instances : null,
+    keypairs : null,
+    accesskeys : null,
+    certs : null,
+    azones : null,
+    securityGroups : null,
+    addresses : null,
+    bundleTasks : null,
+    offerings : null,
     reservedInstances : null,
-    loadbalancer      : null,
-    InstanceHealth    : null,
-    subnets           : null,
-    vpcs              : null,
-    dhcpOptions       : null,
-    vpnConnections    : null,
-    vpnGateways       : null,
-    customerGateways  : null,
+    loadbalancer : null,
+    InstanceHealth : null,
+    subnets : null,
+    vpcs : null,
+    dhcpOptions : null,
+    vpnConnections : null,
+    vpnGateways : null,
+    customerGateways : null,
+    internetGateways : null,
 
     resourceMap : {
-        instances        : 0,
-        volumes          : 1,
-        snapshots        : 2,
-        images           : 3,
-        eips             : 4,
-        vpcs             : 5,
-        subnets          : 6,
-        dhcpOptions      : 7,
-        vpnConnections   : 8,
-        vpnGateways      : 9,
-        customerGateways : 10
+        instances : 0,
+        volumes : 1,
+        snapshots : 2,
+        images : 3,
+        eips : 4,
+        vpcs : 5,
+        subnets : 6,
+        dhcpOptions : 7,
+        vpnConnections : 8,
+        vpnGateways : 9,
+        customerGateways : 10,
+        internetGateways : 11
     },
 
     amiIdManifestMap : {},
 
-    invalidate : function() {
+    invalidate : function()
+    {
         // reset all lists, these will notify their associated views
         this.updateImages(null);
         this.updateInstances(null);
@@ -376,156 +435,257 @@ var ec2ui_model = {
         this.updateVpnConnections(null);
         this.updateVpnGateways(null);
         this.updateCustomerGateways(null);
+        this.updateInternetGateways(null);
     },
 
-    getModel : function(name) {
+    getModel : function(name)
+    {
         switch (name) {
-        case "volumes": return this.volumes;
-        case "images": return this.images;
-        case "snapshots": return this.snapshots;
-        case "instances": return this.instances;
-        case "keypairs": return this.keypairs;
-        case "accesskeys": return this.accesskeys;
-        case "certs": return this.certs;
-        case "azones": return this.azones;
-        case "securitygroups": return this.securityGroups;
-        case "addresses": return this.addresses;
-        case "bundleTasks": return this.bundleTasks;
-        case "offerings": return this.offerings;
-        case "reservedInstances": return this.reservedInstances;
-        case "loadbalancer": return this.loadbalancer;
-        case "InstanceHealth": return this.InstanceHealth;
-        case "subnets": return this.subnets;
-        case "vpcs": return this.vpcs;
-        case "dhcpOptions": return this.dhcpOptions;
-        case "vpnConnections": return this.vpnConnections;
-        case "vpnGateways": return this.vpnGateways;
-        case "customerGateways": return this.customerGateways;
+        case "volumes":
+            return this.volumes;
+        case "images":
+            return this.images;
+        case "snapshots":
+            return this.snapshots;
+        case "instances":
+            return this.instances;
+        case "keypairs":
+            return this.keypairs;
+        case "accesskeys":
+            return this.accesskeys;
+        case "certs":
+            return this.certs;
+        case "azones":
+            return this.azones;
+        case "securitygroups":
+            return this.securityGroups;
+        case "addresses":
+            return this.addresses;
+        case "bundleTasks":
+            return this.bundleTasks;
+        case "offerings":
+            return this.offerings;
+        case "reservedInstances":
+            return this.reservedInstances;
+        case "loadbalancer":
+            return this.loadbalancer;
+        case "InstanceHealth":
+            return this.InstanceHealth;
+        case "subnets":
+            return this.subnets;
+        case "vpcs":
+            return this.vpcs;
+        case "dhcpOptions":
+            return this.dhcpOptions;
+        case "vpnConnections":
+            return this.vpnConnections;
+        case "vpnGateways":
+            return this.vpnGateways;
+        case "customerGateways":
+            return this.customerGateways;
+        case "internetGateways":
+            return this.internetGateways;
         }
         return []
     },
 
-    refreshModel : function(name) {
+    refreshModel : function(name)
+    {
         switch (name) {
-        case "volumes": ec2ui_session.controller.describeVolumes(); break;
-        case "images": ec2ui_session.controller.describeImages(); break;
-        case "snapshots": ec2ui_session.controller.describeSnapshots(); break;
-        case "instances": ec2ui_session.controller.describeInstances(); break;
-        case "keypairs": ec2ui_session.controller.describeKeypairs(); break;
-        case "accesskeys": ec2ui_session.controller.listAccessKeys(); break;
-        case "certs": ec2ui_session.controller.listsigningCertificates(); break;
-        case "azones": ec2ui_session.controller.describeAvailabilityZones(); break;
-        case "securitygroups": ec2ui_session.controller.describeSecurityGroups(); break;
-        case "addresses": ec2ui_session.controller.describeAddresses(); break;
-        case "bundleTasks": ec2ui_session.controller.describeBundleTasks(); break;
-        case "offerings": ec2ui_session.controller.describeLeaseOfferings(); break;
-        case "reservedInstances": ec2ui_session.controller.describeReservedInstances(); break;
-        case "loadbalancer": ec2ui_session.controller.describeLoadBalancers(); break;
-        case "InstanceHealth": ec2ui_session.controller.describeInstanceHealth(); break;
-        case "subnets": ec2ui_session.controller.describeSubnets(); break;
-        case "vpcs": ec2ui_session.controller.describeVpcs(); break;
-        case "dhcpOptions": ec2ui_session.controller.describedhcpOptions(); break;
-        case "vpnConnections": ec2ui_session.controller.describeVpnConnections(); break;
-        case "vpnGateways": ec2ui_session.controller.describeVpnGateways(); break;
-        case "customerGateways": ec2ui_session.controller.describeCustomerGateways(); break;
+        case "volumes":
+            ec2ui_session.controller.describeVolumes();
+            break;
+        case "images":
+            ec2ui_session.controller.describeImages();
+            break;
+        case "snapshots":
+            ec2ui_session.controller.describeSnapshots();
+            break;
+        case "instances":
+            ec2ui_session.controller.describeInstances();
+            break;
+        case "keypairs":
+            ec2ui_session.controller.describeKeypairs();
+            break;
+        case "accesskeys":
+            ec2ui_session.controller.listAccessKeys();
+            break;
+        case "certs":
+            ec2ui_session.controller.listsigningCertificates();
+            break;
+        case "azones":
+            ec2ui_session.controller.describeAvailabilityZones();
+            break;
+        case "securitygroups":
+            ec2ui_session.controller.describeSecurityGroups();
+            break;
+        case "addresses":
+            ec2ui_session.controller.describeAddresses();
+            break;
+        case "bundleTasks":
+            ec2ui_session.controller.describeBundleTasks();
+            break;
+        case "offerings":
+            ec2ui_session.controller.describeLeaseOfferings();
+            break;
+        case "reservedInstances":
+            ec2ui_session.controller.describeReservedInstances();
+            break;
+        case "loadbalancer":
+            ec2ui_session.controller.describeLoadBalancers();
+            break;
+        case "InstanceHealth":
+            ec2ui_session.controller.describeInstanceHealth();
+            break;
+        case "subnets":
+            ec2ui_session.controller.describeSubnets();
+            break;
+        case "vpcs":
+            ec2ui_session.controller.describeVpcs();
+            break;
+        case "dhcpOptions":
+            ec2ui_session.controller.describedhcpOptions();
+            break;
+        case "vpnConnections":
+            ec2ui_session.controller.describeVpnConnections();
+            break;
+        case "vpnGateways":
+            ec2ui_session.controller.describeVpnGateways();
+            break;
+        case "customerGateways":
+            ec2ui_session.controller.describeCustomerGateways();
+            break;
+        case "internetGateways":
+            ec2ui_session.controller.describeInternetGateways();
+            break;
         }
         return []
     },
 
-    notifyComponents : function(interest) {
+    notifyComponents : function(interest)
+    {
         var comps = this.componentInterests[interest] || [];
-        for (var i in comps) {
+        for ( var i in comps) {
             comps[i].notifyModelChanged(interest);
         }
     },
 
-    registerInterest : function(component, interest) {
+    registerInterest : function(component, interest)
+    {
         if (!this.componentInterests[interest]) {
             this.componentInterests[interest] = [];
         }
         this.componentInterests[interest].push(component);
     },
 
-    updateVpcs : function(list) {
+    updateVpcs : function(list)
+    {
         this.vpcs = list;
         this.notifyComponents("vpcs");
     },
 
-    getVpcs : function() {
+    getVpcs : function()
+    {
         if (this.vpcs == null) {
             ec2ui_session.controller.describeVpcs();
         }
         return this.vpcs;
     },
 
-    updateSubnets : function(list) {
+    updateSubnets : function(list)
+    {
         this.subnets = list;
         this.notifyComponents("subnets");
     },
 
-    getSubnets : function() {
+    getSubnets : function()
+    {
         if (this.subnets == null) {
             ec2ui_session.controller.describeSubnets();
         }
         return this.subnets;
     },
 
-    updateDhcpOptions : function(list) {
+    updateDhcpOptions : function(list)
+    {
         this.dhcpOptions = list;
         this.notifyComponents("dhcpOptions");
     },
 
-    getDhcpOptions : function() {
+    getDhcpOptions : function()
+    {
         if (this.dhcpOptions == null) {
             ec2ui_session.controller.describeDhcpOptions();
         }
         return this.dhcpOptions;
     },
 
-    updateVpnConnections : function(list) {
+    updateVpnConnections : function(list)
+    {
         this.vpnConnections = list;
         this.notifyComponents("vpnConnections");
     },
 
-    getVpnConnections : function() {
+    getVpnConnections : function()
+    {
         if (this.vpnConnections == null) {
             ec2ui_session.controller.describeVpnConnections();
         }
         return this.vpnConnections;
     },
 
-    updateVpnGateways : function(list) {
+    updateVpnGateways : function(list)
+    {
         this.vpnGateways = list;
         this.notifyComponents("vpnGateways");
     },
 
-    getVpnGateways : function() {
+    getVpnGateways : function()
+    {
         if (this.vpnGateways == null) {
             ec2ui_session.controller.describeVpnGateways();
         }
         return this.vpnGateways;
     },
 
-    updateCustomerGateways : function(list) {
+    updateCustomerGateways : function(list)
+    {
         this.customerGateways = list;
         this.notifyComponents("customerGateways");
     },
 
-    getCustomerGateways : function() {
+    getCustomerGateways : function()
+    {
         if (this.customerGateways == null) {
             ec2ui_session.controller.describeCustomerGateways();
         }
         return this.customerGateways;
     },
 
-    getVolumes : function() {
+    updateInternetGateways : function(list)
+    {
+        this.internetGateways = list;
+        this.notifyComponents("internetGateways");
+    },
+
+    getInternetGateways : function()
+    {
+        if (this.internetGateways == null) {
+            ec2ui_session.controller.describeInternetGateways();
+        }
+        return this.internetGateways;
+    },
+
+    getVolumes : function()
+    {
         if (this.volumes == null) {
             ec2ui_session.controller.describeVolumes();
         }
         return this.volumes;
     },
 
-    updateVolumes : function(list) {
+    updateVolumes : function(list)
+    {
         if (!this.instances) {
             ec2ui_session.controller.describeInstances();
         }
@@ -535,12 +695,12 @@ var ec2ui_model = {
         if (this.instances && list) {
             var instanceNames = new Object();
 
-            for (var i = 0; i < this.instances.length; i++) {
+            for ( var i = 0; i < this.instances.length; i++) {
                 var instance = this.instances[i];
                 instanceNames[instance.id] = instance.name;
             }
 
-            for (var i = 0; i < list.length; i++) {
+            for ( var i = 0; i < list.length; i++) {
                 var volume = list[i];
                 volume.instanceName = instanceNames[volume.instanceId];
             }
@@ -549,7 +709,8 @@ var ec2ui_model = {
         this.notifyComponents("volumes");
     },
 
-    updateSnapshots : function(list) {
+    updateSnapshots : function(list)
+    {
         if (!this.images) {
             ec2ui_session.controller.describeImages();
         }
@@ -559,12 +720,12 @@ var ec2ui_model = {
         if (this.images && list) {
             var amiNames = new Object();
 
-            for (var i = 0; i < this.images.length; i++) {
+            for ( var i = 0; i < this.images.length; i++) {
                 var image = this.images[i];
                 amiNames[image.id] = image.name;
             }
 
-            for (var i = 0; i < list.length; i++) {
+            for ( var i = 0; i < list.length; i++) {
                 var snapshot = list[i];
                 var snapshotAmiId = null;
                 var m = null;
@@ -583,14 +744,16 @@ var ec2ui_model = {
         this.notifyComponents("snapshots");
     },
 
-    getSnapshots : function() {
+    getSnapshots : function()
+    {
         if (this.snapshots == null) {
             ec2ui_session.controller.describeSnapshots();
         }
         return this.snapshots;
     },
 
-    addToAmiManifestMap : function(ami, map) {
+    addToAmiManifestMap : function(ami, map)
+    {
         if (!ami) return;
         if (!map) map = this.amiIdManifestMap;
         if (ami.id.match(regExs["ami"])) {
@@ -598,20 +761,20 @@ var ec2ui_model = {
         }
     },
 
-    updateImages : function(list) {
+    updateImages : function(list)
+    {
         this.images = list;
 
         var amiMap = new Object();
         if (list) {
             // Rebuild the list that maps ami-id to ami-manifest
-            for (var i = 0; i < list.length; ++i) {
+            for ( var i = 0; i < list.length; ++i) {
                 var ami = list[i];
                 this.addToAmiManifestMap(ami, amiMap);
 
                 var manifest = ami.location;
                 manifest = manifest.toLowerCase();
-                if (ami.platform == "windows" &&
-                    manifest.indexOf("winauth") >= 0) {
+                if (ami.platform == "windows" && manifest.indexOf("winauth") >= 0) {
                     ami.platform += " authenticated";
                 }
             }
@@ -620,28 +783,30 @@ var ec2ui_model = {
         this.notifyComponents("images");
     },
 
-    getImages : function() {
+    getImages : function()
+    {
         if (this.images == null) {
             ec2ui_session.controller.describeImages();
         }
         return this.images;
     },
 
-    getAmiManifestForId : function(imageId) {
-        if (imageId == null)
-            return "";
+    getAmiManifestForId : function(imageId)
+    {
+        if (imageId == null) return "";
         return this.amiIdManifestMap[imageId] || "";
     },
 
-    updateInstances : function(list) {
+    updateInstances : function(list)
+    {
         this.instances = list;
         if (list != null) {
-            for (var i = 0; i < list.length; ++i) {
+            for ( var i = 0; i < list.length; ++i) {
                 var instance = list[i];
                 if (instance.platform == "windows") {
                     // Retrieve the ami manifest from the amiid
                     var manifest = this.amiIdManifestMap[instance.imageId] || "";
-                    log ("Manifest requested for: " + instance.imageId + ", received: " + manifest);
+                    log("Manifest requested for: " + instance.imageId + ", received: " + manifest);
                     manifest = manifest.toLowerCase();
                     if (manifest.indexOf("winauth") >= 0) {
                         // This is an authenticated Windows instance
@@ -653,69 +818,80 @@ var ec2ui_model = {
         this.notifyComponents("instances");
     },
 
-    getInstances : function() {
+    getInstances : function()
+    {
         if (this.instances == null) {
             ec2ui_session.controller.describeInstances();
         }
         return this.instances;
     },
 
-    updateKeypairs : function(list) {
+    updateKeypairs : function(list)
+    {
         this.keypairs = list;
         this.notifyComponents("keypairs");
     },
 
-    getKeypairs : function() {
+    getKeypairs : function()
+    {
         if (this.keypairs == null) {
             ec2ui_session.controller.describeKeypairs();
         }
         return this.keypairs;
     },
 
-    updateAccessKeys : function(list) {
+    updateAccessKeys : function(list)
+    {
         this.accesskeys = list;
         this.notifyComponents("accesskeys");
     },
 
-    getAccessKeys : function() {
+    getAccessKeys : function()
+    {
         if (this.accesskeys == null) {
             ec2ui_session.controller.listAccessKeys();
         }
         return this.accesskeys;
     },
 
-    updateCerts : function(list) {
+    updateCerts : function(list)
+    {
         this.certs = list;
         this.notifyComponents("certs");
     },
 
-    getCerts : function() {
+    getCerts : function()
+    {
         if (this.certs == null) {
             ec2ui_session.controller.listSigningCertificates();
         }
         return this.certs;
     },
 
-    updateSecurityGroups : function(list) {
+    updateSecurityGroups : function(list)
+    {
         this.securityGroups = list;
         this.notifyComponents("securitygroups");
     },
 
-    getSecurityGroups : function() {
+    getSecurityGroups : function()
+    {
         if (this.securityGroups == null) {
             ec2ui_session.controller.describeSecurityGroups();
         }
         return this.securityGroups;
     },
 
-    getAddresses : function() {
+    getAddresses : function()
+    {
         if (this.addresses == null) {
             ec2ui_session.controller.describeAddresses();
         }
         return this.addresses;
     },
 
-    updateAddresses : function(list) {
+    updateAddresses : function(list)
+    {
         if (!this.instances) {
             ec2ui_session.controller.describeInstances();
         }
@@ -726,13 +902,13 @@ var ec2ui_model = {
             var instanceNames = new Object();
             var instancePublicDnsNames = new Object();
 
-            for (var i = 0; i < this.instances.length; i++) {
+            for ( var i = 0; i < this.instances.length; i++) {
                 var instance = this.instances[i];
                 instanceNames[instance.id] = instance.name;
                 instancePublicDnsNames[instance.id] = instance.publicDnsName;
             }
 
-            for (var i = 0; i < list.length; i++) {
+            for ( var i = 0; i < list.length; i++) {
                 var address = list[i];
                 address.instanceName = instanceNames[address.instanceid];
                 address.instancePublicDnsName = instancePublicDnsNames[address.instanceid];
@@ -742,67 +918,78 @@ var ec2ui_model = {
         this.notifyComponents("addresses");
     },
 
-    updateAvailabilityZones : function(list) {
+    updateAvailabilityZones : function(list)
+    {
         this.azones = list;
         this.notifyComponents("azones");
     },
 
-    getAvailabilityZones : function() {
+    getAvailabilityZones : function()
+    {
         if (this.azones == null) {
             ec2ui_session.controller.describeAvailabilityZones();
         }
         return this.azones;
     },
 
-    updateBundleTasks : function(list) {
+    updateBundleTasks : function(list)
+    {
         this.bundleTasks = list;
         this.notifyComponents("bundleTasks");
     },
 
-    getBundleTasks : function() {
+    getBundleTasks : function()
+    {
         if (this.bundleTasks == null) {
             ec2ui_session.controller.describeBundleTasks();
         }
         return this.bundleTasks;
     },
 
-    updateLeaseOfferings : function(list) {
+    updateLeaseOfferings : function(list)
+    {
         this.offerings = list;
         this.notifyComponents("offerings");
     },
 
-    getLeaseOfferings : function() {
+    getLeaseOfferings : function()
+    {
         if (this.offerings == null) {
             ec2ui_session.controller.describeLeaseOfferings();
         }
         return this.offerings;
     },
 
-    updateReservedInstances : function(list) {
+    updateReservedInstances : function(list)
+    {
         this.reservedInstances = list;
         this.notifyComponents("reservedInstances");
     },
 
-    getReservedInstances : function() {
+    getReservedInstances : function()
+    {
         if (this.reservedInstances == null) {
             ec2ui_session.controller.describeReservedInstances();
         }
         return this.reservedInstances;
     },
 
-    updateLoadbalancer : function(list) {
+    updateLoadbalancer : function(list)
+    {
         this.loadbalancer = list;
         this.notifyComponents("loadbalancer");
     },
 
-    getLoadbalancer : function() {
+    getLoadbalancer : function()
+    {
         if (this.loadbalancer == null) {
             ec2ui_session.controller.describeLoadBalancers();
         }
         return this.loadbalancer;
     },
 
-    updateInstanceHealth : function(list) {
+    updateInstanceHealth : function(list)
+    {
         if (!this.instances) {
             ec2ui_session.controller.describeInstances();
         }
@@ -812,12 +999,12 @@ var ec2ui_model = {
         if (this.instances && list) {
             var instanceNames = new Object();
 
-            for (var i = 0; i < this.instances.length; i++) {
+            for ( var i = 0; i < this.instances.length; i++) {
                 var instance = this.instances[i];
                 instanceNames[instance.id] = instance.name;
             }
 
-            for (var i = 0; i < list.length; i++) {
+            for ( var i = 0; i < list.length; i++) {
                 var instanceHealth = list[i];
                 instanceHealth.InstanceName = instanceNames[instanceHealth.InstanceId];
             }
@@ -826,7 +1013,8 @@ var ec2ui_model = {
         this.notifyComponents("InstanceHealth");
     },
 
-    getInstanceHealth : function() {
+    getInstanceHealth : function()
+    {
         if (this.InstanceHealth == null) {
             ec2ui_session.controller.describeInstanceHealth();
         }

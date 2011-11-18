@@ -9,7 +9,7 @@
     ondialogcancel="return true;" onload="ec2_SubnetCreator.init();"
     title="Create a new Subnet" buttonlabelaccept="Create Subnet">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/diaog_create_subnet.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/dialog_create_subnet.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
 
     <vbox flex="1">
@@ -21,7 +21,7 @@
             <rows>
                 <!-- Vpc -->
                 <row>
-                    <label control="ec2ui.newsubnet.vpcid" 
+                    <label control="ec2ui.newsubnet.vpcid"
                            value="Virtual Private Cloud: "/>
                     <hbox>
                         <menulist id="ec2ui.newsubnet.vpcid"/>

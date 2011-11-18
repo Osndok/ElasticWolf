@@ -18,6 +18,7 @@
                     <menuitem oncommand="ec2ui_ElasticIPTreeView.copyPublicDnsToClipBoard('address');" label="Copy Public DNS Name to Clipboard" />
                 </menupopup>
             </popupset>
+
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
                 <toolbarbutton image="images/refresh.png" oncommand="ec2ui_ElasticIPTreeView.refresh();" tooltiptext="&ec2ui.refresh.tip;" />
                 <toolbarbutton image="images/add.png" tooltiptext="&ec2ui.eips.allocate.tip;" oncommand="ec2ui_ElasticIPTreeView.allocateAddress();" />
@@ -26,7 +27,7 @@
                 <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.eips.disassociate.tip;" oncommand="ec2ui_ElasticIPTreeView.disassociateAddress();" />
                 <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ec2ui_ElasticIPTreeView.tag();" tooltiptext="Add Tag" />
             </toolbar>
-            <!-- <tree enableColumnDrag="true" seltype="single" id="ec2ui.eip.view" flex="1" ondblclick="ec2ui_ElasticIPTreeView.viewDetails(event)"> -->
+
             <tree enableColumnDrag="true" seltype="single" id="ec2ui.eip.view" flex="1">
                 <treecols>
                     <treecol id="eip.address" label="&ec2ui.eip.address.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
