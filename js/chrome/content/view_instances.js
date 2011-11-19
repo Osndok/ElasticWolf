@@ -298,25 +298,12 @@ var ec2ui_InstancesTreeView = {
         var instance = this.getSelectedInstance();
         if (instance == null) return;
 
-        window.openDialog("chrome://ec2ui/content/dialog_create_image.xul",
-                          null,
-                          "chrome,centerscreen,modal,resizable",
-                          instance.id,
-                          ec2ui_session,
-                          retVal);
-
+        window.openDialog("chrome://ec2ui/content/dialog_create_image.xul", null, "chrome,centerscreen,modal,resizable", instance.id, ec2ui_session, retVal);
         if (retVal.ok) {
             var wrap = function(id) {
-                alert("A new EBS-backed AMI is being created and will\n"+
-                      "be available in a moment.\n\n"+
-                      "The AMI ID is: "+id);
+                alert("A new EBS-backed AMI is being created and will\nbe available in a moment.\n\nThe AMI ID is: "+id);
             }
-
-            ec2ui_session.controller.createImage(instance.id,
-                                                 retVal.amiName,
-                                                 retVal.amiDescription,
-                                                 retVal.noReboot,
-                                                 wrap);
+            ec2ui_session.controller.createImage(instance.id, retVal.amiName, retVal.amiDescription, retVal.noReboot, wrap);
         }
     },
 
@@ -700,9 +687,7 @@ var ec2ui_InstancesTreeView = {
     },
 
     selectionChanged : function(event) {
-        // When an instance is selected, select the associated AMI, ARI and AKI
-        // but only if a single instance has been selected
-
+        // When an instance is selected, select the associated AMI, ARI and AKI but only if a single instance has been selected
         var instance = this.getSelectedInstance();
         if (instance == null) return;
         this.selectedInstanceId = instance.id;
@@ -746,6 +731,8 @@ var ec2ui_InstancesTreeView = {
           document.getElementById("instances.context.getPassword").disabled = true;
         }
 
+        document.getElementById("instances.context.connectPublic").disabled = getIPFromHostname(instance) == ""
+
         if (isEbsRootDeviceType(instance.rootDeviceType)) {
             document.getElementById("instances.context.bundle").disabled = true;
             document.getElementById("instances.context.createimage").disabled = false;
@@ -758,13 +745,7 @@ var ec2ui_InstancesTreeView = {
                 document.getElementById("instances.context.bundle").disabled = true;
             }
         }
-
-        // These context menu items don't apply to Windows instances
-        // so enable them.
-
-
-        // These items are only valid for instances with EBS-backed
-        // root devices.
+        // These items are only valid for instances with EBS-backed root devices.
         var optDisabled = !isEbsRootDeviceType(instance.rootDeviceType);
         document.getElementById("instances.context.start").disabled = optDisabled;
         document.getElementById("instances.context.stop").disabled = optDisabled;
@@ -1138,12 +1119,12 @@ var ec2ui_InstancesTreeView = {
         }
     },
 
-    connectToSelectedInstances : function() {
+    connectToSelectedInstances : function(isPrivate) {
         for (var i in this.instanceList) {
             if (this.selection.isSelected(i)) {
                 log ("Connecting to " + this.instanceList[i].id);
                 this.selection.currentIndex = i;
-                this.connectTo(this.instanceList[i]);
+                this.connectTo(this.instanceList[i], isPrivate);
             }
         }
     },
@@ -1172,13 +1153,13 @@ var ec2ui_InstancesTreeView = {
         }
     },
 
-    connectTo : function(instance) {
+    connectTo : function(instance, isPrivate) {
         ec2ui_session.showBusyCursor(true);
         var args = ec2ui_prefs.getSSHArgs();
         var cmd = ec2ui_prefs.getSSHCommand();
         var hostname = getIPFromHostname(instance);
 
-        if (isVpc(instance)) {
+        if (isPrivate) {
            hostname = instance.privateIpAddress;
         } else {
            this.openConnectionPort(instance);

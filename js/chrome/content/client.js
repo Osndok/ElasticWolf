@@ -10,7 +10,7 @@ var ec2_httpclient = {
     errorCount: 0,
     timers : {},
 
-    VERSION: "1.0.9",
+    VERSION: "1.1",
     API_VERSION : "2011-07-15",
     OLD_API_VERSION: "2010-11-15",
     ELB_API_VERSION : "2011-04-05",

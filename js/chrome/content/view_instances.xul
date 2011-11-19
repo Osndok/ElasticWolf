@@ -50,7 +50,12 @@
             </menupopup>
           </menu>
           <menuseparator />
-          <menuitem id="instances.context.connect" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances();" label="Connect to Instance" />
+          <menu label="Connect to Instance">
+            <menupopup>
+                <menuitem id="instances.context.connectPublic" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances();" label="Connect to Public IP" />
+                <menuitem id="instances.context.connectPrivate" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances(true);" label="Connect to Private IP" />
+            </menupopup>
+          </menu>
         </menupopup>
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
@@ -75,11 +80,6 @@
         </hbox>
       </toolbar>
 
-      <!--
-      <tree id="ec2ui.instances.view" ondblclick="ec2ui_InstancesTreeView.viewDetails(event)"
-        onselect="ec2ui_InstancesTreeView.selectionChanged(event)"
-        enableColumnDrag="true" flex="1">
-        -->
       <tree id="ec2ui.instances.view" onselect="ec2ui_InstancesTreeView.selectionChanged(event)"  enableColumnDrag="true" flex="1">
         <treecols>
           <treecol id="instance.name" label="Name" flex="2" persist="width ordinal hidden sortDirection" />
