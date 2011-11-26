@@ -208,9 +208,11 @@ var ec2_Authorizer = {
     var groupMenu = document.getElementById("ec2ui.newpermission.source.group");
     groupMenu.appendItem("", "");
     for(var i in securityGroups) {
-        groupMenu.appendItem(securityGroups[i].name, securityGroups[i].id);
+        groupMenu.appendItem(securityGroups[i].id + "/" + securityGroups[i].name, securityGroups[i].id);
+        if (this.group.id == securityGroups[i].id) {
+            groupMenu.selectedIndex = i;
+        }
     }
-    groupMenu.selectedIndex = 0;
 
     // Initialize the Protocol Port for the selected protocol.
     var protocol = document.getElementById("ec2ui.newpermission.protocol").value;

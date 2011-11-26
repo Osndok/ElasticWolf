@@ -187,6 +187,29 @@ function Permission(protocol, fromPort, toPort, srcGroup, cidrIp)
     this.cidrIp = cidrIp;
 }
 
+function Route(tableId, cidr, gatewayId, state)
+{
+    this.tableId = tableId
+    this.cidr = cidr
+    this.gatewayId = gatewayId
+    this.state = state
+}
+
+function RouteAssociation(id, tableId, subnetId)
+{
+    this.id = id
+    this.tableId = tableId || ""
+    this.subnetId = subnetId || ""
+}
+
+function RouteTable(id, vpcId, routes, associations)
+{
+    this.id = id
+    this.vpcId = vpcId
+    this.routes = routes
+    this.associations = associations
+}
+
 function AvailabilityZone(name, state)
 {
     this.name = name;
@@ -393,6 +416,7 @@ var ec2ui_model = {
     vpnGateways : null,
     customerGateways : null,
     internetGateways : null,
+    routetables: null,
 
     resourceMap : {
         instances : 0,
@@ -406,7 +430,8 @@ var ec2ui_model = {
         vpnConnections : 8,
         vpnGateways : 9,
         customerGateways : 10,
-        internetGateways : 11
+        internetGateways : 11,
+        routetables: 12,
     },
 
     amiIdManifestMap : {},
@@ -436,6 +461,7 @@ var ec2ui_model = {
         this.updateVpnGateways(null);
         this.updateCustomerGateways(null);
         this.updateInternetGateways(null);
+        this.updateRouteTables(null);
     },
 
     getModel : function(name)
@@ -484,6 +510,8 @@ var ec2ui_model = {
         case "customerGateways":
             return this.customerGateways;
         case "internetGateways":
+            return this.internetGateways;
+        case "routeTables":
             return this.internetGateways;
         }
         return []
@@ -557,6 +585,9 @@ var ec2ui_model = {
             break;
         case "internetGateways":
             ec2ui_session.controller.describeInternetGateways();
+            break;
+        case "routeTables":
+            ec2ui_session.controller.describeRouteTables();
             break;
         }
         return []
@@ -674,6 +705,20 @@ var ec2ui_model = {
             ec2ui_session.controller.describeInternetGateways();
         }
         return this.internetGateways;
+    },
+
+    updateRouteTables : function(list)
+    {
+        this.routeTables = list;
+        this.notifyComponents("routeTables");
+    },
+
+    getRouteTables : function()
+    {
+        if (this.routeTables == null) {
+            ec2ui_session.controller.describeRouteTables();
+        }
+        return this.routeTables;
     },
 
     getVolumes : function()

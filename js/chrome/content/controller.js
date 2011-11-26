@@ -1813,6 +1813,107 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
+    describeRouteTables : function(callback)
+    {
+        ec2_httpclient.queryEC2("DescribeRouteTables", [], this, true, "onCompleteDescribeRouteTables", callback);
+    },
+
+    onCompleteDescribeRouteTables : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.evaluate("/ec2:DescribeRouteTablesResponse/ec2:routeTableSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        for ( var i = 0; i < items.snapshotLength; i++) {
+            var routes = [], associations = []
+            var id = getNodeValueByName(items.snapshotItem(i), "routeTableId");
+            var vpcId = getNodeValueByName(items.snapshotItem(i), "vpcId");
+
+            var routeItems = items.snapshotItem(i).getElementsByTagName("routeSet")[0].childNodes;
+            for ( var j = 0; routeItems && j < routeItems.length; j++) {
+                if (routeItems.item(j).nodeName == '#text') continue;
+                var cidr = getNodeValueByName(routeItems.item(j), "destinationCidrBlock");
+                var gateway = getNodeValueByName(routeItems.item(j), "gatewayId");
+                var state = getNodeValueByName(routeItems.item(j), "state");
+                routes.push(new Route(id, cidr, gateway, state));
+            }
+            var assocSet = items.snapshotItem(i).getElementsByTagName("associationSet")[0];
+            var assocItems = assocSet.childNodes;
+            if (assocItems) {
+                for ( var j = 0; j < assocItems.length; j++) {
+                    if (assocItems.item(j).nodeName == '#text') continue;
+                    var aid = getNodeValueByName(assocItems.item(j), "routeTableAssociationId");
+                    var table = getNodeValueByName(assocItems.item(j), "routeTableId");
+                    var subnet = getNodeValueByName(assocItems.item(j), "subnetId");
+                    associations.push(new RouteAssociation(aid, table, subnet));
+                }
+            }
+            list.push(new RouteTable(id, vpcId, routes, associations));
+        }
+        ec2ui_model.updateRouteTables(list);
+        if (objResponse.callback) objResponse.callback(list);
+    },
+
+    createRouteTable : function(vpcId, callback)
+    {
+        ec2_httpclient.queryEC2("CreateRouteTable", [["VpcId", vpcId]], this, true, "onCompleteCreateRouteTable", callback);
+    },
+
+    onCompleteCreateRouteTable : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    deleteRouteTable : function(tableId, callback)
+    {
+        ec2_httpclient.queryEC2("DeleteRouteTable", [["RouteTableId", tableId]], this, true, "onCompleteDeleteRouteTable", callback);
+    },
+
+    onCompleteDeleteRouteTable : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    createRoute : function(tableId, cidr, gatewayId, callback)
+    {
+        ec2_httpclient.queryEC2("CreateRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr], ["GatewayId", gatewayId]], this, true, "onCompleteCreateRoute", callback);
+    },
+
+    onCompleteCreateRoute : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    deleteRoute : function(tableId, cidr, callback)
+    {
+        ec2_httpclient.queryEC2("DeleteRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr]], this, true, "onCompleteDeleteRoute", callback);
+    },
+
+    onCompleteDeleteRoute : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    AssociateRouteTable : function(tableId, subnetId, callback)
+    {
+        ec2_httpclient.queryEC2("AssociateRouteTable", [["RouteTableId", tableId], ["SubnetId", subnetId]], this, true, "onCompleteAssociateRouteTable", callback);
+    },
+
+    onCompleteAssociateRouteTable : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    DisassociateRouteTable : function(assocId, callback)
+    {
+        ec2_httpclient.queryEC2("DisassociateRouteTable", [["AssociationId", assocId]], this, true, "onCompleteDisassociateRouteTable", callback);
+    },
+
+    onCompleteDisassociateRouteTable : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
     describeSecurityGroups : function(callback)
     {
         ec2_httpclient.queryEC2("DescribeSecurityGroups", [], this, true, "onCompleteDescribeSecurityGroups", callback);
@@ -1906,20 +2007,20 @@ var ec2ui_controller = {
     authorizeSourceCIDR : function(group, ipProtocol, fromPort, toPort, cidrIp, callback)
     {
         var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
-        params.push([ "IpProtocol", ipProtocol ]);
-        params.push([ "FromPort", fromPort ]);
-        params.push([ "ToPort", toPort ]);
-        params.push([ "CidrIp", cidrIp ]);
+        params.push([ "IpPermissions.1.IpProtocol", ipProtocol ]);
+        params.push([ "IpPermissions.1.FromPort", fromPort ]);
+        params.push([ "IpPermissions.1.ToPort", toPort ]);
+        params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
         ec2_httpclient.queryEC2("AuthorizeSecurityGroupIngress", params, this, true, "onCompleteAuthorizeSecurityGroupIngress", callback);
     },
 
     revokeSourceCIDR : function(group, ipProtocol, fromPort, toPort, cidrIp, callback)
     {
         var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
-        params.push([ "IpProtocol", ipProtocol ]);
-        params.push([ "FromPort", fromPort ]);
-        params.push([ "ToPort", toPort ]);
-        params.push([ "CidrIp", cidrIp ]);
+        params.push([ "IpPermissions.1.IpProtocol", ipProtocol ]);
+        params.push([ "IpPermissions.1.FromPort", fromPort ]);
+        params.push([ "IpPermissions.1.ToPort", toPort ]);
+        params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
         ec2_httpclient.queryEC2("RevokeSecurityGroupIngress", params, this, true, "onCompleteRevokeSecurityGroupIngress", callback);
     },
 

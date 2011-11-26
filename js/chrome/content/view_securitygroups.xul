@@ -23,9 +23,7 @@
           <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.secgroups.delete.tip;" oncommand="ec2ui_SecurityGroupsTreeView.deleteSelected();" />
         </hbox>
       </toolbar>
-      <tree id="ec2ui.securitygroups.view" seltype="single"
-        enableColumnDrag="true"
-        onselect="ec2ui_SecurityGroupsTreeView.selectionChanged(event);" flex="1">
+      <tree id="ec2ui.securitygroups.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_SecurityGroupsTreeView.selectionChanged(event);" flex="1">
         <treecols>
           <treecol id="securitygroup.id" label="ID" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />

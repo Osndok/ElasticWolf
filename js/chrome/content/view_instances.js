@@ -286,7 +286,7 @@ var ec2ui_InstancesTreeView = {
                 ec2ui_BundleTasksTreeView.refresh();
                 ec2ui_BundleTasksTreeView.selectByBundleId(list[0].id);
                 var tabPanel = document.getElementById("ec2ui.primary.tabs");
-                tabPanel.selectedIndex = 9;
+                tabPanel.selectedIndex = 8;
             }
 
             ec2ui_session.controller.bundleInstance(instance.id, retVal.bucketName, retVal.prefix, ec2ui_session.getActiveCredential(), wrap);
@@ -374,7 +374,7 @@ var ec2ui_InstancesTreeView = {
                 ec2ui_VolumeTreeView.refresh();
             }
             var tabPanel = document.getElementById("ec2ui.primary.tabs");
-            tabPanel.selectedIndex = 7;
+            tabPanel.selectedIndex = 6;
             ec2ui_VolumeTreeView.selectByImageId(retVal.volumeId);
         }
     },
@@ -397,7 +397,7 @@ var ec2ui_InstancesTreeView = {
             var fAddEIP = confirm ("Would you like to create a new Elastic IP to associate with this instance?");
             if (fAddEIP) {
                 var tabPanel = document.getElementById("ec2ui.primary.tabs");
-                tabPanel.selectedIndex = 6;
+                tabPanel.selectedIndex = 5;
                 ec2ui_ElasticIPTreeView.allocateAddress();
             }
             return;

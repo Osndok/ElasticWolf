@@ -225,9 +225,8 @@ function cycleHeader(col, document, columnIdList, list)
 
 function getNodeValueByName(parent, nodeName)
 {
-    var node = parent.getElementsByTagName(nodeName)[0];
-    if (node == null) return "";
-    return node.firstChild ? node.firstChild.nodeValue : "";
+    var node = parent ? parent.getElementsByTagName(nodeName)[0] : null;
+    return node && node.firstChild ? node.firstChild.nodeValue : "";
 }
 
 function methodPointer(obj, method)

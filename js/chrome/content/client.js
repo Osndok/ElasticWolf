@@ -10,7 +10,7 @@ var ec2_httpclient = {
     errorCount: 0,
     timers : {},
 
-    VERSION: "1.1",
+    VERSION: "1.2",
     API_VERSION : "2011-07-15",
     OLD_API_VERSION: "2010-11-15",
     ELB_API_VERSION : "2011-04-05",
@@ -136,10 +136,9 @@ var ec2_httpclient = {
             try {
                 rsp = this.queryEC2Impl(action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion);
                 if (rsp.hasErrors) {
-                    // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or
-                    // endpoint and until all views not refreshed
+                    // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
                     this.errorCount++;
-                    if (this.errorCount < 2) {
+                    if (this.errorCount < 5) {
                         if (!this.errorDialog("EC2 responded with an error for "+action, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
                             break;
                         }
@@ -162,7 +161,7 @@ var ec2_httpclient = {
 
     errorDialog : function(msg, code, rId, fStr) {
         var retry = {value:null};
-        window.openDialog("chrome://ec2ui/content/dialog_retry_cancel.xul", null, "chrome,centerscreen,modal,resizable", msg, code, rId, fStr, retry);
+        window.openDialog("chrome://ec2ui/content/dialog_retry_cancel.xul", null, "chrome,modal,resizable", msg, code, rId, fStr, retry);
         return retry.value;
     },
 
@@ -248,7 +247,6 @@ var ec2_httpclient = {
                     // A timer didn't exist, this is unexpected
                     throw e;
                 }
-
                 var faultStr = "Please check your EC2 URL '" + url + "' for correctness, or delete the value in ec2ui.endpoints using about:config and retry.";
                 return this.newResponseObject(null, callback, reqType, true, "Request Error", faultStr, "");
             }
@@ -423,7 +421,6 @@ var ec2_httpclient = {
             requestId : requestId,
             faultString : faultString,
             hasErrors : hasErrors,
-            //responseText: ("" + xmlhttp.responseText.toString())
         };
     },
 

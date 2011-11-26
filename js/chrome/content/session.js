@@ -56,6 +56,9 @@ var ec2ui_session = {
             document.getElementById("ec2ui.customergateways.view").view = ec2ui_CustomerGatewayTreeView;
             document.getElementById("ec2ui.vpnattachments.view").view = ec2ui_VpnAttachmentTreeView;
             document.getElementById("ec2ui.internetgateways.view").view = ec2ui_InternetGatewayTreeView;
+            document.getElementById("ec2ui.routetables.view").view = ec2ui_RouteTablesTreeView;
+            document.getElementById("ec2ui.routes.view").view = ec2ui_RoutesTreeView;
+            document.getElementById("ec2ui.route.associations.view").view = ec2ui_RouteAssociationsTreeView;
 
             // Enable about:blank to work if noscript is installed
             if ("@maone.net/noscript-service;1" in Components.classes) {
@@ -169,14 +172,12 @@ var ec2ui_session = {
             this.model.getImages();
             this.showBusyCursor(false);
             break;
-        case "AccessKeys":
+        case "Access Keys":
             eval("ec2ui_AccessKeyTreeView." + toCall);
             break;
-        case "Certificates":
-            eval("ec2ui_CertTreeView." + toCall);
-            break;
-        case "KeyPairs":
+        case "Key Pairs":
             eval("ec2ui_KeypairTreeView." + toCall);
+            eval("ec2ui_CertTreeView." + toCall);
             break;
         case "Security Groups":
             eval("ec2ui_SecurityGroupsTreeView." + toCall);
@@ -212,6 +213,9 @@ var ec2ui_session = {
             break;
         case "ELB":
             eval("ec2ui_LoadbalancerTreeView." + toCall);
+            break;
+        case "Route Tables":
+            eval("ec2ui_RouteTablesTreeView." + toCall);
             break;
         default:
             log("This is an invalid tab: " + tabs.selectedItem.label);
@@ -765,6 +769,31 @@ var ec2ui_session = {
             return false
         }
         return true
+    },
+
+    promptList: function(title, msg, items, columns)
+    {
+        var list = []
+        for (var i = 0; i < items.length; i++) {
+            if (typeof items[i] == "object") {
+                var item = ""
+                for (p in items[i]) {
+                    if (!columns || columns.indexOf(p) > -1) {
+                        item += (item != "" ? ": " : "") + items[i][p]
+                    }
+                }
+                list.push(item)
+            } else {
+                list.push(items[i])
+            }
+        }
+
+        var selected = {};
+        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+        if (!prompts.select(null, title, msg, list.length, list, selected)) {
+            return -1;
+        }
+        return selected.value
     },
 
     promptForFile : function(msg)

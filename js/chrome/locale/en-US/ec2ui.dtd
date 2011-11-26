@@ -11,8 +11,8 @@
 
 <!ENTITY ec2ui.tabs.instances.label "Instances">
 <!ENTITY ec2ui.tabs.images.label "Images">
-<!ENTITY ec2ui.tabs.keypairs.label "KeyPairs">
-<!ENTITY ec2ui.tabs.accesskeys.label "AccessKeys">
+<!ENTITY ec2ui.tabs.keypairs.label "Key Pairs">
+<!ENTITY ec2ui.tabs.accesskeys.label "Access Keys">
 <!ENTITY ec2ui.tabs.certs.label "Certificates">
 <!ENTITY ec2ui.tabs.secgroups.label "Security Groups">
 <!ENTITY ec2ui.tabs.availzones.label "AZ">
@@ -22,6 +22,7 @@
 <!ENTITY ec2ui.tabs.leases.label "RI">
 <!ENTITY ec2ui.tabs.loadbalancer.label "ELB">
 <!ENTITY ec2ui.tabs.vpcs.label "VPC">
+<!ENTITY ec2ui.tabs.routetables.label "Route Tables">
 <!ENTITY ec2ui.tabs.vpns.label "VPNC">
 
 <!ENTITY ec2ui.captions.images.images.label "Machine Images (AMIs)">
@@ -369,6 +370,18 @@
 <!ENTITY ec2ui.permissions.authorize.tip "Grant Permission">
 <!ENTITY ec2ui.permissions.revoke.tip "Revoke Permission">
 <!ENTITY ec2ui.permissions.contextmenu.revoke.label "Revoke this permission">
+
+<!ENTITY ec2ui.captions.routetables.label "Route Tables">
+<!ENTITY ec2ui.routetable.create.tip "Create Route Table">
+<!ENTITY ec2ui.routetable.delete.tip "Delete Route Table">
+
+<!ENTITY ec2ui.captions.routes.label "Routes">
+<!ENTITY ec2ui.routes.create.tip "Create Route">
+<!ENTITY ec2ui.routes.delete.tip "Delete Route">
+
+<!ENTITY ec2ui.captions.route.associations.label "Route Associations">
+<!ENTITY ec2ui.route.associations.create.tip "Associate Route">
+<!ENTITY ec2ui.route.associations.delete.tip "Deassociate Route">
 
 <!ENTITY ec2ui.createvolfromsnap.tip "Create new volume from this snapshot">
 <!ENTITY ec2ui.deletesnap.tip "Delete this snapshot">

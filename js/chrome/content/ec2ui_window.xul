@@ -5,7 +5,6 @@
 <?xul-overlay href="chrome://ec2ui/content/view_amis.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_keypairs.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_accesskeys.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/view_certs.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_securitygroups.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_azone.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_eip.xul"?>
@@ -15,6 +14,7 @@
 <?xul-overlay href="chrome://ec2ui/content/view_vpcs.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_vpns.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_loadbalancer.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_routetables.xul"?>
 
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 <window id="ec2ui-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -36,6 +36,7 @@
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_certs.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_instances.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_securitygroups.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_routetables.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_permissions.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_azone.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_eip.js" />
@@ -83,7 +84,6 @@
         <tab label="&ec2ui.tabs.images.label;" />
         <tab label="&ec2ui.tabs.keypairs.label;" />
         <tab label="&ec2ui.tabs.accesskeys.label;" />
-        <tab label="&ec2ui.tabs.certs.label;" />
         <tab label="&ec2ui.tabs.secgroups.label;" />
         <tab label="&ec2ui.tabs.eips.label;" />
         <tab label="&ec2ui.tabs.volumes.label;" />
@@ -91,6 +91,7 @@
         <tab label="&ec2ui.tabs.bundleTasks.label;" />
         <tab label="&ec2ui.tabs.leases.label;" />
         <tab label="&ec2ui.tabs.vpcs.label;" />
+        <tab label="&ec2ui.tabs.routetables.label;" />
         <tab label="&ec2ui.tabs.vpns.label;" />
         <tab label="&ec2ui.tabs.availzones.label;" />
       </tabs>
@@ -99,7 +100,6 @@
         <tabpanel id="images_tab"/>
         <tabpanel id="keypairs_tab"/>
         <tabpanel id="accesskeys_tab"/>
-        <tabpanel id="certs_tab"/>
         <tabpanel id="security_groups_tab"/>
         <tabpanel id="eip_tab"/>
         <tabpanel id="volumes_tab"/>
@@ -107,6 +107,7 @@
         <tabpanel id="bundle_tasks_tab"/>
         <tabpanel id="leases_tab"/>
         <tabpanel id="vpcs_tab"/>
+        <tabpanel id="routetables_tab"/>
         <tabpanel id="vpns_tab"/>
         <tabpanel id="availzones_tab"/>
       </tabpanels>
