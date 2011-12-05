@@ -28,7 +28,7 @@ var ec2ui_SecurityGroupsTreeView = {
         this.treeBox.invalidate();
         if (sel) {
             log(sel.name + ": Select this group post sort");
-            this.selectByName(sel.name);
+            this.selectGroup(sel);
         } else {
             log("The selected group is null!");
         }
@@ -54,18 +54,17 @@ var ec2ui_SecurityGroupsTreeView = {
     getColumnProperties: function(column, element, prop) {},
     getLevel : function(idx) { return 0; },
 
-    selectByName : function(name) {
+    selectGroup : function(group) {
         this.selection.clearSelection();
-        for(var i in this.groupList) {
-            if (this.groupList[i].name == name) {
-                this.selection.select(i);
-                this.treeBox.ensureRowIsVisible(i);
-                return;
+        if (group) {
+            for (var i in this.groupList) {
+                if ((group.id && this.groupList[i].id == group.id) || (group.name && this.groupList[i].name == group.name)) {
+                    this.selection.select(i);
+                    this.treeBox.ensureRowIsVisible(i);
+                    return;
+                }
             }
         }
-
-        // In case we don't find a match (which is probably a bug).
-        this.selection.select(0);
     },
 
     register: function() {
@@ -111,7 +110,7 @@ var ec2ui_SecurityGroupsTreeView = {
             var wrap = function(id) {
                 retVal.id = id
                 me.refresh();
-                me.selectByName(retVal.name);
+                me.selectGroup(retVal);
                 me.authorizeCommonProtocolsByUserRequest(retVal);
             }
             ec2ui_session.controller.createSecurityGroup(retVal.name, retVal.description, retVal.vpcId, wrap);
@@ -141,7 +140,7 @@ var ec2ui_SecurityGroupsTreeView = {
         if (cidr != null) {
             var wrap = function() {
                 ec2ui_SecurityGroupsTreeView.refresh();
-                ec2ui_SecurityGroupsTreeView.selectByName(retVal.name);
+                ec2ui_SecurityGroupsTreeView.selectGroup(retVal);
             }
 
             // 1st enable SSH
@@ -166,24 +165,21 @@ var ec2ui_SecurityGroupsTreeView = {
         var me = this;
         var wrap = function() {
             me.refresh();
-            me.selectByName(group.name);
+            me.selectGroup(group);
         }
         ec2ui_session.controller.deleteSecurityGroup(group, wrap);
     },
 
     displayGroups : function (groupList) {
         if (!groupList) { groupList = []; }
+        var group = this.getSelectedGroup();
 
+        ec2ui_PermissionsTreeView.displayPermissions([]);
         this.treeBox.rowCountChanged(0, -this.groupList.length);
         this.groupList = groupList;
         this.treeBox.rowCountChanged(0, this.groupList.length);
         this.sort();
-
-        ec2ui_PermissionsTreeView.displayPermissions([]);
-
-        if (groupList.length > 0) {
-            this.selection.select(0);
-        }
+        this.selectGroup(group);
     }
 };
 

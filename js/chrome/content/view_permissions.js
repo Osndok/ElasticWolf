@@ -82,7 +82,7 @@ var ec2ui_PermissionsTreeView = {
             var me = this;
             var wrap = function() {
                 ec2ui_SecurityGroupsTreeView.refresh();
-                ec2ui_SecurityGroupsTreeView.selectByName(group.name);
+                ec2ui_SecurityGroupsTreeView.selectGroup(group);
             }
 
             var newPerm = retVal.newPerm;
@@ -121,7 +121,7 @@ var ec2ui_PermissionsTreeView = {
         var wrap = function() {
             if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
                 ec2ui_SecurityGroupsTreeView.refresh();
-                ec2ui_SecurityGroupsTreeView.selectByName(group.name);
+                ec2ui_SecurityGroupsTreeView.selectGroup(group);
             }
         }
 

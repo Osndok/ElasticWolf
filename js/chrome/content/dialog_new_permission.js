@@ -51,7 +51,7 @@ var ec2_Authorizer = {
           alert("Please provide a source group / user");
           return false;
         }
-        newPerm.srcGroup = { id: group.value, name: group.selectedItem.label, ownerId: user.value };
+        newPerm.srcGroup = { id: group.value, name: group.selectedItem.label.split("/")[1], ownerId: user.value };
     }
 
     newPerm.cidrIp = cidrStr;
@@ -208,6 +208,9 @@ var ec2_Authorizer = {
     var groupMenu = document.getElementById("ec2ui.newpermission.source.group");
     groupMenu.appendItem("", "");
     for(var i in securityGroups) {
+        if ((this.group.vpcId != "" && securityGroups[i].vpcId == "") || (this.group.vpcId == "" && securityGroups[i].vpcId != "")) {
+            continue;
+        }
         groupMenu.appendItem(securityGroups[i].id + "/" + securityGroups[i].name, securityGroups[i].id);
         if (this.group.id == securityGroups[i].id) {
             groupMenu.selectedIndex = i;
