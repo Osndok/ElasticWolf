@@ -18,10 +18,10 @@
     function init() {
         this.ec2ui_session = window.arguments[0];
         this.retVal = window.arguments[1];
-        this.ec2_httpclient = window.arguments[2];
+        this.ec2ui_client = window.arguments[2];
 
-        var opts = this.ec2_httpclient.queryVpnConnectionStylesheets(null);
-        var formats = opts.xmlDoc.evaluate("/CustomerGatewayConfigFormats/Format", opts.xmlDoc, this.ec2_httpclient.getNsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var opts = this.ec2ui_client.queryVpnConnectionStylesheets(null);
+        var formats = opts.xmlDoc.evaluate("/CustomerGatewayConfigFormats/Format", opts.xmlDoc, this.ec2ui_client.getNsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         var cgwMenu = document.getElementById("ec2ui.vpncustomerconfig.cgwtype");
         for (var i = 0; i &lt; formats.snapshotLength; i++) {
             var platform = this.getNodeValueByName(formats.snapshotItem(i), "Platform");

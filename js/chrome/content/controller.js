@@ -2,7 +2,7 @@
 var ec2ui_controller = {
     getNsResolver : function()
     {
-        return ec2_httpclient.getNsResolver();
+        return ec2ui_client.getNsResolver();
     },
 
     registerImageInRegion : function(manifestPath, region, callback)
@@ -15,13 +15,13 @@ var ec2ui_controller = {
             // The image's region is the same as the active region
             this.registerImage(manifestPath, callback);
         } else {
-            ec2_httpclient.queryEC2InRegion(region, "RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, true, "onCompleteRegisterImage", callback);
+            ec2ui_client.queryEC2InRegion(region, "RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, true, "onCompleteRegisterImage", callback);
         }
     },
 
     registerImage : function(manifestPath, callback)
     {
-        ec2_httpclient.queryEC2("RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, true, "onCompleteRegisterImage", callback);
+        ec2ui_client.queryEC2("RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, true, "onCompleteRegisterImage", callback);
     },
 
     registerImageFromSnapshot : function(snapshotId, amiName, amiDescription, architecture, kernelId, ramdiskId, deviceName, deleteOnTermination, callback)
@@ -38,7 +38,7 @@ var ec2ui_controller = {
         params.push([ 'BlockDeviceMapping.1.Ebs.SnapshotId', snapshotId ]);
         params.push([ 'BlockDeviceMapping.1.Ebs.DeleteOnTermination', deleteOnTermination ]);
 
-        ec2_httpclient.queryEC2("RegisterImage", params, this, true, "onCompleteRegisterImage", callback);
+        ec2ui_client.queryEC2("RegisterImage", params, this, true, "onCompleteRegisterImage", callback);
     },
 
     onCompleteRegisterImage : function(objResponse)
@@ -51,7 +51,7 @@ var ec2ui_controller = {
 
     deregisterImage : function(imageId, callback)
     {
-        ec2_httpclient.queryEC2("DeregisterImage", [ [ "ImageId", imageId ] ], this, true, "onCompleteDeregisterImage", callback);
+        ec2ui_client.queryEC2("DeregisterImage", [ [ "ImageId", imageId ] ], this, true, "onCompleteDeregisterImage", callback);
     },
 
     onCompleteDeregisterImage : function(objResponse)
@@ -61,7 +61,7 @@ var ec2ui_controller = {
 
     createSnapshot : function(volumeId, callback)
     {
-        ec2_httpclient.queryEC2("CreateSnapshot", [ [ "VolumeId", volumeId ] ], this, true, "onCompleteCreateSnapshot", callback);
+        ec2ui_client.queryEC2("CreateSnapshot", [ [ "VolumeId", volumeId ] ], this, true, "onCompleteCreateSnapshot", callback);
     },
 
     onCompleteCreateSnapshot : function(objResponse)
@@ -78,7 +78,7 @@ var ec2ui_controller = {
         if (volumeId != null) params.push([ "VolumeId", volumeId ]);
         if (instanceId != null) params.push([ "InstanceId", instanceId ]);
         if (device != null) params.push([ "Device", device ]);
-        ec2_httpclient.queryEC2("AttachVolume", params, this, true, "onCompleteAttachVolume", callback);
+        ec2ui_client.queryEC2("AttachVolume", params, this, true, "onCompleteAttachVolume", callback);
     },
 
     onCompleteAttachVolume : function(objResponse)
@@ -92,7 +92,7 @@ var ec2ui_controller = {
         if (size != null) params.push([ "Size", size ]);
         if (snapshotId != null) params.push([ "SnapshotId", snapshotId ]);
         if (zone != null) params.push([ "AvailabilityZone", zone ]);
-        ec2_httpclient.queryEC2("CreateVolume", params, this, true, "onCompleteCreateVolume", callback);
+        ec2ui_client.queryEC2("CreateVolume", params, this, true, "onCompleteCreateVolume", callback);
     },
 
     onCompleteCreateVolume : function(objResponse)
@@ -104,7 +104,7 @@ var ec2ui_controller = {
 
     deleteSnapshot : function(snapshotId, callback)
     {
-        ec2_httpclient.queryEC2("DeleteSnapshot", [ [ "SnapshotId", snapshotId ] ], this, true, "onCompleteDeleteSnapshot", callback);
+        ec2ui_client.queryEC2("DeleteSnapshot", [ [ "SnapshotId", snapshotId ] ], this, true, "onCompleteDeleteSnapshot", callback);
     },
 
     onCompleteDeleteSnapshot : function(objResponse)
@@ -115,7 +115,7 @@ var ec2ui_controller = {
 
     deleteVolume : function(volumeId, callback)
     {
-        ec2_httpclient.queryEC2("DeleteVolume", [ [ "VolumeId", volumeId ] ], this, true, "onCompleteDeleteVolume", callback);
+        ec2ui_client.queryEC2("DeleteVolume", [ [ "VolumeId", volumeId ] ], this, true, "onCompleteDeleteVolume", callback);
     },
 
     onCompleteDeleteVolume : function(objResponse)
@@ -125,12 +125,12 @@ var ec2ui_controller = {
 
     detachVolume : function(volumeId, callback)
     {
-        ec2_httpclient.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ] ], this, true, "onCompleteDetachVolume", callback);
+        ec2ui_client.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ] ], this, true, "onCompleteDetachVolume", callback);
     },
 
     forceDetachVolume : function(volumeId, callback)
     {
-        ec2_httpclient.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ], [ "Force", true ] ], this, true, "onCompleteDetachVolume", callback);
+        ec2ui_client.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ], [ "Force", true ] ], this, true, "onCompleteDetachVolume", callback);
     },
 
     onCompleteDetachVolume : function(objResponse)
@@ -140,7 +140,7 @@ var ec2ui_controller = {
 
     describeVolumes : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeVolumes", [], this, true, "onCompleteDescribeVolumes", callback);
+        ec2ui_client.queryEC2("DescribeVolumes", [], this, true, "onCompleteDescribeVolumes", callback);
     },
 
     onCompleteDescribeVolumes : function(objResponse)
@@ -187,7 +187,7 @@ var ec2ui_controller = {
 
     describeSnapshots : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeSnapshots", [], this, true, "onCompleteDescribeSnapshots", callback);
+        ec2ui_client.queryEC2("DescribeSnapshots", [], this, true, "onCompleteDescribeSnapshots", callback);
     },
 
     onCompleteDescribeSnapshots : function(objResponse)
@@ -221,7 +221,7 @@ var ec2ui_controller = {
     describeVpcs : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        ec2_httpclient.queryEC2("DescribeVpcs", [], this, isSync, "onCompleteDescribeVpcs", callback);
+        ec2ui_client.queryEC2("DescribeVpcs", [], this, isSync, "onCompleteDescribeVpcs", callback);
     },
 
     onCompleteDescribeVpcs : function(objResponse)
@@ -244,7 +244,7 @@ var ec2ui_controller = {
 
     createVpc : function(cidr, callback)
     {
-        ec2_httpclient.queryEC2("CreateVpc", [ [ "CidrBlock", cidr ] ], this, true, "onCompleteCreateVpc", callback);
+        ec2ui_client.queryEC2("CreateVpc", [ [ "CidrBlock", cidr ] ], this, true, "onCompleteCreateVpc", callback);
     },
 
     onCompleteCreateVpc : function(objResponse)
@@ -256,7 +256,7 @@ var ec2ui_controller = {
 
     deleteVpc : function(id, callback)
     {
-        ec2_httpclient.queryEC2("DeleteVpc", [ [ "VpcId", id ] ], this, true, "onCompleteDeleteVpc", callback);
+        ec2ui_client.queryEC2("DeleteVpc", [ [ "VpcId", id ] ], this, true, "onCompleteDeleteVpc", callback);
     },
 
     onCompleteDeleteVpc : function(objResponse)
@@ -267,7 +267,7 @@ var ec2ui_controller = {
     describeSubnets : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        ec2_httpclient.queryEC2("DescribeSubnets", [], this, isSync, "onCompleteDescribeSubnets", callback);
+        ec2ui_client.queryEC2("DescribeSubnets", [], this, isSync, "onCompleteDescribeSubnets", callback);
     },
 
     onCompleteDescribeSubnets : function(objResponse)
@@ -292,7 +292,7 @@ var ec2ui_controller = {
 
     createSubnet : function(vpcId, cidr, az, callback)
     {
-        ec2_httpclient.queryEC2("CreateSubnet", [ [ "CidrBlock", cidr ], [ "VpcId", vpcId ], [ "AvailabilityZone", az ] ], this, true, "onCompleteCreateSubnet", callback);
+        ec2ui_client.queryEC2("CreateSubnet", [ [ "CidrBlock", cidr ], [ "VpcId", vpcId ], [ "AvailabilityZone", az ] ], this, true, "onCompleteCreateSubnet", callback);
     },
 
     onCompleteCreateSubnet : function(objResponse)
@@ -302,7 +302,7 @@ var ec2ui_controller = {
 
     deleteSubnet : function(id, callback)
     {
-        ec2_httpclient.queryEC2("DeleteSubnet", [ [ "SubnetId", id ] ], this, true, "onCompleteDeleteSubnet", callback);
+        ec2ui_client.queryEC2("DeleteSubnet", [ [ "SubnetId", id ] ], this, true, "onCompleteDeleteSubnet", callback);
     },
 
     onCompleteDeleteSubnet : function(objResponse)
@@ -313,7 +313,7 @@ var ec2ui_controller = {
     describeDhcpOptions : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        ec2_httpclient.queryEC2("DescribeDhcpOptions", [], this, isSync, "onCompleteDescribeDhcpOptions", callback);
+        ec2ui_client.queryEC2("DescribeDhcpOptions", [], this, isSync, "onCompleteDescribeDhcpOptions", callback);
     },
 
     onCompleteDescribeDhcpOptions : function(objResponse)
@@ -354,7 +354,7 @@ var ec2ui_controller = {
 
     associateDhcpOptions : function(dhcpOptionsId, vpcId, callback)
     {
-        ec2_httpclient.queryEC2("AssociateDhcpOptions", [ [ "DhcpOptionsId", dhcpOptionsId ], [ "VpcId", vpcId ] ], this, true, "onCompleteAssociateDhcpOptions", callback);
+        ec2ui_client.queryEC2("AssociateDhcpOptions", [ [ "DhcpOptionsId", dhcpOptionsId ], [ "VpcId", vpcId ] ], this, true, "onCompleteAssociateDhcpOptions", callback);
     },
 
     onCompleteAssociateDhcpOptions : function(objResponse)
@@ -375,7 +375,7 @@ var ec2ui_controller = {
             }
         }
 
-        ec2_httpclient.queryEC2("CreateDhcpOptions", params, this, true, "onCompleteCreateDhcpOptions", callback);
+        ec2ui_client.queryEC2("CreateDhcpOptions", params, this, true, "onCompleteCreateDhcpOptions", callback);
     },
 
     onCompleteCreateDhcpOptions : function(objResponse)
@@ -385,7 +385,7 @@ var ec2ui_controller = {
 
     deleteDhcpOptions : function(id, callback)
     {
-        ec2_httpclient.queryEC2("DeleteDhcpOptions", [ [ "DhcpOptionsId", id ] ], this, true, "onCompleteDeleteDhcpOptions", callback);
+        ec2ui_client.queryEC2("DeleteDhcpOptions", [ [ "DhcpOptionsId", id ] ], this, true, "onCompleteDeleteDhcpOptions", callback);
     },
 
     onCompleteDeleteDhcpOptions : function(objResponse)
@@ -396,7 +396,7 @@ var ec2ui_controller = {
     describeVpnGateways : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        ec2_httpclient.queryEC2("DescribeVpnGateways", [], this, isSync, "onCompleteDescribeVpnGateways", callback);
+        ec2ui_client.queryEC2("DescribeVpnGateways", [], this, isSync, "onCompleteDescribeVpnGateways", callback);
     },
 
     onCompleteDescribeVpnGateways : function(objResponse)
@@ -428,7 +428,7 @@ var ec2ui_controller = {
 
     createVpnGateway : function(type, az, callback)
     {
-        ec2_httpclient.queryEC2("CreateVpnGateway", [ [ "Type", type ], [ "AvailabilityZone", az ] ], this, true, "onCompleteCreateVpnGateway", callback);
+        ec2ui_client.queryEC2("CreateVpnGateway", [ [ "Type", type ], [ "AvailabilityZone", az ] ], this, true, "onCompleteCreateVpnGateway", callback);
     },
 
     onCompleteCreateVpnGateway : function(objResponse)
@@ -438,7 +438,7 @@ var ec2ui_controller = {
 
     deleteVpnGateway : function(id, callback)
     {
-        ec2_httpclient.queryEC2("DeleteVpnGateway", [ [ "VpnGatewayId", id ] ], this, true, "onCompleteDeleteVpnGateway", callback);
+        ec2ui_client.queryEC2("DeleteVpnGateway", [ [ "VpnGatewayId", id ] ], this, true, "onCompleteDeleteVpnGateway", callback);
     },
 
     onCompleteDeleteVpnGateway : function(objResponse)
@@ -449,7 +449,7 @@ var ec2ui_controller = {
     describeCustomerGateways : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        ec2_httpclient.queryEC2("DescribeCustomerGateways", [], this, isSync, "onCompleteDescribeCustomerGateways", callback);
+        ec2ui_client.queryEC2("DescribeCustomerGateways", [], this, isSync, "onCompleteDescribeCustomerGateways", callback);
     },
 
     onCompleteDescribeCustomerGateways : function(objResponse)
@@ -473,7 +473,7 @@ var ec2ui_controller = {
 
     createCustomerGateway : function(type, ip, asn, callback)
     {
-        ec2_httpclient.queryEC2("CreateCustomerGateway", [ [ "Type", type ], [ "IpAddress", ip ], [ "BgpAsn", asn ] ], this, true, "onCompleteCreateCustomerGateway", callback);
+        ec2ui_client.queryEC2("CreateCustomerGateway", [ [ "Type", type ], [ "IpAddress", ip ], [ "BgpAsn", asn ] ], this, true, "onCompleteCreateCustomerGateway", callback);
     },
 
     onCompleteCreateCustomerGateway : function(objResponse)
@@ -483,7 +483,7 @@ var ec2ui_controller = {
 
     deleteCustomerGateway : function(id, callback)
     {
-        ec2_httpclient.queryEC2("DeleteCustomerGateway", [ [ "CustomerGatewayId", id ] ], this, true, "onCompleteDeleteCustomerGateway", callback);
+        ec2ui_client.queryEC2("DeleteCustomerGateway", [ [ "CustomerGatewayId", id ] ], this, true, "onCompleteDeleteCustomerGateway", callback);
     },
 
     onCompleteDeleteCustomerGateway : function(objResponse)
@@ -494,7 +494,7 @@ var ec2ui_controller = {
     describeInternetGateways : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        ec2_httpclient.queryEC2("DescribeInternetGateways", [], this, isSync, "onCompleteDescribeInternetGateways", callback);
+        ec2ui_client.queryEC2("DescribeInternetGateways", [], this, isSync, "onCompleteDescribeInternetGateways", callback);
     },
 
     onCompleteDescribeInternetGateways : function(objResponse)
@@ -527,7 +527,7 @@ var ec2ui_controller = {
 
     createInternetGateway : function(callback)
     {
-        ec2_httpclient.queryEC2("CreateInternetGateway", [], this, true, "onCompleteCreateInternetGateway", callback);
+        ec2ui_client.queryEC2("CreateInternetGateway", [], this, true, "onCompleteCreateInternetGateway", callback);
     },
 
     onCompleteCreateInternetGateway : function(objResponse)
@@ -539,7 +539,7 @@ var ec2ui_controller = {
 
     deleteInternetGateway : function(id, callback)
     {
-        ec2_httpclient.queryEC2("DeleteInternetGateway", [ [ "InternetGatewayId", id ] ], this, true, "onCompleteDeleteInternetGateway", callback);
+        ec2ui_client.queryEC2("DeleteInternetGateway", [ [ "InternetGatewayId", id ] ], this, true, "onCompleteDeleteInternetGateway", callback);
     },
 
     onCompleteDeleteInternetGateway : function(objResponse)
@@ -549,7 +549,7 @@ var ec2ui_controller = {
 
     attachInternetGateway : function(igwid, vpcid, callback)
     {
-        ec2_httpclient.queryEC2("AttachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, true, "onCompleteAttachInternetGateway", callback);
+        ec2ui_client.queryEC2("AttachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, true, "onCompleteAttachInternetGateway", callback);
     },
 
     onCompleteAttachInternetGateway : function(objResponse)
@@ -559,7 +559,7 @@ var ec2ui_controller = {
 
     detachInternetGateway : function(igwid, vpcid, callback)
     {
-        ec2_httpclient.queryEC2("DetachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, true, "onCompleteDetachInternetGateway", callback);
+        ec2ui_client.queryEC2("DetachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, true, "onCompleteDetachInternetGateway", callback);
     },
 
     onCompleteDetachInternetGateway : function(objResponse)
@@ -570,7 +570,7 @@ var ec2ui_controller = {
     describeVpnConnections : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        ec2_httpclient.queryEC2("DescribeVpnConnections", [], this, isSync, "onCompleteDescribeVpnConnections", callback);
+        ec2ui_client.queryEC2("DescribeVpnConnections", [], this, isSync, "onCompleteDescribeVpnConnections", callback);
     },
 
     onCompleteDescribeVpnConnections : function(objResponse)
@@ -609,7 +609,7 @@ var ec2ui_controller = {
 
     createVpnConnection : function(type, cgwid, vgwid, callback)
     {
-        ec2_httpclient.queryEC2("CreateVpnConnection", [ [ "Type", type ], [ "CustomerGatewayId", cgwid ], [ "VpnGatewayId", vgwid ] ], this, true, "onCompleteCreateVpnConnection", callback);
+        ec2ui_client.queryEC2("CreateVpnConnection", [ [ "Type", type ], [ "CustomerGatewayId", cgwid ], [ "VpnGatewayId", vgwid ] ], this, true, "onCompleteCreateVpnConnection", callback);
     },
 
     onCompleteCreateVpnConnection : function(objResponse)
@@ -619,7 +619,7 @@ var ec2ui_controller = {
 
     deleteVpnConnection : function(id, callback)
     {
-        ec2_httpclient.queryEC2("DeleteVpnConnection", [ [ "VpnConnectionId", id ] ], this, true, "onCompleteDeleteVpnConnection", callback);
+        ec2ui_client.queryEC2("DeleteVpnConnection", [ [ "VpnConnectionId", id ] ], this, true, "onCompleteDeleteVpnConnection", callback);
     },
 
     onCompleteDeleteVpnConnection : function(objResponse)
@@ -629,7 +629,7 @@ var ec2ui_controller = {
 
     attachVpnGatewayToVpc : function(vgwid, vpcid, callback)
     {
-        ec2_httpclient.queryEC2("AttachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, true, "onCompleteAttachVpnGatewayToVpc", callback);
+        ec2ui_client.queryEC2("AttachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, true, "onCompleteAttachVpnGatewayToVpc", callback);
     },
 
     onCompleteAttachVpnGatewayToVpc : function(objResponse)
@@ -639,7 +639,7 @@ var ec2ui_controller = {
 
     detachVpnGatewayFromVpc : function(vgwid, vpcid, callback)
     {
-        ec2_httpclient.queryEC2("DetachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, true, "onCompleteDetachVpnGatewayFromVpc", callback);
+        ec2ui_client.queryEC2("DetachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, true, "onCompleteDetachVpnGatewayFromVpc", callback);
     },
 
     onCompleteDetachVpnGatewayFromVpc : function(objResponse)
@@ -649,7 +649,7 @@ var ec2ui_controller = {
 
     describeImage : function(imageId, callback)
     {
-        ec2_httpclient.queryEC2("DescribeImages", [ [ "ImageId", imageId ] ], this, true, "onCompleteDescribeImage", callback);
+        ec2ui_client.queryEC2("DescribeImages", [ [ "ImageId", imageId ] ], this, true, "onCompleteDescribeImage", callback);
     },
 
     onCompleteDescribeImage : function(objResponse)
@@ -691,7 +691,7 @@ var ec2ui_controller = {
         var noRebootVal = "false";
         if (noReboot == true) noRebootVal = "true";
 
-        ec2_httpclient.queryEC2("CreateImage", [ [ "InstanceId", instanceId ], [ "Name", amiName ], [ "Description", amiDescription ], [ "NoReboot", noRebootVal ] ], this, true, "onCompleteCreateImage", callback);
+        ec2ui_client.queryEC2("CreateImage", [ [ "InstanceId", instanceId ], [ "Name", amiName ], [ "Description", amiDescription ], [ "NoReboot", noRebootVal ] ], this, true, "onCompleteCreateImage", callback);
     },
 
     onCompleteCreateImage : function(objResponse)
@@ -705,7 +705,7 @@ var ec2ui_controller = {
     describeImages : function(isSync, callback)
     {
         if (!isSync) isSync = false;
-        ec2_httpclient.queryEC2("DescribeImages", [], this, isSync, "onCompleteDescribeImages", callback);
+        ec2ui_client.queryEC2("DescribeImages", [], this, isSync, "onCompleteDescribeImages", callback);
     },
 
     onCompleteDescribeImages : function(objResponse)
@@ -746,7 +746,7 @@ var ec2ui_controller = {
 
     describeLeaseOfferings : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeReservedInstancesOfferings", [], this, true, "onCompleteDescribeLeaseOfferings", callback);
+        ec2ui_client.queryEC2("DescribeReservedInstancesOfferings", [], this, true, "onCompleteDescribeLeaseOfferings", callback);
     },
 
     onCompleteDescribeLeaseOfferings : function(objResponse)
@@ -774,7 +774,7 @@ var ec2ui_controller = {
 
     describeReservedInstances : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeReservedInstances", [], this, true, "onCompleteDescribeReservedInstances", callback);
+        ec2ui_client.queryEC2("DescribeReservedInstances", [], this, true, "onCompleteDescribeReservedInstances", callback);
     },
 
     onCompleteDescribeReservedInstances : function(objResponse)
@@ -807,7 +807,7 @@ var ec2ui_controller = {
 
     purchaseOffering : function(id, count, callback)
     {
-        ec2_httpclient.queryEC2("PurchaseReservedInstancesOffering", [ [ "ReservedInstancesOfferingId", id ], [ "InstanceCount", count ] ], this, true, "onCompletePurchaseOffering", callback);
+        ec2ui_client.queryEC2("PurchaseReservedInstancesOffering", [ [ "ReservedInstancesOfferingId", id ], [ "InstanceCount", count ] ], this, true, "onCompletePurchaseOffering", callback);
     },
 
     onCompletePurchaseOffering : function(objResponse)
@@ -820,7 +820,7 @@ var ec2ui_controller = {
 
     describeLaunchPermissions : function(imageId, callback)
     {
-        ec2_httpclient.queryEC2("DescribeImageAttribute", [ [ "ImageId", imageId ], [ "Attribute", "launchPermission" ] ], this, true, "onCompleteDescribeLaunchPermissions", callback);
+        ec2ui_client.queryEC2("DescribeImageAttribute", [ [ "ImageId", imageId ], [ "Attribute", "launchPermission" ] ], this, true, "onCompleteDescribeLaunchPermissions", callback);
     },
 
     onCompleteDescribeLaunchPermissions : function(objResponse)
@@ -852,7 +852,7 @@ var ec2ui_controller = {
         } else {
             params.push([ "UserId.1", name ]);
         }
-        ec2_httpclient.queryEC2("ModifyImageAttribute", params, this, true, "onCompleteModifyImageAttribute", callback);
+        ec2ui_client.queryEC2("ModifyImageAttribute", params, this, true, "onCompleteModifyImageAttribute", callback);
     },
 
     revokeLaunchPermission : function(imageId, name, callback)
@@ -866,7 +866,7 @@ var ec2ui_controller = {
         } else {
             params.push([ "UserId.1", name ]);
         }
-        ec2_httpclient.queryEC2("ModifyImageAttribute", params, this, true, "onCompleteModifyImageAttribute", callback);
+        ec2ui_client.queryEC2("ModifyImageAttribute", params, this, true, "onCompleteModifyImageAttribute", callback);
     },
 
     onCompleteModifyImageAttribute : function(objResponse)
@@ -879,7 +879,7 @@ var ec2ui_controller = {
         var params = []
         params.push([ "ImageId", imageId ]);
         params.push([ "Attribute", "launchPermission" ]);
-        ec2_httpclient.queryEC2("ResetImageAttribute", params, this, true, "onCompleteResetImageAttribute", callback);
+        ec2ui_client.queryEC2("ResetImageAttribute", params, this, true, "onCompleteResetImageAttribute", callback);
     },
 
     onCompleteResetImageAttribute : function(objResponse)
@@ -982,7 +982,7 @@ var ec2ui_controller = {
             }
         }
 
-        ec2_httpclient.queryEC2("RunInstances", params, this, true, "onCompleteRunInstances", callback);
+        ec2ui_client.queryEC2("RunInstances", params, this, true, "onCompleteRunInstances", callback);
     },
 
     onCompleteRunInstances : function(objResponse)
@@ -1020,7 +1020,7 @@ var ec2ui_controller = {
         for ( var i in instanceIds) {
             params.push([ "InstanceId." + (i + 1), instanceIds[i] ]);
         }
-        ec2_httpclient.queryEC2("TerminateInstances", params, this, true, "onCompleteTerminateInstances", callback);
+        ec2ui_client.queryEC2("TerminateInstances", params, this, true, "onCompleteTerminateInstances", callback);
     },
 
     onCompleteTerminateInstances : function(objResponse)
@@ -1052,7 +1052,7 @@ var ec2ui_controller = {
         if (force == true) {
             params.push([ "Force", "true" ]);
         }
-        ec2_httpclient.queryEC2("StopInstances", params, this, true, "onCompleteStopInstances", callback);
+        ec2ui_client.queryEC2("StopInstances", params, this, true, "onCompleteStopInstances", callback);
     },
 
     onCompleteStopInstances : function(objResponse)
@@ -1081,7 +1081,7 @@ var ec2ui_controller = {
         for ( var i in instanceIds) {
             params.push([ "InstanceId." + (i + 1), instanceIds[i] ]);
         }
-        ec2_httpclient.queryEC2("StartInstances", params, this, true, "onCompleteStartInstances", callback);
+        ec2ui_client.queryEC2("StartInstances", params, this, true, "onCompleteStartInstances", callback);
     },
 
     onCompleteStartInstances : function(objResponse)
@@ -1107,7 +1107,7 @@ var ec2ui_controller = {
 
     describeInstances : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeInstances", [], this, true, "onCompleteDescribeInstances", callback);
+        ec2ui_client.queryEC2("DescribeInstances", [], this, true, "onCompleteDescribeInstances", callback);
     },
 
     onCompleteDescribeInstances : function(objResponse)
@@ -1291,7 +1291,7 @@ var ec2ui_controller = {
 
     describeBundleTasks : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeBundleTasks", [], this, true, "onCompleteDescribeBundleTasks", callback);
+        ec2ui_client.queryEC2("DescribeBundleTasks", [], this, true, "onCompleteDescribeBundleTasks", callback);
     },
 
     onCompleteDescribeBundleTasks : function(objResponse)
@@ -1350,7 +1350,7 @@ var ec2ui_controller = {
 
         if (false) {
             // Check to see whether the key exists in the bucket already
-            httpRsp = ec2_httpclient.makeS3HTTPRequest("HEAD", "/" + dstB + params, this.getS3URL(dstB, destReg) + params, null, xmlhttp);
+            httpRsp = ec2ui_client.makeS3HTTPRequest("HEAD", "/" + dstB + params, this.getS3URL(dstB, destReg) + params, null, xmlhttp);
 
             if (!httpRsp.hasErrors || (httpRsp.hasErrors && (httpRsp.xmlhttp.status == 403))) {
                 log("File exists, no need to copy it");
@@ -1368,7 +1368,7 @@ var ec2ui_controller = {
         msg += " from Source: " + srcB + " to Dest: " + dstB;
         log(msg);
 
-        var resp = ec2_httpclient.makeS3HTTPRequest("PUT", "/" + dstB + params, this.getS3URL(dstB, destReg) + params, null, xmlhttp, "/" + srcB + params, true, "onCompleteCopyS3Key", this, callback);
+        var resp = ec2ui_client.makeS3HTTPRequest("PUT", "/" + dstB + params, this.getS3URL(dstB, destReg) + params, null, xmlhttp, "/" + srcB + params, true, "onCompleteCopyS3Key", this, callback);
 
         return !resp.hasErrors;
     },
@@ -1394,7 +1394,7 @@ var ec2ui_controller = {
 
         log("Enumerating ACLs for Bucket: " + bucket);
         var params = "/" + key + "?acl";
-        var httpRsp = ec2_httpclient.makeS3HTTPRequest("GET", "/" + bucket + params, this.getS3URL(bucket, region) + params);
+        var httpRsp = ec2ui_client.makeS3HTTPRequest("GET", "/" + bucket + params, this.getS3URL(bucket, region) + params);
 
         if (!httpRsp.hasErrors) {
             var xmlhttp = httpRsp.xmlhttp;
@@ -1429,7 +1429,7 @@ var ec2ui_controller = {
 
         log("Setting ACL on Key: " + key);
         var params = "/" + key + "?acl";
-        var httpRsp = ec2_httpclient.makeS3HTTPRequest("PUT", "/" + bucket + params, this.getS3URL(bucket, region) + params, acl, xmlhttp);
+        var httpRsp = ec2ui_client.makeS3HTTPRequest("PUT", "/" + bucket + params, this.getS3URL(bucket, region) + params, acl, xmlhttp);
 
         return !httpRsp.hasErrors;
     },
@@ -1442,7 +1442,7 @@ var ec2ui_controller = {
         }
 
         var params = "/" + key;
-        var httpRsp = ec2_httpclient.makeS3HTTPRequest("PUT", "/" + bucket + params, this.getS3URL(bucket, region) + params, content);
+        var httpRsp = ec2ui_client.makeS3HTTPRequest("PUT", "/" + bucket + params, this.getS3URL(bucket, region) + params, content);
 
         return !httpRsp.hasErrors;
     },
@@ -1455,7 +1455,7 @@ var ec2ui_controller = {
         }
 
         var params = "/" + key;
-        ec2_httpclient.makeS3HTTPRequest("DELETE", "/" + bucket + params, this.getS3URL(bucket, region) + params);
+        ec2ui_client.makeS3HTTPRequest("DELETE", "/" + bucket + params, this.getS3URL(bucket, region) + params);
 
         return true;
     },
@@ -1470,7 +1470,7 @@ var ec2ui_controller = {
         log("Enumerating keys with prefix " + prefix + " in bucket " + bucket);
         var list = null;
         var params = "/?prefix=" + prefix;
-        var httpRsp = ec2_httpclient.makeS3HTTPRequest("GET", "/" + bucket + "/", this.getS3URL(bucket, region) + params);
+        var httpRsp = ec2ui_client.makeS3HTTPRequest("GET", "/" + bucket + "/", this.getS3URL(bucket, region) + params);
 
         if (!httpRsp.hasErrors) {
             var respXML = new DOMParser().parseFromString(httpRsp.xmlhttp.responseText, "text/xml");
@@ -1490,7 +1490,7 @@ var ec2ui_controller = {
         var fileName = "/" + bucket + "/";
         var s3url = this.getS3URL(bucket, region) + "/?max-keys=0";
         var fSuccess = false;
-        var httpRsp = ec2_httpclient.makeS3HTTPRequest("HEAD", fileName, s3url);
+        var httpRsp = ec2ui_client.makeS3HTTPRequest("HEAD", fileName, s3url);
 
         if (httpRsp.hasErrors) {
             if (httpRsp.xmlhttp.status == 403) {
@@ -1527,7 +1527,7 @@ var ec2ui_controller = {
 
             mult = 1;
             for (i = 0; i < 3; ++i) {
-                httpRsp = ec2_httpclient.makeS3HTTPRequest("GET", "/" + bucket + "/?location", this.getS3URL(bucket) + "/?location");
+                httpRsp = ec2ui_client.makeS3HTTPRequest("GET", "/" + bucket + "/?location", this.getS3URL(bucket) + "/?location");
 
                 if (!httpRsp.hasErrors) {
                     var respXML = httpRsp.xmlhttp.responseXML;
@@ -1583,7 +1583,7 @@ var ec2ui_controller = {
                 }
 
             log(s3url + ": URL, Content: " + content || "");
-            httpRsp = ec2_httpclient.makeS3HTTPRequest("PUT", fileName, s3url, content);
+            httpRsp = ec2ui_client.makeS3HTTPRequest("PUT", fileName, s3url, content);
 
             // The operation succeeded if there were no errors
             fSuccess = !httpRsp.hasErrors;
@@ -1625,7 +1625,7 @@ var ec2ui_controller = {
         params.push([ "Storage.S3.UploadPolicy", s3polb64 ]);
         params.push([ "Storage.S3.UploadPolicySignature", policySig ]);
 
-        ec2_httpclient.queryEC2("BundleInstance", params, this, true, "onCompleteBundleInstance", callback);
+        ec2ui_client.queryEC2("BundleInstance", params, this, true, "onCompleteBundleInstance", callback);
     },
 
     onCompleteBundleInstance : function(objResponse)
@@ -1644,7 +1644,7 @@ var ec2ui_controller = {
         var params = []
         params.push([ "BundleId", id ]);
 
-        ec2_httpclient.queryEC2("CancelBundleTask", params, this, true, "onCompleteCancelBundleTask", callback);
+        ec2ui_client.queryEC2("CancelBundleTask", params, this, true, "onCompleteCancelBundleTask", callback);
     },
 
     onCompleteCancelBundleTask : function(objResponse)
@@ -1658,7 +1658,7 @@ var ec2ui_controller = {
 
     describeKeypairs : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeKeyPairs", [], this, true, "onCompleteDescribeKeypairs", callback);
+        ec2ui_client.queryEC2("DescribeKeyPairs", [], this, true, "onCompleteDescribeKeypairs", callback);
     },
 
     onCompleteDescribeKeypairs : function(objResponse)
@@ -1679,7 +1679,7 @@ var ec2ui_controller = {
 
     createKeypair : function(name, callback)
     {
-        ec2_httpclient.queryEC2("CreateKeyPair", [ [ "KeyName", name ] ], this, true, "onCompleteCreateKeyPair", callback);
+        ec2ui_client.queryEC2("CreateKeyPair", [ [ "KeyName", name ] ], this, true, "onCompleteCreateKeyPair", callback);
     },
 
     onCompleteCreateKeyPair : function(objResponse)
@@ -1698,7 +1698,7 @@ var ec2ui_controller = {
 
     deleteKeypair : function(name, callback)
     {
-        ec2_httpclient.queryEC2("DeleteKeyPair", [ [ "KeyName", name ] ], this, true, "onCompleteDeleteKeyPair", callback);
+        ec2ui_client.queryEC2("DeleteKeyPair", [ [ "KeyName", name ] ], this, true, "onCompleteDeleteKeyPair", callback);
     },
 
     onCompleteDeleteKeyPair : function(objResponse)
@@ -1708,7 +1708,7 @@ var ec2ui_controller = {
 
     createAccessKey : function(callback)
     {
-        ec2_httpclient.queryIAM("CreateAccessKey", [], this, true, "onCompleteCreateAccessKey", callback);
+        ec2ui_client.queryIAM("CreateAccessKey", [], this, true, "onCompleteCreateAccessKey", callback);
     },
 
     onCompleteCreateAccessKey : function(objResponse)
@@ -1724,7 +1724,7 @@ var ec2ui_controller = {
 
     deleteAccessKey : function(name, callback)
     {
-        ec2_httpclient.queryIAM("DeleteAccessKey", [ [ "AccessKeyId", name ] ], this, true, "onCompleteDeleteAccessKey", callback);
+        ec2ui_client.queryIAM("DeleteAccessKey", [ [ "AccessKeyId", name ] ], this, true, "onCompleteDeleteAccessKey", callback);
     },
 
     onCompleteDeleteAccessKey : function(objResponse)
@@ -1734,7 +1734,7 @@ var ec2ui_controller = {
 
     listAccessKeys : function(callback)
     {
-        ec2_httpclient.queryIAM("ListAccessKeys", [], this, true, "onCompleteListAccessKeys", callback);
+        ec2ui_client.queryIAM("ListAccessKeys", [], this, true, "onCompleteListAccessKeys", callback);
     },
 
     onCompleteListAccessKeys : function(objResponse)
@@ -1746,7 +1746,7 @@ var ec2ui_controller = {
         for ( var i = 0; i < items.length; i++) {
             var name = getNodeValueByName(items[i], "AccessKeyId");
             var status = getNodeValueByName(items[i], "Status");
-            list.push(new AccessKey(name, status, "", ec2_httpclient.accessCode == name));
+            list.push(new AccessKey(name, status, "", ec2ui_client.accessCode == name));
         }
 
         ec2ui_model.updateAccessKeys(list);
@@ -1755,7 +1755,7 @@ var ec2ui_controller = {
 
     importKeypair : function(name, keyMaterial, callback)
     {
-        ec2_httpclient.queryEC2("ImportKeyPair", [ [ "KeyName", name ], [ "PublicKeyMaterial", keyMaterial ] ], this, true, "onCompleteImportKeyPair", callback);
+        ec2ui_client.queryEC2("ImportKeyPair", [ [ "KeyName", name ], [ "PublicKeyMaterial", keyMaterial ] ], this, true, "onCompleteImportKeyPair", callback);
     },
 
     onCompleteImportKeyPair : function(objResponse)
@@ -1770,7 +1770,7 @@ var ec2ui_controller = {
 
     listSigningCertificates : function(callback)
     {
-        ec2_httpclient.queryIAM("ListSigningCertificates", [], this, true, "onCompleteListSigningCertificates", callback);
+        ec2ui_client.queryIAM("ListSigningCertificates", [], this, true, "onCompleteListSigningCertificates", callback);
     },
 
     onCompleteListSigningCertificates : function(objResponse)
@@ -1791,7 +1791,7 @@ var ec2ui_controller = {
 
     UploadSigningCertificate : function(body, callback)
     {
-        ec2_httpclient.queryIAM("UploadSigningCertificate", [ [ "CertificateBody", body ] ], this, true, "onCompleteUploadSigningCertificate", callback);
+        ec2ui_client.queryIAM("UploadSigningCertificate", [ [ "CertificateBody", body ] ], this, true, "onCompleteUploadSigningCertificate", callback);
     },
 
     onCompleteUploadSigningCertificate : function(objResponse)
@@ -1805,7 +1805,7 @@ var ec2ui_controller = {
 
     DeleteSigningCertificate : function(cert, callback)
     {
-        ec2_httpclient.queryIAM("DeleteSigningCertificate", [ [ "CertificateId", cert ] ], this, true, "onCompleteDeleteSigningCertificate", callback);
+        ec2ui_client.queryIAM("DeleteSigningCertificate", [ [ "CertificateId", cert ] ], this, true, "onCompleteDeleteSigningCertificate", callback);
     },
 
     onCompleteDeleteSigningCertificate : function(objResponse)
@@ -1815,7 +1815,7 @@ var ec2ui_controller = {
 
     describeRouteTables : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeRouteTables", [], this, true, "onCompleteDescribeRouteTables", callback);
+        ec2ui_client.queryEC2("DescribeRouteTables", [], this, true, "onCompleteDescribeRouteTables", callback);
     },
 
     onCompleteDescribeRouteTables : function(objResponse)
@@ -1856,7 +1856,7 @@ var ec2ui_controller = {
 
     createRouteTable : function(vpcId, callback)
     {
-        ec2_httpclient.queryEC2("CreateRouteTable", [["VpcId", vpcId]], this, true, "onCompleteCreateRouteTable", callback);
+        ec2ui_client.queryEC2("CreateRouteTable", [["VpcId", vpcId]], this, true, "onCompleteCreateRouteTable", callback);
     },
 
     onCompleteCreateRouteTable : function(objResponse)
@@ -1866,7 +1866,7 @@ var ec2ui_controller = {
 
     deleteRouteTable : function(tableId, callback)
     {
-        ec2_httpclient.queryEC2("DeleteRouteTable", [["RouteTableId", tableId]], this, true, "onCompleteDeleteRouteTable", callback);
+        ec2ui_client.queryEC2("DeleteRouteTable", [["RouteTableId", tableId]], this, true, "onCompleteDeleteRouteTable", callback);
     },
 
     onCompleteDeleteRouteTable : function(objResponse)
@@ -1876,7 +1876,7 @@ var ec2ui_controller = {
 
     createRoute : function(tableId, cidr, gatewayId, callback)
     {
-        ec2_httpclient.queryEC2("CreateRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr], ["GatewayId", gatewayId]], this, true, "onCompleteCreateRoute", callback);
+        ec2ui_client.queryEC2("CreateRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr], ["GatewayId", gatewayId]], this, true, "onCompleteCreateRoute", callback);
     },
 
     onCompleteCreateRoute : function(objResponse)
@@ -1886,7 +1886,7 @@ var ec2ui_controller = {
 
     deleteRoute : function(tableId, cidr, callback)
     {
-        ec2_httpclient.queryEC2("DeleteRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr]], this, true, "onCompleteDeleteRoute", callback);
+        ec2ui_client.queryEC2("DeleteRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr]], this, true, "onCompleteDeleteRoute", callback);
     },
 
     onCompleteDeleteRoute : function(objResponse)
@@ -1896,7 +1896,7 @@ var ec2ui_controller = {
 
     AssociateRouteTable : function(tableId, subnetId, callback)
     {
-        ec2_httpclient.queryEC2("AssociateRouteTable", [["RouteTableId", tableId], ["SubnetId", subnetId]], this, true, "onCompleteAssociateRouteTable", callback);
+        ec2ui_client.queryEC2("AssociateRouteTable", [["RouteTableId", tableId], ["SubnetId", subnetId]], this, true, "onCompleteAssociateRouteTable", callback);
     },
 
     onCompleteAssociateRouteTable : function(objResponse)
@@ -1906,7 +1906,7 @@ var ec2ui_controller = {
 
     DisassociateRouteTable : function(assocId, callback)
     {
-        ec2_httpclient.queryEC2("DisassociateRouteTable", [["AssociationId", assocId]], this, true, "onCompleteDisassociateRouteTable", callback);
+        ec2ui_client.queryEC2("DisassociateRouteTable", [["AssociationId", assocId]], this, true, "onCompleteDisassociateRouteTable", callback);
     },
 
     onCompleteDisassociateRouteTable : function(objResponse)
@@ -1916,7 +1916,7 @@ var ec2ui_controller = {
 
     describeSecurityGroups : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeSecurityGroups", [], this, true, "onCompleteDescribeSecurityGroups", callback);
+        ec2ui_client.queryEC2("DescribeSecurityGroups", [], this, true, "onCompleteDescribeSecurityGroups", callback);
     },
 
     onCompleteDescribeSecurityGroups : function(objResponse)
@@ -1983,7 +1983,7 @@ var ec2ui_controller = {
         if (vpcId && vpcId != "") {
             params.push([ "VpcId", vpcId ])
         }
-        ec2_httpclient.queryEC2("CreateSecurityGroup", params, this, true, "onCompleteCreateSecurityGroup", callback, null);
+        ec2ui_client.queryEC2("CreateSecurityGroup", params, this, true, "onCompleteCreateSecurityGroup", callback, null);
     },
 
     onCompleteCreateSecurityGroup : function(objResponse)
@@ -1996,7 +1996,7 @@ var ec2ui_controller = {
     deleteSecurityGroup : function(group, callback)
     {
         var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
-        ec2_httpclient.queryEC2("DeleteSecurityGroup", params, this, true, "onCompleteDeleteSecurityGroup", callback);
+        ec2ui_client.queryEC2("DeleteSecurityGroup", params, this, true, "onCompleteDeleteSecurityGroup", callback);
     },
 
     onCompleteDeleteSecurityGroup : function(objResponse)
@@ -2011,7 +2011,7 @@ var ec2ui_controller = {
         params.push([ "IpPermissions.1.FromPort", fromPort ]);
         params.push([ "IpPermissions.1.ToPort", toPort ]);
         params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
-        ec2_httpclient.queryEC2("AuthorizeSecurityGroupIngress", params, this, true, "onCompleteAuthorizeSecurityGroupIngress", callback);
+        ec2ui_client.queryEC2("AuthorizeSecurityGroupIngress", params, this, true, "onCompleteAuthorizeSecurityGroupIngress", callback);
     },
 
     revokeSourceCIDR : function(group, ipProtocol, fromPort, toPort, cidrIp, callback)
@@ -2021,7 +2021,7 @@ var ec2ui_controller = {
         params.push([ "IpPermissions.1.FromPort", fromPort ]);
         params.push([ "IpPermissions.1.ToPort", toPort ]);
         params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
-        ec2_httpclient.queryEC2("RevokeSecurityGroupIngress", params, this, true, "onCompleteRevokeSecurityGroupIngress", callback);
+        ec2ui_client.queryEC2("RevokeSecurityGroupIngress", params, this, true, "onCompleteRevokeSecurityGroupIngress", callback);
     },
 
     authorizeSourceGroup : function(group, ipProtocol, fromPort, toPort, srcGroup, callback)
@@ -2036,7 +2036,7 @@ var ec2ui_controller = {
             params.push([ "IpPermissions.1.Groups.1.GroupName", srcGroup.name ]);
             params.push([ "IpPermissions.1.Groups.1.UserId", srcGroup.ownerId ]);
         }
-        ec2_httpclient.queryEC2("AuthorizeSecurityGroupIngress", params, this, true, "onCompleteAuthorizeSecurityGroupIngress", callback);
+        ec2ui_client.queryEC2("AuthorizeSecurityGroupIngress", params, this, true, "onCompleteAuthorizeSecurityGroupIngress", callback);
     },
 
     onCompleteAuthorizeSecurityGroupIngress : function(objResponse)
@@ -2056,7 +2056,7 @@ var ec2ui_controller = {
             params.push([ "IpPermissions.1.Groups.1.GroupName", srcGroup.name ]);
             params.push([ "IpPermissions.1.Groups.1.UserId", srcGroup.ownerId ]);
         }
-        ec2_httpclient.queryEC2("RevokeSecurityGroupIngress", params, this, true, "onCompleteRevokeSecurityGroupIngress", callback);
+        ec2ui_client.queryEC2("RevokeSecurityGroupIngress", params, this, true, "onCompleteRevokeSecurityGroupIngress", callback);
     },
 
     onCompleteRevokeSecurityGroupIngress : function(objResponse)
@@ -2070,7 +2070,7 @@ var ec2ui_controller = {
         for ( var i in instanceIds) {
             params.push([ "InstanceId." + (i + 1), instanceIds[i] ]);
         }
-        ec2_httpclient.queryEC2("RebootInstances", params, this, true, "onCompleteRebootInstances", callback);
+        ec2ui_client.queryEC2("RebootInstances", params, this, true, "onCompleteRebootInstances", callback);
     },
 
     onCompleteRebootInstances : function(objResponse)
@@ -2080,7 +2080,7 @@ var ec2ui_controller = {
 
     getConsoleOutput : function(instanceId, callback)
     {
-        return ec2_httpclient.queryEC2("GetConsoleOutput", [ [ "InstanceId", instanceId ] ], this, true, "onCompleteGetConsoleOutput", callback);
+        return ec2ui_client.queryEC2("GetConsoleOutput", [ [ "InstanceId", instanceId ] ], this, true, "onCompleteGetConsoleOutput", callback);
     },
 
     onCompleteGetConsoleOutput : function(objResponse)
@@ -2103,7 +2103,7 @@ var ec2ui_controller = {
 
     describeAvailabilityZones : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeAvailabilityZones", [], this, true, "onCompleteDescribeAvailabilityZones", callback);
+        ec2ui_client.queryEC2("DescribeAvailabilityZones", [], this, true, "onCompleteDescribeAvailabilityZones", callback);
     },
 
     onCompleteDescribeAvailabilityZones : function(objResponse)
@@ -2124,7 +2124,7 @@ var ec2ui_controller = {
 
     describeAddresses : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeAddresses", [], this, true, "onCompleteDescribeAddresses", callback);
+        ec2ui_client.queryEC2("DescribeAddresses", [], this, true, "onCompleteDescribeAddresses", callback);
     },
 
     onCompleteDescribeAddresses : function(objResponse)
@@ -2150,7 +2150,7 @@ var ec2ui_controller = {
     allocateAddress : function(vpc, callback)
     {
         var params = vpc ? [["Domain", "vpc"]] : []
-        ec2_httpclient.queryEC2("AllocateAddress", params, this, true, "onCompleteAllocateAddress", callback);
+        ec2ui_client.queryEC2("AllocateAddress", params, this, true, "onCompleteAllocateAddress", callback);
     },
 
     onCompleteAllocateAddress : function(objResponse)
@@ -2165,7 +2165,7 @@ var ec2ui_controller = {
     releaseAddress : function(eip, callback)
     {
         var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.address ]]
-        ec2_httpclient.queryEC2("ReleaseAddress", params, this, true, "onCompleteReleaseAddress", callback);
+        ec2ui_client.queryEC2("ReleaseAddress", params, this, true, "onCompleteReleaseAddress", callback);
     },
 
     onCompleteReleaseAddress : function(objResponse)
@@ -2177,7 +2177,7 @@ var ec2ui_controller = {
     {
         var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.address ]]
         params.push([ 'InstanceId', instanceid ])
-        ec2_httpclient.queryEC2("AssociateAddress", params, this, true, "onCompleteAssociateAddress", callback);
+        ec2ui_client.queryEC2("AssociateAddress", params, this, true, "onCompleteAssociateAddress", callback);
     },
 
     onCompleteAssociateAddress : function(objResponse)
@@ -2188,7 +2188,7 @@ var ec2ui_controller = {
     disassociateAddress : function(eip, callback)
     {
         var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.address ]]
-        ec2_httpclient.queryEC2("DisassociateAddress", params, this, true, "onCompleteDisassociateAddress", callback);
+        ec2ui_client.queryEC2("DisassociateAddress", params, this, true, "onCompleteDisassociateAddress", callback);
     },
 
     onCompleteDisassociateAddress : function(objResponse)
@@ -2198,7 +2198,7 @@ var ec2ui_controller = {
 
     describeRegions : function(callback)
     {
-        ec2_httpclient.queryEC2("DescribeRegions", [], this, true, "onCompleteDescribeRegions", callback);
+        ec2ui_client.queryEC2("DescribeRegions", [], this, true, "onCompleteDescribeRegions", callback);
     },
 
     onCompleteDescribeRegions : function(objResponse)
@@ -2234,7 +2234,7 @@ var ec2ui_controller = {
 
     describeLoadBalancers : function(callback)
     {
-        ec2_httpclient.queryELB("DescribeLoadBalancers", [], this, true, "onCompleteDescribeLoadBalancers", callback);
+        ec2ui_client.queryELB("DescribeLoadBalancers", [], this, true, "onCompleteDescribeLoadBalancers", callback);
     },
 
     onCompleteDescribeLoadBalancers : function(objResponse)
@@ -2302,7 +2302,7 @@ var ec2ui_controller = {
         params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
-        ec2_httpclient.queryELB("DescribeInstanceHealth", params, this, true, "oncompletedescribeInstanceHealth", callback);
+        ec2ui_client.queryELB("DescribeInstanceHealth", params, this, true, "oncompletedescribeInstanceHealth", callback);
     },
 
     oncompletedescribeInstanceHealth : function(objResponse)
@@ -2328,7 +2328,7 @@ var ec2ui_controller = {
         params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
-        ec2_httpclient.queryELB("DeleteLoadBalancer", params, this, true, "oncompleteDeleteLoadBalancer", callback);
+        ec2ui_client.queryELB("DeleteLoadBalancer", params, this, true, "oncompleteDeleteLoadBalancer", callback);
     },
 
     oncompleteDeleteLoadBalancer : function(objResponse)
@@ -2350,7 +2350,7 @@ var ec2ui_controller = {
         }
         params.push([ "Listeners.member.LoadBalancerPort", elbport ]);
         params.push([ "Listeners.member.InstancePort", instanceport ]);
-        ec2_httpclient.queryELB("CreateLoadBalancer", params, this, true, "onCompleteCreateLoadBalancer", callback);
+        ec2ui_client.queryELB("CreateLoadBalancer", params, this, true, "onCompleteCreateLoadBalancer", callback);
     },
 
     onCompleteCreateLoadBalancer : function(objResponse)
@@ -2376,7 +2376,7 @@ var ec2ui_controller = {
         if (HealthyThreshold != null) params.push([ "HealthCheck.HealthyThreshold", HealthyThreshold ]);
         if (UnhealthyThreshold != null) params.push([ "HealthCheck.UnhealthyThreshold", UnhealthyThreshold ]);
 
-        ec2_httpclient.queryELB("ConfigureHealthCheck", params, this, true, "onCompleteConfigureHealthCheck", callback);
+        ec2ui_client.queryELB("ConfigureHealthCheck", params, this, true, "onCompleteConfigureHealthCheck", callback);
     },
 
     onCompleteConfigureHealthCheck : function(objResponse)
@@ -2392,7 +2392,7 @@ var ec2ui_controller = {
         params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "Instances.member.InstanceId", RegInstance ]);
-        ec2_httpclient.queryELB("RegisterInstancesWithLoadBalancer", params, this, true, "onCompleteRegisterInstancesWithLoadBalancer", callback);
+        ec2ui_client.queryELB("RegisterInstancesWithLoadBalancer", params, this, true, "onCompleteRegisterInstancesWithLoadBalancer", callback);
     },
 
     onCompleteRegisterInstancesWithLoadBalancer : function(objResponse)
@@ -2408,7 +2408,7 @@ var ec2ui_controller = {
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "Instances.member.InstanceId", RegInstance ]);
 
-        ec2_httpclient.queryELB("DeregisterInstancesFromLoadBalancer", params, this, true, "onCompleteDeregisterInstancesWithLoadBalancer", callback);
+        ec2ui_client.queryELB("DeregisterInstancesFromLoadBalancer", params, this, true, "onCompleteDeregisterInstancesWithLoadBalancer", callback);
     },
 
     onCompleteDeregisterInstancesWithLoadBalancer : function(objResponse)
@@ -2424,7 +2424,7 @@ var ec2ui_controller = {
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "AvailabilityZones.member.1", Zone ]);
 
-        ec2_httpclient.queryELB("EnableAvailabilityZonesForLoadBalancer", params, this, true, "onCompleteenableazonewithloadbalancer", callback);
+        ec2ui_client.queryELB("EnableAvailabilityZonesForLoadBalancer", params, this, true, "onCompleteenableazonewithloadbalancer", callback);
     },
 
     onCompleteenableazonewithloadbalancer : function(objResponse)
@@ -2440,7 +2440,7 @@ var ec2ui_controller = {
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "AvailabilityZones.member.1", Zone ]);
 
-        ec2_httpclient.queryELB("DisableAvailabilityZonesForLoadBalancer", params, this, true, "onCompletedisableazonewithloadbalancer", callback);
+        ec2ui_client.queryELB("DisableAvailabilityZonesForLoadBalancer", params, this, true, "onCompletedisableazonewithloadbalancer", callback);
     },
 
     onCompletedisableazonewithloadbalancer : function(objResponse)
@@ -2460,7 +2460,7 @@ var ec2ui_controller = {
         params.push([ "HealthCheck.HealthyThreshold", HealthyThreshold ]);
         params.push([ "HealthCheck.UnhealthyThreshold", UnhealthyThreshold ]);
 
-        ec2_httpclient.queryELB("ConfigureHealthCheck", params, this, true, "onCompleteEditHealthCheck", callback);
+        ec2ui_client.queryELB("ConfigureHealthCheck", params, this, true, "onCompleteEditHealthCheck", callback);
     },
 
     onCompleteEditHealthCheck : function(objResponse)
@@ -2481,7 +2481,7 @@ var ec2ui_controller = {
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "CookieName", CookieName ]);
         params.push([ "PolicyName", PolicyName ]);
-        ec2_httpclient.queryELB("CreateAppCookieStickinessPolicy", params, this, true, "oncompleteCreateAppCookieSP", callback);
+        ec2ui_client.queryELB("CreateAppCookieStickinessPolicy", params, this, true, "oncompleteCreateAppCookieSP", callback);
         //no = no + 1;
     },
 
@@ -2502,7 +2502,7 @@ var ec2ui_controller = {
         params.push([ "CookieExpirationPeriod", CookieExpirationPeriod ]);
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "PolicyName", PolicyName ]);
-        ec2_httpclient.queryELB("CreateLBCookieStickinessPolicy", params, this, true, "oncompleteCreateLBCookieSP", callback);
+        ec2ui_client.queryELB("CreateLBCookieStickinessPolicy", params, this, true, "oncompleteCreateLBCookieSP", callback);
     },
 
     oncompleteCreateLBCookieSP : function(objResponse)
@@ -2518,7 +2518,7 @@ var ec2ui_controller = {
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
         params.push([ "PolicyName", policy ]);
-        ec2_httpclient.queryELB("DeleteLoadBalancerPolicy", params, this, true, "oncompleteDeleteLoadBalancerPolicy", callback);
+        ec2ui_client.queryELB("DeleteLoadBalancerPolicy", params, this, true, "oncompleteDeleteLoadBalancerPolicy", callback);
     },
 
     oncompleteDeleteLoadBalancerPolicy : function(objResponse)
@@ -2535,7 +2535,7 @@ var ec2ui_controller = {
         params.push([ "CertificateBody", CertificateBody ]);
         params.push([ "PrivateKey", PrivateKey ]);
         if (Path != null) params.push([ "Path", Path ]);
-        ec2_httpclient.queryIAM("UploadServerCertificate", params, this, true, "oncompleteuploadserversertificate", callback);
+        ec2ui_client.queryIAM("UploadServerCertificate", params, this, true, "oncompleteuploadserversertificate", callback);
     },
 
     oncompleteuploadservercertificate : function(objResponse)
@@ -2555,7 +2555,7 @@ var ec2ui_controller = {
             params.push([ "Tag." + (i + 1) + ".Value", tags[i][1] ]);
         }
 
-        ec2_httpclient.queryEC2("CreateTags", params, this, true, "onCompleteCreateTags", callback);
+        ec2ui_client.queryEC2("CreateTags", params, this, true, "onCompleteCreateTags", callback);
     },
 
     onCompleteCreateTags : function(objResponse)
@@ -2574,7 +2574,7 @@ var ec2ui_controller = {
             params.push([ "Tag." + (i + 1) + ".Key", keys[i] ]);
         }
 
-        ec2_httpclient.queryEC2("DeleteTags", params, this, true, "onCompleteDeleteTags", callback);
+        ec2ui_client.queryEC2("DeleteTags", params, this, true, "onCompleteDeleteTags", callback);
     },
 
     onCompleteDeleteTags : function(objResponse)
@@ -2593,7 +2593,7 @@ var ec2ui_controller = {
             params.push([ "Filter." + (i + 1) + ".Value.1", resIds[i] ]);
         }
 
-        ec2_httpclient.queryEC2("DescribeTags", params, this, true, "onCompleteDescribeTags", callback);
+        ec2ui_client.queryEC2("DescribeTags", params, this, true, "onCompleteDescribeTags", callback);
     },
 
     onCompleteDescribeTags : function(objResponse)
@@ -2620,7 +2620,7 @@ var ec2ui_controller = {
         var params = new Array();
         params.push([ "InstanceId", instanceId ]);
         params.push([ "Attribute", attribute ]);
-        ec2_httpclient.queryEC2("DescribeInstanceAttribute", params, this, true, "onCompleteDescribeInstanceAttribute", callback);
+        ec2ui_client.queryEC2("DescribeInstanceAttribute", params, this, true, "onCompleteDescribeInstanceAttribute", callback);
     },
 
     onCompleteDescribeInstanceAttribute : function(objResponse)
@@ -2644,7 +2644,7 @@ var ec2ui_controller = {
         params.push([ "InstanceId", instanceId ]);
         params.push([ name + ".Value", value ]);
 
-        ec2_httpclient.queryEC2("ModifyInstanceAttribute", params, this, true, "onCompleteModifyInstanceAttribute", callback);
+        ec2ui_client.queryEC2("ModifyInstanceAttribute", params, this, true, "onCompleteModifyInstanceAttribute", callback);
     },
 
     onCompleteModifyInstanceAttribute : function(objResponse)

@@ -1,4 +1,4 @@
-var ec2_httpclient = {
+var ec2ui_client = {
     handler : null,
     uri     : null,
     auxObj  : null,

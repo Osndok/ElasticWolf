@@ -27,7 +27,7 @@ var ec2ui_session = {
         if (!this.initialized) {
             this.controller = ec2ui_controller;
             this.model = ec2ui_model;
-            this.client = ec2_httpclient;
+            this.client = ec2ui_client;
             this.preferences = ec2ui_prefs;
             ec2ui_prefs.init();
 

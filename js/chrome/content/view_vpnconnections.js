@@ -97,14 +97,14 @@ var ec2ui_VpnConnectionTreeView = {
                           "chrome,centerscreen,modal,resizable",
                           ec2ui_session,
                           retVal,
-                          ec2_httpclient);
+                          ec2ui_client);
 
         configXml = new DOMParser().parseFromString(vpn.config, "text/xml");
 
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);
             var filename = retVal.cgwtype;
-            var xsl = ec2_httpclient.queryVpnConnectionStylesheets(filename);
+            var xsl = ec2ui_client.queryVpnConnectionStylesheets(filename);
             log ("Received XSL: "+xsl.xmlhttp.responseText);
             log ("Received XSL (XML): "+xsl.xmlhttp.xmlDoc);
             log ("VPN Config: "+vpn.config);
