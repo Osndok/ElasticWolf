@@ -151,10 +151,8 @@ function WrappedMap(map)
 };
 
 var ec2ui_prefs = {
-    APP_NAME : "ec2ui.appname",
     ACTIVE_USER_NAME : "ec2ui.active.credentials.name",
     ACTIVE_ENDPOINT : "ec2ui.active.endpoint",
-    API_VERSION : "ec2ui.api_version",
     RDP_COMMAND : "ec2ui.tools.rdp.command",
     RDP_ARGS : "ec2ui.tools.rdp.args",
     SSH_COMMAND : "ec2ui.tools.ssh.command",
@@ -319,7 +317,7 @@ var ec2ui_prefs = {
     },
     getAppName : function()
     {
-        return this.getStringPreference(this.APP_NAME, "EC2UI");
+        return ec2ui_client.getAppName();
     },
     getAppPath : function()
     {

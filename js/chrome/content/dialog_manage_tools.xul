@@ -7,6 +7,7 @@
     onload="return initDialog();" title="Manage EC2 Tools" buttonlabelcancel="Close">
 
     <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/client.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/preferences.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
     <script type="application/x-javascript">

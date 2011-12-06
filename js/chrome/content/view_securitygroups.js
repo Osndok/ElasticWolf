@@ -58,7 +58,7 @@ var ec2ui_SecurityGroupsTreeView = {
         this.selection.clearSelection();
         if (group) {
             for (var i in this.groupList) {
-                if ((group.id && this.groupList[i].id == group.id) || (group.name && this.groupList[i].name == group.name)) {
+                if ((group.id && this.groupList[i].id == group.id) || (!group.id && group.name && this.groupList[i].name == group.name)) {
                     this.selection.select(i);
                     this.treeBox.ensureRowIsVisible(i);
                     return;

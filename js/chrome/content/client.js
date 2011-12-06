@@ -10,20 +10,21 @@ var ec2ui_client = {
     errorCount: 0,
     timers : {},
 
-    VERSION: "1.4",
-    API_VERSION : "2011-07-15",
-    OLD_API_VERSION: "2010-11-15",
-    ELB_API_VERSION : "2011-04-05",
-    IAM_API_VERSION : "2010-05-08",
-    VPN_CONFIG_PATH : "http://ec2-downloads.s3.amazonaws.com/",
-    SIG_VERSION: "2",
-    IAM_GOV_URL: "https://iam.us-gov.amazonaws.com",
-    IAM_URL : "https://iam.amazonaws.com",
-    REALM : "chrome://ec2ui/",
-    HOST  : "chrome://ec2ui/",
+    NAME: 'ElasticWolf',
+    VERSION: '1.4',
+    API_VERSION : '2011-07-15',
+    OLD_API_VERSION: '2010-11-15',
+    ELB_API_VERSION : '2011-04-05',
+    IAM_API_VERSION : '2010-05-08',
+    VPN_CONFIG_PATH : 'http://ec2-downloads.s3.amazonaws.com/',
+    SIG_VERSION: '2',
+    IAM_GOV_URL: 'https://iam.us-gov.amazonaws.com',
+    IAM_URL : 'https://iam.amazonaws.com',
+    REALM : 'chrome://ec2ui/',
+    HOST  : 'chrome://ec2ui/',
 
     getAppName : function() {
-        return ec2ui_prefs.getAppName();
+        return this.NAME;
     },
 
     getUserAgent: function () {
