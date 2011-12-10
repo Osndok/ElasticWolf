@@ -1,29 +1,31 @@
-ElasticWolf is an application for managing Amazon Elastic Cloud servides in simple and 
+ElasticWolf is an application for managing Amazon Web Services resources with a simple and 
 easy to use UI. 
 
-This project is a fork of ElasticFox with support for VPCs, GovCloud and packaged with 
-all necessary tools and utilities to deal with private and public keys and SSL certificates.
+This project is a fork of ElasticFox with support the GovCloud region, much better VPC 
+support, and many other enhancements. It is also packaged with all necessary tools and 
+utilities to deal with private and public keys and SSL certificates. In short, it provides
+everything for an AWS user to get going without using the command line tools.
 
-Windows version of the tool is packaged with openssl for generating keys and ssh clients for 
-accessing Linux instances.
+The Windows version of the tool is packaged with openssl for generating keys and ssh 
+clients for accessing Linux instances.
 
-The project was sponsored by Amazon to deal with new GovCloud services which are not 
-supported by other tool.
+The project has been supported by AWS to deal with new GovCloud services, which are not 
+currently supported by the AWS Console.
 
-Developing
+Developing:
 
- Primary developemnt is done on Mac so there is special dev mode to run it as 
- OS X application with symlink to actual source code
+ Primary development is done on Mac so there is a special dev mode to run it as 
+ an OS X application with symlink to actual source code
 
    make dev
 
- will make links and enables OS X app ready run. To launch execute 
+ will make links and enables OS X app ready run. To launch, execute 
 
    make run
 
-Building
+Building:
 
- To create binary packages for Mac and Windows just type
+ To create binary packages for Mac and Windows, just type
 
   make build
 
