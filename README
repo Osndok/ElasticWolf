@@ -1,0 +1,19 @@
+ElasticWolf is an application for managing Amazon Elastic Cloud servides in simple and 
+easy to use UI. 
+
+This project is a fork of ElasticFox with support for VPCs, GovCloud and packaged with 
+all necessary tools and utilities to deal with private and public keys and SSL certificates.
+
+Windows version of the tool is packaged with openssl for generating keys and ssh clients for 
+accessing Linux instances.
+
+The project was sponsored by Amazon to deal with new GovCloud services which are not 
+supported by other tool.
+
+Developers:
+  Vlad Seryakov
+
+QA and support:
+ Mark Ryland
+ Ben Butler
+
