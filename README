@@ -4,7 +4,7 @@ easy to use UI.
 This project is a fork of ElasticFox with support the GovCloud region, much better VPC 
 support, and many other enhancements. It is also packaged with all necessary tools and 
 utilities to deal with private and public keys and SSL certificates. In short, it provides
-everything for user to get going without requiring access to the command line tools.
+everything for an AWS user to get going without using the command line tools.
 
 The Windows version of the tool is packaged with openssl for generating keys and ssh 
 clients for accessing Linux instances.
