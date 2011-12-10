@@ -15,10 +15,6 @@ dev:	clean
 
 build:	clean build_osx build_win
 
-copy:	build
-	scp *.zip cbi:site/ec2ui
-
-
 version:
 	sed -E -i '' -e "s/^Version=.*$$/Version=$(VER)/" $(SRC)/application.ini
 	sed -E -i '' -e "s/^Name=.*$$/Name=$(NAME)/" $(SRC)/application.ini
