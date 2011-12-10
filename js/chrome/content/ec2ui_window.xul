@@ -14,7 +14,7 @@
 <?xul-overlay href="chrome://ec2ui/content/view_vpcs.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_vpns.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_loadbalancer.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/view_routetables.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_routing.xul"?>
 
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 <window id="ec2ui-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -36,8 +36,7 @@
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_certs.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_instances.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_securitygroups.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/view_routetables.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/view_permissions.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_routing.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_azone.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_eip.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_baseimages.js" />
@@ -48,7 +47,6 @@
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_reservedinstances.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_bundletasks.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_vpcs.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/view_subnets.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_dhcpoptions.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_vpngateways.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_customergateways.js" />
@@ -56,7 +54,6 @@
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_vpnattachments.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_loadbalancer.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_instancehealth.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/view_internetgateways.js" />
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="ec2ui.properties.bundle" src="chrome://ec2ui/locale/ec2ui.properties" />
@@ -91,7 +88,7 @@
         <tab label="&ec2ui.tabs.bundleTasks.label;" />
         <tab label="&ec2ui.tabs.leases.label;" />
         <tab label="&ec2ui.tabs.vpcs.label;" />
-        <tab label="&ec2ui.tabs.routetables.label;" />
+        <tab label="&ec2ui.tabs.routing.label;" />
         <tab label="&ec2ui.tabs.vpns.label;" />
         <tab label="&ec2ui.tabs.availzones.label;" />
       </tabs>
@@ -107,7 +104,7 @@
         <tabpanel id="bundle_tasks_tab"/>
         <tabpanel id="leases_tab"/>
         <tabpanel id="vpcs_tab"/>
-        <tabpanel id="routetables_tab"/>
+        <tabpanel id="routing_tab"/>
         <tabpanel id="vpns_tab"/>
         <tabpanel id="availzones_tab"/>
       </tabpanels>

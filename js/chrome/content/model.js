@@ -512,7 +512,7 @@ var ec2ui_model = {
         case "internetGateways":
             return this.internetGateways;
         case "routeTables":
-            return this.internetGateways;
+            return this.routeTables;
         }
         return []
     },

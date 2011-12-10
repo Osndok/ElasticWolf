@@ -22,7 +22,7 @@
 <!ENTITY ec2ui.tabs.leases.label "RI">
 <!ENTITY ec2ui.tabs.loadbalancer.label "ELB">
 <!ENTITY ec2ui.tabs.vpcs.label "VPC">
-<!ENTITY ec2ui.tabs.routetables.label "Route Tables">
+<!ENTITY ec2ui.tabs.routing.label "Routing">
 <!ENTITY ec2ui.tabs.vpns.label "VPNC">
 
 <!ENTITY ec2ui.captions.images.images.label "Machine Images (AMIs)">

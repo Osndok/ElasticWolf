@@ -40,119 +40,100 @@ var TreeView = {
     registered : false,
     model : null,
 
-    rowCount : function()
-    {
+    rowCount : function() {
         return this.treeList.length;
     },
-    setTree : function(treeBox)
-    {
+    setTree : function(treeBox) {
         this.treeBox = treeBox;
     },
-    getCellText : function(idx, column)
-    {
+    getCellText : function(idx, column) {
         return idx >= this.rowCount ? "" : this.treeList[idx][column.id.split(".").pop()];
     },
-    isEditable : function(idx, column)
-    {
+    isEditable : function(idx, column) {
         return true;
     },
-    isContainer : function(idx)
-    {
+    isContainer : function(idx) {
         return false;
     },
-    isSeparator : function(idx)
-    {
+    isSeparator : function(idx) {
         return false;
     },
-    isSorted : function()
-    {
+    isSorted : function() {
         return false;
     },
-    getSelected : function()
-    {
+    getSelected : function() {
         return this.selection.currentIndex == -1 ? null : this.treeList[this.selection.currentIndex];
     },
-    getImageSrc : function(idx, column)
-    {
-        return "";
+    getImageSrc : function(idx, column) {
+        return ""
     },
-    getProgressMode : function(idx, column)
-    {
+    getProgressMode : function(idx, column) {
     },
-    getCellValue : function(idx, column)
-    {
+    getCellValue : function(idx, column) {
     },
-    notifyModelChanged : function(interest)
-    {
+    notifyModelChanged : function(interest) {
         this.invalidate();
     },
-    selectionChanged : function()
-    {
+    selectionChanged : function() {
     },
-    cycleCell : function(idx, column)
-    {
+    cycleCell : function(idx, column) {
     },
-    performAction : function(action)
-    {
+    performAction : function(action) {
     },
-    performActionOnCell : function(action, index, column)
-    {
+    performActionOnCell : function(action, index, column) {
     },
-    getRowProperties : function(idx, column, prop)
-    {
+    getRowProperties : function(idx, column, prop) {
     },
-    getCellProperties : function(idx, column, prop)
-    {
+    getCellProperties : function(idx, column, prop) {
     },
-    getColumnProperties : function(column, element, prop)
-    {
+    getColumnProperties : function(column, element, prop) {
     },
-    getLevel : function(idx)
-    {
+    getLevel : function(idx) {
         return 0;
     },
-    cycleHeader : function(col)
-    {
+    cycleHeader : function(col) {
         var item = this.getSelected();
         cycleHeader(col, document, this.COLNAMES, this.treeList);
         this.treeBox.invalidate();
-        if (item && item.name) this.selectByName(item.name);
+        if (item && item.name) this.select(item);
     },
-    sort : function()
-    {
+    sort : function() {
         var item = this.getSelected();
         sortView(document, this.COLNAMES, this.treeList);
-        if (item && item.name) this.selectByName(item.name);
+        if (item && item.name) this.select(item);
     },
-    register : function()
-    {
+    register : function() {
         if (!this.registered) {
             this.registered = true;
             ec2ui_model.registerInterest(this, this.model);
         }
     },
-    selectByName : function(name)
-    {
-        this.selection.clearSelection();
-        for ( var i in this.treeList) {
-            if (this.treeList[i].name == name) {
-                this.selection.select(i);
-                this.treeBox.ensureRowIsVisible(i);
-                return;
+    find: function(obj) {
+        if (obj) {
+            for (var i in this.treeList) {
+                if (obj.id && obj.id != "" && this.treeList[i].id == obj.id) return i;
+                if (obj.name && obj.name != "" && this.treeList[i].name == obj.name) return i;
             }
         }
-        this.selection.select(0);
+        return -1;
     },
-    refresh : function()
-    {
+    select : function(obj) {
+        var i = this.find(obj)
+        if (i >= 0) {
+            this.selection.select(i);
+            this.treeBox.ensureRowIsVisible(i);
+        }
+    },
+    refresh : function() {
         ec2ui_model.refreshModel(this.model);
     },
-    invalidate : function()
-    {
-        this.display(ec2ui_model.getModel(this.model));
+    invalidate : function() {
+        this.display(this.filter(ec2ui_model.getModel(this.model)));
     },
-    display : function(list)
-    {
+    filter : function(list) {
+        return list;
+    },
+    display : function(list) {
         if (!list) {
             list = [];
         }

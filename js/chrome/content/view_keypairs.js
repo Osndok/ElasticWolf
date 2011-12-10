@@ -20,7 +20,7 @@ var ec2ui_KeypairTreeView = {
             var fp = FileIO.open(file)
             FileIO.write(fp, key + "\n\n", "");
             me.refresh();
-            me.selectByName(name);
+            me.select({name: name});
         }
         ec2ui_session.controller.createKeypair(name, wrap);
     },
@@ -32,7 +32,7 @@ var ec2ui_KeypairTreeView = {
         var me = this;
         var wrap = function(name) {
             me.refresh();
-            me.selectByName(name);
+            me.select({name: name});
         }
         // Create new private key file using openssl and return key value
         var file = ec2ui_session.promptForFile("Select the public key file to upload:")

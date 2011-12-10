@@ -203,7 +203,6 @@ var ec2ui_session = {
             eval("ec2ui_VpcTreeView." + toCall);
             eval("ec2ui_SubnetTreeView." + toCall);
             eval("ec2ui_DhcpoptsTreeView." + toCall);
-            eval("ec2ui_InternetGatewayTreeView." + toCall);
             break;
         case "VPNC":
             eval("ec2ui_VpnConnectionTreeView." + toCall);
@@ -214,7 +213,8 @@ var ec2ui_session = {
         case "ELB":
             eval("ec2ui_LoadbalancerTreeView." + toCall);
             break;
-        case "Route Tables":
+        case "Routing":
+            eval("ec2ui_InternetGatewayTreeView." + toCall);
             eval("ec2ui_RouteTablesTreeView." + toCall);
             break;
         default:

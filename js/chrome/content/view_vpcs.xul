@@ -91,70 +91,37 @@
             <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
                 <grippy />
             </splitter>
-            <hbox flex="1">
-                <groupbox flex="1" orient="vertical">
-                    <caption label="&ec2ui.captions.internetgateways.label;" />
-                    <popupset>
-                        <menupopup id="ec2ui.internetgateways.contextmenu">
-                            <menuitem oncommand="ec2ui_InternetGatewayTreeView.createInternetGateway();" label="&ec2ui.internetgateways.add.tip;" />
-                            <menuitem oncommand="ec2ui_InternetGatewayTreeView.deleteInternetGateway();" label="&ec2ui.internetgateways.remove.tip;" />
-                            <menuitem oncommand="ec2ui_InternetGatewayTreeView.attachInternetGateway();" label="&ec2ui.internetgateways.attach.tip;" />
-                            <menuitem oncommand="ec2ui_InternetGatewayTreeView.detachInternetGateway();" label="&ec2ui.internetgateways.detach.tip;" />
-                        </menupopup>
-                    </popupset>
-                    <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
-                        <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.createInternetGateway();" tooltiptext="&ec2ui.internetgateways.add.tip;" />
-                        <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.deleteInternetGateway();" tooltiptext="&ec2ui.internetgateways.remove.tip;" />
-                        <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.attachInternetGateway();" tooltiptext="&ec2ui.internetgateways.attach.tip;" />
-                        <toolbarbutton image="images/stop.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.detachInternetGateway();" tooltiptext="&ec2ui.internetgateways.detach.tip;" />
-                    </toolbar>
-                    <tree id="ec2ui.internetgateways.view" seltype="single" enableColumnDrag="true" flex="1">
-                        <treecols>
-                            <treecol id="igw.id" label="ID" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
-                            <splitter class="tree-splitter" />
-                            <treecol id="igw.vpcs" label="VPCs" flex="1" persist="width ordinal hidden sortDirection" />
-                            <splitter class="tree-splitter" />
-                            <treecol id="igw.tags" label="Tags" flex="1" persist="width ordinal hidden sortDirection" />
-                        </treecols>
-                        <treechildren context="ec2ui.internetgateways.contextmenu" />
-                    </tree>
-                </groupbox>
-                <splitter style="max-width: 4px; height: 4px;" persist="state" collapse="after" resizebefore="closest">
-                    <grippy />
-                </splitter>
-                <groupbox orient="vertical" flex="1">
-                    <caption label="&ec2ui.captions.dhcpopts.dhcpopts.label;" />
-                    <popupset>
-                        <menupopup id="ec2ui.dhcpopts.contextmenu">
-                            <menuitem oncommand="ec2ui_DhcpoptsTreeView.tag(event);" label="Add Tag" />
-                            <menuseparator />
-                            <menuitem oncommand="ec2ui_DhcpoptsTreeView.deleteDhcpOptions();" label="&ec2ui.dhcpopts.contextmenu.delete.label;" />
-                            <menuseparator />
-                            <menuitem oncommand="ec2ui_DhcpoptsTreeView.copyToClipBoard('id');" label="&ec2ui.dhcpopts.contextmenu.copydhcpoptsid.label;" />
-                        </menupopup>
-                    </popupset>
-                    <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                        <hbox flex="10">
-                            <textbox id="ec2ui.dhcpopts.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" onkeypress="ec2ui_DhcpoptsTreeView.searchChanged(event);" />
-                            <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
-                            <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.createDhcpOptions()" tooltiptext="&ec2ui.createdhcpoptions.tip;" />
-                            <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.deleteDhcpOptions()" tooltiptext="&ec2ui.deletedhcpoptions.tip;" />
-                            <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.tag();" tooltiptext="Add Tag" />
-                        </hbox>
-                    </toolbar>
-                    <tree id="ec2ui.dhcpoptions.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_DhcpoptsTreeView.selectionChanged(event)" flex="1">
-                        <treecols>
-                            <treecol id="dhcpoption.id" label="&ec2ui.dhcpopts.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
-                            <splitter class="tree-splitter" />
-                            <treecol id="dhcpoption.options" label="&ec2ui.dhcpopts.options.label;" flex="1" persist="width ordinal hidden sortDirection" />
-                            <splitter class="tree-splitter" />
-                            <treecol id="dhcpoption.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
-                        </treecols>
-                        <treechildren context="ec2ui.dhcpopts.contextmenu" />
-                    </tree>
-                </groupbox>
-            </hbox>
+            <groupbox orient="vertical" flex="1">
+                <caption label="&ec2ui.captions.dhcpopts.dhcpopts.label;" />
+                <popupset>
+                    <menupopup id="ec2ui.dhcpopts.contextmenu">
+                        <menuitem oncommand="ec2ui_DhcpoptsTreeView.tag(event);" label="Add Tag" />
+                        <menuseparator />
+                        <menuitem oncommand="ec2ui_DhcpoptsTreeView.deleteDhcpOptions();" label="&ec2ui.dhcpopts.contextmenu.delete.label;" />
+                        <menuseparator />
+                        <menuitem oncommand="ec2ui_DhcpoptsTreeView.copyToClipBoard('id');" label="&ec2ui.dhcpopts.contextmenu.copydhcpoptsid.label;" />
+                    </menupopup>
+                </popupset>
+                <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                    <hbox flex="10">
+                        <textbox id="ec2ui.dhcpopts.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" onkeypress="ec2ui_DhcpoptsTreeView.searchChanged(event);" />
+                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
+                        <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.createDhcpOptions()" tooltiptext="&ec2ui.createdhcpoptions.tip;" />
+                        <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.deleteDhcpOptions()" tooltiptext="&ec2ui.deletedhcpoptions.tip;" />
+                        <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ec2ui_DhcpoptsTreeView.tag();" tooltiptext="Add Tag" />
+                    </hbox>
+                </toolbar>
+                <tree id="ec2ui.dhcpoptions.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_DhcpoptsTreeView.selectionChanged(event)" flex="1">
+                    <treecols>
+                        <treecol id="dhcpoption.id" label="&ec2ui.dhcpopts.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="dhcpoption.options" label="&ec2ui.dhcpopts.options.label;" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="dhcpoption.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
+                    </treecols>
+                    <treechildren context="ec2ui.dhcpopts.contextmenu" />
+                </tree>
+            </groupbox>
         </vbox>
     </tabpanel>
 </overlay>
