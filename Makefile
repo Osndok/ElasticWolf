@@ -1,6 +1,6 @@
 NAME=ElasticWolf
 OSX=osx/Contents/Resources
-SRC=js
+SRC=src
 VER=$(shell awk '{if($$1=="VERSION:"){gsub(/[\"\",;]+/,"",$$2);print $$2;}}' $(SRC)/chrome/content/client.js)
 
 all:
