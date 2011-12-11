@@ -15,7 +15,8 @@ dev:	clean
 	ln -sf `pwd`/$(SRC)/osx.plist $(OSX)/../Info.plist
 	ln -sf `pwd`/$(SRC)/osx.icns $(OSX)/NAME.icns
 
-build:	clean build_osx build_win dev
+build:	clean build_osx build_win
+	make dev
 
 version:
 	sed -E -i '' -e "s/^Version=.*$$/Version=$(VER)/" $(SRC)/application.ini
@@ -26,17 +27,17 @@ version:
 
 build_osx: clean_osx version
 	rsync -a $(SRC)/application.ini $(SRC)/chrome $(SRC)/defaults $(OSX)
-	rsync -a $(SRC)/osx.icns $(OSX)/$(NAME).incs
+	rsync -a $(SRC)/osx.icns $(OSX)/$(NAME).icns
 	sed -E -e "s/NAME/$(NAME)/" $(SRC)/osx.plist > $(OSX)/../Info.plist
 	mv osx $(NAME).app
-	zip -rqy $(NAME)-osx-$(VER).zip $(NAME).app
+	zip -rqy ../$(NAME)-osx-$(VER).zip $(NAME).app
 	mv $(NAME).app osx
 
 build_win: clean_win version
 	rsync -a $(SRC)/application.ini $(SRC)/chrome $(SRC)/defaults win
 	rsync -a win/xulrunner/xulrunner-stub.exe win/$(NAME).exe
 	mv win $(NAME)
-	zip -rq $(NAME)-win-$(VER).zip $(NAME)
+	zip -rq ../$(NAME)-win-$(VER).zip $(NAME)
 	mv $(NAME) win
 
 xpi:
@@ -50,4 +51,5 @@ clean_osx:
 
 clean_win:
 	rm -rf win/chrome win/defaults win/application.ini win/$(NAME).exe
+
 

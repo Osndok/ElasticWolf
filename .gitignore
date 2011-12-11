@@ -1,7 +1,7 @@
 .DS_Store
 .settings
-osx/Contents/Info.plist
-osx/Contents/Resources/NAME.icns
+osx/Contents/*.plist
+osx/Contents/Resources/*.icns
 osx/Contents/Resources/*.ini
 osx/Contents/Resources/chrome
 osx/Contents/Resources/defaults
