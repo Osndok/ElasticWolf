@@ -12,8 +12,10 @@ dev:	clean
 	ln -sf `pwd`/$(SRC)/chrome $(OSX)/chrome 
 	ln -sf `pwd`/$(SRC)/defaults $(OSX)/defaults 
 	ln -sf `pwd`/$(SRC)/application.ini $(OSX)/application.ini
+	ln -sf `pwd`/$(SRC)/osx.plist $(OSX)/../Info.plist
+	ln -sf `pwd`/$(SRC)/osx.icns $(OSX)/NAME.icns
 
-build:	clean build_osx build_win
+build:	clean build_osx build_win dev
 
 version:
 	sed -E -i '' -e "s/^Version=.*$$/Version=$(VER)/" $(SRC)/application.ini
@@ -24,6 +26,8 @@ version:
 
 build_osx: clean_osx version
 	rsync -a $(SRC)/application.ini $(SRC)/chrome $(SRC)/defaults $(OSX)
+	rsync -a $(SRC)/osx.icns $(OSX)/$(NAME).incs
+	sed -E -e "s/NAME/$(NAME)/" $(SRC)/osx.plist > $(OSX)/../Info.plist
 	mv osx $(NAME).app
 	zip -rqy $(NAME)-osx-$(VER).zip $(NAME).app
 	mv $(NAME).app osx
@@ -42,7 +46,7 @@ clean: clean_osx clean_win
 	rm -rf *.zip
 
 clean_osx:
-	rm -rf $(OSX)/chrome $(OSX)/defaults $(OSX)/application.ini
+	rm -rf $(OSX)/chrome $(OSX)/defaults $(OSX)/*.ini $(OSX)/../Info.plist $(OSX)/*.icns
 
 clean_win:
 	rm -rf win/chrome win/defaults win/application.ini win/$(NAME).exe
