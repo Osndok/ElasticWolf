@@ -11,7 +11,7 @@ var ec2ui_client = {
     timers : {},
 
     NAME: 'ElasticWolf',
-    VERSION: '1.5',
+    VERSION: '1.6',
     API_VERSION : '2011-07-15',
     OLD_API_VERSION: '2010-11-15',
     ELB_API_VERSION : '2011-04-05',
