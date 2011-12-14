@@ -35,13 +35,13 @@ build_osx: clean_osx version
 
 build_win: clean_win version
 	rsync -a $(SRC)/application.ini $(SRC)/chrome $(SRC)/defaults win
-	rsync -a win/xulrunner/xulrunner-stub.exe win/$(NAME).exe
+	rsync -u win/xulrunner/xulrunner-stub.exe win/$(NAME).exe
 	mv win $(NAME)
 	zip -rq ../$(NAME)-win-$(VER).zip $(NAME)
 	mv $(NAME) win
 
 xpi:
-	(cd $(SRC) && zip -rq ../$(NAME)-$(VER).zpi .)
+	(cd $(SRC) && zip -rq ../$(NAME)-$(VER).xpi .)
 
 clean: clean_osx clean_win
 	rm -rf *.zip
@@ -50,6 +50,6 @@ clean_osx:
 	rm -rf $(OSX)/chrome $(OSX)/defaults $(OSX)/*.ini $(OSX)/../Info.plist $(OSX)/*.icns
 
 clean_win:
-	rm -rf win/chrome win/defaults win/application.ini win/$(NAME).exe
+	rm -rf win/chrome win/defaults win/application.ini
 
 
