@@ -143,8 +143,7 @@ var BaseImagesView = {
         var patt = new RegExp(searchText, "i");
         for(var i in imageList) {
             img = imageList[i];
-            if (img.id.match(this.imageIdRegex) &&
-                this.imageMatchesSearch(img, patt)) {
+            if (img.id.match(this.imageIdRegex) && this.imageMatchesSearch(img, patt)) {
                 newList.push(img);
             }
         }

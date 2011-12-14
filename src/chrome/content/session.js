@@ -796,11 +796,11 @@ var ec2ui_session = {
         return selected.value
     },
 
-    promptForFile : function(msg)
+    promptForFile : function(msg, save)
     {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-        fp.init(window, msg, nsIFilePicker.modeOpen);
+        fp.init(window, msg, save ? nsIFilePicker.modeSave : nsIFilePicker.modeOpen);
         fp.displayDirectory = FileIO.open(ec2ui_prefs.getHome() + DirIO.sep + ec2ui_prefs.getAppName());
         if (fp.show() == nsIFilePicker.returnOK) {
             return fp.file.path;

@@ -43,6 +43,20 @@ var ec2ui_AccessKeyTreeView = {
             ec2ui_session.controller.deleteAccessKey(key.name, wrap);
         },
 
+        exportSelected  : function () {
+            var key = this.getSelected();
+            if (key == null) return;
+            key.secret = this.getAccessKeySecret(key.name)
+            if (key.secret == "") {
+                alert("No secret key available for this access key")
+                return
+            }
+            var path = ec2ui_session.promptForFile("Choose file where to export this access key", true)
+            if (path) {
+                FileIO.write(FileIO.open(path), "AWSAccessKeyId=" + key.name + "\nAWSSecretKey=" + key.secret + "\n")
+            }
+        },
+
         switchCredentials  : function () {
             var key = this.getSelected();
             if (key == null) return;

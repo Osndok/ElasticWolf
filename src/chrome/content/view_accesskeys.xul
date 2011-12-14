@@ -13,6 +13,7 @@
           <menuitem oncommand="ec2ui_AccessKeyTreeView.createAccessKey()" label="Create a new access key" />
           <menuitem oncommand="ec2ui_AccessKeyTreeView.switchCredentials();" label="Use this access key for credentials" />
           <menuitem oncommand="ec2ui_AccessKeyTreeView.deleteSelected();" label="Delete this access key" />
+          <menuitem oncommand="ec2ui_AccessKeyTreeView.exportSelected();" label="Export this access key into text file" />
         </menupopup>
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">

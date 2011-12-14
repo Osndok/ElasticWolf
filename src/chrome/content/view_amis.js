@@ -28,8 +28,7 @@ var ec2ui_AMIsTreeView = {
         document.getElementById("amis.context.launch").disabled = fDisabled;
         document.getElementById("amis.context.delete").disabled = fDisabled;
 
-        // These context menu items don't apply to Windows instances
-        // so enable them.
+        // These context menu items don't apply to Windows instancesso enable them.
 
         // These items don't apply to AMIs with root device type 'ebs'
         if (isEbsRootDeviceType(image.rootDeviceType)) {
@@ -39,6 +38,9 @@ var ec2ui_AMIsTreeView = {
             document.getElementById("amis.context.deleteSnapshotAndDeregister").disabled = true;
         }
 
+        var type = document.getElementById("ec2ui_AMIsTreeView.image.type").value;
+        document.getElementById("amis.context.fadd").disabled = type == "fav";
+        document.getElementById("amis.context.fdelete").disabled = type != "fav";
     },
 
     imageTypeChanged : function()
@@ -47,9 +49,42 @@ var ec2ui_AMIsTreeView = {
         this.displayImagesOfType();
     },
 
+    manageFavorites: function(remove) {
+        var image = this.getSelectedImage();
+        if (image == null) return;
+        var favs = ec2ui_prefs.getStringPreference(ec2ui_prefs.AMI_FAVORITES, "").split("^");
+        debug(remove + ":" + favs)
+        if (remove) {
+            var i = favs.indexOf(image.id)
+            if (i > -1) {
+                favs.splice(i, 1)
+            }
+        } else {
+            if (favs.indexOf(image.id) == -1) {
+                favs.push(image.id)
+            }
+        }
+        ec2ui_prefs.setStringPreference(ec2ui_prefs.AMI_FAVORITES, favs.join("^"));
+        if (remove) {
+            this.invalidate();
+        }
+    },
+
     displayImagesOfType : function()
     {
         var type = document.getElementById("ec2ui_AMIsTreeView.image.type");
+        if (type.value == "fav") {
+            var favs = ec2ui_prefs.getStringPreference(ec2ui_prefs.AMI_FAVORITES, "").split("^");
+            var images = []
+            for (var i in ec2ui_model.images) {
+                if (favs.indexOf(ec2ui_model.images[i].id) >= 0) {
+                    images.push(ec2ui_model.images[i])
+                }
+            }
+            this.displayImages(images);
+            return
+        }
+
         // Initialize the owner display filter to the empty string
         this.ownerDisplayFilter = "";
         if (type.value == "my_ami" || type.value == "my_ami_rdt_ebs") {
@@ -62,7 +97,8 @@ var ec2ui_AMIsTreeView = {
 
                 if (type.value == "my_ami")
                     this.rootDeviceType = "";
-                else this.rootDeviceType = "ebs";
+                else
+                    this.rootDeviceType = "ebs";
             }
         } else
         if (type.value == "amzn" || type.value == "amzn_rdt_ebs") {
@@ -89,7 +125,6 @@ var ec2ui_AMIsTreeView = {
         images = this.filterRootDevice(images);
         images = this.filterOwnerDisplay(images);
         images = this.filterImages(images, currentUser);
-
         this.displayImages(images);
     },
 
@@ -130,7 +165,7 @@ var ec2ui_AMIsTreeView = {
 
     searchChanged : function(event)
     {
-        document.getElementById("ec2ui_AMIsTreeView.image.type").selectedIndex = 1;
+        //document.getElementById("ec2ui_AMIsTreeView.image.type").selectedIndex = 1;
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
         }

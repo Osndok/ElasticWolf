@@ -186,6 +186,7 @@ var ec2ui_prefs = {
     PROMPT_OPEN_PORT : "ec2ui.prompt.open.port",
     OPEN_CONNECTION_PORT : "ec2ui.open.connection.port",
     OPENSSL_COMMAND : "ec2ui.tools.openssl.command",
+    AMI_FAVORITES: "ec2ui.ami.favorites",
     endpoints : null,
 
     prefs : null,
