@@ -189,6 +189,8 @@ var ec2ui_prefs = {
     OPENSSL_COMMAND : "ec2ui.tools.openssl.command",
     SHELL_COMMAND : "ec2ui.tools.shell.command",
     AMI_FAVORITES: "ec2ui.ami.favorites",
+    EC2_TOOLS_PATH: "ec2ui.tools.ec2.path",
+    IAM_TOOLS_PATH: "ec2ui.tools.iam.path",
     endpoints : null,
 
     prefs : null,
@@ -529,9 +531,9 @@ var ec2ui_prefs = {
         return cmd;
     },
 
-    getAccessKeyFile : function(name)
+    getCredentialFile : function(name)
     {
-        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "AccessKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "AWSCredential_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
     },
 
     getPrivateKeyFile : function(name)

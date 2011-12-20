@@ -725,7 +725,7 @@ var ec2ui_session = {
 
         // Create openssl config file
         var conffile = ec2ui_prefs.getKeyHome() + DirIO.sep + "openssl.cnf"
-        var confdata = "[req]\nprompt=no\ndistinguished_name=name\nx509_extensions=ca\n[ca]\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always,issuer\nbasicConstraints=CA:true\n[name]\nCN=EC2\nOU=EC2\nemailAddress=ec2@amazonaws.com\n"
+        var confdata = "[req]\nprompt=no\ndistinguished_name=n\nx509_extensions=c\n[c]\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always,issuer\nbasicConstraints=CA:true\n[n]\nCN=EC2\nOU=EC2\nemailAddress=ec2@amazonaws.com\n"
         FileIO.write(FileIO.open(conffile), confdata)
 
         // Create private and cert files
@@ -759,14 +759,26 @@ var ec2ui_session = {
         }
 
         // Save current acces key into file
-        FileIO.write(FileIO.open(ec2ui_prefs.getAccessKeyFile(name)), "AWSAccessKeyId=" + ec2ui_client.accessCode + "\nAWSSecretKey=" + ec2ui_client.secretKey + "\n")
+        FileIO.write(FileIO.open(ec2ui_prefs.getCredentialFile(name)), "AWSAccessKeyId=" + ec2ui_client.accessCode + "\nAWSSecretKey=" + ec2ui_client.secretKey + "\n")
 
         // Setup environment
         ec2ui_prefs.setEnv("EC2_URL", ec2ui_client.serviceURL);
         ec2ui_prefs.setEnv("EC2_PRIVATE_KEY", ec2ui_prefs.getPrivateKeyFile(name));
         ec2ui_prefs.setEnv("EC2_CERT", ec2ui_prefs.getCertificateFile(name));
-        ec2ui_prefs.setEnv("AWS_CREDENTIAL_FILE", ec2ui_prefs.getAccessKeyFile(name));
+        ec2ui_prefs.setEnv("AWS_CREDENTIAL_FILE", ec2ui_prefs.getCredentialFile(name));
         ec2ui_prefs.setEnv("AWS_IAM_URL", ec2ui_client.IAM_URL);
+        // Update path to the command line tools
+        var path = ec2ui_prefs.getEnv("PATH"), sep = isWindows(navigator.platform) ? ";" : ":";
+        var p1 = ec2ui_prefs.getStringPreference(ec2ui_prefs.EC2_TOOLS_PATH, "");
+        var p2 = ec2ui_prefs.getStringPreference(ec2ui_prefs.IAM_TOOLS_PATH, "");
+        if (p1 != "") {
+            path += sep + p1;
+        }
+        if (p2 != "") {
+            path += sep + p2;
+        }
+        debug(path)
+        ec2ui_prefs.setEnv("PATH", path);
         this.launchProcess(ec2ui_prefs.getShellCommand(), []);
     },
 
