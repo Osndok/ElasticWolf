@@ -3,7 +3,8 @@
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 
 <dialog id="ec2ui.dialog.managetools" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    buttons="accept,extra1" ondialogaccept="return saveDialog()" ondialogextra1="resetDialog();" buttonlabelextra1="Reset"
+    buttons="accept,extra1" ondialogaccept="return saveDialog()"
+    ondialogextra1="resetDialog();" buttonlabelextra1="Reset"
     onload="return initDialog();" title="Manage EC2 Tools" buttonlabelcancel="Close">
 
     <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
@@ -14,12 +15,14 @@
    function initDialog() {
       ec2ui_prefs.init();
       document.getElementById("ec2ui.tools.home").value = ec2ui_prefs.getHome();
+      document.getElementById("ec2ui.tools.keyhome").value = ec2ui_prefs.getKeyHome();
       document.getElementById("ec2ui.tools.ssh.command").value = ec2ui_prefs.getSSHCommand();
       document.getElementById("ec2ui.tools.ssh.args").value = ec2ui_prefs.getSSHArgs();
       document.getElementById("ec2ui.tools.ssh.user").value = ec2ui_prefs.getSSHUser();
       document.getElementById("ec2ui.tools.rdp.command").value = ec2ui_prefs.getRDPCommand();
       document.getElementById("ec2ui.tools.rdp.args").value = ec2ui_prefs.getRDPArgs();
       document.getElementById("ec2ui.tools.openssl.command").value = ec2ui_prefs.getOpenSSLCommand();
+      document.getElementById("ec2ui.tools.shell.command").value = ec2ui_prefs.getShellCommand();
       document.getElementById("ec2ui.tools.debug").checked = ec2ui_prefs.isDebugEnabled();
       return true;
    }
@@ -31,12 +34,14 @@
    }
 
    function saveDialog() {
+      ec2ui_prefs.setKeyHome(document.getElementById("ec2ui.tools.keyhome").value.toString());
       ec2ui_prefs.setSSHCommand(document.getElementById("ec2ui.tools.ssh.command").value.toString());
       ec2ui_prefs.setSSHArgs(document.getElementById("ec2ui.tools.ssh.args").value.toString());
       ec2ui_prefs.setSSHUser(document.getElementById("ec2ui.tools.ssh.user").value.toString());
       ec2ui_prefs.setRDPCommand(document.getElementById("ec2ui.tools.rdp.command").value.toString());
       ec2ui_prefs.setRDPArgs(document.getElementById("ec2ui.tools.rdp.args").value.toString());
       ec2ui_prefs.setOpenSSLCommand(document.getElementById("ec2ui.tools.openssl.command").value.toString());
+      ec2ui_prefs.setShellCommand(document.getElementById("ec2ui.tools.shell.command").value.toString());
       ec2ui_prefs.setDebugEnabled(document.getElementById("ec2ui.tools.debug").checked);
       return true;
    }
@@ -50,9 +55,15 @@
             </columns>
             <rows>
                 <row>
-                    <label control="ec2ui.tools.home" value="Your home directory:" />
+                    <label control="ec2ui.tools.home" value="User home directory:" />
                     <hbox>
                         <textbox id="ec2ui.tools.home" size="60" readonly="true" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.keyhome" value="Directory for private key files:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.keyhome" size="60" />
                     </hbox>
                 </row>
                 <row>
@@ -80,6 +91,12 @@
                     </hbox>
                 </row>
                 <row>
+                    <label control="ec2ui.tools.shell.command" value="SHELL Command:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.shell.command" size="60" />
+                    </hbox>
+                </row>
+                <row>
                     <label control="ec2ui.tools.rdp.command" value="RDP Command:" />
                     <hbox>
                         <textbox id="ec2ui.tools.rdp.command" size="80" />
@@ -101,6 +118,9 @@
         </grid>
         <hbox>
             <description>${home} - Your home directory.</description>
+        </hbox>
+        <hbox>
+            <description>${keyhome} - Directory where to keep private and public key files.</description>
         </hbox>
         <hbox>
             <description>${keyname} - The EC2 keypair name the instance was launched with.</description>

@@ -166,6 +166,7 @@ var ec2ui_prefs = {
     AUTOFETCH_LP : "ec2ui.autofetchlaunchpermissions.enabled",
     OPEN_IN_NEW_TAB : "ec2ui.usenewtab.enabled",
     EC2_URL : "ec2ui.url",
+    EC2_KEYHOME: "ec2ui.keyhome",
     CURRENT_TAB : "ec2ui.current.tab",
     REQUEST_TIMEOUT : "ec2ui.timeout.request",
     KNOWN_ACCOUNT_IDS : "ec2ui.known.account.ids",
@@ -186,6 +187,7 @@ var ec2ui_prefs = {
     PROMPT_OPEN_PORT : "ec2ui.prompt.open.port",
     OPEN_CONNECTION_PORT : "ec2ui.open.connection.port",
     OPENSSL_COMMAND : "ec2ui.tools.openssl.command",
+    SHELL_COMMAND : "ec2ui.tools.shell.command",
     AMI_FAVORITES: "ec2ui.ami.favorites",
     endpoints : null,
 
@@ -223,8 +225,8 @@ var ec2ui_prefs = {
             this.setConcurrentS3Conns(this.getConcurrentS3Conns());
             this.setPromptForPortOpening(this.getPromptForPortOpening());
             this.setOpenConnectionPort(this.getOpenConnectionPort());
+            this.setKeyHome(this.getKeyHome());
         }
-        DirIO.create(DirIO.open(this.getHome() + DirIO.sep + this.getAppName()))
     },
 
     setLastUsedAccount : function(value)
@@ -250,6 +252,10 @@ var ec2ui_prefs = {
     setSSHUser : function(value)
     {
         this.setStringPreference(this.SSH_USER, value);
+    },
+    setShellCommand : function(value)
+    {
+        this.setStringPreference(this.SHELL_COMMAND, value);
     },
     setRequestTimeout : function(value)
     {
@@ -311,6 +317,10 @@ var ec2ui_prefs = {
     {
         this.setStringPreference(this.OPENSSL_COMMAND, value);
     },
+    setKeyHome : function(value)
+    {
+        this.setStringPreference(this.EC2_KEYHOME, value);
+    },
 
     getDirSeparator : function()
     {
@@ -323,6 +333,10 @@ var ec2ui_prefs = {
     getAppPath : function()
     {
         return DirIO.get("CurProcD").path;
+    },
+    getKeyHome : function()
+    {
+        return this.getStringPreference(this.EC2_KEYHOME, this.getHome() + this.getDirSeparator() + this.getAppName());
     },
     getUserHome : function()
     {
@@ -412,6 +426,10 @@ var ec2ui_prefs = {
     {
         return this.getStringPreference(this.OPENSSL_COMMAND, this.getDefaultOpenSSLCommand());
     },
+    getShellCommand : function()
+    {
+        return this.getStringPreference(this.SHELL_COMMAND, this.getDefaultShellCommand());
+    },
 
     // default helpers
     getPrefForUserInRegion : function(pref, dflt)
@@ -443,6 +461,19 @@ var ec2ui_prefs = {
             }
 
         return [ "/usr/bin/rdesktop", rdesktopargs ];
+    },
+
+    getDefaultShellCommand : function()
+    {
+        if (isMacOS(navigator.platform)) {
+            return '/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal';
+        } else
+
+        if (isWindows(navigator.platform)) {
+            return 'c:\\\Windows\\System32\\cmd.exe';
+        }
+
+        return '/usr/bin/xterm';
     },
 
     // get a [cmd, argument-string] pair
@@ -482,7 +513,7 @@ var ec2ui_prefs = {
             return [ "", args ];
         }
 
-        return [ '"/usr/bin/xterm', '-e /usr/bin/ssh ' + args ];
+        return [ '/usr/bin/xterm', '-e /usr/bin/ssh ' + args ];
     },
 
     getDefaultOpenSSLCommand : function()
@@ -498,19 +529,24 @@ var ec2ui_prefs = {
         return cmd;
     },
 
+    getAccessKeyFile : function(name)
+    {
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "AccessKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+    },
+
     getPrivateKeyFile : function(name)
     {
-        return this.getTemplateProcessed("${home}" + this.getDirSeparator() + this.getAppName() + this.getDirSeparator() + "PrivateKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "PrivateKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
     },
 
     getPublicKeyFile : function(name)
     {
-        return this.getTemplateProcessed("${home}" + this.getDirSeparator() + this.getAppName() + this.getDirSeparator() + "PublicKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "PublicKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
     },
 
     getCertificateFile : function(name)
     {
-        return this.getTemplateProcessed("${home}" + this.getDirSeparator() + this.getAppName() + this.getDirSeparator() + "X509Certificate_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "X509Certificate_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
     },
 
     getTemplateProcessed : function(file, args)
@@ -535,6 +571,10 @@ var ec2ui_prefs = {
         if (file.indexOf("${home}") > -1) {
             var home = this.getHome()
             file = file.replace(/\${home}/g, isWindows(navigator.platform) ? home.replace(/\s/g, "\\ ") : home);
+        }
+        if (file.indexOf("${keyhome}") > -1) {
+            var home = this.getKeyHome()
+            file = file.replace(/\${keyhome}/g, isWindows(navigator.platform) ? home.replace(/\s/g, "\\ ") : home);
         }
         if (file.indexOf("${user}") > -1) {
             file = file.replace(/\${user}/g, this.getLastUsedAccount());

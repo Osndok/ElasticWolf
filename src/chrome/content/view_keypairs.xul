@@ -20,7 +20,8 @@
                 <toolbarbutton image="images/import.png" tooltiptext="&ec2ui.keypairs.import.tip;" oncommand="ec2ui_KeypairTreeView.importKeypair();" />
                 <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.keypairs.delete.tip;" oncommand="ec2ui_KeypairTreeView.deleteSelected();" />
                 <toolbarbutton image="images/gen.png" tooltiptext="&ec2ui.keypairs.generate.tip;" oncommand="ec2ui_KeypairTreeView.createCertAndKeypair();" />
-                <toolbarbutton image="images/info.png" oncommand="ec2ui_KeypairTreeView.viewDetails()" tooltiptext="&ec2ui.keypairs.details.tip;" />
+                <toolbarbutton image="images/info.png" tooltiptext="&ec2ui.keypairs.details.tip;" oncommand="ec2ui_KeypairTreeView.viewDetails()"/>
+                <toolbarbutton image="images/start.png" tooltiptext="&ec2ui.keypairs.shell.tip;" oncommand="ec2ui_KeypairTreeView.runShell()"/>
             </toolbar>
             <tree enableColumnDrag="true" id="ec2ui.keypairs.view" flex="1">
                 <treecols>

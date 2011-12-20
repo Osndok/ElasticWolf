@@ -708,6 +708,12 @@ var ec2ui_session = {
 
     generateCertificate : function(name)
     {
+        // Make sure we have directory
+        if (!DirIO.mkpath(ec2ui_prefs.getKeyHome())) {
+            alert("Error creating directory " + ec2ui_prefs.getKeyHome());
+            return 0
+        }
+
         var certfile = ec2ui_prefs.getCertificateFile(name);
         var keyfile = ec2ui_prefs.getPrivateKeyFile(name);
         var pubfile = ec2ui_prefs.getPublicKeyFile(name);
@@ -718,7 +724,7 @@ var ec2ui_session = {
         FileIO.remove(pubfile);
 
         // Create openssl config file
-        var conffile = ec2ui_prefs.getHome() + DirIO.sep + ec2ui_prefs.getAppName() + DirIO.sep + "openssl.cnf"
+        var conffile = ec2ui_prefs.getKeyHome() + DirIO.sep + "openssl.cnf"
         var confdata = "[req]\nprompt=no\ndistinguished_name=name\nx509_extensions=ca\n[ca]\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always,issuer\nbasicConstraints=CA:true\n[name]\nCN=EC2\nOU=EC2\nemailAddress=ec2@amazonaws.com\n"
         FileIO.write(FileIO.open(conffile), confdata)
 
@@ -742,6 +748,26 @@ var ec2ui_session = {
         this.launchProcess(openssl, [ "rsa", "-in", keyfile, "-pubout", "-out", pubfile ], true)
 
         return FileIO.toString(certfile)
+    },
+
+    launchShell : function(name)
+    {
+        // Make sure we have directory
+        if (!DirIO.mkpath(ec2ui_prefs.getKeyHome())) {
+            alert("Error creating directory " + ec2ui_prefs.getKeyHome());
+            return 0
+        }
+
+        // Save current acces key into file
+        FileIO.write(FileIO.open(ec2ui_prefs.getAccessKeyFile(name)), "AWSAccessKeyId=" + ec2ui_client.accessCode + "\nAWSSecretKey=" + ec2ui_client.secretKey + "\n")
+
+        // Setup environment
+        ec2ui_prefs.setEnv("EC2_URL", ec2ui_client.serviceURL);
+        ec2ui_prefs.setEnv("EC2_PRIVATE_KEY", ec2ui_prefs.getPrivateKeyFile(name));
+        ec2ui_prefs.setEnv("EC2_CERT", ec2ui_prefs.getCertificateFile(name));
+        ec2ui_prefs.setEnv("AWS_CREDENTIAL_FILE", ec2ui_prefs.getAccessKeyFile(name));
+        ec2ui_prefs.setEnv("AWS_IAM_URL", ec2ui_client.IAM_URL);
+        this.launchProcess(ec2ui_prefs.getShellCommand(), []);
     },
 
     launchProcess : function(cmd, args, block)
@@ -801,7 +827,19 @@ var ec2ui_session = {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, save ? nsIFilePicker.modeSave : nsIFilePicker.modeOpen);
-        fp.displayDirectory = FileIO.open(ec2ui_prefs.getHome() + DirIO.sep + ec2ui_prefs.getAppName());
+        fp.displayDirectory = FileIO.open(ec2ui_prefs.getKeyHome());
+        if (fp.show() == nsIFilePicker.returnOK) {
+            return fp.file.path;
+        }
+        return null
+    },
+
+    promptForDir : function(msg, save)
+    {
+        var nsIFilePicker = Components.interfaces.nsIFilePicker;
+        var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
+        fp.init(window, msg, nsIFilePicker.modeGetFolder);
+        fp.displayDirectory = FileIO.open(ec2ui_prefs.getKeyHome());
         if (fp.show() == nsIFilePicker.returnOK) {
             return fp.file.path;
         }

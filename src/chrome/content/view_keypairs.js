@@ -8,8 +8,16 @@ var ec2ui_KeypairTreeView = {
         window.openDialog("chrome://ec2ui/content/dialog_keypair_details.xul", null, "chrome,centerscreen,modal,resizable", keypair);
     },
 
+    runShell: function() {
+        var keypair = this.getSelected();
+        ec2ui_session.launchShell(keypair ? keypair.name: null);
+    },
 
     createKeypair : function () {
+        if (ec2ui_client.isGovCloud()) {
+            alert("This function is disabled in GovCloud mode")
+            return
+        }
         var name = prompt("Please provide a new keypair name");
         if (name == null) return;
         name = name.trim();
@@ -56,6 +64,11 @@ var ec2ui_KeypairTreeView = {
             ec2ui_session.controller.importKeypair(name, body, wrap);
         }
         ec2ui_session.showBusyCursor(true);
+
+        var file = ec2ui_session.promptForDir("Choose where to store keys and certificate or Cancel to use " + ec2ui_prefs.getKeyHome(), true)
+        if (file) {
+            ec2ui_prefs.setKeyHome(file);
+        }
 
         // Create new certificate file using openssl and return cert value
         var body = ec2ui_session.generateCertificate(name);

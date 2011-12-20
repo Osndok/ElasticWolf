@@ -340,6 +340,7 @@
 <!ENTITY ec2ui.keypairs.details.tip "Show keypair details">
 <!ENTITY ec2ui.keypairs.create.tip "Create a new keypair">
 <!ENTITY ec2ui.keypairs.delete.tip "Delete selected keypair">
+<!ENTITY ec2ui.keypairs.shell.tip "Run shell with this key for command line tools">
 <!ENTITY ec2ui.keypairs.import.tip "Create keypair from existing public key">
 <!ENTITY ec2ui.keypairs.generate.tip "Create new certificate and public/private keys and import into new keypair">
 
