@@ -26,6 +26,9 @@
       document.getElementById("ec2ui.tools.shell.command").value = ec2ui_prefs.getShellCommand();
       document.getElementById("ec2ui.tools.path.ec2").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.EC2_TOOLS_PATH, "");
       document.getElementById("ec2ui.tools.path.iam").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.IAM_TOOLS_PATH, "");
+      document.getElementById("ec2ui.tools.path.ami").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.AMI_TOOLS_PATH, "");
+      document.getElementById("ec2ui.tools.path.cloudwatch").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.CLOUDWATCH_TOOLS_PATH, "");
+      document.getElementById("ec2ui.tools.path.java").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.JAVA_TOOLS_PATH, "");
       document.getElementById("ec2ui.tools.debug").checked = ec2ui_prefs.isDebugEnabled();
       return true;
    }
@@ -47,6 +50,9 @@
       ec2ui_prefs.setShellCommand(document.getElementById("ec2ui.tools.shell.command").value.toString());
       ec2ui_prefs.setStringPreference(ec2ui_prefs.EC2_TOOLS_PATH, document.getElementById("ec2ui.tools.path.ec2").value.toString());
       ec2ui_prefs.setStringPreference(ec2ui_prefs.IAM_TOOLS_PATH, document.getElementById("ec2ui.tools.path.iam").value.toString());
+      ec2ui_prefs.setStringPreference(ec2ui_prefs.AMI_TOOLS_PATH, document.getElementById("ec2ui.tools.path.ami").value.toString());
+      ec2ui_prefs.setStringPreference(ec2ui_prefs.CLOUDWATCH_TOOLS_PATH, document.getElementById("ec2ui.tools.path.cloudwatch").value.toString());
+      ec2ui_prefs.setStringPreference(ec2ui_prefs.JAVA_TOOLS_PATH, document.getElementById("ec2ui.tools.path.java").value.toString());
       ec2ui_prefs.setDebugEnabled(document.getElementById("ec2ui.tools.debug").checked);
       return true;
    }
@@ -121,15 +127,33 @@
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.path.ec2" value="EC2 Command-line Tools Path:" />
+                    <label control="ec2ui.tools.path.java" value="Java Home Path:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.path.java" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.java')" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.path.ec2" value="EC2 API Command-line Tools Home:" />
                     <hbox>
                         <textbox id="ec2ui.tools.path.ec2" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.ec2')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.path.iam" value="IAM Command-line Tools Path:" />
+                    <label control="ec2ui.tools.path.iam" value="IAM Command-line Tools Home:" />
                     <hbox>
                         <textbox id="ec2ui.tools.path.iam" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.iam')" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.path.ami" value="AMI Command-line Tools Home:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.path.ami" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.ami')" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ec2ui.tools.path.cloudwatch" value="Cloud Watch Command-line Tools Home:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.path.cloudwatch" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.cloudwatch')" />
                     </hbox>
                 </row>
                 <row>

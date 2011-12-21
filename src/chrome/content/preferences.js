@@ -189,8 +189,11 @@ var ec2ui_prefs = {
     OPENSSL_COMMAND : "ec2ui.tools.openssl.command",
     SHELL_COMMAND : "ec2ui.tools.shell.command",
     AMI_FAVORITES: "ec2ui.ami.favorites",
-    EC2_TOOLS_PATH: "ec2ui.tools.ec2.path",
-    IAM_TOOLS_PATH: "ec2ui.tools.iam.path",
+    EC2_TOOLS_PATH: "ec2ui.tools.path.ec2_home",
+    IAM_TOOLS_PATH: "ec2ui.tools.path.aws_iam_home",
+    AMI_TOOLS_PATH: "ec2ui.tools.path.ec2_amitool_home",
+    CLOUDWATCH_TOOLS_PATH: "ec2ui.tools.path.aws_cloudwatch_home",
+    JAVA_TOOLS_PATH: "ec2ui.tools.path.java_home",
     endpoints : null,
 
     prefs : null,
@@ -533,7 +536,7 @@ var ec2ui_prefs = {
 
     getCredentialFile : function(name)
     {
-        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "AWSCredential_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "AWSCredential_${keyname}.txt", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
     },
 
     getPrivateKeyFile : function(name)

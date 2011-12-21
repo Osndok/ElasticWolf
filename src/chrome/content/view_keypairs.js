@@ -55,15 +55,6 @@ var ec2ui_KeypairTreeView = {
         if (name == null) return;
         name = name.trim();
         var me = this;
-        var wrap = function(name) {
-            me.refresh()
-        }
-        var wrap2 = function(id) {
-            // Import new public key as new keypair
-            var body = readPublicKey(ec2ui_prefs.getPublicKeyFile(name));
-            ec2ui_session.controller.importKeypair(name, body, wrap);
-        }
-        ec2ui_session.showBusyCursor(true);
 
         var file = ec2ui_session.promptForDir("Choose where to store keys and certificate or Cancel to use " + ec2ui_prefs.getKeyHome(), true)
         if (file) {
@@ -72,12 +63,18 @@ var ec2ui_KeypairTreeView = {
 
         // Create new certificate file using openssl and return cert value
         var body = ec2ui_session.generateCertificate(name);
-        if (body) {
-            ec2ui_session.controller.UploadSigningCertificate(body, wrap2);
-        } else {
+        if (!body) {
             alert("Could not create certificate");
             return;
         }
+        ec2ui_session.showBusyCursor(true);
+
+        // Delay to avoid "not valid yet" error due to clock drift
+        setTimeout(function() { ec2ui_session.controller.UploadSigningCertificate(body, function() {ec2ui_CertTreeView.refresh();alert("Certificate is uploaded sucessfully")}); }, 30000);
+
+        // Import new public key as new keypair
+        var pub = readPublicKey(ec2ui_prefs.getPublicKeyFile(name));
+        ec2ui_session.controller.importKeypair(name, pub, function() {me.refresh();});
     },
 
     deleteSelected  : function () {
@@ -85,10 +82,7 @@ var ec2ui_KeypairTreeView = {
         if (keypair == null) return;
         if (!confirm("Delete key pair "+keypair.name+"?")) return;
         var me = this;
-        var wrap = function() {
-            me.refresh();
-        }
-        ec2ui_session.controller.deleteKeypair(keypair.name, wrap);
+        ec2ui_session.controller.deleteKeypair(keypair.name, function() {me.refresh();});
     }
 };
 

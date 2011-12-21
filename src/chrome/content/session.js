@@ -767,15 +767,20 @@ var ec2ui_session = {
         ec2ui_prefs.setEnv("EC2_CERT", ec2ui_prefs.getCertificateFile(name));
         ec2ui_prefs.setEnv("AWS_CREDENTIAL_FILE", ec2ui_prefs.getCredentialFile(name));
         ec2ui_prefs.setEnv("AWS_IAM_URL", ec2ui_client.IAM_URL);
+
+        // Current PATH
+        var path = ec2ui_prefs.getEnv("PATH");
+        var sep = isWindows(navigator.platform) ? ";" : ":";
+
         // Update path to the command line tools
-        var path = ec2ui_prefs.getEnv("PATH"), sep = isWindows(navigator.platform) ? ";" : ":";
-        var p1 = ec2ui_prefs.getStringPreference(ec2ui_prefs.EC2_TOOLS_PATH, "");
-        var p2 = ec2ui_prefs.getStringPreference(ec2ui_prefs.IAM_TOOLS_PATH, "");
-        if (p1 != "") {
-            path += sep + p1;
-        }
-        if (p2 != "") {
-            path += sep + p2;
+        var paths = [ec2ui_prefs.JAVA_TOOLS_PATH, ec2ui_prefs.EC2_TOOLS_PATH, ec2ui_prefs.IAM_TOOLS_PATH, ec2ui_prefs.AMI_TOOLS_PATH, ec2ui_prefs.CLOUDWATCH_TOOLS_PATH];
+        for(var i in paths) {
+            var p = ec2ui_prefs.getStringPreference(paths[i], "");
+            if (p == "") {
+                continue;
+            }
+            ec2ui_prefs.setEnv(paths[i].split(".").pop().toUpperCase(), p);
+            path += sep + p + DirIO.sep + "bin";
         }
         debug(path)
         ec2ui_prefs.setEnv("PATH", path);
