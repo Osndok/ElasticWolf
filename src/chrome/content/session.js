@@ -766,14 +766,14 @@ var ec2ui_session = {
         ec2ui_prefs.setEnv("EC2_PRIVATE_KEY", ec2ui_prefs.getPrivateKeyFile(name));
         ec2ui_prefs.setEnv("EC2_CERT", ec2ui_prefs.getCertificateFile(name));
         ec2ui_prefs.setEnv("AWS_CREDENTIAL_FILE", ec2ui_prefs.getCredentialFile(name));
-        ec2ui_prefs.setEnv("AWS_IAM_URL", ec2ui_client.IAM_URL);
+        ec2ui_prefs.setEnv("AWS_IAM_URL", ec2ui_client.getIAMURL());
 
         // Current PATH
         var path = ec2ui_prefs.getEnv("PATH");
         var sep = isWindows(navigator.platform) ? ";" : ":";
 
         // Update path to the command line tools
-        var paths = [ec2ui_prefs.JAVA_TOOLS_PATH, ec2ui_prefs.EC2_TOOLS_PATH, ec2ui_prefs.IAM_TOOLS_PATH, ec2ui_prefs.AMI_TOOLS_PATH, ec2ui_prefs.CLOUDWATCH_TOOLS_PATH];
+        var paths = [ec2ui_prefs.JAVA_TOOLS_PATH, ec2ui_prefs.EC2_TOOLS_PATH, ec2ui_prefs.IAM_TOOLS_PATH, ec2ui_prefs.AMI_TOOLS_PATH, ec2ui_prefs.CLOUDWATCH_TOOLS_PATH, ec2ui_prefs.AWS_AUTOSCALING_TOOLS_PATH];
         for(var i in paths) {
             var p = ec2ui_prefs.getStringPreference(paths[i], "");
             if (p == "") {

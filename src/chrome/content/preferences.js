@@ -192,6 +192,7 @@ var ec2ui_prefs = {
     EC2_TOOLS_PATH: "ec2ui.tools.path.ec2_home",
     IAM_TOOLS_PATH: "ec2ui.tools.path.aws_iam_home",
     AMI_TOOLS_PATH: "ec2ui.tools.path.ec2_amitool_home",
+    AWS_AUTOSCALING_TOOLS_PATH: "ec2ui.tools.path.aws_auto_scaling_home",
     CLOUDWATCH_TOOLS_PATH: "ec2ui.tools.path.aws_cloudwatch_home",
     JAVA_TOOLS_PATH: "ec2ui.tools.path.java_home",
     endpoints : null,

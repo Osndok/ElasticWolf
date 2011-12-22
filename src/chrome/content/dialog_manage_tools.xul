@@ -27,6 +27,7 @@
       document.getElementById("ec2ui.tools.path.ec2").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.EC2_TOOLS_PATH, "");
       document.getElementById("ec2ui.tools.path.iam").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.IAM_TOOLS_PATH, "");
       document.getElementById("ec2ui.tools.path.ami").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.AMI_TOOLS_PATH, "");
+      document.getElementById("ec2ui.tools.path.autoscale").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.AWS_AUTOSCALING_TOOLS_PATH, "");
       document.getElementById("ec2ui.tools.path.cloudwatch").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.CLOUDWATCH_TOOLS_PATH, "");
       document.getElementById("ec2ui.tools.path.java").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.JAVA_TOOLS_PATH, "");
       document.getElementById("ec2ui.tools.debug").checked = ec2ui_prefs.isDebugEnabled();
@@ -51,6 +52,7 @@
       ec2ui_prefs.setStringPreference(ec2ui_prefs.EC2_TOOLS_PATH, document.getElementById("ec2ui.tools.path.ec2").value.toString());
       ec2ui_prefs.setStringPreference(ec2ui_prefs.IAM_TOOLS_PATH, document.getElementById("ec2ui.tools.path.iam").value.toString());
       ec2ui_prefs.setStringPreference(ec2ui_prefs.AMI_TOOLS_PATH, document.getElementById("ec2ui.tools.path.ami").value.toString());
+      ec2ui_prefs.setStringPreference(ec2ui_prefs.AWS_AUTOSCALING_TOOLS_PATH, document.getElementById("ec2ui.tools.path.autoscale").value.toString());
       ec2ui_prefs.setStringPreference(ec2ui_prefs.CLOUDWATCH_TOOLS_PATH, document.getElementById("ec2ui.tools.path.cloudwatch").value.toString());
       ec2ui_prefs.setStringPreference(ec2ui_prefs.JAVA_TOOLS_PATH, document.getElementById("ec2ui.tools.path.java").value.toString());
       ec2ui_prefs.setDebugEnabled(document.getElementById("ec2ui.tools.debug").checked);
@@ -157,6 +159,12 @@
                     </hbox>
                 </row>
                 <row>
+                    <label control="ec2ui.tools.path.autoscale" value="AWS Auto Scaling Command-line Tools Home:" />
+                    <hbox>
+                        <textbox id="ec2ui.tools.path.autoscale" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.autoscale')" />
+                    </hbox>
+                </row>
+                <row>
                     <label control="ec2ui.tools.debug" value="Enable debug output:" />
                     <hbox>
                         <checkbox id="ec2ui.tools.debug" />
@@ -165,40 +173,23 @@
             </rows>
         </grid>
         <hbox>
+        <vbox>
             <description>${home} - Your home directory.</description>
-        </hbox>
-        <hbox>
             <description>${keyhome} - Directory where to keep private and public key files.</description>
-        </hbox>
-        <hbox>
             <description>${keyname} - The EC2 keypair name the instance was launched with.</description>
-        </hbox>
-        <hbox>
             <description>${host} - The public DNS name / IP address of the EC2 instance.</description>
-        </hbox>
-        <hbox>
             <description>${publicDnsName} - The public DNS name of the EC2 instance.</description>
-        </hbox>
-        <hbox>
             <description>${privateDnsName} - The private DNS name of the EC2 instance.</description>
-        </hbox>
-        <hbox>
+        </vbox>
+        <spacer flex="1"/>
+        <vbox>
             <description>${privateIpAddress} - The private IP address name of the EC2 instance.</description>
-        </hbox>
-        <hbox>
             <description>${name} - The "Name" tag of the EC2 instance.</description>
-        </hbox>
-        <hbox>
             <description>${login} - The configured SSH user name.</description>
-        </hbox>
-        <hbox>
             <description>${key} - The (interpolated) EC2 private key template.</description>
-        </hbox>
-        <hbox>
             <description>${user} - The configured account name.</description>
-        </hbox>
-        <hbox>
             <description>${pass} - The Administrator password for a Windows instance.</description>
+        </vbox>
         </hbox>
     </vbox>
 

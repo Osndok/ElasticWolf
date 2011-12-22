@@ -150,7 +150,7 @@ var ec2ui_RoutesTreeView = {
             var wrap = function(id)
             {
                 ec2ui_RouteTablesTreeView.refresh(true);
-                ec2ui_RouteTablesTreeView.selectById(table.id)
+                ec2ui_RouteTablesTreeView.select({ id: table.id })
             }
             ec2ui_session.controller.createRoute(table.id, retVal.cidr, retVal.gatewayId, wrap);
             ec2ui_session.showBusyCursor(false);
@@ -165,7 +165,7 @@ var ec2ui_RoutesTreeView = {
         var wrap = function()
         {
             ec2ui_RouteTablesTreeView.refresh();
-            ec2ui_RouteTablesTreeView.selectById(item.tableId)
+            ec2ui_RouteTablesTreeView.select({ id: item.tableId })
         }
         ec2ui_session.controller.deleteRoute(item.tableId, item.cidr, wrap);
     }
@@ -195,7 +195,7 @@ var ec2ui_RouteAssociationsTreeView = {
         var wrap = function()
         {
             ec2ui_RouteTablesTreeView.refresh();
-            ec2ui_RouteTablesTreeView.selectById(table.id)
+            ec2ui_RouteTablesTreeView.select({ id: table.id} )
         }
         ec2ui_session.controller.AssociateRouteTable(table.id, subnets[rc].id, wrap);
     },
@@ -208,7 +208,7 @@ var ec2ui_RouteAssociationsTreeView = {
         var wrap = function()
         {
             ec2ui_RouteTablesTreeView.refresh();
-            ec2ui_RouteTablesTreeView.selectById(item.tableId)
+            ec2ui_RouteTablesTreeView.select({ id:item.tableId })
         }
         ec2ui_session.controller.DisassociateRouteTable(item.id, wrap);
     }

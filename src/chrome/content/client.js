@@ -11,7 +11,7 @@ var ec2ui_client = {
     timers : {},
 
     NAME: 'ElasticWolf',
-    VERSION: '1.9',
+    VERSION: '1.10',
     API_VERSION : '2011-07-15',
     OLD_API_VERSION: '2010-11-15',
     ELB_API_VERSION : '2011-04-05',
@@ -29,6 +29,10 @@ var ec2ui_client = {
 
     getUserAgent: function () {
         return this.getAppName() + "/" + this.VERSION;
+    },
+
+    getIAMURL: function() {
+        return this.isGovCloud() ? this.IAM_GOV_URL : this.IAM_URL;
     },
 
     isGovCloud : function()
@@ -264,7 +268,7 @@ var ec2ui_client = {
     },
 
     queryIAM : function (action, params, objActions, isSync, reqType, callback) {
-        return this.queryEC2(action, params, objActions, isSync, reqType, callback, this.isGovCloud() ? this.IAM_GOV_URL : this.IAM_URL, this.IAM_API_VERSION);
+        return this.queryEC2(action, params, objActions, isSync, reqType, callback, this.getIAMURL(), this.IAM_API_VERSION);
     },
 
     generateS3StringToSign : function(requestType, content, copySource, curTime, fileName) {
