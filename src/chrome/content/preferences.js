@@ -348,6 +348,10 @@ var ec2ui_prefs = {
     {
         return DirIO.get("Home").path;
     },
+    getProfileHome : function()
+    {
+        return DirIO.get("ProfD").path;
+    },
     getLastUsedAccount : function()
     {
         return this.getStringPreference(this.ACTIVE_USER_NAME, "");
@@ -533,6 +537,17 @@ var ec2ui_prefs = {
             }
         }
         return cmd;
+    },
+
+    getDefaultJavaHome: function() {
+        if (isWindows(navigator.platform)) {
+            return "C:\\Program Files\\Java\\gre6";
+        } else
+
+        if (isMacOS(navigator.platform)) {
+            return "/System/Library/Frameworks/JavaVM.framework/Home";
+        }
+        return "/usr/lib/java";
     },
 
     getCredentialFile : function(name)

@@ -2187,7 +2187,7 @@ var ec2ui_controller = {
 
     disassociateAddress : function(eip, callback)
     {
-        var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.address ]]
+        var params = eip.associationId ? [["AssociationId", eip.associationId]] : [[ 'PublicIp', eip.address ]]
         ec2ui_client.queryEC2("DisassociateAddress", params, this, true, "onCompleteDisassociateAddress", callback);
     },
 
