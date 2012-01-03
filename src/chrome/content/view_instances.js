@@ -515,11 +515,10 @@ var ec2ui_InstancesTreeView = {
     promptForKeyFile : function(keyName) {
         var keyFile = ec2ui_session.promptForFile("Select the EC2 Private Key File for key: " + keyName);
         if (keyFile) {
-            if (this.promptYesNo('Would you like to use "' + keyFile + '" as the default EC2 Private Key File for "' + ec2ui_session.getActiveCredential().name + '"?')) {
+            if (ec2ui_session.promptYesNo('Confirm', 'Would you like to use "' + keyFile + '" as the default EC2 Private Key File for "' + ec2ui_session.getActiveCredential().name + '"?')) {
                 ec2ui_prefs.setLastEC2PKeyFile(keyFile);
             }
         }
-
         log("getkey: " + keyName + "=" + keyFile);
         return keyFile;
     },
@@ -1165,6 +1164,11 @@ var ec2ui_InstancesTreeView = {
            this.openConnectionPort(instance);
         }
 
+        if (hostname == "") {
+            alert("No " + (isPrivate ? "Private" : "Public") + " IP is available");
+            return;
+        }
+
         if (isWindows(instance.platform)) {
             args = ec2ui_prefs.getRDPArgs();
             cmd = ec2ui_prefs.getRDPCommand();
@@ -1203,7 +1207,7 @@ var ec2ui_InstancesTreeView = {
 
 
         // Common substitution
-        args = ec2ui_prefs.getTemplateProcessed(args, params)
+        args = ec2ui_prefs.getArgsProcessed(args, params, hostname);
 
         // Finally, split args into an array
         args = tokenise(args);

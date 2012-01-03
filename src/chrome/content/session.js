@@ -709,8 +709,7 @@ var ec2ui_session = {
     generateCertificate : function(name)
     {
         // Make sure we have directory
-        if (!DirIO.mkpath(ec2ui_prefs.getKeyHome())) {
-            alert("Error creating directory " + ec2ui_prefs.getKeyHome());
+        if (!ec2ui_prefs.makeKeyHome()) {
             return 0
         }
 
@@ -753,8 +752,7 @@ var ec2ui_session = {
     launchShell : function(name)
     {
         // Make sure we have directory
-        if (!DirIO.mkpath(ec2ui_prefs.getKeyHome())) {
-            alert("Error creating directory " + ec2ui_prefs.getKeyHome());
+        if (!ec2ui_prefs.makeKeyHome()) {
             return 0
         }
 

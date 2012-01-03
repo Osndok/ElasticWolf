@@ -60,8 +60,12 @@
       return true;
    }
 
-   function browse(id) {
-      var path = ec2ui_session.promptForDir("Choose directory where tools are located:");
+   function browse(id, forFile) {
+      if (forFile) {
+         var path = ec2ui_session.promptForFile("Choose command:");
+      } else {
+         var path = ec2ui_session.promptForDir("Choose directory where tools are located:");
+      }
       if (path) {
           document.getElementById(id).value = path;
       }
@@ -90,13 +94,13 @@
                 <row>
                     <label control="ec2ui.tools.keyhome" value="Directory for private key files:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.keyhome" size="60" />
+                        <textbox id="ec2ui.tools.keyhome" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.keyhome')" />
                     </hbox>
                 </row>
                 <row>
                     <label control="ec2ui.tools.ssh.command" value="SSH Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.ssh.command" size="60" />
+                        <textbox id="ec2ui.tools.ssh.command" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.ssh.command', true)" />
                     </hbox>
                 </row>
                 <row>
@@ -114,19 +118,19 @@
                 <row>
                     <label control="ec2ui.tools.openssl.command" value="OPENSSL Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.openssl.command" size="60" />
+                        <textbox id="ec2ui.tools.openssl.command" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.openssl.command', true)" />
                     </hbox>
                 </row>
                 <row>
                     <label control="ec2ui.tools.shell.command" value="SHELL Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.shell.command" size="60" />
+                        <textbox id="ec2ui.tools.shell.command" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.shell.command', true)" />
                     </hbox>
                 </row>
                 <row>
                     <label control="ec2ui.tools.rdp.command" value="RDP Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.rdp.command" size="80" />
+                        <textbox id="ec2ui.tools.rdp.command" size="80" /> <button label="Browse" oncommand="browse('ec2ui.tools.rdp.command', true)" />
                     </hbox>
                 </row>
                 <row>

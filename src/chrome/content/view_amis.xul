@@ -57,7 +57,9 @@
                         <treecols>
                             <treecol id="ami.id" label="&ec2ui.images.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                             <splitter class="tree-splitter" />
-                            <treecol id="ami.location" label="&ec2ui.images.manifest.label;" flex="3" persist="width ordinal hidden sortDirection" />
+                            <treecol id="ami.description" label="&ec2ui.description.label;" flex="2" persist="width ordinal hidden sortDirection" />
+                            <splitter class="tree-splitter" />
+                            <treecol id="ami.location" label="&ec2ui.images.manifest.label;" flex="1" persist="width ordinal hidden sortDirection" />
                             <splitter class="tree-splitter" />
                             <treecol id="ami.state" label="&ec2ui.images.state.label;" flex="1" persist="width ordinal hidden sortDirection" />
                             <splitter class="tree-splitter" />
@@ -74,8 +76,6 @@
                             <treecol id="ami.rootDeviceType" label="&ec2ui.images.rootDeviceType.label;" flex="1" persist="width ordinal hidden sortDirection" />
                             <splitter class="tree-splitter" />
                             <treecol id="ami.name" label="&ec2ui.images.name.label;" flex="1" persist="width ordinal hidden sortDirection" />
-                            <splitter class="tree-splitter" />
-                            <treecol id="ami.description" label="&ec2ui.description.label;" flex="1" persist="width ordinal hidden sortDirection" />
                             <splitter class="tree-splitter" />
                             <treecol id="ami.tag" label="Tag" flex="2" persist="width ordinal hidden sortDirection" />
                             <splitter class="tree-splitter" />

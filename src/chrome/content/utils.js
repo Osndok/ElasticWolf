@@ -228,6 +228,16 @@ function sanitize(val)
     return trim(val).replace(/[ ]+/g, "");
 }
 
+function escapepath(path)
+{
+    return isWindows(navigator.platform) ? path.replace(/\s/g, "\\ ") : path;
+}
+
+function quotepath(path)
+{
+    return path.indexOf(' ') > 0 ? '"' + path + '"' : path;
+}
+
 function getProperty(name, defValue)
 {
     try {

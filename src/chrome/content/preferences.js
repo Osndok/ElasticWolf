@@ -512,8 +512,8 @@ var ec2ui_prefs = {
         if (isWindows(navigator.platform)) {
             cmd = this.getAppPath() + '\\ssh.exe'
             if (FileIO.exists(cmd)) {
-                cmd = '"set CYGWIN=nodosfilewarning&&set HOME=' + this.getHome().replace(/\s/g, "\\ ") + '&&' + cmd + args + '"'
-                return [ 'c:\\\Windows\\System32\\cmd.exe', '/K ' + cmd ]
+                batch = "#!set CYGWIN=nodosfilewarning#!set HOME=" + this.getHome() + "#!" + quotepath(cmd) + args;
+                return [ 'c:\\\Windows\\System32\\cmd.exe', '/K '+ batch ]
             }
 
             cmd = this.getAppPath() + '"\\putty.exe'
@@ -570,16 +570,16 @@ var ec2ui_prefs = {
         return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "X509Certificate_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
     },
 
-    getTemplateProcessed : function(file, args)
+    getTemplateProcessed : function(file, params)
     {
         var keyname = null
         // Custom variables
-        for ( var i = 0; args && i < args.length; i++) {
-            var val = args[i][1]
-            if (file.indexOf("${" + args[i][0] + "}") > -1) {
-                file = file.replace(new RegExp("\\${" + args[i][0] + "}", "g"), val);
+        for ( var i = 0; params && i < params.length; i++) {
+            var val = params[i][1]
+            if (file.indexOf("${" + params[i][0] + "}") > -1) {
+                file = file.replace(new RegExp("\\${" + params[i][0] + "}", "g"), quotepath(val));
             }
-            switch (args[i][0]) {
+            switch (params[i][0]) {
             case "keyname":
                 keyname = val
                 break;
@@ -591,19 +591,52 @@ var ec2ui_prefs = {
         }
         if (file.indexOf("${home}") > -1) {
             var home = this.getHome()
-            file = file.replace(/\${home}/g, isWindows(navigator.platform) ? home.replace(/\s/g, "\\ ") : home);
+            file = file.replace(/\${home}/g, quotepath(home));
         }
         if (file.indexOf("${keyhome}") > -1) {
             var home = this.getKeyHome()
-            file = file.replace(/\${keyhome}/g, isWindows(navigator.platform) ? home.replace(/\s/g, "\\ ") : home);
+            file = file.replace(/\${keyhome}/g, quotepath(home));
         }
         if (file.indexOf("${user}") > -1) {
             file = file.replace(/\${user}/g, this.getLastUsedAccount());
         }
         if (file.indexOf("${key}") > -1) {
-            file = file.replace(/\${key}/g, this.getPrivateKeyFile(keyname));
+            file = file.replace(/\${key}/g, quotepath(this.getPrivateKeyFile(keyname)));
         }
         return file
+    },
+
+    getArgsProcessed: function(args, params, filename)
+    {
+        var idx = args.indexOf('#!');
+        if (idx == -1) {
+            return ec2ui_prefs.getTemplateProcessed(args, params);
+        }
+
+        // Batch file
+        if (!this.makeKeyHome()) return null
+
+        var batch = args.substr(idx + 2).replace(/\#\!/g, "\r\n") + "\r\n";
+        batch = ec2ui_prefs.getTemplateProcessed(batch, params);
+
+        var file = this.getKeyHome() + DirIO.sep + filename + (isWindows(navigator.platform) ? ".bat" : ".sh");
+        args = ec2ui_prefs.getTemplateProcessed(args.substr(0, idx) + " " + quotepath(file), params);
+
+        var fd = FileIO.open(file);
+        FileIO.write(fd, batch);
+        fd.permissions = 0700;
+
+        debug("BATCH:" + file + "\n" + batch)
+        return args;
+    },
+
+    makeKeyHome: function()
+    {
+        if (!DirIO.mkpath(this.getKeyHome())) {
+            alert("Error creating directory " + this.getKeyHome());
+            return 0
+        }
+        return 1
     },
 
     getEmptyWrappedMap : function()

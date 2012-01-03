@@ -248,7 +248,7 @@ var ec2ui_InternetGatewayTreeView = {
     {
         var igw = this.getSelected();
         if (igw == null) return;
-        if (!ec2ui_session.promptYesNo("Delete Internet Gateway " + igw.id + "?")) return;
+        if (!ec2ui_session.promptYesNo("Confirm", "Delete Internet Gateway " + igw.id + "?")) return;
 
         var me = this;
         var wrap = function()
@@ -293,7 +293,7 @@ var ec2ui_InternetGatewayTreeView = {
     {
         var igw = this.getSelected();
         if (igw == null) return;
-        if (!ec2ui_session.promptYesNo("Detach Internet Gateway " + igw.id + " from " + igw.vpcs + "?")) return;
+        if (!ec2ui_session.promptYesNo("Confirm", "Detach Internet Gateway " + igw.id + " from " + igw.vpcs + "?")) return;
         var me = this;
         var wrap = function(id)
         {

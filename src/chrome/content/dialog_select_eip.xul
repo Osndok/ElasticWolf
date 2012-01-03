@@ -14,7 +14,7 @@
             var eipSel = this.eipList[selected];
 
             if (eipSel.instanceid != null &amp;&amp; eipSel.instanceid != '') {
-                if (!this.session.promptYesNo("Address " + eipSel.address + " is already mapped to an instance, are you sure?")) {
+                if (!this.session.promptYesNo("Confirm", "Address " + eipSel.address + " is already mapped to an instance, are you sure?")) {
                     return false;
                 }
             }

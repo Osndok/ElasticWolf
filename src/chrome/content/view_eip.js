@@ -127,7 +127,7 @@ var ec2ui_ElasticIPTreeView = {
 
     allocateAddress : function() {
         if (!ec2ui_session.client.isGovCloud()) {
-            var vpc = ec2ui_session.promptYesNo("Is this Elastic IP to be used for VPC?");
+            var vpc = ec2ui_session.promptYesNo("Confirm", "Is this Elastic IP to be used for VPC?");
         } else {
             var vpc = true
         }
@@ -142,7 +142,7 @@ var ec2ui_ElasticIPTreeView = {
     releaseAddress : function() {
         var eip = this.getSelectedEip();
         if (eip == null) return;
-        if (!ec2ui_session.promptYesNo("Release "+eip.address+"?")) return;
+        if (!ec2ui_session.promptYesNo("Confirm", "Release "+eip.address+"?")) return;
 
         var me = this;
         var wrap = function() {
