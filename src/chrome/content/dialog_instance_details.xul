@@ -35,22 +35,11 @@
         document.getElementById("ec2ui.instance.vpcid").value = instance.vpcId;
         document.getElementById("ec2ui.instance.subnetid").value = instance.subnetId;
         document.getElementById("ec2ui.instance.tag").value = instance.tag || "";
+        document.getElementById("ec2ui.instance.eip").value = instance.eip;
 
         var secGroups = document.getElementById("ec2ui.instance.securitygrouplist");
         for(var i in instance.groupList) {
             secGroups.appendItem(instance.groupList[i]);
-        }
-
-        var addresses = session.model.getAddresses();
-        var addr = null;
-        for (var i in addresses) {
-            addr = addresses[i];
-            if (addr.instanceid == instance.id) {
-                var val = addr.address;
-                if (addr.tag) val = val + ":" + addr.tag;
-                document.getElementById("ec2ui.instance.eip").value = val;
-                break;
-            }
         }
 
         var volumeL = document.getElementById("ec2ui.instance.volumelist");

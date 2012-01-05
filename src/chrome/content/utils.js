@@ -230,12 +230,12 @@ function sanitize(val)
 
 function escapepath(path)
 {
-    return isWindows(navigator.platform) ? path.replace(/\s/g, "\\ ") : path;
+    return path && isWindows(navigator.platform) ? path.replace(/\s/g, "\\ ") : path;
 }
 
 function quotepath(path)
 {
-    return path.indexOf(' ') > 0 ? '"' + path + '"' : path;
+    return path && path.indexOf(' ') > 0 ? '"' + path + '"' : path;
 }
 
 function getProperty(name, defValue)

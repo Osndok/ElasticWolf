@@ -34,7 +34,7 @@ var ec2ui_InstancesTreeView = {
     selectedInstanceId : null, // To preserve instance selections across
                                 // refreshes, etc
 
-    get rowCount() { return this.instanceList.length; },
+    rowCount: function() { return this.instanceList.length; },
     setTree     : function(treeBox)     { this.treeBox = treeBox; },
     getCellText : function(idx, column) {
         if (idx >= this.rowCount) return "";
@@ -148,11 +148,10 @@ var ec2ui_InstancesTreeView = {
 
     viewDetails : function(event) {
         var instance = this.getSelectedInstance();
-
         if (instance == null) {
             return;
         }
-
+        instance.eip = this.getEIP(instance);
         var mani = ec2ui_session.model.getAmiManifestForId(instance.imageId);
         if (mani.length == 0) {
             // Need to call describe Image
@@ -411,6 +410,20 @@ var ec2ui_InstancesTreeView = {
         }
     },
 
+    getEIP: function(instance) {
+        var addresses = ec2ui_session.model.getAddresses();
+        var addr = null;
+        for (var i in addresses) {
+            addr = addresses[i];
+            if (addr.instanceid == instance.id) {
+                var val = addr.address;
+                if (addr.tag) val = val + ":" + addr.tag;
+                return val;
+            }
+        }
+        return ""
+    },
+
     retrieveRSAKeyFromKeyFile : function(keyFile, fSilent) {
         var fileIn = FileIO.open(keyFile);
         if (!fileIn || !fileIn.exists()) {
@@ -515,9 +528,7 @@ var ec2ui_InstancesTreeView = {
     promptForKeyFile : function(keyName) {
         var keyFile = ec2ui_session.promptForFile("Select the EC2 Private Key File for key: " + keyName);
         if (keyFile) {
-            if (ec2ui_session.promptYesNo('Confirm', 'Would you like to use "' + keyFile + '" as the default EC2 Private Key File for "' + ec2ui_session.getActiveCredential().name + '"?')) {
-                ec2ui_prefs.setLastEC2PKeyFile(keyFile);
-            }
+            ec2ui_prefs.setLastEC2PKeyFile(keyFile);
         }
         log("getkey: " + keyName + "=" + keyFile);
         return keyFile;
@@ -572,8 +583,7 @@ var ec2ui_InstancesTreeView = {
                 }
 
                 // There is no default EC2 Private Key File, and a bad Private
-                // Key File was specified. Ask the user whether
-                // they would like to retry with a new private key file
+                // Key File was specified. Ask the user whether they would like to retry with a new private key file
                 if (!confirm ("An error occurred while reading the EC2 Private Key from file: " + prvKeyFile + ". Would you like to retry with a different private key file?")) {
                     break;
                 } else {
@@ -731,6 +741,7 @@ var ec2ui_InstancesTreeView = {
         }
 
         document.getElementById("instances.context.connectPublic").disabled = getIPFromHostname(instance) == ""
+        document.getElementById("instances.context.connectElastic").disabled = this.getEIP(instance) == ""
 
         if (isEbsRootDeviceType(instance.rootDeviceType)) {
             document.getElementById("instances.context.bundle").disabled = true;
@@ -1118,12 +1129,12 @@ var ec2ui_InstancesTreeView = {
         }
     },
 
-    connectToSelectedInstances : function(isPrivate) {
+    connectToSelectedInstances : function(ipType) {
         for (var i in this.instanceList) {
             if (this.selection.isSelected(i)) {
-                log ("Connecting to " + this.instanceList[i].id);
+                log ("Connecting to " + ipType + ": " + this.instanceList[i].id);
                 this.selection.currentIndex = i;
-                this.connectTo(this.instanceList[i], isPrivate);
+                this.connectTo(this.instanceList[i], ipType);
             }
         }
     },
@@ -1152,20 +1163,24 @@ var ec2ui_InstancesTreeView = {
         }
     },
 
-    connectTo : function(instance, isPrivate) {
+    // ipType: 0 - private, 1 - public, 2 - elastic, 3 - public or elastic
+    connectTo : function(instance, ipType) {
         ec2ui_session.showBusyCursor(true);
         var args = ec2ui_prefs.getSSHArgs();
         var cmd = ec2ui_prefs.getSSHCommand();
-        var hostname = getIPFromHostname(instance);
 
-        if (isPrivate) {
-           hostname = instance.privateIpAddress;
-        } else {
+        var hostname = !ipType ? instance.privateIpAddress : ipType == 1 || ipType == 3 ? getIPFromHostname(instance) : ipType == 2 ? this.getEIP(instance) : "";
+        if (hostname == "" && ipType == 3) {
+            hostname = this.getEIP(instance)
+        }
+
+        // Open ports for non private connection
+        if (ipType) {
            this.openConnectionPort(instance);
         }
 
         if (hostname == "") {
-            alert("No " + (isPrivate ? "Private" : "Public") + " IP is available");
+            alert("No " + (!ipType ? "Private" : ipType == 1 ? "Public" : ipType == 2 ? "Elastic" : "") + " IP is available");
             return;
         }
 

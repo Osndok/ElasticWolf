@@ -512,7 +512,7 @@ var ec2ui_prefs = {
         if (isWindows(navigator.platform)) {
             cmd = this.getAppPath() + '\\ssh.exe'
             if (FileIO.exists(cmd)) {
-                batch = "#!set CYGWIN=nodosfilewarning#!set HOME=" + this.getHome() + "#!" + quotepath(cmd) + args;
+                batch = "#!set CYGWIN=nodosfilewarning#!set HOME=" + this.getHome() + "#!" + quotepath(cmd) + " -o \"ServerAliveInterval 5\"" + args;
                 return [ 'c:\\\Windows\\System32\\cmd.exe', '/K '+ batch ]
             }
 

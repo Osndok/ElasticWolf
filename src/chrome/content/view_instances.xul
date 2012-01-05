@@ -52,8 +52,9 @@
           <menuseparator />
           <menu label="Connect to Instance">
             <menupopup>
-                <menuitem id="instances.context.connectPublic" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances();" label="Connect to Public IP" />
-                <menuitem id="instances.context.connectPrivate" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances(true);" label="Connect to Private IP" />
+                <menuitem id="instances.context.connectPrivate" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances();" label="Connect to Private IP" />
+                <menuitem id="instances.context.connectPublic" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances(1);" label="Connect to Public IP" />
+                <menuitem id="instances.context.connectElastic" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances(2);" label="Connect to Elastic IP" />
             </menupopup>
           </menu>
         </menupopup>
@@ -70,7 +71,7 @@
           <toolbarbutton image="images/powerdown.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.terminateInstance();" tooltiptext="&ec2ui.instances.powerdown.tip;" />
           <toolbarseparator />
           <toolbarbutton image="images/get_console_output.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.fetchConsoleOutput();" tooltiptext="&ec2ui.instances.console.tip;" />
-          <toolbarbutton image="images/key.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances();" tooltiptext="&ec2ui.instances.connect.tip;" />
+          <toolbarbutton image="images/key.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances(3);" tooltiptext="&ec2ui.instances.connect.tip;" />
           <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.viewDetails();" tooltiptext="View Details" />
           <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ec2ui_InstancesTreeView.tag();" tooltiptext="Edit EC2 Tag" />
           <button oncommand="ec2ui_InstancesTreeView.showInstancesSummary();" label="Summary" />
