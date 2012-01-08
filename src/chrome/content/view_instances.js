@@ -1194,7 +1194,6 @@ var ec2ui_InstancesTreeView = {
                 return;
             }
         }
-
         var params = []
         params.push(["host", hostname]);
         params.push(["name", instance.name]);
@@ -1220,6 +1219,12 @@ var ec2ui_InstancesTreeView = {
             }
         }
 
+        if (args.indexOf("${login}") >= 0 && ec2ui_prefs.getSSHUser() == "") {
+            var login = prompt("Please provide SSH user name:");
+            if (login && login != "") {
+                params.push(["login", login])
+            }
+        }
 
         // Common substitution
         args = ec2ui_prefs.getArgsProcessed(args, params, hostname);
