@@ -1025,6 +1025,7 @@ var ec2ui_InstancesTreeView = {
             return;
         }
         instance.publicIpAddress = getIPFromHostname(instance);
+        instance.eip = this.getEIP(instance);
 
         copyToClipboard(instance[fieldName]);
     },
@@ -1163,13 +1164,16 @@ var ec2ui_InstancesTreeView = {
         }
     },
 
-    // ipType: 0 - private, 1 - public, 2 - elastic, 3 - public or elastic
+    // ipType: 0 - private, 1 - public, 2 - elastic, 3 - public or elastic, 4 - dns name
     connectTo : function(instance, ipType) {
         ec2ui_session.showBusyCursor(true);
         var args = ec2ui_prefs.getSSHArgs();
         var cmd = ec2ui_prefs.getSSHCommand();
 
-        var hostname = !ipType ? instance.privateIpAddress : ipType == 1 || ipType == 3 ? getIPFromHostname(instance) : ipType == 2 ? this.getEIP(instance) : "";
+        var hostname = !ipType ? instance.privateIpAddress :
+                       ipType == 1 || ipType == 3 ? getIPFromHostname(instance) :
+                       ipType == 4 ? instance.publicDnsName :
+                       ipType == 2 ? this.getEIP(instance) : "";
         if (hostname == "" && ipType == 3) {
             hostname = this.getEIP(instance)
         }

@@ -11,7 +11,7 @@ var ec2ui_client = {
     timers : {},
 
     NAME: 'ElasticWolf',
-    VERSION: '1.13',
+    VERSION: '1.15',
     API_VERSION : '2011-07-15',
     OLD_API_VERSION: '2010-11-15',
     ELB_API_VERSION : '2011-04-05',
@@ -184,7 +184,7 @@ var ec2ui_client = {
         var curTime = new Date();
         var formattedTime = formatDate(curTime, "yyyy-MM-ddThh:mm:ssZ");
 
-	    var url = apiURL ? apiURL : this.serviceURL
+        var url = apiURL ? apiURL : this.serviceURL
         var sigValues = new Array();
         sigValues.push(new Array("Action", action));
         sigValues.push(new Array("AWSAccessKeyId", this.accessCode));

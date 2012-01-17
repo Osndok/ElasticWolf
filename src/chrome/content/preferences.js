@@ -232,6 +232,15 @@ var ec2ui_prefs = {
             this.setPromptForPortOpening(this.getPromptForPortOpening());
             this.setOpenConnectionPort(this.getOpenConnectionPort());
             this.setKeyHome(this.getKeyHome());
+
+            var cmd = this.getOpenSSLCommand();
+            if (cmd.indexOf('openssl.exe') > 0 && cmd.indexOf('bin\\openssl.exe') == -1) {
+                this.setOpenSSLCommand(cmd.replace(/openssl.exe/, 'bin\\openssl.exe'));
+            }
+            var cmd = this.getSSHArgs();
+            if (cmd.indexOf('ssh.exe') > 0 && cmd.indexOf('bin\\ssh.exe') == -1) {
+                this.setSSHArgs(cmd.replace(/ssh.exe/, 'bin\\ssh.exe'));
+            }
         }
     },
 
@@ -374,7 +383,7 @@ var ec2ui_prefs = {
     },
     getSSHUser : function()
     {
-        return this.getStringPreference(this.SSH_USER, "root");
+        return this.getStringPreference(this.SSH_USER, "");
     },
     getRequestTimeout : function()
     {
@@ -510,13 +519,13 @@ var ec2ui_prefs = {
         } else
 
         if (isWindows(navigator.platform)) {
-            cmd = this.getAppPath() + '\\ssh.exe'
+            cmd = this.getAppPath() + '\\bin\\ssh.exe'
             if (FileIO.exists(cmd)) {
-                batch = "#!set CYGWIN=nodosfilewarning#!set HOME=" + this.getHome() + "#!" + quotepath(cmd) + " -o \"ServerAliveInterval 5\"" + args;
+                batch = "#!set HOME=" + this.getHome() + "#!" + quotepath(cmd) + " -o \"ServerAliveInterval 5\"" + args;
                 return [ 'c:\\\Windows\\System32\\cmd.exe', '/K '+ batch ]
             }
 
-            cmd = this.getAppPath() + '"\\putty.exe'
+            cmd = this.getAppPath() + '"\\bin\putty.exe'
             if (FileIO.exists(cmd)) {
                 return [ cmd, args ]
             }
@@ -531,7 +540,7 @@ var ec2ui_prefs = {
         var cmd = "/usr/bin/openssl"
 
         if (isWindows(navigator.platform)) {
-            cmd = this.getAppPath() + "\\openssl.exe"
+            cmd = this.getAppPath() + "\\bin\\openssl.exe"
             if (FileIO.exists(cmd)) {
                 return cmd
             }
@@ -541,7 +550,7 @@ var ec2ui_prefs = {
 
     getDefaultJavaHome: function() {
         if (isWindows(navigator.platform)) {
-            return "C:\\Program Files\\Java\\gre6";
+            return "C:\\Program Files (x86)\\Java\\gre6";
         } else
 
         if (isMacOS(navigator.platform)) {
@@ -587,7 +596,12 @@ var ec2ui_prefs = {
         }
         // Global variables
         if (file.indexOf("${login}") > -1) {
-            file = file.replace(/\${login}/g, this.getSSHUser());
+            var user = this.getSSHUser()
+            if (user != "") {
+                file = file.replace(/\${login}/g, user);
+            } else {
+                file = file.replace(/\${login}@/g, "");
+            }
         }
         if (file.indexOf("${home}") > -1) {
             var home = this.getHome()

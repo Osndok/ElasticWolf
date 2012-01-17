@@ -47,6 +47,7 @@
               <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('publicIpAddress');" label="Public IP Address" />
               <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('privateDnsName');" label="Private DNS Name" />
               <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('privateIpAddress');" label="Private IP Address" />
+              <menuitem oncommand="ec2ui_InstancesTreeView.copyToClipBoard('eip');" label="Elastic IP Address" />
             </menupopup>
           </menu>
           <menuseparator />
@@ -55,6 +56,7 @@
                 <menuitem id="instances.context.connectPrivate" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances();" label="Connect to Private IP" />
                 <menuitem id="instances.context.connectPublic" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances(1);" label="Connect to Public IP" />
                 <menuitem id="instances.context.connectElastic" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances(2);" label="Connect to Elastic IP" />
+                <menuitem id="instances.context.connectPublic" oncommand="ec2ui_InstancesTreeView.connectToSelectedInstances(4);" label="Connect to Public DNS" />
             </menupopup>
           </menu>
         </menupopup>
