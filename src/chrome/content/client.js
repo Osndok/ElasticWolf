@@ -11,11 +11,12 @@ var ec2ui_client = {
     timers : {},
 
     NAME: 'ElasticWolf',
-    VERSION: '1.15',
+    VERSION: '1.16',
     API_VERSION : '2011-07-15',
     OLD_API_VERSION: '2010-11-15',
     ELB_API_VERSION : '2011-04-05',
     IAM_API_VERSION : '2010-05-08',
+    APP_URL: 'https://github.com/vseryakov/',
     VPN_CONFIG_PATH : 'http://ec2-downloads.s3.amazonaws.com/',
     SIG_VERSION: '2',
     IAM_GOV_URL: 'https://iam.us-gov.amazonaws.com',
@@ -25,6 +26,14 @@ var ec2ui_client = {
 
     getAppName : function() {
         return this.NAME;
+    },
+
+    getAppUrl: function() {
+        return this.APP_URL + this.NAME
+    },
+
+    getDownloadUrl: function() {
+        return this.APP_URL + this.NAME + "/downloads/";
     },
 
     getUserAgent: function () {

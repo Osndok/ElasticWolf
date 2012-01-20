@@ -59,6 +59,9 @@ var ec2ui_session = {
             document.getElementById("ec2ui.routetables.view").view = ec2ui_RouteTablesTreeView;
             document.getElementById("ec2ui.routes.view").view = ec2ui_RoutesTreeView;
             document.getElementById("ec2ui.route.associations.view").view = ec2ui_RouteAssociationsTreeView;
+            document.getElementById("ec2ui.acls.view").view = ec2ui_NetworkAclsTreeView;
+            document.getElementById("ec2ui.acls.associations.view").view = ec2ui_NetworkAclAssociationsTreeView;
+            document.getElementById("ec2ui.acls.rules.view").view = ec2ui_NetworkAclRulesTreeView;
 
             // Enable about:blank to work if noscript is installed
             if ("@maone.net/noscript-service;1" in Components.classes) {
@@ -216,6 +219,9 @@ var ec2ui_session = {
         case "Routing":
             eval("ec2ui_InternetGatewayTreeView." + toCall);
             eval("ec2ui_RouteTablesTreeView." + toCall);
+            break;
+        case "ACLs":
+            eval("ec2ui_NetworkAclsTreeView." + toCall);
             break;
         default:
             log("This is an invalid tab: " + tabs.selectedItem.label);

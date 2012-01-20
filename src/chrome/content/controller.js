@@ -393,6 +393,122 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
+    createNetworkAclEntry : function(aclId, num, proto, action, egress, cidr, var1, var2, callback)
+    {
+        var params = [ [ "NetworkAclId", aclId ], [ "RuleNumber", num], ["Protocol", proto], ["RuleAction", action], ["Egress", egress], ["CidrBlock", cidr] ];
+        switch (proto) {
+        case "1":
+            params.push([ "Icmp.Code", var1])
+            params.push([ "Icmp.Type", var2])
+            break;
+        case "6":
+        case "17":
+            params.push(["PortRange.From", var1])
+            params.push(["PortRange.To", var2])
+            break;
+        }
+        ec2ui_client.queryEC2("CreateNetworkAclEntry", params, this, true, "onCompleteCreateNetworkAclEntry", callback);
+    },
+
+    onCompleteCreateNetworkAclEntry : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    deleteNetworkAclEntry : function(aclId, num, egress, callback)
+    {
+        ec2ui_client.queryEC2("DeleteNetworkAclEntry", [ [ "NetworkAclId", aclId ], ["RuleNumber", num], ["Egress", egress] ], this, true, "onCompleteDeleteNetworkAclEntry", callback);
+    },
+
+    onCompleteDeleteNetworkAclEntry : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    ReplaceNetworkAclAssociation: function(assocId, aclId, callback)
+    {
+        ec2ui_client.queryEC2("ReplaceNetworkAclAssociation", [ [ "AssociationId", assocId ], ["NetworkAclId", aclId] ], this, true, "onCompleteReplaceNetworkAclAssociation", callback);
+    },
+
+    onCompleteReplaceNetworkAclAssociation : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    createNetworkAcl : function(vpcId, callback)
+    {
+        ec2ui_client.queryEC2("CreateNetworkAcl", [ [ "VpcId", vpcId ] ], this, true, "onCompleteCreateNetworkAcl", callback);
+    },
+
+    onCompleteCreateNetworkAcl : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    deleteNetworkAcl : function(id, callback)
+    {
+        ec2ui_client.queryEC2("DeleteNetworkAcl", [ [ "NetworkAclId", id ] ], this, true, "onCompleteDeleteNetworkAcl", callback);
+    },
+
+    onCompleteDeleteNetworkAcl : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    describeNetworkAcls : function(callback)
+    {
+        ec2ui_client.queryEC2("DescribeNetworkAcls", [], this, true, "onCompleteDescribeNetworkAcls", callback);
+    },
+
+    onCompleteDescribeNetworkAcls : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.evaluate("/ec2:DescribeNetworkAclsResponse/ec2:networkAclSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        for ( var i = 0; i < items.snapshotLength; i++) {
+            var entryList = [], assocList = []
+            var id = getNodeValueByName(items.snapshotItem(i), "networkAclId");
+            var vpcId = getNodeValueByName(items.snapshotItem(i), "vpcId");
+            var dflt = getNodeValueByName(items.snapshotItem(i), "default");
+
+            var entries = items.snapshotItem(i).getElementsByTagName("entrySet")[0].getElementsByTagName("item");
+            for ( var j = 0; j < entries.length; j++) {
+                var num = getNodeValueByName(entries[j], "ruleNumber");
+                var proto = getNodeValueByName(entries[j], "protocol");
+                var action = getNodeValueByName(entries[j], "ruleAction");
+                var egress = getNodeValueByName(entries[j], "egress");
+                var cidr = getNodeValueByName(entries[j], "cidrBlock");
+
+                var icmpList = [], portList = []
+                var code = getNodeValueByName(entries[j], "code");
+                var type = getNodeValueByName(entries[j], "type");
+                if (code != "" && type != "") {
+                    icmpList.push([code, type])
+                }
+                var from = getNodeValueByName(entries[j], "from");
+                var to = getNodeValueByName(entries[j], "to");
+                if (from != "" && to != "") {
+                    portList.push([from, to])
+                }
+
+                entryList.push(new NetworkAclEntry(num, proto, action, egress, cidr, icmpList, portList))
+            }
+
+            var assoc = items.snapshotItem(i).getElementsByTagName("associationSet")[0].getElementsByTagName("item");
+            for ( var j = 0; j < assoc.length; j++) {
+                var aid = getNodeValueByName(assoc[j], "networkAclAssociationId");
+                var acl = getNodeValueByName(assoc[j], "networkAclId");
+                var subnet = getNodeValueByName(assoc[j], "subnetId");
+                assocList.push(new NetworkAclAssociation(aid, acl, subnet))
+            }
+            list.push(new NetworkAcl(id, vpcId, dflt, entryList, assocList));
+        }
+
+        ec2ui_model.updateNetworkAcls(list);
+        if (objResponse.callback) objResponse.callback(list);
+    },
+
     describeVpnGateways : function(isSync, callback)
     {
         if (!isSync) isSync = false;

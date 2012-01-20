@@ -24,6 +24,7 @@
 <!ENTITY ec2ui.tabs.vpcs.label "VPC">
 <!ENTITY ec2ui.tabs.routing.label "Routing">
 <!ENTITY ec2ui.tabs.vpns.label "VPNC">
+<!ENTITY ec2ui.tabs.acls.label "ACLs">
 
 <!ENTITY ec2ui.captions.images.images.label "Machine Images (AMIs)">
 <!ENTITY ec2ui.captions.images.attribs.label "Launch Permissions">
@@ -39,6 +40,10 @@
 <!ENTITY ec2ui.internetgateways.remove.tip "Delete Gateway">
 <!ENTITY ec2ui.internetgateways.attach.tip "Attach to VPC">
 <!ENTITY ec2ui.internetgateways.detach.tip "Detach from VPC">
+
+<!ENTITY ec2ui.captions.acls.label "Network ACLs">
+<!ENTITY ec2ui.acls.add.tip "Add ACL">
+<!ENTITY ec2ui.acls.remove.tip "Delete ACL">
 
 <!ENTITY ec2ui.images.id.label "ID">
 <!ENTITY ec2ui.images.manifest.label "Manifest">

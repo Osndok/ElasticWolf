@@ -28,6 +28,35 @@ function Tag(name, value)
     }
 }
 
+function NetworkAclAssociation(id, acl, subnet)
+{
+    this.id = id
+    this.aclId = acl
+    this.subnetId = subnet
+    this.cidr = ""
+}
+
+function NetworkAclEntry(num, proto, action, egress, cidr, icmp, ports)
+{
+    this.num = num
+    this.proto = proto
+    this.action = action
+    this.egress = egress
+    this.cidr = cidr
+    this.icmp = icmp ? icmp : []
+    this.ports = ports ? ports : []
+}
+
+function NetworkAcl(id, vpcId, dflt, rules, assocs)
+{
+    this.id = id
+    this.vpcId = vpcId
+    this.dflt = dflt
+    this.rules = rules
+    this.associations = assocs
+    this.subnets = ""
+}
+
 function Endpoint(name, url)
 {
     if (!name || name == "") {
@@ -417,6 +446,7 @@ var ec2ui_model = {
     customerGateways : null,
     internetGateways : null,
     routetables: null,
+    networkAcls: null,
 
     resourceMap : {
         instances : 0,
@@ -432,6 +462,7 @@ var ec2ui_model = {
         customerGateways : 10,
         internetGateways : 11,
         routetables: 12,
+        networkAcls: 13,
     },
 
     amiIdManifestMap : {},
@@ -462,6 +493,7 @@ var ec2ui_model = {
         this.updateCustomerGateways(null);
         this.updateInternetGateways(null);
         this.updateRouteTables(null);
+        this.updateNetworkAcls(null);
     },
 
     getModel : function(name)
@@ -513,6 +545,8 @@ var ec2ui_model = {
             return this.internetGateways;
         case "routeTables":
             return this.routeTables;
+        case "networkAcls":
+            return this.networkAcls;
         }
         return []
     },
@@ -589,6 +623,9 @@ var ec2ui_model = {
         case "routeTables":
             ec2ui_session.controller.describeRouteTables();
             break;
+        case "networkAcls":
+            ec2ui_session.controller.describeNetworkAcls();
+            break;
         }
         return []
     },
@@ -623,6 +660,16 @@ var ec2ui_model = {
         return this.vpcs;
     },
 
+    getVpcById: function(id)
+    {
+        for (var i in this.vpcs) {
+            if (this.vpcs[i].id == id) {
+                return this.vpcs[i]
+            }
+        }
+        return null
+    },
+
     updateSubnets : function(list)
     {
         this.subnets = list;
@@ -635,6 +682,27 @@ var ec2ui_model = {
             ec2ui_session.controller.describeSubnets();
         }
         return this.subnets;
+    },
+
+    getSubnetById: function(id)
+    {
+        for (var i in this.subnets) {
+            if (this.subnets[i].id == id) {
+                return this.subnets[i]
+            }
+        }
+        return null
+    },
+
+    getSubnetsByVpcId: function(vpcId)
+    {
+        var rc = []
+        for (var i in this.subnets) {
+            if (this.subnets[i].vpcId == vpcId) {
+                rc.push(this.subnets[i])
+            }
+        }
+        return rc
     },
 
     updateDhcpOptions : function(list)
@@ -719,6 +787,31 @@ var ec2ui_model = {
             ec2ui_session.controller.describeRouteTables();
         }
         return this.routeTables;
+    },
+
+    updateNetworkAcls : function(list)
+    {
+        this.networkAcls = list;
+        this.notifyComponents("networkAcls");
+    },
+
+    getNetworkAcls : function()
+    {
+        if (this.networkAcls == null) {
+            ec2ui_session.controller.describeNetworkAcls();
+        }
+        return this.networkAcls;
+    },
+
+    getNetworkAclsByVpcId: function(vpcId)
+    {
+        var rc = []
+        for (var i in this.networkAcls) {
+            if (this.networkAcls[i].vpcId == vpcId) {
+                rc.push(this.networkAcls[i])
+            }
+        }
+        return rc
     },
 
     getVolumes : function()
