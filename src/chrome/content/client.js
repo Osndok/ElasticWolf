@@ -16,7 +16,8 @@ var ec2ui_client = {
     OLD_API_VERSION: '2010-11-15',
     ELB_API_VERSION : '2011-04-05',
     IAM_API_VERSION : '2010-05-08',
-    APP_URL: 'https://github.com/vseryakov/',
+    APP_SITE: 'https://github.com',
+    APP_PATH: '/vseryakov/',
     VPN_CONFIG_PATH : 'http://ec2-downloads.s3.amazonaws.com/',
     SIG_VERSION: '2',
     IAM_GOV_URL: 'https://iam.us-gov.amazonaws.com',
@@ -29,11 +30,11 @@ var ec2ui_client = {
     },
 
     getAppUrl: function() {
-        return this.APP_URL + this.NAME
+        return this.APP_SITE + this.APP_PATH + this.NAME
     },
 
     getDownloadUrl: function() {
-        return this.APP_URL + this.NAME + "/downloads/";
+        return this.getAppUrl() + "/downloads/"
     },
 
     getUserAgent: function () {
@@ -47,6 +48,31 @@ var ec2ui_client = {
     isGovCloud : function()
     {
         return this.serviceURL.indexOf("ec2.us-gov") > -1;
+    },
+
+    checkForUpdates: function() {
+        ver = parseFloat(this.VERSION) + 0.01
+        var url = this.getDownloadUrl()
+        var xmlhttp = this.newInstance();
+        if (!xmlhttp) {
+            log("Could not create xmlhttp object");
+            return;
+        }
+        debug(url)
+        xmlhttp.open("GET", url, false);
+        xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
+        try { xmlhttp.send(null); }
+        catch(e) { debug(JSON.stringify(e)) }
+        var data = xmlhttp.responseText;
+        var d = data.match(new RegExp("\/downloads\/[^\/]+\/" + this.NAME + "\/" + this.NAME + (isWindows(navigator.platform) ? "-win-" : "-osx-") + "([0-9]\.[0-9][0-9])\.zip"))
+        if (d != null) {
+            debug(d);
+            if (parseFloat(d[1]) > parseFloat(this.VERSION)) {
+                alert("New version " + d[1] + "is available at " + this.APP_SITE + d[0])
+                return;
+            }
+        }
+        alert("No new version available")
     },
 
     getNsResolver : function() {

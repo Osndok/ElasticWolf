@@ -3,9 +3,9 @@
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 
 <dialog id="ec2ui.dialog.managetools" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    buttons="accept,extra1" ondialogaccept="return saveDialog()"
-    ondialogextra1="resetDialog();" buttonlabelextra1="Reset"
-    onload="return initDialog();" title="Manage EC2 Tools" buttonlabelcancel="Close">
+    buttons="accept,extra1,extra2" ondialogaccept="return saveDialog()"
+    ondialogextra1="resetDialog();" buttonlabelextra1="Reset" buttonlabelextra2="Check For Updates"
+    onload="return initDialog();" title="Manage EC2 Tools" buttonlabelcancel="Close" ondialogextra2="ec2ui_client.checkForUpdates()">
 
     <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/client.js" />
