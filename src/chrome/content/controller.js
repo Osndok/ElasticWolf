@@ -2030,9 +2030,90 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
+    createNetworkInterface : function(subnetId, callback)
+    {
+        ec2ui_client.queryEC2("CreateNetworkInterface", [["subnetId", subnetId]], this, true, "onCompleteCreateNetworkInterface", callback);
+    },
+
+    onCompleteCreateNetworkInterface : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    deleteNetworkInterface : function(id, callback)
+    {
+        ec2ui_client.queryEC2("DeleteNetworkInterface", [["NetworkInterfaceId", id]], this, true, "onCompleteDeleteNetworkInterface", callback);
+    },
+
+    onCompleteDeleteNetworkInterface : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    describeNetworkInterfaces : function(callback)
+    {
+        ec2ui_client.queryEC2("DescribeNetworkInterfaces", [], this, true, "onCompleteDescribeNetworkInterfaces", callback);
+    },
+
+    onCompleteDescribeNetworkInterfaces : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.evaluate("/ec2:DescribeNetworkInterfcesResponse/ec2:networkInterfaceSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        for ( var i = 0; i < items.snapshotLength; i++) {
+            var id = getNodeValueByName(items.snapshotItem(i), "networkInterfaceId");
+            var subnetId = getNodeValueByName(items.snapshotItem(i), "subnetId");
+            var vpcId = getNodeValueByName(items.snapshotItem(i), "vpcId");
+            var descr = getNodeValueByName(items.snapshotItem(i), "description");
+            var status = getNodeValueByName(items.snapshotItem(i), "status");
+            var mac = getNodeValueByName(items.snapshotItem(i), "macAddress");
+            var ip = getNodeValueByName(items.snapshotItem(i), "privateIpAddress");
+            var check = getNodeValueByName(items.snapshotItem(i), "sourceDestCheck");
+
+            list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, mac, ip, check));
+        }
+
+        ec2ui_model.updateNetwotkInterfaces(list);
+        if (objResponse.callback) objResponse.callback(list);
+    },
+
     describeSecurityGroups : function(callback)
     {
         ec2ui_client.queryEC2("DescribeSecurityGroups", [], this, true, "onCompleteDescribeSecurityGroups", callback);
+    },
+
+    parsePermissions: function(type, list, items)
+    {
+        if (items) {
+            for ( var j = 0; j < items.length; j++) {
+                if (items.item(j).nodeName == '#text') continue;
+                var ipProtocol = getNodeValueByName(items.item(j), "ipProtocol");
+                var fromPort = getNodeValueByName(items.item(j), "fromPort");
+                var toPort = getNodeValueByName(items.item(j), "toPort");
+                log("Group ipp [" + ipProtocol + ":" + fromPort + "-" + toPort + "]");
+
+                var groups = items[j].getElementsByTagName("groups")[0];
+                if (groups) {
+                    var groupsItems = groups.childNodes;
+                    for ( var k = 0; k < groupsItems.length; k++) {
+                        if (groupsItems.item(k).nodeName == '#text') continue;
+                        var srcGrp = { ownerId : getNodeValueByName(groupsItems[k], "userId"), id : getNodeValueByName(groupsItems[k], "groupId"), name : getNodeValueByName(groupsItems[k], "groupName") }
+                        list.push(new Permission(type, ipProtocol, fromPort, toPort, srcGrp));
+                    }
+                }
+                var ipRanges = items[j].getElementsByTagName("ipRanges")[0];
+                if (ipRanges) {
+                    var ipRangesItems = ipRanges.childNodes;
+                    for ( var k = 0; k < ipRangesItems.length; k++) {
+                        if (ipRangesItems.item(k).nodeName == '#text') continue;
+                        var cidrIp = getNodeValueByName(ipRangesItems[k], "cidrIp");
+                        list.push(new Permission(type, ipProtocol, fromPort, toPort, null, cidrIp));
+                    }
+                }
+            }
+        }
+        return list
     },
 
     onCompleteDescribeSecurityGroups : function(objResponse)
@@ -2049,42 +2130,10 @@ var ec2ui_controller = {
             var vpcId = getNodeValueByName(items.snapshotItem(i), "vpcId");
             log("Group name [id=" + groupId + ", name=" + groupName + ", vpcId=" + vpcId + "]");
 
-            var ipPermissionsList = new Array();
             var ipPermissions = items.snapshotItem(i).getElementsByTagName("ipPermissions")[0];
-            var ipPermissionsItems = ipPermissions.childNodes;
-            if (ipPermissionsItems) {
-                for ( var j = 0; j < ipPermissionsItems.length; j++) {
-                    if (ipPermissionsItems.item(j).nodeName == '#text') continue;
-                    var ipProtocol = getNodeValueByName(ipPermissionsItems.item(j), "ipProtocol");
-                    var fromPort = getNodeValueByName(ipPermissionsItems.item(j), "fromPort");
-                    var toPort = getNodeValueByName(ipPermissionsItems.item(j), "toPort");
-                    log("Group ipp [" + ipProtocol + ":" + fromPort + "-" + toPort + "]");
-
-                    var groups = ipPermissionsItems[j].getElementsByTagName("groups")[0];
-                    if (groups) {
-                        var groupsItems = groups.childNodes;
-                        for ( var k = 0; k < groupsItems.length; k++) {
-                            if (groupsItems.item(k).nodeName == '#text') continue;
-                            var srcGrp = {
-                                ownerId : getNodeValueByName(groupsItems[k], "userId"),
-                                id : getNodeValueByName(groupsItems[k], "groupId"),
-                                name : getNodeValueByName(groupsItems[k], "groupName")
-                            }
-                            ipPermissionsList.push(new Permission(ipProtocol, fromPort, toPort, srcGrp));
-                        }
-                    }
-
-                    var ipRanges = ipPermissionsItems[j].getElementsByTagName("ipRanges")[0];
-                    if (ipRanges) {
-                        var ipRangesItems = ipRanges.childNodes;
-                        for ( var k = 0; k < ipRangesItems.length; k++) {
-                            if (ipRangesItems.item(k).nodeName == '#text') continue;
-                            var cidrIp = getNodeValueByName(ipRangesItems[k], "cidrIp");
-                            ipPermissionsList.push(new Permission(ipProtocol, fromPort, toPort, null, cidrIp));
-                        }
-                    }
-                }
-            }
+            var ipPermissionsList = this.parsePermissions('Ingress', [], ipPermissions.childNodes);
+            ipPermissions = items.snapshotItem(i).getElementsByTagName("ipPermissionsEgress")[0];
+            ipPermissionsList = this.parsePermissions('Egress', ipPermissionsList, ipPermissions.childNodes);
 
             list.push(new SecurityGroup(groupId, ownerId, groupName, groupDescription, vpcId, ipPermissionsList));
         }
@@ -2120,27 +2169,27 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    authorizeSourceCIDR : function(group, ipProtocol, fromPort, toPort, cidrIp, callback)
+    authorizeSourceCIDR : function(type, group, ipProtocol, fromPort, toPort, cidrIp, callback)
     {
         var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
         params.push([ "IpPermissions.1.IpProtocol", ipProtocol ]);
         params.push([ "IpPermissions.1.FromPort", fromPort ]);
         params.push([ "IpPermissions.1.ToPort", toPort ]);
         params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
-        ec2ui_client.queryEC2("AuthorizeSecurityGroupIngress", params, this, true, "onCompleteAuthorizeSecurityGroupIngress", callback);
+        ec2ui_client.queryEC2("AuthorizeSecurityGroup" + type, params, this, true, "onCompleteAuthorizeSecurityGroup", callback);
     },
 
-    revokeSourceCIDR : function(group, ipProtocol, fromPort, toPort, cidrIp, callback)
+    revokeSourceCIDR : function(type, group, ipProtocol, fromPort, toPort, cidrIp, callback)
     {
         var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
         params.push([ "IpPermissions.1.IpProtocol", ipProtocol ]);
         params.push([ "IpPermissions.1.FromPort", fromPort ]);
         params.push([ "IpPermissions.1.ToPort", toPort ]);
         params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
-        ec2ui_client.queryEC2("RevokeSecurityGroupIngress", params, this, true, "onCompleteRevokeSecurityGroupIngress", callback);
+        ec2ui_client.queryEC2("RevokeSecurityGroup" + type, params, this, true, "onCompleteRevokeSecurityGroup", callback);
     },
 
-    authorizeSourceGroup : function(group, ipProtocol, fromPort, toPort, srcGroup, callback)
+    authorizeSourceGroup : function(type, group, ipProtocol, fromPort, toPort, srcGroup, callback)
     {
         var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
         params.push([ "IpPermissions.1.IpProtocol", ipProtocol ]);
@@ -2152,15 +2201,15 @@ var ec2ui_controller = {
             params.push([ "IpPermissions.1.Groups.1.GroupName", srcGroup.name ]);
             params.push([ "IpPermissions.1.Groups.1.UserId", srcGroup.ownerId ]);
         }
-        ec2ui_client.queryEC2("AuthorizeSecurityGroupIngress", params, this, true, "onCompleteAuthorizeSecurityGroupIngress", callback);
+        ec2ui_client.queryEC2("AuthorizeSecurityGroup" + type, params, this, true, "onCompleteAuthorizeSecurityGroup", callback);
     },
 
-    onCompleteAuthorizeSecurityGroupIngress : function(objResponse)
+    onCompleteAuthorizeSecurityGroup : function(objResponse)
     {
         if (objResponse.callback) objResponse.callback();
     },
 
-    revokeSourceGroup : function(group, ipProtocol, fromPort, toPort, srcGroup, callback)
+    revokeSourceGroup : function(type, group, ipProtocol, fromPort, toPort, srcGroup, callback)
     {
         var params = group.id && group.id != "" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group.name ] ]
         params.push([ "IpPermissions.1.IpProtocol", ipProtocol ]);
@@ -2172,10 +2221,10 @@ var ec2ui_controller = {
             params.push([ "IpPermissions.1.Groups.1.GroupName", srcGroup.name ]);
             params.push([ "IpPermissions.1.Groups.1.UserId", srcGroup.ownerId ]);
         }
-        ec2ui_client.queryEC2("RevokeSecurityGroupIngress", params, this, true, "onCompleteRevokeSecurityGroupIngress", callback);
+        ec2ui_client.queryEC2("RevokeSecurityGroup" + type, params, this, true, "onCompleteRevokeSecurityGroup", callback);
     },
 
-    onCompleteRevokeSecurityGroupIngress : function(objResponse)
+    onCompleteRevokeSecurityGroup : function(objResponse)
     {
         if (objResponse.callback) objResponse.callback();
     },

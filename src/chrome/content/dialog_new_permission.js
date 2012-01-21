@@ -200,7 +200,7 @@ var ec2_Authorizer = {
         return true;
     }
     var permCaption = document.getElementById("ec2ui.newpermission.add.caption");
-    permCaption.label = "Add New Permission for Security Group: " + this.group.name;
+    permCaption.label = "Add New " + this.retVal.type + " Permission for Security Group: " + this.group.name;
 
     var user = document.getElementById("ec2ui.newpermission.source.user");
     user.value = this.group.ownerId;

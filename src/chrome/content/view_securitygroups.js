@@ -185,7 +185,7 @@ var ec2ui_SecurityGroupsTreeView = {
 ec2ui_SecurityGroupsTreeView.register();
 
 var ec2ui_PermissionsTreeView = {
-        COLNAMES : ['permission.protocol','permission.fromPort','permission.toPort','permission.cidrIp','permission.group'],
+        COLNAMES : ['permission.type','permission.protocol','permission.fromPort','permission.toPort','permission.cidrIp','permission.group'],
         treeBox : null,
         selection : null,
         permissionList : new Array(),
@@ -257,11 +257,17 @@ var ec2ui_PermissionsTreeView = {
         getColumnProperties: function(column, element, prop) {},
         getLevel : function(idx) { return 0; },
 
-        grantPermission : function() {
+        grantPermission : function(type) {
             var group = ec2ui_SecurityGroupsTreeView.getSelectedGroup();
             if (group == null) return;
 
-            retVal = {ok:null};
+            type = type ? type : "Ingress";
+
+            if (type == "Egress" && group.vpcId == "") {
+                alert("Egress can be used for VPC groups only")
+                return;
+            }
+            retVal = {ok:null, type: type};
             window.openDialog("chrome://ec2ui/content/dialog_new_permission.xul", null, "chrome,centerscreen,modal,resizable", group, ec2ui_session, retVal);
 
             if (retVal.ok) {
@@ -273,9 +279,9 @@ var ec2ui_PermissionsTreeView = {
 
                 var newPerm = retVal.newPerm;
                 if (newPerm.cidrIp != null) {
-                    ec2ui_session.controller.authorizeSourceCIDR(group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.cidrIp,wrap);
+                    ec2ui_session.controller.authorizeSourceCIDR(type, group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.cidrIp,wrap);
                 } else {
-                    ec2ui_session.controller.authorizeSourceGroup(group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.srcGroup, wrap);
+                    ec2ui_session.controller.authorizeSourceGroup(type, group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.srcGroup, wrap);
                 }
             }
         },
@@ -315,9 +321,9 @@ var ec2ui_PermissionsTreeView = {
             for (i in perms) {
                 permission = perms[i];
                 if (permission.cidrIp) {
-                    ec2ui_session.controller.revokeSourceCIDR(group,permission.protocol,permission.fromPort,permission.toPort,permission.cidrIp,wrap);
+                    ec2ui_session.controller.revokeSourceCIDR(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.cidrIp,wrap);
                 } else {
-                    ec2ui_session.controller.revokeSourceGroup(group,permission.protocol,permission.fromPort,permission.toPort,permission.srcGroup,wrap);
+                    ec2ui_session.controller.revokeSourceGroup(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.srcGroup,wrap);
                 }
             }
             ec2ui_session.showBusyCursor(false);

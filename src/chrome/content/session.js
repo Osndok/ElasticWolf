@@ -62,6 +62,8 @@ var ec2ui_session = {
             document.getElementById("ec2ui.acls.view").view = ec2ui_NetworkAclsTreeView;
             document.getElementById("ec2ui.acls.associations.view").view = ec2ui_NetworkAclAssociationsTreeView;
             document.getElementById("ec2ui.acls.rules.view").view = ec2ui_NetworkAclRulesTreeView;
+            document.getElementById("ec2ui.enis.view").view = ec2ui_NetworkInterfacesTreeView;
+            document.getElementById("ec2ui.enis.attachments.view").view = ec2ui_NetworkInterfaceAttachmentsTreeView;
 
             // Enable about:blank to work if noscript is installed
             if ("@maone.net/noscript-service;1" in Components.classes) {

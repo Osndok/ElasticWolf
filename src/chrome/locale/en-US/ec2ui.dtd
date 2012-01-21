@@ -25,6 +25,7 @@
 <!ENTITY ec2ui.tabs.routing.label "Routing">
 <!ENTITY ec2ui.tabs.vpns.label "VPNC">
 <!ENTITY ec2ui.tabs.acls.label "ACLs">
+<!ENTITY ec2ui.tabs.enis.label "ENIs">
 
 <!ENTITY ec2ui.captions.images.images.label "Machine Images (AMIs)">
 <!ENTITY ec2ui.captions.images.attribs.label "Launch Permissions">
@@ -108,6 +109,7 @@
 <!ENTITY ec2ui.captions.secgroups.groups.label "Your Groups">
 <!ENTITY ec2ui.captions.secgroups.permissions.label "Group Permissions">
 
+<!ENTITY ec2ui.permissions.type.label "Type">
 <!ENTITY ec2ui.permissions.protocol.label "Protocol">
 <!ENTITY ec2ui.permissions.fromport.label "From Port/ICMP Type">
 <!ENTITY ec2ui.permissions.toport.label "To Port/ICMP Code">
@@ -373,7 +375,8 @@
 <!ENTITY ec2ui.secgroups.contextmenu.create.label "Create a new security group">
 <!ENTITY ec2ui.secgroups.contextmenu.delete.label "Delete this security group">
 
-<!ENTITY ec2ui.permissions.authorize.tip "Grant Permission">
+<!ENTITY ec2ui.permissions.authorize.tip "Grant Ingress Permission">
+<!ENTITY ec2ui.permissions.authorize.egress.tip "Grant Egress Permission">
 <!ENTITY ec2ui.permissions.revoke.tip "Revoke Permission">
 <!ENTITY ec2ui.permissions.contextmenu.revoke.label "Revoke this permission">
 

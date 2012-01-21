@@ -16,6 +16,7 @@
 <?xul-overlay href="chrome://ec2ui/content/view_loadbalancer.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_routing.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_networkacls.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_enis.xul"?>
 
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 <window id="ec2ui-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
@@ -56,6 +57,7 @@
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_loadbalancer.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_instancehealth.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_networkacls.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_enis.js" />
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="ec2ui.properties.bundle" src="chrome://ec2ui/locale/ec2ui.properties" />
@@ -92,6 +94,7 @@
         <tab label="&ec2ui.tabs.vpcs.label;" />
         <tab label="&ec2ui.tabs.routing.label;" />
         <tab label="&ec2ui.tabs.acls.label;" />
+        <tab label="&ec2ui.tabs.enis.label;" />
         <tab label="&ec2ui.tabs.vpns.label;" />
         <tab label="&ec2ui.tabs.availzones.label;" />
       </tabs>
@@ -109,6 +112,7 @@
         <tabpanel id="vpcs_tab"/>
         <tabpanel id="routing_tab"/>
         <tabpanel id="acls_tab"/>
+        <tabpanel id="enis_tab"/>
         <tabpanel id="vpns_tab"/>
         <tabpanel id="availzones_tab"/>
       </tabpanels>

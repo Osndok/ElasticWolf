@@ -55,12 +55,15 @@
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
         <hbox>
-          <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ec2ui_PermissionsTreeView.grantPermission();" tooltiptext="&ec2ui.permissions.authorize.tip;" />
+          <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_PermissionsTreeView.grantPermission();" tooltiptext="&ec2ui.permissions.authorize.tip;" />
+          <toolbarbutton image="images/import.png" style="-moz-box-pack:center;" oncommand="ec2ui_PermissionsTreeView.grantPermission('Egress');" tooltiptext="&ec2ui.permissions.authorize.egress.tip;" />
           <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ec2ui_PermissionsTreeView.revokePermission();" tooltiptext="&ec2ui.permissions.revoke.tip;" />
         </hbox>
       </toolbar>
       <tree id="ec2ui.permissions.view" enableColumnDrag="true" flex="1">
         <treecols>
+          <treecol id="permission.type" label="&ec2ui.permissions.type.label;" flex="1" persist="width ordinal hidden sortDirection" />
+          <splitter class="tree-splitter" />
           <treecol id="permission.protocol" label="&ec2ui.permissions.protocol.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="permission.fromPort" label="&ec2ui.permissions.fromport.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />

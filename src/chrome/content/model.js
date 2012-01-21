@@ -28,6 +28,18 @@ function Tag(name, value)
     }
 }
 
+function NetworkInterface(id, status, descr, subnetId, vpcId, macAddress, privateIpAddress, sourceDestCheck)
+{
+    this.id = id
+    this.status = status
+    this.descr = descr
+    this.subnetId = subnetId
+    this.vpcId = vpcId
+    this.macAddress = macAddress
+    this.privateIpAddress = privateIpAddress
+    this.sourceDestCheck = sourceDestCheck
+}
+
 function NetworkAclAssociation(id, acl, subnet)
 {
     this.id = id
@@ -206,8 +218,9 @@ function SecurityGroup(id, ownerId, name, description, vpcId, permissions)
     this.permissions = permissions;
 }
 
-function Permission(protocol, fromPort, toPort, srcGroup, cidrIp)
+function Permission(type, protocol, fromPort, toPort, srcGroup, cidrIp)
 {
+    this.type = type
     this.protocol = protocol;
     this.fromPort = fromPort;
     this.toPort = toPort;
@@ -447,6 +460,7 @@ var ec2ui_model = {
     internetGateways : null,
     routetables: null,
     networkAcls: null,
+    networkInterfaces: null,
 
     resourceMap : {
         instances : 0,
@@ -463,6 +477,7 @@ var ec2ui_model = {
         internetGateways : 11,
         routetables: 12,
         networkAcls: 13,
+        networkInterfaces: 14,
     },
 
     amiIdManifestMap : {},
@@ -494,6 +509,7 @@ var ec2ui_model = {
         this.updateInternetGateways(null);
         this.updateRouteTables(null);
         this.updateNetworkAcls(null);
+        this.updateNetworkInterfaces(null);
     },
 
     getModel : function(name)
@@ -547,6 +563,8 @@ var ec2ui_model = {
             return this.routeTables;
         case "networkAcls":
             return this.networkAcls;
+        case "networkInterfaces":
+            return this.networkInterfaces;
         }
         return []
     },
@@ -626,6 +644,9 @@ var ec2ui_model = {
         case "networkAcls":
             ec2ui_session.controller.describeNetworkAcls();
             break;
+        case "networkInterfaces":
+            ec2ui_session.controller.describeNetworkInterfaces();
+            break;
         }
         return []
     },
@@ -644,6 +665,20 @@ var ec2ui_model = {
             this.componentInterests[interest] = [];
         }
         this.componentInterests[interest].push(component);
+    },
+
+    updateNetworkInterfaces: function(list)
+    {
+        this.networkInterfaces = list;
+        this.notifyComponents("networkInterfaces");
+    },
+
+    getNetworkInterfaces: function()
+    {
+        if (this.networkInterfaces == null) {
+            ec2ui_session.controller.describeNetworkInterfaces();
+        }
+        return this.networkInterfaces;
     },
 
     updateVpcs : function(list)
