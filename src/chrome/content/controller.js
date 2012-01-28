@@ -2074,7 +2074,7 @@ var ec2ui_controller = {
             list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, mac, ip, check));
         }
 
-        ec2ui_model.updateNetwotkInterfaces(list);
+        ec2ui_model.updateNetworkInterfaces(list);
         if (objResponse.callback) objResponse.callback(list);
     },
 
