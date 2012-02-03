@@ -1415,309 +1415,110 @@ var ec2ui_controller = {
         var list = this.parseDescribeBundleTasksResponse(objResponse.xmlDoc);
 
         ec2ui_model.updateBundleTasks(list);
-        if (objResponse.callback) {
-            objResponse.callback(list);
-        }
+        if (objResponse.callback) objResponse.callback(list);
     },
 
-    // Returns either the US or EU S3 endpoint
-    getS3URL : function(bucket, region)
+    createS3Bucket : function(bucket, region, callback)
     {
-        var suffix = null;
-
-        // If a region wasn't passed, get the ACL for an
-        // object in the currently active region
-        if (!region) {
-            region = ec2ui_utils.determineRegionFromString(ec2ui_session.getActiveEndpoint().name);
+        if (region) {
+            content = "<CreateBucketConstraint><LocationConstraint>" + region + "</LocationConstraint></CreateBucketConstraint>";
         }
-
-        if (region == "EU-WEST-1") {
-            suffix = ".s3-external-3.amazonaws.com";
-        } else
-            if (region == "US-WEST-1") {
-                suffix = ".s3-us-west-1.amazonaws.com";
-            } else {
-                suffix = ".s3.amazonaws.com";
-            }
-        return "https://" + bucket + suffix;
+        ec2ui_client.queryS3("PUT", bucket, "/", {}, content, this, true, "onCompleteCreateS3Bucket", callback);
     },
 
-    // Returns true/false based on whether the copy operation was initiated
-    copyS3Key : function(srcB, key, dstB, destReg, callback, xmlhttp)
+    onCompleteCreateS3Bucket : function(objResponse)
     {
-        // 0 - FAILURE
-        // 1 - SUCCESS
-        // 2 - FILE_EXISTS
-        var ret = fileCopyStatus.FAILURE;
-
-        if (destReg == null || destReg.length == 0 || srcB == null || srcB.length == 0) {
-            return ret;
-        }
-
-        if (key == null || key.length == 0 || dstB == null || dstB.length == 0) {
-            return ret;
-        }
-
-        if (callback == undefined) {
-            return ret;
-        }
-
-        var params = "/" + key;
-
-        if (false) {
-            // Check to see whether the key exists in the bucket already
-            httpRsp = ec2ui_client.makeS3HTTPRequest("HEAD", "/" + dstB + params, this.getS3URL(dstB, destReg) + params, null, xmlhttp);
-
-            if (!httpRsp.hasErrors || (httpRsp.hasErrors && (httpRsp.xmlhttp.status == 403))) {
-                log("File exists, no need to copy it");
-                ret = fileCopyStatus.FILE_EXISTS;
-            }
-
-            if (ret == fileCopyStatus.FILE_EXISTS) {
-                sleep(10);
-                return ret;
-            }
-        }
-
-        // Need to copy this key from source to destination
-        var msg = "Copying key: " + key;
-        msg += " from Source: " + srcB + " to Dest: " + dstB;
-        log(msg);
-
-        var resp = ec2ui_client.makeS3HTTPRequest("PUT", "/" + dstB + params, this.getS3URL(dstB, destReg) + params, null, xmlhttp, "/" + srcB + params, true, "onCompleteCopyS3Key", this, callback);
-
-        return !resp.hasErrors;
+        if (objResponse.callback) objResponse.callback();
     },
 
-    onCompleteCopyS3Key : function(objResponse)
+    listS3Buckets : function(callback)
     {
-        var callback = objResponse.callback;
-        if (callback) {
-            callback(objResponse);
-        }
+        ec2ui_client.queryS3("GET", "", "/", {}, content, this, true, "onCompleteListS3Buckets", callback);
     },
 
-    // Returns the acl or ""
-    getS3ACL : function(bucket, key, region)
+    onCompleteListS3Buckets : function(objResponse)
     {
-        if (bucket == null || bucket.length == 0) {
-            return null;
+        var xmlDoc = objResponse.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("Bucket");
+        for ( var i = 0; i < items.length; i++) {
+            var name = getNodeValueByName(items[i], "Name");
+            var date = getNodeValueByName(items[i], "CreationDate");
+            list.push(new S3Bucket(name, date));
         }
 
-        if (!key) {
-            key = "";
-        }
+        ec2ui_model.updateS3Buckets(list);
 
-        log("Enumerating ACLs for Bucket: " + bucket);
-        var params = "/" + key + "?acl";
-        var httpRsp = ec2ui_client.makeS3HTTPRequest("GET", "/" + bucket + params, this.getS3URL(bucket, region) + params);
-
-        if (!httpRsp.hasErrors) {
-            var xmlhttp = httpRsp.xmlhttp;
-            if (xmlhttp) {
-                var doc = xmlhttp.responseXML;
-                if (doc == null) {
-                    doc = new DOMParser().parseFromString(xmlhttp.responseText, "text/xml");
-                }
-
-                var serializer = new XMLSerializer();
-                return serializer.serializeToString(doc.firstChild);
-            }
-        }
-
-        return "";
+        if (objResponse.callback) objResponse.callback(list);
     },
 
-    // Returns true/false based on whether the acl could be set
-    setS3ACL : function(bucket, key, region, acl, xmlhttp)
+    getS3BucketAcl : function(bucket, callback)
     {
-        if (bucket == null || bucket.length == 0) {
-            return false;
-        }
-
-        if (!key) {
-            key = "";
-        }
-
-        if (acl == null || acl.length == 0) {
-            return true;
-        }
-
-        log("Setting ACL on Key: " + key);
-        var params = "/" + key + "?acl";
-        var httpRsp = ec2ui_client.makeS3HTTPRequest("PUT", "/" + bucket + params, this.getS3URL(bucket, region) + params, acl, xmlhttp);
-
-        return !httpRsp.hasErrors;
+        ec2ui_client.queryS3("GET", bucket, "/?acl", {}, content, this, true, "onCompleteGetS3BucketAcl", callback);
     },
 
-    // Returns true or false
-    writeS3KeyInBucket : function(bucket, key, content, region)
+    onCompleteGetS3BucketAcl : function(objResponse)
     {
-        if (key == null || key.length == 0 || bucket == null || bucket.length == 0) {
-            return false;
+        var xmlDoc = objResponse.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("Grant");
+        for ( var i = 0; i < items.length; i++) {
+            var id = getNodeValueByName(items[i], "ID");
+            var name = getNodeValueByName(items[i], "DisplayName");
+            var perms = getNodeValueByName(items[i], "Permission");
+            list.push(new S3BucketAcl(id, name, perms));
         }
+        ec2ui_model.updateS3BucketAcls(objResponse.data, list);
 
-        var params = "/" + key;
-        var httpRsp = ec2ui_client.makeS3HTTPRequest("PUT", "/" + bucket + params, this.getS3URL(bucket, region) + params, content);
-
-        return !httpRsp.hasErrors;
+        if (objResponse.callback) objResponse.callback(objResponse.data, list);
     },
 
-    // Returns true or false
-    deleteS3KeyFromBucket : function(bucket, key, region)
+    listS3BucketKeys : function(bucket, params, callback)
     {
-        if (key == null || key.length == 0 || bucket == null || bucket.length == 0) {
-            // return false;
-        }
-
-        var params = "/" + key;
-        ec2ui_client.makeS3HTTPRequest("DELETE", "/" + bucket + params, this.getS3URL(bucket, region) + params);
-
-        return true;
+        ec2ui_client.queryS3("GET", bucket, "/", {}, null, this, true, "onCompleteListS3BucketKeys", callback);
     },
 
-    // Returns a list of parts or null
-    getS3KeyListWithPrefixInBucket : function(prefix, bucket, region)
+    onCompleteListS3BucketKeys : function(objResponse)
     {
-        if (prefix == null || prefix.length == 0 || bucket == null || bucket.length == 0) {
-            return null;
+        var xmlDoc = objResponse.xmlDoc;
+
+        var list = new Array();
+        var bucket = getNodeValueByName(xmlDoc, "Name");
+        var items = xmlDoc.getElementsByTagName("Contents");
+        for ( var i = 0; i < items.length; i++) {
+            var id = getNodeValueByName(items[i], "Key");
+            var size = getNodeValueByName(items[i], "Size");
+            var type = getNodeValueByName(items[i], "StorageClass");
+            var etag = getNodeValueByName(items[i], "ETag");
+            var mtime = getNodeValueByName(items[i], "LastModified");
+            list.push(new S3BucketKey(id, type, size, mtime, etag));
         }
 
-        log("Enumerating keys with prefix " + prefix + " in bucket " + bucket);
-        var list = null;
-        var params = "/?prefix=" + prefix;
-        var httpRsp = ec2ui_client.makeS3HTTPRequest("GET", "/" + bucket + "/", this.getS3URL(bucket, region) + params);
+        ec2ui_model.updateS3BucketKeys(bucket, list);
 
-        if (!httpRsp.hasErrors) {
-            var respXML = new DOMParser().parseFromString(httpRsp.xmlhttp.responseText, "text/xml");
-            var items = respXML.getElementsByTagName("Contents");
-            list = new Array(items.length);
-            for ( var i = 0; i < items.length; ++i) {
-                list[i] = getNodeValueByName(items[i], "Key");
-            }
-            log("# Keys retrieved: " + list.length);
-        }
-
-        return list;
+        if (objResponse.callback) objResponse.callback(bucket, list);
     },
 
-    doesS3BucketExist : function(bucket, region)
+    deleteS3Bucket : function(bucket, callback)
     {
-        var fileName = "/" + bucket + "/";
-        var s3url = this.getS3URL(bucket, region) + "/?max-keys=0";
-        var fSuccess = false;
-        var httpRsp = ec2ui_client.makeS3HTTPRequest("HEAD", fileName, s3url);
-
-        if (httpRsp.hasErrors) {
-            if (httpRsp.xmlhttp.status == 403) {
-                // Forbidden to access this but the bucket does exist!
-                log("Bucket exists");
-                fSuccess = true;
-            }
-        } else {
-            // No errors!
-            fSuccess = true;
-        }
-
-        log("Bucket '" + bucket + "' exists?: " + fSuccess);
-        return fSuccess;
+        ec2ui_client.queryS3("DELETE", bucket, "/", {}, null, this, true, "onCompleteDeleteS3Bucket", callback);
     },
 
-    // Returns the bucket location or null
-    getS3BucketLocation : function(bucket)
+    onCompleteDeleteS3Bucket : function(objResponse)
     {
-        var fExist = false;
-        var reg = null;
-        var mult = 1;
-        for ( var i = 0; i < 3; ++i) {
-            if (this.doesS3BucketExist(bucket)) {
-                fExist = true;
-                break;
-            }
-            // Sleep before trying again
-            sleep(1000 * mult);
-        }
-
-        if (fExist) {
-            var httpRsp = null;
-
-            mult = 1;
-            for (i = 0; i < 3; ++i) {
-                httpRsp = ec2ui_client.makeS3HTTPRequest("GET", "/" + bucket + "/?location", this.getS3URL(bucket) + "/?location");
-
-                if (!httpRsp.hasErrors) {
-                    var respXML = httpRsp.xmlhttp.responseXML;
-                    if (respXML) {
-                        var loc = getNodeValueByName(respXML, "LocationConstraint") || "";
-                        if (loc.length == 0) {
-                            loc = "US-EAST-1";
-                        }
-                        reg = ec2ui_utils.determineRegionFromString(loc);
-                    }
-                }
-                // Sleep before trying again
-                sleep(1000 * mult);
-                mult += mult;
-            }
-        }
-
-        return reg;
+        if (objResponse.callback) objResponse.callback();
     },
 
-    // Returns true/false based on whether the bucket could be created
-    createS3Bucket : function(bucket, region)
+    createS3BucketKey : function(bucket, key, params, callback)
     {
-        var fileName = "/" + bucket + "/";
-        if (!region) {
-            region = ec2ui_utils.determineRegionFromString(ec2ui_session.getActiveEndpoint().name);
-        }
+        ec2ui_client.queryS3("PUT", bucket, "/" + key, params, null, this, true, "onCompleteCreate3BucketKey", callback);
+    },
 
-        var s3url = this.getS3URL(bucket, region);
-        var fSuccess = false;
-        var httpRsp = null;
-        var content = null;
-        var respXML = null;
-
-        // Check if the bucket already exists
-        for ( var i = 0; i < 2; ++i) {
-            fSuccess = this.doesS3BucketExist(bucket, region);
-            if (fSuccess) {
-                break;
-            }
-
-            // Sleep a 100ms before trying again
-            sleep(100);
-        }
-
-        // It doesn't exist, so create it
-        if (!fSuccess) {
-            if (region == "EU-WEST-1") {
-                content = "<CreateBucketConstraint><LocationConstraint>EU</LocationConstraint></CreateBucketConstraint>";
-            } else
-                if (region == "US-WEST-1") {
-                    content = "<CreateBucketConstraint><LocationConstraint>us-west-1</LocationConstraint></CreateBucketConstraint>";
-                }
-
-            log(s3url + ": URL, Content: " + content || "");
-            httpRsp = ec2ui_client.makeS3HTTPRequest("PUT", fileName, s3url, content);
-
-            // The operation succeeded if there were no errors
-            fSuccess = !httpRsp.hasErrors;
-        }
-
-        if (!fSuccess) {
-            respXML = httpRsp.xmlhttp.responseXML;
-            var errorMsg = getNodeValueByName(respXML, "Message");
-            var errorCode = getNodeValueByName(respXML, "Code");
-            alert("Could not create S3 bucket. Error: " + errorCode + " - " + errorMsg);
-            var toSign = getNodeValueByName(respXML, "StringToSignBytes");
-            toSign = "0x" + toSign;
-            toSign = toSign.replace(/\s/g, " 0x");
-            toSign = toSign.split(" ");
-            log(byteArrayToString(toSign));
-        }
-
-        return fSuccess;
+    onCompleteCreateS3BucketKey : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
     },
 
     bundleInstance : function(instanceId, bucket, prefix, activeCred, callback)

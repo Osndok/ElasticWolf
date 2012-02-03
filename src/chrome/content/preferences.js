@@ -785,6 +785,27 @@ var ec2ui_prefs = {
         return new WrappedMapEndpoints(endpointmap, this);
     },
 
+    getS3Regions: function() {
+
+        return [ { name: "US Standard", url: "s3.amazonaws.com", region: "" },
+                 { name: "US West (Oregon)", url: "s3-us-west-2.amazonaws.com", region: "us-west-2" },
+                 { name: "US West (Northern California)", url: "s3-us-west-1.amazonaws.com", region: "us-west-1" },
+                 { name: "EU (Ireland)", url: "s3-eu-west-1.amazonaws.com", region: "EU" },
+                 { name: "Asia Pacific (Singapore)", url: "s3-ap-southeast-1.amazonaws.com", region: "ap-southeast-1" },
+                 { name: "Asia Pacific (Tokyo)", url: "s3-ap-northeast-1.amazonaws.com", region: "ap-northeast-1" },
+                 { name: "South America (Sao Paulo)", url: "s3-sa-east-1.amazonaws.com", region: "sa-east-1" } ]
+    },
+
+    getS3Region: function(region) {
+        var regions = this.getS3Regions();
+        for (var i in regions) {
+            if (regions[i].region == region) {
+                return regions[i]
+            }
+        }
+        return regions[0]
+    },
+
     setEIPTags : function(value)
     {
         this.setTags(this.EIP_TAGS, value);

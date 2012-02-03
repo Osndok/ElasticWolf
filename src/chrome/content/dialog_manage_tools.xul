@@ -3,7 +3,7 @@
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 
 <dialog id="ec2ui.dialog.managetools" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    buttons="accept,extra1,extra2" ondialogaccept="return saveDialog()"
+    buttons="accept,extra1,extra2,cancel" ondialogaccept="return saveDialog()" ondialogcancel="return true;"
     ondialogextra1="resetDialog();" buttonlabelextra1="Reset" buttonlabelextra2="Check For Updates"
     onload="return initDialog();" title="Manage EC2 Tools" buttonlabelcancel="Close" ondialogextra2="ec2ui_client.checkForUpdates()">
 

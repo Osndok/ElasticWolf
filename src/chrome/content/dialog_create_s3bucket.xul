@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+
+<dialog id="ec2ui.dialog.createbucket" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    buttons="accept,cancel"
+    ondialogaccept="return createBucket();"
+    ondialogcancel="return true;" onload="init();"
+    title="Create a Bucket" buttonlabelaccept="Create">
+
+    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+    <script>
+    function createBucket() {
+        this.retVal.name = document.getElementById("ec2ui.bucket").value.trim();
+        if (this.retVal.name == "") {
+            alert("Name must not be empty");
+            return false;
+        }
+        this.retVal.region = document.getElementById("ec2ui.regions").value;
+        this.retVal.params["x-amz-acl"] = document.getElementById("ec2ui.acls").value;
+        this.retVal.ok = true;
+        return true;
+    }
+
+    function init() {
+        this.session = window.arguments[0];
+        this.retVal = window.arguments[1];
+
+        var regions = this.session.preferences.getS3Regions()
+        var menu = document.getElementById("ec2ui.regions");
+        menu.removeAllItems();
+        for (var i = 0; i &lt; regions.length; i++) {
+            menu.appendItem(regions[i].name, regions[i].region);
+        }
+        menu.selectedIndex = 0
+    }
+    </script>
+
+    <vbox flex="1">
+    <groupbox>
+    <description>Specify Bucket name and optionally region where it will reside</description>
+    <grid flex="1">
+        <columns>
+            <column />
+            <column />
+        </columns>
+        <rows>
+            <row>
+                <label control="ec2ui.bucket" value="Bucket Name:" />
+                <textbox id="ec2ui.bucket" size="20" value="" />
+            </row>
+            <row>
+                <label control="ec2ui.acls" value="ACL:" />
+                <menulist id="ec2ui.acls">
+                <menupopup>
+                <menuitem label="Private" value="private" checked="true" />
+                <menuitem label="Public Read" value="public-read"/>
+                <menuitem label="Public Read Write" value="public-read-write"/>
+                <menuitem label="Authenticated Read" value="authenticated-read"/>
+                <menuitem label="Bucket Owner Read" value="bucket-owner-read"/>
+                <menuitem label="Bucket Owner Full Control" value="bucket-owner-full-control"/>
+                </menupopup>
+                </menulist>
+            </row>
+            <row>
+                <label control="ec2ui.regions" value="Regions:" />
+                <menulist id="ec2ui.regions" />
+           </row>
+        </rows>
+    </grid>
+    </groupbox>
+</vbox>
+</dialog>

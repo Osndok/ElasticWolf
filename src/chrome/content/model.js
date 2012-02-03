@@ -12,6 +12,34 @@ function Credential(name, accessKey, secretKey, endPoint)
     }
 }
 
+function S3Bucket(name,date)
+{
+    this.name = name
+    this.date = date
+    this.region = ""
+    this.acls = null
+    this.keys = []
+}
+
+function S3BucketAcl(id, name, permission)
+{
+    this.id = id
+    this.name = name
+    this.permission = permission
+    this.toStr = function() {
+       return (this.name ? this.name : this.id ? this.id : "ALL") + "=" + this.permission
+    }
+}
+
+function S3BucketKey(name, type, size, mtime, etag)
+{
+    this.name = name
+    this.type = type
+    this.size = size
+    this.mtime = mtime
+    this.etag = etag
+}
+
 function AccountIdName(id, name)
 {
     this.accountid = id;
@@ -461,6 +489,7 @@ var ec2ui_model = {
     routetables: null,
     networkAcls: null,
     networkInterfaces: null,
+    s3buckets: null,
 
     resourceMap : {
         instances : 0,
@@ -478,6 +507,7 @@ var ec2ui_model = {
         routetables: 12,
         networkAcls: 13,
         networkInterfaces: 14,
+        s3buckets: 15,
     },
 
     amiIdManifestMap : {},
@@ -510,6 +540,7 @@ var ec2ui_model = {
         this.updateRouteTables(null);
         this.updateNetworkAcls(null);
         this.updateNetworkInterfaces(null);
+        this.updateS3Buckets(null);
     },
 
     getModel : function(name)
@@ -565,6 +596,8 @@ var ec2ui_model = {
             return this.networkAcls;
         case "networkInterfaces":
             return this.networkInterfaces;
+        case "s3buckets":
+            return this.s3buckets;
         }
         return []
     },
@@ -647,6 +680,9 @@ var ec2ui_model = {
         case "networkInterfaces":
             ec2ui_session.controller.describeNetworkInterfaces();
             break;
+        case "s3buckets":
+            ec2ui_session.controller.listS3Buckets();
+            break;
         }
         return []
     },
@@ -665,6 +701,40 @@ var ec2ui_model = {
             this.componentInterests[interest] = [];
         }
         this.componentInterests[interest].push(component);
+    },
+
+    updateS3Buckets : function(list)
+    {
+        this.s3buckets = list;
+        this.notifyComponents("s3buckets");
+    },
+
+    getS3Buckets : function()
+    {
+        if (this.s3buckets == null) {
+            ec2ui_session.controller.listS3Buckets();
+        }
+        return this.s3buckets;
+    },
+
+    updateS3BucketKeys: function(bucket, list) {
+        for (var i in this.getS3Buckets()) {
+            if (bucket == this.s3buckets[i].name) {
+                this.s3buckets[i].keys = list
+                return;
+            }
+        }
+        debug("Bucket " + bucket + " not found")
+    },
+
+    updateS3BucketAcls: function(bucket, list) {
+        for (var i in this.getS3Buckets()) {
+            if (bucket == this.s3buckets[i].name) {
+                this.s3buckets[i].acls = list
+                return;
+            }
+        }
+        debug("Bucket " + bucket + " not found")
     },
 
     updateNetworkInterfaces: function(list)

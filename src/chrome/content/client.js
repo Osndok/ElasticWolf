@@ -3,7 +3,7 @@ var ec2ui_client = {
     uri     : null,
     auxObj  : null,
     serviceURL : null,
-    regions : null,
+    region : null,
     elbURL  : null,
     accessCode : null,
     secretKey : null,
@@ -11,7 +11,7 @@ var ec2ui_client = {
     timers : {},
 
     NAME: 'ElasticWolf',
-    VERSION: '1.18',
+    VERSION: '1.19',
     API_VERSION : '2011-12-15',
     ELB_API_VERSION : '2011-04-05',
     IAM_API_VERSION : '2010-05-08',
@@ -93,8 +93,8 @@ var ec2ui_client = {
     setEndpoint : function (endpoint) {
         if (endpoint != null) {
             this.serviceURL = endpoint.url;
-            this.regions = endpoint.name;
-            this.elbURL = "https://elasticloadbalancing."+this.regions+".amazonaws.com";
+            this.region = endpoint.name;
+            this.elbURL = "https://elasticloadbalancing."+this.region+".amazonaws.com";
         }
     },
 
@@ -255,43 +255,19 @@ var ec2ui_client = {
 
         log("URL ["+url+"?"+queryParams+"]");
 
-        var timerKey = strSig+":"+formattedTime;
-
-        if (!ec2ui_prefs.isOfflineEnabled()) {
-            var xmlhttp = this.newInstance();
-            if (!xmlhttp) {
-                log("Could not create xmlhttp object");
-                return null;
-            }
-            xmlhttp.open("POST", url, !isSync);
-            xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
-            xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xmlhttp.setRequestHeader("Content-Length", queryParams.length);
-            xmlhttp.setRequestHeader("Connection", "close");
-            this.startTimer(timerKey, 30000, xmlhttp.abort);
-            var me = this;
-            if (isSync) {
-                xmlhttp.onreadystatechange = empty;
-            } else {
-                xmlhttp.onreadystatechange = function () {
-                    me.handleAsyncResponse(xmlhttp, callback, reqType, objActions);
-                }
-            }
-
-            try {
-                xmlhttp.send(queryParams);
-                this.stopTimer(timerKey);
-            } catch(e) {
-                if (isSync && !this.stopTimer(timerKey)) {
-                    // A timer didn't exist, this is unexpected
-                    throw e;
-                }
-                var faultStr = "Please check your EC2 URL '" + url + "' for correctness, or delete the value in ec2ui.endpoints using about:config and retry.";
-                return this.newResponseObject(null, callback, reqType, true, "Request Error", faultStr, "");
-            }
+        var xmlhttp = this.newInstance();
+        if (!xmlhttp) {
+            log("Could not create xmlhttp object");
+            return null;
         }
+        xmlhttp.open("POST", url, !isSync);
+        xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
+        xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xmlhttp.setRequestHeader("Content-Length", queryParams.length);
+        xmlhttp.setRequestHeader("Connection", "close");
 
-        return this.processXMLHTTPResponse(xmlhttp, reqType, isSync, timerKey, objActions, callback);
+        var timerKey = strSig+":"+formattedTime;
+        return this.sendRequest(xmlhttp, queryParams, isSync, timerKey, reqType, objActions, callback);
     },
 
     queryELB : function (action, params, objActions, isSync, reqType, callback) {
@@ -305,57 +281,141 @@ var ec2ui_client = {
         return this.queryEC2(action, params, objActions, isSync, reqType, callback, this.getIAMURL(), this.IAM_API_VERSION);
     },
 
-    generateS3StringToSign : function(requestType, content, copySource, curTime, fileName) {
-        var sigValues = new Array();
-        sigValues.push(new Array("Request-Type", requestType));
-        sigValues.push(new Array("Content-MD5", ""));
+    queryS3Impl : function(method, bucket, path, params, content, objActions, isSync, reqType, callback) {
+        var curTime = new Date().toUTCString();
+        var url = "https://" + (bucket ? bucket + "." : "") + ec2ui_prefs.getS3Region(this.region || "").url;
 
-        var contType = "binary/octet-stream";
-        if (content &&
-            content.length > 0 &&
-            ("@mozilla.org/login-manager;1" in Components.classes)) {
-            // This is firefox 3+, so an automatic content-encoding is added
-            contType = contType + "; charset=UTF-8";
-        }
+        if (!params) params = {}
 
-        sigValues.push(new Array("Content-Type", contType));
-        sigValues.push(new Array("Date", curTime));
-
-        if (copySource) {
-            sigValues.push(new Array("Amazon-S3-Extension", "x-amz-copy-source:" + encodeURIComponent(copySource)));
-            sigValues.push(new Array("Amazon-S3-Extension", "x-amz-metadata-directive:COPY"));
-        }
-        sigValues.push(new Array("path", fileName));
+        // Required headers
+        if (!params["Content-Type"]) params["Content-Type"] = "binary/octet-stream";
+        if (!params["Content-MD5"]) params["Content-MD5"] = "";
+        if (!params["Date"]) params["Date"] = curTime;
+        if (!params["Content-Length"]) params["Content-Length"] = content ? content.length : 0;
 
         // Construct the string to sign and query string
-        var strSig = "";
-        for (var i = 0; i < (sigValues.length - 1); ++i) {
-            strSig += sigValues[i][1] + "\n";
+        var strSig = method + "\n" +
+                     params['Content-MD5'] + "\n" +
+                     params['Content-Type'] + "\n" +
+                     params['Date'] + "\n";
+
+        // Amazon canonical headers
+        var headers = []
+        for (var p in params) {
+            if (/X-AMZ-/i.test(p)) {
+                var value = params[p]
+                if (value instanceof Array) {
+                    value = value.join(',');
+                }
+                headers.push(p.toString().toLowerCase() + ':' + value);
+            }
+        }
+        if (headers.length) {
+            strSig += headers.sort().join('\n') + "\n"
         }
 
-        // Append the last part of the request that needs to be signed.
-        strSig += sigValues[i][1];
-        log("StrSig ["+strSig+"]");
+        // Split query string for subresources, supported are:
+        var resources = ["acl", "lifecycle", "location", "logging", "notification", "partNumber", "policy", "requestPayment", "torrent",
+                         "uploadId", "uploads", "versionId", "versioning", "versions", "website",
+                         "delete",
+                         "response-content-type", "response-content-language", "response-expires",
+                         "response-cache-control", "response-content-disposition", "response-content-encoding" ]
+        var rclist = []
+        var query = parseQuery(path)
+        for (var p in query) {
+            p = p.toLowerCase();
+            if (resources.indexOf(p) != -1) {
+                rclist.push(p + (query[p] == true ? "" : "=" + query[p]))
+            }
+        }
+        strSig += "/" + (bucket ?  bucket + "/" : "")  + (rclist.length ? "?" : "") + rclist.sort().join("&");
 
-        return strSig;
+        params["Authorization"] = "AWS " + this.accessCode + ":" + b64_hmac_sha1(this.secretKey, strSig);
+        params["User-Agent"] = this.getUserAgent();
+        params["Connection"] = "close";
+
+        debug("S3 [" + method + " " + url + " " + path + "|" + strSig.replace(/\n/g, "|") + "]")
+
+        var xmlhttp = this.newInstance();
+        if (!xmlhttp) {
+            log("Could not create xmlhttp object");
+            return null;
+        }
+        xmlhttp.open(method, url + path, !isSync);
+
+        for (var p in params) {
+            xmlhttp.setRequestHeader(p, params[p]);
+        }
+
+        var timerKey = strSig + ":" + curTime;
+        return this.sendRequest(xmlhttp, content, isSync, timerKey, reqType, objActions, callback, bucket);
     },
 
-    S3SignString : function(strSig) {
-        var sig = "AWS " + this.accessCode + ":" + b64_hmac_sha1(this.secretKey, strSig);
-        log("Auth Str["+sig+"]");
-
-        return sig;
+    queryS3 : function (method, bucket, path, params, content, objActions, isSync, reqType, callback) {
+        var rsp = null;
+        while(true) {
+            try {
+                rsp = this.queryS3Impl(method, bucket, path, params, content, objActions, isSync, reqType, callback);
+                if (rsp.hasErrors) {
+                    // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
+                    this.errorCount++;
+                    if (this.errorCount < 5) {
+                        if (!this.errorDialog("S3 responded with an error for "+ method + " " + bucket + "/" + path, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
+                            break;
+                        }
+                        this.errorCount = 0;
+                    } else {
+                        break;
+                    }
+                } else {
+                    this.errorCount = 0;
+                    break;
+                }
+            } catch (e) {
+                alert ("An error occurred while calling "+ method + " " + bucket + "/" + path + "\n"+e);
+                rsp = null;
+                break;
+            }
+        }
+        return rsp;
     },
 
-    handleAsyncResponse : function(xmlhttp, callback, reqType, objActions) {
+    sendRequest: function(xmlhttp, content, isSync, timerKey, reqType, objActions, callback, data) {
+        var me = this;
+
+        if (isSync) {
+            xmlhttp.onreadystatechange = empty;
+        } else {
+            xmlhttp.onreadystatechange = function () {
+                me.handleAsyncResponse(xmlhttp, callback, reqType, objActions, data);
+            }
+        }
+        this.startTimer(timerKey, 30000, xmlhttp.abort);
+
+        try {
+            xmlhttp.send(content);
+            this.stopTimer(timerKey);
+        } catch(e) {
+            if (isSync && !this.stopTimer(timerKey)) {
+                // A timer didn't exist, this is unexpected
+                throw e;
+            }
+            var faultStr = "Please check your EC2/S3 URL for correctness and retry.";
+            return this.newResponseObject(null, callback, reqType, true, "Request Error", faultStr, "", data);
+        }
+        // Process the response
+        return this.processXMLHTTPResponse(xmlhttp, reqType, isSync, timerKey, objActions, callback, data);
+    },
+
+    handleAsyncResponse : function(xmlhttp, callback, reqType, objActions, data) {
         if (xmlhttp.readyState == 4) {
             var responseObject = null;
             log("Async Response = " + xmlhttp.status + ", response: " + xmlhttp.responseText);
             if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
-                responseObject = this.newResponseObject(xmlhttp, callback, reqType, false);
+                responseObject = this.newResponseObject(xmlhttp, callback, reqType, false, "", "", "", data);
             } else {
                 log("Generating ASync Failure Response");
-                responseObject = this.unpackXMLErrorRsp(xmlhttp, reqType, callback);
+                responseObject = this.unpackXMLErrorRsp(xmlhttp, reqType, callback, data);
             }
             responseObject.isAsync = true;
             objActions.onResponseComplete(responseObject);
@@ -363,127 +423,34 @@ var ec2ui_client = {
         }
     },
 
-    makeS3HTTPRequest : function(requestType, fileName, url, content, xmlhttp, copySource, isAsync, reqType, objActions, callback) {
-        var curTime = new Date().toUTCString();
-
-        // isAsync might be undefined. This forces a true/false
-        // value to be associated with fAsync
-        var fAsync = (isAsync == true);
-
-        if (requestType != "GET" &&
-            requestType != "PUT" &&
-            requestType != "DELETE" &&
-            requestType != "HEAD") {
-            return null;
-        }
-
-        if (!content) {
-            content = null;
-        }
-
-        // Generate String to Sign
-        var strSig = this.generateS3StringToSign(requestType, content, copySource, curTime, fileName);
-
-        // Sign the string
-        var sig = this.S3SignString(strSig);
-
-        if (!xmlhttp) {
-            xmlhttp = this.newInstance();
-        }
-
-        // Ensure that the URL is encoded correctly and that an attack isn't
-        // launched against S3 via the bucket name or key
-        // This breaks the XMLHTTPRequest.Open call.
-        // url = encodeURIComponent(url);
-
-        var me = this;
-        xmlhttp.open(requestType, url, fAsync);
-
-        // In the future, the onreadystatechange event will be
-        // triggered for synchronous requests in Firefox as well.
-        if (fAsync) {
-            xmlhttp.onreadystatechange = function () {
-                me.handleAsyncResponse(xmlhttp, callback, reqType, objActions);
-            }
-        } else {
-            xmlhttp.onreadystatechange = empty;
-        }
-
-        xmlhttp.setRequestHeader("Content-Type", "binary/octet-stream");
-        xmlhttp.setRequestHeader("Content-MD5", "");
-        xmlhttp.setRequestHeader("Date", curTime);
-        xmlhttp.setRequestHeader("Authorization", sig);
-        if (content && content.length) {
-            xmlhttp.setRequestHeader("Content-Length", content.length);
-            log ("Content-Length: " + content.length);
-        } else {
-            xmlhttp.setRequestHeader("Content-Length", 0);
-        }
-
-        if (copySource) {
-            xmlhttp.setRequestHeader("x-amz-copy-source", encodeURIComponent(copySource));
-            xmlhttp.setRequestHeader("x-amz-metadata-directive", "COPY");
-        }
-        xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
-
-        var timerKey = new Date().getTime();
-        this.startTimer(timerKey, 30 * 1000, xmlhttp.abort);
-        try {
-            log("Content: " + content);
-            xmlhttp.send(content);
-            this.stopTimer(timerKey);
-        } catch(e) {
-            if (!fAsync && !this.stopTimer(timerKey)) {
-                // A timer didn't exist, this is unexpected
-                throw e;
-            }
-
-            var faultStr = "Your request timed out. Please try again later.";
-            return this.newResponseObject(null, callback, reqType, true, "Timeout", faultStr, "");
-        }
-
-        // Process the response
-        return this.processXMLHTTPResponse(xmlhttp, reqType, !fAsync, timerKey, objActions, callback);
-    },
-
-    newResponseObject : function(xmlhttp, callback, reqType, hasErrors, faultCode, faultString, requestId) {
+    newResponseObject : function(xmlhttp, callback, reqType, hasErrors, faultCode, faultString, requestId, data) {
         var xmlDoc = (xmlhttp) ? xmlhttp.responseXML : null;
         var strHeaders = (xmlhttp) ? xmlhttp.getAllResponseHeaders() : null;
 
-        return {
-            xmlhttp : xmlhttp,
-            xmlDoc: xmlDoc,
-            strHeaders: strHeaders,
-            callback: callback,
-            requestType : reqType,
-            faultCode : faultCode,
-            requestId : requestId,
-            faultString : faultString,
-            hasErrors : hasErrors,
-        };
+        return { xmlhttp : xmlhttp, xmlDoc: xmlDoc, strHeaders: strHeaders, callback: callback, requestType : reqType, faultCode : faultCode, requestId : requestId, faultString : faultString, hasErrors : hasErrors, data: data };
     },
 
-    processXMLHTTPResponse : function(xmlhttp, reqType, isSync, timerKey, objActions, callback) {
+    processXMLHTTPResponse : function(xmlhttp, reqType, isSync, timerKey, objActions, callback, data) {
         if (isSync) {
             log("Sync Response = " + xmlhttp.status + "("+xmlhttp.readyState+"): " + xmlhttp.responseText);
 
             if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
                 log("Generating Sync Success Response");
-                var resp = this.newResponseObject(xmlhttp, callback, reqType, false);
+                var resp = this.newResponseObject(xmlhttp, callback, reqType, false, "", "", "", data);
                 if (objActions) {
                     objActions.onResponseComplete(resp);
                 }
                 return resp;
             } else {
                 log("Generating Sync Failure Response");
-                return this.unpackXMLErrorRsp(xmlhttp, reqType, callback);
+                return this.unpackXMLErrorRsp(xmlhttp, reqType, callback, data);
             }
         } else {
             return {hasErrors:false};
         }
     },
 
-    unpackXMLErrorRsp : function(xmlhttp, reqType, callback) {
+    unpackXMLErrorRsp : function(xmlhttp, reqType, callback, data) {
         var faultCode = "Unknown";
         var faultString = "An unknown error occurred.";
         var requestId = "";
@@ -501,7 +468,7 @@ var ec2ui_client = {
         }
 
         log("Generated New Error Response Object");
-        return this.newResponseObject(xmlhttp, callback, reqType, true, faultCode, faultString, requestId);
+        return this.newResponseObject(xmlhttp, callback, reqType, true, faultCode, faultString, requestId, data);
     },
 
     queryVpnConnectionStylesheets : function(stylesheet) {

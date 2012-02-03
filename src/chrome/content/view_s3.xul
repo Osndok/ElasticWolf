@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://ec2ui/skin/ec2ui.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <tabpanel id="s3_tab" flex="1">
+    <vbox flex="1">
+       <hbox flex="3">
+            <groupbox flex="1" orient="vertical">
+                <caption label="S3 Buckets" />
+                <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
+                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.createBucket();" tooltiptext="Create Bucket" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.deleteBucket();" tooltiptext="Delete Bucket" />
+                    <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.viewDetails();" tooltiptext="Show Details" />
+                </toolbar>
+                <tree id="ec2ui.s3.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_S3BucketsTreeView.selectionChanged(event);" flex="1">
+                    <treecols>
+                        <treecol id="s3.name" label="Name" flex="2" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="s3.date" label="Date" flex="1" persist="width ordinal hidden sortDirection" />
+                    </treecols>
+                    <treechildren />
+                </tree>
+            </groupbox>
+
+            <groupbox orient="vertical" flex="2">
+                <caption label="S3 Bucket Keys" />
+                <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.selectionChanged(event)" tooltiptext="&ec2ui.refresh.tip;" />
+                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.createBucketKey();" tooltiptext="Create Bucket Key" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.deleteBucketKey();" tooltiptext="Delete Bucket Key" />
+                    <toolbarbutton image="images/download.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.downloadBucketKey();" tooltiptext="Download Bucket Key" />
+                    <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.uploadBucketKey();" tooltiptext="Upload file to Bucket Key" />
+                </toolbar>
+                <tree id="ec2ui.s3.keys.view" enableColumnDrag="true" flex="1">
+                    <treecols>
+                        <treecol id="key.name" label="ID" flex="2" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="key.type" label="Type" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="key.size" label="Size" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="key.etag" label="ETag" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="key.mtime" label="Modified" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    </treecols>
+                    <treechildren />
+                </tree>
+            </groupbox>
+       </hbox>
+    </vbox>
+    </tabpanel>
+</overlay>

@@ -64,6 +64,8 @@ var ec2ui_session = {
             document.getElementById("ec2ui.acls.rules.view").view = ec2ui_NetworkAclRulesTreeView;
             document.getElementById("ec2ui.enis.view").view = ec2ui_NetworkInterfacesTreeView;
             document.getElementById("ec2ui.enis.attachments.view").view = ec2ui_NetworkInterfaceAttachmentsTreeView;
+            document.getElementById("ec2ui.s3.view").view = ec2ui_S3BucketsTreeView;
+            document.getElementById("ec2ui.s3.keys.view").view = ec2ui_S3BucketKeysTreeView;
 
             // Enable about:blank to work if noscript is installed
             if ("@maone.net/noscript-service;1" in Components.classes) {
@@ -93,14 +95,7 @@ var ec2ui_session = {
 
     parseURL : function()
     {
-        var a = window.location.href.split("?");
-        if (a[1]) a = a[1].split("&");
-        var o = {};
-        for ( var i = 0; i < a.length; ++i) {
-            var parts = a[i].split("=");
-            o[parts[0]] = parts[1];
-        }
-        return o;
+        return parseQuery(window.location.href)
     },
 
     processURLArguments : function()
@@ -224,6 +219,12 @@ var ec2ui_session = {
             break;
         case "ACLs":
             eval("ec2ui_NetworkAclsTreeView." + toCall);
+            break;
+        case "ENIs":
+            eval("ec2ui_NetworkInterfacesTreeView." + toCall);
+            break;
+        case "S3":
+            eval("ec2ui_S3BucketsTreeView." + toCall);
             break;
         default:
             log("This is an invalid tab: " + tabs.selectedItem.label);

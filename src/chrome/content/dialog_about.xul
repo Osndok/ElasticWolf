@@ -21,16 +21,13 @@
   <vbox flex="1">
     <groupbox>
       <description class="header"><html:span id="ec2ui.appname">APPNAME</html:span> version <html:span id="ec2ui.version">VERSION</html:span> (EC2 API <html:span id="ec2ui.apiversion">API-VERSION</html:span>)</description>
-      <description><html:p><html:span id="ec2ui.appname1">APPNAME</html:span>
-                   (<html:a target="_blank" href="" onclick="window.open(window.arguments[0].getAppUrl(),'','width=800,height=600,resizable');return false;" style="color: blue; text-decoration: underline"><html:span id="ec2ui.appurl">URL</html:span></html:a>)
-                   is a Firefox extension for interacting with Amazon's EC2 web service.
+      <description><html:p><html:span id="ec2ui.appname1">APPNAME</html:span> (<html:span id="ec2ui.appurl">URL</html:span>)
+                   is a Firefox extension for interacting with Amazon's EC2/S3 web services.
                    The code is fork of ElasticFox-ec2tag extension which was based on original Elasticfox from Amazon</html:p>
       </description>
     </groupbox>
     <vbox>
-      <description><html:span id="ec2ui.appname2">APPNAME</html:span> is licensed under the
-         <html:a target="_blank" href="" onclick="window.open('http://www.apache.org/licenses/','','width=800,height=600,resizable'); return false" style="color: blue; text-decoration: underline">Apache 2.0</html:a>
-         license.
+      <description><html:span id="ec2ui.appname2">APPNAME</html:span> is licensed under the Apache 2.0 license.
       </description>
     </vbox>
   </vbox>

@@ -122,6 +122,10 @@ var TreeView = {
         if (i >= 0) {
             this.selection.select(i);
             this.treeBox.ensureRowIsVisible(i);
+            // Make sure the event is fired if we select same item
+            if (this.selection.currentIndex == i) {
+                this.selectionChanged();
+            }
         }
     },
     refresh : function() {
@@ -133,17 +137,28 @@ var TreeView = {
     filter : function(list) {
         return list;
     },
+    selectionChanged: function(event) {},
     display : function(list) {
         if (!list) {
             list = [];
         }
-        this.treeBox.rowCountChanged(0, -this.treeList.length);
-        this.treeList = list;
-        this.treeBox.rowCountChanged(0, this.treeList.length);
-        this.sort();
-        this.selection.clearSelection();
-        if (this.treeList.length > 0) {
-            this.selection.select(0);
+        try {
+            var sel = this.getSelected()
+            this.treeBox.rowCountChanged(0, -this.treeList.length);
+            this.treeList = list;
+            this.treeBox.rowCountChanged(0, this.treeList.length);
+            this.sort();
+            this.selection.clearSelection();
+            if (this.treeList.length > 0) {
+                if (sel) {
+                    this.select(sel)
+                } else {
+                    this.selection.select(0);
+                }
+            }
+        }
+        catch(e) {
+            debug(this.model + ":" + e)
         }
     }
 };
@@ -208,6 +223,20 @@ function getNodeValueByName(parent, nodeName)
 {
     var node = parent ? parent.getElementsByTagName(nodeName)[0] : null;
     return node && node.firstChild ? node.firstChild.nodeValue : "";
+}
+
+function parseQuery(str)
+{
+    var a = str.split("?");
+    if (a[1]) {
+        a = a[1].split("&");
+    }
+    var o = {};
+    for (var i = 0; i < a.length; ++i) {
+        var parts = a[i].split("=");
+        o[parts[0]] = parts[1] ? parts[1] : true;
+    }
+    return o;
 }
 
 function methodPointer(obj, method)
@@ -1128,27 +1157,6 @@ var ec2ui_utils = {
         __tagging2ec2__(resIds, session, tag, true);
     },
 
-    determineRegionFromString : function(str)
-    {
-        var region = "US-EAST-1";
-        if (!str) {
-            return region;
-        }
-
-        str = str.toLowerCase();
-        // If str starts with:
-        // us-east-1: region is US-EAST-1
-        // us-west-1: region is US-WEST-1
-        // eu-west-1: region is EU-WEST-1
-        if (str.indexOf("us-west-1") >= 0) {
-            region = "US-WEST-1";
-        } else
-            if (str.indexOf("eu-west-1") >= 0 || str == "eu") {
-                region = "EU-WEST-1";
-            }
-
-        return region;
-    },
     getMessageProperty : function(key, replacements)
     {
         if (!this._stringBundle) {
