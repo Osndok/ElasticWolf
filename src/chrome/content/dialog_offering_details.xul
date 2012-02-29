@@ -16,6 +16,8 @@
         document.getElementById("ec2ui.offering.fixedPrice").value = image.fixedPrice;
         document.getElementById("ec2ui.offering.usagePrice").value = image.usagePrice;
         document.getElementById("ec2ui.offering.description").value = image.description;
+        document.getElementById("ec2ui.offering.offering").value = image.offering;
+        document.getElementById("ec2ui.offering.tenancy").value = image.tenancy;
     }
   </script>
   <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
@@ -51,6 +53,14 @@
         <row>
           <label control="ec2ui.offering.usagePrice" value="&ec2ui.offerings.usagePrice.label;:" />
           <textbox id="ec2ui.offering.usagePrice" size="40" readonly="true" />
+        </row>
+        <row>
+          <label control="ec2ui.offering.offering" value="&ec2ui.offerings.offering.label;:" />
+          <textbox id="ec2ui.offering.offering" size="40" readonly="true" />
+        </row>
+        <row>
+          <label control="ec2ui.offering.tenancy" value="&ec2ui.offerings.tenancy.label;:" />
+          <textbox id="ec2ui.offering.tenancy" size="40" readonly="true" />
         </row>
         <row>
           <label control="ec2ui.offering.description" value="&ec2ui.description.label;:" />

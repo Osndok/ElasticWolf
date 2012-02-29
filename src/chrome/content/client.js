@@ -281,7 +281,7 @@ var ec2ui_client = {
         return this.queryEC2(action, params, objActions, isSync, reqType, callback, this.getIAMURL(), this.IAM_API_VERSION);
     },
 
-    queryS3Impl : function(method, bucket, path, params, content, objActions, isSync, reqType, callback) {
+    queryS3Prepare : function(method, bucket, path, params, content) {
         var curTime = new Date().toUTCString();
         var url = "https://" + (bucket ? bucket + "." : "") + ec2ui_prefs.getS3Region(this.region || "").url;
 
@@ -336,19 +336,31 @@ var ec2ui_client = {
 
         debug("S3 [" + method + " " + url + " " + path + "|" + strSig.replace(/\n/g, "|") + "]")
 
+        return { url: url + path, headers: params, sig: strSig, time: curTime }
+    },
+
+    queryS3Impl : function(method, bucket, path, params, content, objActions, isSync, reqType, callback) {
+
+        var req = this.queryS3Prepare(method, bucket, path, params, content);
+
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
             return null;
         }
-        xmlhttp.open(method, url + path, !isSync);
+        xmlhttp.open(method, req.url, !isSync);
 
-        for (var p in params) {
-            xmlhttp.setRequestHeader(p, params[p]);
+        for (var p in req.headers) {
+            xmlhttp.setRequestHeader(p, req.headers[p]);
         }
 
-        var timerKey = strSig + ":" + curTime;
+        var timerKey = req.sig + ":" + req.time;
         return this.sendRequest(xmlhttp, content, isSync, timerKey, reqType, objActions, callback, bucket);
+    },
+
+    downloadS3 : function (method, bucket, path, params, file, callback) {
+        var req = this.queryS3Prepare(method, bucket, path, params, null);
+        this.download(req.url, req.headers, file, callback);
     },
 
     queryS3 : function (method, bucket, path, params, content, objActions, isSync, reqType, callback) {
@@ -386,9 +398,7 @@ var ec2ui_client = {
         if (isSync) {
             xmlhttp.onreadystatechange = empty;
         } else {
-            xmlhttp.onreadystatechange = function () {
-                me.handleAsyncResponse(xmlhttp, callback, reqType, objActions, data);
-            }
+            xmlhttp.onreadystatechange = function () { me.handleAsyncResponse(xmlhttp, callback, reqType, objActions, data); }
         }
         this.startTimer(timerKey, 30000, xmlhttp.abort);
 
@@ -457,8 +467,9 @@ var ec2ui_client = {
         var xmlDoc = xmlhttp.responseXML;
 
         if (!xmlDoc) {
-            if (xmlhttp.responseText)
-            xmlDoc = new DOMParser().parseFromString(xmlhttp.responseText, "text/xml");
+            if (xmlhttp.responseText) {
+                xmlDoc = new DOMParser().parseFromString(xmlhttp.responseText, "text/xml");
+            }
         }
 
         if (xmlDoc) {
@@ -530,6 +541,45 @@ var ec2ui_client = {
         }
 
         retVal.ipAddress = xmlhttp.responseText;
+    },
+
+    download: function(url, headers, filename, callback) {
+        debug('download: ' + url + '| ' + JSON.stringify(headers) + '| ' + filename)
+
+        try {
+          FileIO.remove(filename);
+          var file = FileIO.open(filename);
+          if (!FileIO.create(file)) {
+              alert('Cannot create ' + filename)
+              return false;
+          }
+
+          var io = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).newURI(url, null, null);
+          var persist = Components.classes["@mozilla.org/embedding/browser/nsWebBrowserPersist;1"].createInstance(Components.interfaces.nsIWebBrowserPersist);
+          persist.persistFlags = Components.interfaces.nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES;
+          persist.progressListener = {
+            onProgressChange: function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {
+                window.status =  (aCurTotalProgress/aMaxTotalProgress)*100 + "%";
+            },
+            onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
+                debug("download: " + aStateFlags + " " + aStatus)
+                if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
+                    if (callback) callback();
+                }
+            }
+          }
+
+          var hdrs = "";
+          for (var p in headers) {
+              hdrs += p + ":" + headers[p] + "\n";
+          }
+          persist.saveURI(io, null, null, null, hdrs, file);
+          return true;
+
+        } catch (e) {
+          alert(e);
+        }
+        return false;
     },
 
     startTimer : function(key, timeout, expr) {

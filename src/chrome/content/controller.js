@@ -880,8 +880,10 @@ var ec2ui_controller = {
             var fPrice = parseInt(getNodeValueByName(items.snapshotItem(i), "fixedPrice")).toString();
             var uPrice = getNodeValueByName(items.snapshotItem(i), "usagePrice");
             var desc = getNodeValueByName(items.snapshotItem(i), "productDescription");
+            var otype = getNodeValueByName(items.snapshotItem(i), "offeringType");
+            var tenancy = getNodeValueByName(items.snapshotItem(i), "instanceTenancy");
 
-            list.push(new LeaseOffering(id, type, az, duration, fPrice, uPrice, desc));
+            list.push(new LeaseOffering(id, type, az, duration, fPrice, uPrice, desc, otype, tenancy));
         }
 
         ec2ui_model.updateLeaseOfferings(list);
@@ -1519,6 +1521,11 @@ var ec2ui_controller = {
     onCompleteCreateS3BucketKey : function(objResponse)
     {
         if (objResponse.callback) objResponse.callback();
+    },
+
+    getS3BucketKey : function(bucket, key, params, file, callback)
+    {
+        ec2ui_client.downloadS3("GET", bucket, "/" + key, params, file, callback);
     },
 
     bundleInstance : function(instanceId, bucket, prefix, activeCred, callback)

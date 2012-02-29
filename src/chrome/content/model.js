@@ -308,7 +308,7 @@ function BundleTask(id, instanceId, state, startTime, updateTime, s3bucket, s3pr
     this.errorMsg = errorMsg;
 }
 
-function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc)
+function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc, offering, tenancy)
 {
     this.id = id;
     this.instanceType = type;
@@ -317,6 +317,8 @@ function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc)
     this.fixedPrice = fPrice;
     this.usagePrice = uPrice;
     this.description = desc;
+    this.offering = offering;
+    this.tenancy = tenancy;
 }
 
 function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state)

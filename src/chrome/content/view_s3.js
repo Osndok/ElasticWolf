@@ -47,15 +47,26 @@ var ec2ui_S3BucketsTreeView = {
     },
 
     createBucketKey: function() {
-
+        alert('Not implemented yet')
     },
 
     deleteBucketKey: function() {
-
-
+        alert('Not implemented yet')
     },
-    downloadBucketKey: function() {
 
+    downloadBucketKey: function() {
+        var bucket = this.getSelected()
+        if (bucket == null) return
+        var key = ec2ui_S3BucketKeysTreeView.getSelected()
+        if (key == null) return
+        var file = ec2ui_session.promptForFile("Save to file", true, DirIO.fileName(key.name))
+        if (file) {
+            ec2ui_session.controller.getS3BucketKey(bucket.name, key.name, {}, file, function() { alert(file + ' is downloaded'); })
+        }
+    },
+
+    uploadBucketKey: function() {
+        alert('Not implemented yet')
     },
 };
 ec2ui_S3BucketsTreeView.__proto__ = TreeView;

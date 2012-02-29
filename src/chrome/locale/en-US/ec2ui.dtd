@@ -26,6 +26,7 @@
 <!ENTITY ec2ui.tabs.vpns.label "VPNC">
 <!ENTITY ec2ui.tabs.acls.label "ACLs">
 <!ENTITY ec2ui.tabs.enis.label "ENIs">
+<!ENTITY ec2ui.tabs.s3.label "S3">
 
 <!ENTITY ec2ui.captions.images.images.label "Machine Images (AMIs)">
 <!ENTITY ec2ui.captions.images.attribs.label "Launch Permissions">
@@ -235,6 +236,8 @@
 <!ENTITY ec2ui.offerings.captions.payment.label "One-time Payment Details">
 <!ENTITY ec2ui.offerings.purchaseOffering.tip "PurchaseOffering">
 <!ENTITY ec2ui.offerings.contextmenu.purchase.label "Purchase Reserved Instances Offering">
+<!ENTITY ec2ui.offerings.offering.label "OfferingType">
+<!ENTITY ec2ui.offerings.tenancy.label "Tenancy">
 
 <!ENTITY ec2ui.rsvdInst.id.label "Reserved Instances ID">
 <!ENTITY ec2ui.rsvdInst.instType.label "Instance Type">

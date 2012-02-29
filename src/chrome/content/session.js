@@ -846,13 +846,14 @@ var ec2ui_session = {
         return selected.value
     },
 
-    promptForFile : function(msg, save)
+    promptForFile : function(msg, save, filename)
     {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, save ? nsIFilePicker.modeSave : nsIFilePicker.modeOpen);
         fp.displayDirectory = FileIO.open(ec2ui_prefs.getKeyHome());
-        if (fp.show() == nsIFilePicker.returnOK) {
+        fp.defaultString = filename || ""
+        if (fp.show() != nsIFilePicker.returnCancel) {
             return fp.file.path;
         }
         return null
@@ -864,7 +865,7 @@ var ec2ui_session = {
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, nsIFilePicker.modeGetFolder);
         fp.displayDirectory = FileIO.open(ec2ui_prefs.getKeyHome());
-        if (fp.show() == nsIFilePicker.returnOK) {
+        if (fp.show() != nsIFilePicker.returnCancel) {
             return fp.file.path;
         }
         return null

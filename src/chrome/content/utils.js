@@ -298,6 +298,12 @@ function readPublicKey(file)
     return Base64.encode(body.trim())
 }
 
+function openBrowser(url)
+{
+    debug('openBrowser: ' + url)
+    window.openDialog("chrome://ec2ui/content/ec2ui_browser.xul", 'Browser', "chrome,centerscreen,resizable,width=800,height=600", url);
+}
+
 function addZero(vNumber)
 {
     return ((vNumber < 10) ? "0" : "") + vNumber;
@@ -1795,7 +1801,13 @@ var DirIO = {
             str += arr[i] + ((i != arr.length - 1) ? this.sep : '');
         }
         return str;
-    }
+    },
+
+    fileName: function(path)
+    {
+        var arr = path.split(/\/|\\/)
+        return arr.length ? arr[arr.length - 1] : ""
+    },
 }
 
 // Copyright (c) 2005 Tom Wu

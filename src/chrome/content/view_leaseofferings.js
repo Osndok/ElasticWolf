@@ -1,29 +1,28 @@
-var ec2ui_LeaseOfferingsTreeView = {
-    COLNAMES : ['offering.id',
-                'offering.instanceType',
-                'offering.azone',
-                'offering.duration',
-                'offering.fixedPrice',
-                'offering.usagePrice',
-                'offering.description'],
+var ec2ui_LeaseOfferingsTreeView = { COLNAMES :
+    [ 'offering.id', 'offering.instanceType', 'offering.azone', 'offering.duration', 'offering.fixedPrice', 'offering.usagePrice', 'offering.offering', 'offering.tenancy', 'offering.description' ],
+
     imageIdRegex : new RegExp(".*"),
 
-    getSearchText : function() {
+    getSearchText : function()
+    {
         return document.getElementById('ec2ui.offerings.search').value;
     },
 
-    refresh : function() {
+    refresh : function()
+    {
         ec2ui_session.showBusyCursor(true);
         ec2ui_session.controller.describeLeaseOfferings();
         ec2ui_session.showBusyCursor(false);
     },
 
-    invalidate : function() {
+    invalidate : function()
+    {
         var target = ec2ui_LeaseOfferingsTreeView;
         target.displayImages(target.filterImages(ec2ui_model.offerings));
     },
 
-    searchChanged : function(event) {
+    searchChanged : function(event)
+    {
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
         }
@@ -31,19 +30,20 @@ var ec2ui_LeaseOfferingsTreeView = {
         this.searchTimer = setTimeout(this.invalidate, 500);
     },
 
-    register : function() {
+    register : function()
+    {
         if (!this.registered) {
             this.registered = true;
             ec2ui_model.registerInterest(this, 'offerings');
         }
     },
 
-    displayImages : function (imageList) {
+    displayImages : function(imageList)
+    {
         if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
             // Determine if there are any pending operations
             if (this.pendingUpdates()) {
-                this.startRefreshTimer("",
-                                       ec2ui_LeaseOfferingsTreeView.refresh);
+                this.startRefreshTimer("", ec2ui_LeaseOfferingsTreeView.refresh);
             } else {
                 this.stopRefreshTimer("ec2ui_LeaseOfferingsTreeView");
             }
@@ -54,17 +54,16 @@ var ec2ui_LeaseOfferingsTreeView = {
         BaseImagesView.displayImages.call(this, imageList);
     },
 
-    viewDetails : function(event) {
+    viewDetails : function(event)
+    {
         var image = this.getSelectedImage();
         if (image == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_offering_details.xul",
-                          null,
-                          "chrome,centerscreen,modal,resizable",
-                          image);
+        window.openDialog("chrome://ec2ui/content/dialog_offering_details.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
-    purchaseOffering : function () {
-        var retVal = {ok:null,id:null,count:null};
+    purchaseOffering : function()
+    {
+        var retVal = { ok : null, id : null, count : null };
         var image = this.getSelectedImage();
         if (image == null) return;
         retVal.id = image.id;
@@ -72,22 +71,14 @@ var ec2ui_LeaseOfferingsTreeView = {
 
         while (fRepeat) {
             // Hand off receiving user input to a dialog
-            window.openDialog("chrome://ec2ui/content/dialog_purchase_offering.xul",
-                              null,
-                              "chrome,centerscreen,modal,resizable",
-                              image,
-                              retVal);
+            window.openDialog("chrome://ec2ui/content/dialog_purchase_offering.xul", null, "chrome,centerscreen,modal,resizable", image, retVal);
 
             fRepeat = retVal.ok;
             if (retVal.ok) {
                 // Ensure that the user actually wants to purchase this offering
-                var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                    .getService(Components.interfaces.nsIPromptService);
+                var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
                 var check = null;
-                var flags = prompts.BUTTON_TITLE_IS_STRING * prompts.BUTTON_POS_0 +
-                    prompts.BUTTON_TITLE_IS_STRING * prompts.BUTTON_POS_1 +
-                    prompts.BUTTON_TITLE_CANCEL * prompts.BUTTON_POS_2 +
-                    prompts.BUTTON_POS_0_DEFAULT;
+                var flags = prompts.BUTTON_TITLE_IS_STRING * prompts.BUTTON_POS_0 + prompts.BUTTON_TITLE_IS_STRING * prompts.BUTTON_POS_1 + prompts.BUTTON_TITLE_CANCEL * prompts.BUTTON_POS_2 + prompts.BUTTON_POS_0_DEFAULT;
 
                 var msg = "You are about to purchase " + retVal.count;
                 msg = msg + " " + image.description + " Reserved Instance(s)";
@@ -96,15 +87,7 @@ var ec2ui_LeaseOfferingsTreeView = {
                 msg = msg + retVal.count * parseInt(image.fixedPrice);
                 msg = msg + ". Are you sure?\n\nAn email will be sent to you shortly after we receive your order.";
 
-                var button = prompts.confirmEx(window,
-                                               "Confirm Reserved Instances Offering Purchase",
-                                               msg,
-                                               flags,
-                                               "Edit Order",
-                                               "Place Order",
-                                               "",
-                                               null,
-                                               {});
+                var button = prompts.confirmEx(window, "Confirm Reserved Instances Offering Purchase", msg, flags, "Edit Order", "Place Order", "", null, {});
 
                 // Edit: 0
                 // Purchase: 1
@@ -112,7 +95,8 @@ var ec2ui_LeaseOfferingsTreeView = {
                 if (button == 1) {
                     fRepeat = false;
                     // The user wants to purchase this offering
-                    var wrap = function(id) {
+                    var wrap = function(id)
+                    {
                         if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
                             ec2ui_ReservedInstancesTreeView.refresh();
                             ec2ui_ReservedInstancesTreeView.selectByImageId(id);
@@ -120,22 +104,23 @@ var ec2ui_LeaseOfferingsTreeView = {
                     }
 
                     // purchase this lease offering
-                    ec2ui_session.controller.purchaseOffering(retVal.id,
-                                                              retVal.count,
-                                                              wrap);
-                } else if (button == 0) {
-                    // The user wants to edit the order
-                    continue;
-                } else {
-                    fRepeat = false;
-                }
+                    ec2ui_session.controller.purchaseOffering(retVal.id, retVal.count, wrap);
+                } else
+                    if (button == 0) {
+                        // The user wants to edit the order
+                        continue;
+                    } else {
+                        fRepeat = false;
+                    }
             }
         }
     },
 
-    pendingUpdates : function() {
+    pendingUpdates : function()
+    {
         return false;
     },
+
 };
 
 // poor-man's inheritance
