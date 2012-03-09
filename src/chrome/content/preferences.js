@@ -550,7 +550,7 @@ var ec2ui_prefs = {
 
     getDefaultJavaHome: function() {
         if (isWindows(navigator.platform)) {
-            return "C:\\Program Files (x86)\\Java\\gre6";
+            return "C:\\Program Files (x86)\\Java\\jre6";
         } else
 
         if (isMacOS(navigator.platform)) {
