@@ -793,7 +793,8 @@ var ec2ui_prefs = {
                  { name: "EU (Ireland)", url: "s3-eu-west-1.amazonaws.com", region: "EU" },
                  { name: "Asia Pacific (Singapore)", url: "s3-ap-southeast-1.amazonaws.com", region: "ap-southeast-1" },
                  { name: "Asia Pacific (Tokyo)", url: "s3-ap-northeast-1.amazonaws.com", region: "ap-northeast-1" },
-                 { name: "South America (Sao Paulo)", url: "s3-sa-east-1.amazonaws.com", region: "sa-east-1" } ]
+                 { name: "South America (Sao Paulo)", url: "s3-sa-east-1.amazonaws.com", region: "sa-east-1" },
+                 { name: "GovCloud", url: 's3-us-gov-west-1.amazonaws.com', region: 'us-gov-west-1' } ]
     },
 
     getS3Region: function(region) {

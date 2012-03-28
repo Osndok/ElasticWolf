@@ -22,8 +22,8 @@
     <groupbox>
       <description class="header"><html:span id="ec2ui.appname">APPNAME</html:span> version <html:span id="ec2ui.version">VERSION</html:span> (EC2 API <html:span id="ec2ui.apiversion">API-VERSION</html:span>)</description>
       <description><html:p><html:span id="ec2ui.appname1">APPNAME</html:span> (<html:span id="ec2ui.appurl">URL</html:span>)
-                   is a Firefox extension for interacting with Amazon's EC2/S3 web services.
-                   The code is fork of ElasticFox-ec2tag extension which was based on original Elasticfox from Amazon</html:p>
+                   is a Firefox extension for<html:br /> interacting with Amazon's EC2/S3 web services.
+                   The code is fork of ElasticFox-ec2tag<html:br/> extension which was based on original Elasticfox from Amazon</html:p>
       </description>
     </groupbox>
     <vbox>

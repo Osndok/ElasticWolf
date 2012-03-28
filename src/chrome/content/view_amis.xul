@@ -23,6 +23,7 @@
                             <menuitem id="amis.context.launch" oncommand="ec2ui_AMIsTreeView.launchNewInstances();" label="Launch instance(s) of this AMI" />
                             <menuseparator />
                             <menuitem oncommand="ec2ui_AMIsTreeView.copyToClipBoard('id');" label="&ec2ui.contextmenu.copyid.label;" />
+                            <menuitem oncommand="ec2ui_AMIsTreeView.copyToClipBoard('name');" label="&ec2ui.contextmenu.copyname.label;" />
                             <menuitem id="amis.context.fadd" oncommand="ec2ui_AMIsTreeView.manageFavorites();" label="Add AMI to favorites" />
                             <menuitem id="amis.context.fdelete" oncommand="ec2ui_AMIsTreeView.manageFavorites(true);" label="Delete AMI from favorites" />
                         </menupopup>

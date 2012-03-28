@@ -230,16 +230,15 @@ var ec2ui_AMIsTreeView = {
 
     registerNewImage : function()
     {
-        var retVal = {
-            ok : null,
-            manifestPath : null
-        };
+        var me = this;
+        var retVal = {  ok : null, manifestPath : null };
         window.openDialog("chrome://ec2ui/content/dialog_register_image.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
 
         if (retVal.ok) {
             var s3bucket = retVal.manifestPath.split('/')[0];
-            var bucketReg = ec2ui_session.controller.getS3BucketLocation(s3bucket);
-            this.callRegisterImageInRegion(retVal.manifestPath, bucketReg);
+            var bucketReg = ec2ui_session.controller.getS3BucketLocation(s3bucket, function(bucket, region) {
+                me.callRegisterImageInRegion(retVal.manifestPath, region);
+            });
         }
     },
 
@@ -291,6 +290,9 @@ var ec2ui_AMIsTreeView = {
             return;
         }
 
+        alert("Not implemented yet");
+        return;
+
         window.openDialog("chrome://ec2ui/content/dialog_migrate_ami.xul", null, "chrome,centerscreen,modal,resizable", image, ec2ui_session, retVal);
 
         if (retVal.ok) {
@@ -300,8 +302,8 @@ var ec2ui_AMIsTreeView = {
             // Reset the retVal's ok member so the object can be reused
             retVal.ok = false;
 
-            // Finish up AMI migration with visual prompts
-            window.openDialog("chrome://ec2ui/content/dialog_copy_S3_keys.xul", null, "chrome, dialog, centerscreen, resizable=yes", ec2ui_session, retVal);
+            // TODO: Finish up AMI migration with visual prompts
+            //window.openDialog("chrome://ec2ui/content/dialog_copy_S3_keys.xul", null, "chrome, dialog, centerscreen, resizable=yes", ec2ui_session, retVal);
         }
     },
 

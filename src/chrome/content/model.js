@@ -729,6 +729,16 @@ var ec2ui_model = {
         debug("Bucket " + bucket + " not found")
     },
 
+    updateS3BucketLocation: function(bucket, region) {
+        for (var i in this.getS3Buckets()) {
+            if (bucket == this.s3buckets[i].name) {
+                this.s3buckets[i].region = region
+                return;
+            }
+        }
+        debug("Bucket " + bucket + " not found")
+    },
+
     updateS3BucketAcls: function(bucket, list) {
         for (var i in this.getS3Buckets()) {
             if (bucket == this.s3buckets[i].name) {

@@ -1477,6 +1477,20 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback(objResponse.data, list);
     },
 
+    getS3BucketLocation : function(bucket, callback)
+    {
+        ec2ui_client.queryS3("GET", bucket, "/?location", {}, content, this, true, "onCompleteGetS3BucketLocation", callback);
+    },
+
+    onCompleteGetS3BucketLocation : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+        var region = getNodeValueByName(xmlDoc, "LocationConstraint");
+        ec2ui_model.updateS3BucketLocation(objResponse.data, region);
+
+        if (objResponse.callback) objResponse.callback(objResponse.data, region);
+    },
+
     listS3BucketKeys : function(bucket, params, callback)
     {
         ec2ui_client.queryS3("GET", bucket, "/", {}, null, this, true, "onCompleteListS3BucketKeys", callback);
