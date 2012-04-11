@@ -7,6 +7,7 @@ var ec2_InstanceLauncher = {
     usedSecGroupsList : null,
     vpcMenu : null,
     azMenu : null,
+    tnMenu: null,
     subnetMenu : null,
     unused : new Array(),
     used : new Array(),
@@ -37,7 +38,7 @@ var ec2_InstanceLauncher = {
         this.retVal.keyName = document.getElementById("ec2ui.newinstances.keypairlist").selectedItem.value;
 
         // This will be an empty string if <any> is selected
-        this.retVal.placement = { "availabilityZone" : this.azMenu.value };
+        this.retVal.placement = { "availabilityZone" : this.azMenu.value, "tenancy": this.tnMenu.value };
 
         this.retVal.userData = document.getElementById("ec2ui.newinstances.userdata").value;
         if (this.retVal.userData == "") {
@@ -279,6 +280,8 @@ var ec2_InstanceLauncher = {
             this.azMenu.appendItem(availZones[i].name + " (" + availZones[i].state + ")", availZones[i].name);
         }
         this.azMenu.selectedIndex = 0;
+
+        this.tnMenu = document.getElementById("ec2ui.newinstances.tenancy");
 
         // vpcs
         this.vpcMenu = document.getElementById("ec2ui.newinstances.vpcId");

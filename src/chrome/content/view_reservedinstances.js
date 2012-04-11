@@ -1,6 +1,7 @@
 var ec2ui_ReservedInstancesTreeView = {
     COLNAMES: ['rsvdInst.id',
                'rsvdInst.instanceType',
+               'rsvdInst.tenancy',
                'rsvdInst.azone',
                'rsvdInst.start',
                'rsvdInst.duration',
@@ -44,26 +45,22 @@ var ec2ui_ReservedInstancesTreeView = {
     viewDetails : function(event) {
         var image = this.getSelectedImage();
         if (image == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_reserved_instances_details.xul",
-                          null,
-                          "chrome,centerscreen,modal,resizable",
-                          image);
+        window.openDialog("chrome://ec2ui/content/dialog_reserved_instances_details.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
     displayImages : function (imageList) {
         if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-            // Determine if there are any pending operations
-            if (this.pendingUpdates()) {
-                this.startRefreshTimer("ec2ui_ReservedInstancesTreeView",
-                                       ec2ui_ReservedInstancesTreeView.refresh);
-            } else {
-                this.stopRefreshTimer("ec2ui_ReservedInstancesTreeView");
-            }
+        // Determine if there are any pending operations
+        if (this.pendingUpdates()) {
+            this.startRefreshTimer("ec2ui_ReservedInstancesTreeView", ec2ui_ReservedInstancesTreeView.refresh);
         } else {
             this.stopRefreshTimer("ec2ui_ReservedInstancesTreeView");
         }
+    } else {
+        this.stopRefreshTimer("ec2ui_ReservedInstancesTreeView");
+    }
 
-        BaseImagesView.displayImages.call(this, imageList);
+    BaseImagesView.displayImages.call(this, imageList);
     },
 
     pendingUpdates : function() {

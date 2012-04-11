@@ -31,8 +31,7 @@ var ec2_OfferingPurchaser = {
         }
 
         var me = this;
-        this.inputTimer = setTimeout(function() { me.updateTotals(); },
-                                     100);
+        this.inputTimer = setTimeout(function() { me.updateTotals(); }, 100);
     },
 
     updateTotals : function() {
@@ -42,6 +41,9 @@ var ec2_OfferingPurchaser = {
         }
 
         if (!this.validateInstanceCount(true)) return false;
+
+        var tenancy = document.getElementById("ec2ui.purchase.offering.tenancy").value;
+
 
         var textbox = document.getElementById("ec2ui.purchase.offering.count");
         var count = parseInt(textbox.value);
@@ -65,6 +67,7 @@ var ec2_OfferingPurchaser = {
         document.getElementById("ec2ui.purchase.offering.id").value = item.id;
         document.getElementById("ec2ui.purchase.offering.instType").value = item.instanceType;
         document.getElementById("ec2ui.purchase.offering.azone").value = item.azone;
+        document.getElementById("ec2ui.purchase.offering.tenancy").value = item.tenancy;
         document.getElementById("ec2ui.purchase.offering.duration").value = item.duration;
         document.getElementById("ec2ui.purchase.offering.description").value = item.description;
         document.getElementById("ec2ui.purchase.offering.fixedPrice").value = item.fixedPrice;

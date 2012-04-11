@@ -11,6 +11,7 @@
         var image = window.arguments[0];
         document.getElementById("ec2ui.rsvdInst.id").value = image.id;
         document.getElementById("ec2ui.rsvdInst.instType").value = image.instanceType;
+        document.getElementById("ec2ui.rsvdInst.tenancy").value = image.tenancy;
         document.getElementById("ec2ui.rsvdInst.azone").value = image.azone;
         document.getElementById("ec2ui.rsvdInst.start").value = image.start;
         document.getElementById("ec2ui.rsvdInst.duration").value = image.duration;
@@ -44,6 +45,10 @@
         <row>
           <label control="ec2ui.rsvdInst.instType" value="&ec2ui.rsvdInst.instType.label;:" />
           <textbox id="ec2ui.rsvdInst.instType" size="40" readonly="true" />
+        </row>
+        <row>
+          <label control="ec2ui.rsvdInst.tenancy" value="Tenancy:" />
+          <textbox id="ec2ui.rsvdInst.tenancy" size="40" readonly="true" />
         </row>
         <row>
           <label control="ec2ui.rsvdInst.azone" value="&ec2ui.availabilityZone.label;" />

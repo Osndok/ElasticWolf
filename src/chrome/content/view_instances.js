@@ -18,6 +18,7 @@ var ec2ui_InstancesTreeView = {
        'instance.instanceType',
        'instance.launchTimeDisp',
        'instance.placement.availabilityZone',
+       'instance.placement.tenancy',
        'instance.platform',
        'instance.tag',
        'instance.vpcId',

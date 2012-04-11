@@ -24,9 +24,7 @@
                         <toolbarbutton image="images/cash.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_LeaseOfferingsTreeView.purchaseOffering();" tooltiptext="PurchaseOffering" />
                     </hbox>
                 </toolbar>
-                <tree id="ec2ui.offerings.view" seltype="single" enableColumnDrag="true" ondblclick="ec2ui_LeaseOfferingsTreeView.viewDetails(event)" onselect="ec2ui_LeaseOfferingsTreeView.selectionChanged(event)"
-                    flex="1"
-                >
+                <tree id="ec2ui.offerings.view" seltype="single" enableColumnDrag="true" ondblclick="ec2ui_LeaseOfferingsTreeView.viewDetails(event)" onselect="ec2ui_LeaseOfferingsTreeView.selectionChanged(event)" flex="1" >
                     <treecols>
                         <treecol id="offering.id" label="&ec2ui.offerings.id.label;" flex="3" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -68,13 +66,13 @@
                         <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_ReservedInstancesTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
                     </hbox>
                 </toolbar>
-                <tree id="ec2ui.rsvdInst.view" seltype="single" enableColumnDrag="true" ondblclick="ec2ui_ReservedInstancesTreeView.viewDetails(event)" onselect="ec2ui_ReservedInstancesTreeView.selectionChanged(event)"
-                    flex="1"
-                >
+                <tree id="ec2ui.rsvdInst.view" seltype="single" enableColumnDrag="true" ondblclick="ec2ui_ReservedInstancesTreeView.viewDetails(event)" onselect="ec2ui_ReservedInstancesTreeView.selectionChanged(event)" flex="1" >
                     <treecols>
                         <treecol id="rsvdInst.id" label="&ec2ui.rsvdInst.id.label;" flex="3" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="rsvdInst.instanceType" label="&ec2ui.rsvdInst.instType.label;" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="rsvdInst.tenancy" label="&ec2ui.offerings.tenancy.label;" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="rsvdInst.azone" label="&ec2ui.availabilityZone.label;" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

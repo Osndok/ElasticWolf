@@ -321,7 +321,7 @@ function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc, offering, t
     this.tenancy = tenancy;
 }
 
-function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state)
+function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state, tenancy)
 {
     this.id = id;
     this.instanceType = type;
@@ -334,6 +334,7 @@ function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, 
     this.count = count;
     this.description = desc;
     this.state = state;
+    this.tenancy = tenancy
 }
 
 function Vpc(id, cidr, state, dhcpOptionsId, tag)

@@ -125,6 +125,8 @@
           <splitter class="tree-splitter" />
           <treecol id="instance.placement.availabilityZone" label="&ec2ui.availabilityZone.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
+          <treecol id="instance.placement.tenancy" label="Tenancy" flex="1" persist="width ordinal hidden sortDirection" />
+          <splitter class="tree-splitter" />
           <treecol id="instance.rootDeviceType" label="&ec2ui.instances.rootDeviceType.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="instance.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />

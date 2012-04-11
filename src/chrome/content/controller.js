@@ -915,8 +915,9 @@ var ec2ui_controller = {
             var count = getNodeValueByName(item, "instanceCount");
             var desc = getNodeValueByName(item, "productDescription");
             var state = getNodeValueByName(item, "state");
+            var tenancy = getNodeValueByName(item, "instanceTenancy");
 
-            list.push(new ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state));
+            list.push(new ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state, tenancy));
         }
 
         ec2ui_model.updateReservedInstances(list);
@@ -1036,10 +1037,10 @@ var ec2ui_controller = {
             launchTime.setISO8601(getNodeValueByName(instanceItems[j], "launchTime"));
 
             var placementElem = instanceItems[j].getElementsByTagName("placement")[0];
-            var availabilityZone = placementElem.getElementsByTagName("availabilityZone")[0].firstChild;
-            var placement = {
-                "availabilityZone" : availabilityZone != null ? availabilityZone.nodeValue : null
-            };
+            var availabilityZone = getNodeValueByName(placementElem, "availabilityZone");
+            var tenancy = getNodeValueByName(placementElem, "tenancy");
+            var placement = {  "availabilityZone" : availabilityZone, "tenancy": tenancy };
+
             // This value might not exist, but getNodeValueByName
             // returns "" in case the element is not defined.
             var platform = getNodeValueByName(instanceItems[j], "platform");
@@ -1047,7 +1048,6 @@ var ec2ui_controller = {
                 var kernelId = getNodeValueByName(instanceItems[j], "kernelId");
                 var ramdiskId = getNodeValueByName(instanceItems[j], "ramdiskId");
             }
-
             var rdt = getNodeValueByName(instanceItems[j], "rootDeviceType");
 
             list.push(new Instance(resId, ownerId, groups, instanceId, imageId, kernelId || "", ramdiskId || "", stateName, dnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, placement, platform, null, vpcId, subnetId, rdt));
@@ -1091,6 +1091,9 @@ var ec2ui_controller = {
         }
         if (placement.availabilityZone != null && placement.availabilityZone != "") {
             params.push([ "Placement.AvailabilityZone", placement.availabilityZone ]);
+        }
+        if (placement.tenancy != null && placement.tenancy != "") {
+            params.push([ "Placement.Tenancy", placement.tenancy ]);
         }
         if (subnetId != null) {
             params.push([ "SubnetId", subnetId ]);

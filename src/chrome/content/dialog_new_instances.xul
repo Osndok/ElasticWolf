@@ -43,6 +43,15 @@
                     <menulist id="ec2ui.newinstances.instancetypelist" />
                 </row>
                 <row>
+                    <label control="ec2ui.newinstances.tenancy" value="Instance Tenancy:" />
+                    <menulist id="ec2ui.newinstances.tenancy" size="30" >
+                         <menupopup id="ec2ui.newinstances.tenancy">
+                            <menuitem label="Default" value="default"/>
+                            <menuitem label="Dedicated" value="dedicated"/>
+                         </menupopup>
+                    </menulist>
+                </row>
+                <row>
                     <label control="ec2ui.newinstances.min" value="Number of instances - Min: " />
                     <hbox>
                         <textbox id="ec2ui.newinstances.min" size="10" value="1" />

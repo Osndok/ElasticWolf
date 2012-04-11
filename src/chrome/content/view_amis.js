@@ -209,6 +209,7 @@ var ec2ui_AMIsTreeView = {
         if (retVal.ok) {
             this.newInstanceTag = retVal.tag || "";
 
+            console.log(JSON.stringify(retVal))
             ec2ui_session.controller.runInstances(retVal.imageId, retVal.kernelId, retVal.ramdiskId, retVal.minCount, retVal.maxCount, retVal.keyName, retVal.securityGroups,
                     retVal.userData, retVal.properties, retVal.instanceType, retVal.placement, retVal.subnetId, retVal.ipAddress, this.newInstanceCallback);
         }

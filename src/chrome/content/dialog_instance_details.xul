@@ -31,6 +31,7 @@
         document.getElementById("ec2ui.instance.instanceType").value = instance.instanceType;
         document.getElementById("ec2ui.instance.launchTime").value = instance.launchTime.toString();
         document.getElementById("ec2ui.instance.availabilityZone").value = instance.placement.availabilityZone;
+        document.getElementById("ec2ui.instance.tenancy").value = instance.placement.tenancy;
         document.getElementById("ec2ui.instance.platform").value = instance.platform;
         document.getElementById("ec2ui.instance.vpcid").value = instance.vpcId;
         document.getElementById("ec2ui.instance.subnetid").value = instance.subnetId;
@@ -118,6 +119,8 @@
         <row>
           <label control="ec2ui.instance.keyname" value="Key Name:" />
           <textbox id="ec2ui.instance.keyname" size="30" readonly="true" />
+          <label control="ec2ui.instance.tenancy" value="Tenancy:" />
+          <textbox id="ec2ui.instance.tenancy" size="30" readonly="true" />
         </row>
         <row>
           <label control="ec2ui.instance.reason" value="Last Reason:" />
