@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://ec2ui/skin/ec2ui.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <tabpanel id="enis_tab" flex="1">
+    <vbox flex="1">
+            <groupbox flex="1" orient="vertical">
+                <caption label="Elastic Network Interfaces" />
+                <popupset>
+                    <menupopup id="ec2ui.enis.contextmenu">
+                        <menuitem oncommand="ec2ui_NetworkInterfacesTreeView.createInterface();" label="Create ENI" />
+                        <menuitem oncommand="ec2ui_NetworkInterfacesTreeView.deleteInterface();" label="Delete ENI" />
+                        <menuitem oncommand="ec2ui_NetworkInterfacesTreeView.attacheInterface();" label="Attach to instance" />
+                    </menupopup>
+                </popupset>
+                <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_NetworkInterfacesTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
+                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkInterfacesTreeView.createInterface();" tooltiptext="Create ENI" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkInterfacesTreeView.deleteInterface();" tooltiptext="Delete ENI" />
+                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkInterfacesTreeViewa.attachInterface();" tooltiptext="Attach to instance" />
+                </toolbar>
+                <tree id="ec2ui.enis.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_NetworkInterfacesTreeView.selectionChanged(event);" flex="1">
+                    <treecols>
+                        <treecol id="eni.id" label="ID" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="eni.status" label="Status" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="eni.descr" label="Descr" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="eni.subnetId" label="Subnet" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="eni.vpcId" label="VPC" flex="2" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="eni.macAddress" label="MAC" flex="2" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="eni.privateIpAddress" label="IP" flex="2" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="eni.sourceDestCheck" label="IP" flex="2" persist="width ordinal hidden sortDirection" />
+                    </treecols>
+                    <treechildren context="ec2ui.enis.contextmenu" />
+                </tree>
+            </groupbox>
+
+            <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
+                <grippy />
+            </splitter>
+
+            <hbox flex="1">
+            <groupbox orient="vertical" flex="1">
+                <caption label="ENI Attachments" />
+                <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                    <hbox>
+                    </hbox>
+                </toolbar>
+                <tree id="ec2ui.enis.attachments.view" enableColumnDrag="true" flex="1">
+                    <treecols>
+                        <treecol id="att.id" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="att.instanceId" label="Instance" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="att.descr" label="Descr" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    </treecols>
+                    <treechildren />
+                </tree>
+            </groupbox>
+
+            </hbox>
+    </vbox>
+    </tabpanel>
+</overlay>

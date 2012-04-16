@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+
+<dialog id="ec2ui.dialog.about" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  buttons="accept" ondialogaccept="return true;" onload="updateVersion();"
+  title="About">
+
+  <script type="application/x-javascript">
+  function updateVersion() {
+    document.getElementById("ec2ui.version").innerHTML = window.arguments[0].VERSION;
+    document.getElementById("ec2ui.apiversion").innerHTML = window.arguments[0].API_VERSION;
+    document.getElementById("ec2ui.appurl").innerHTML = window.arguments[0].getAppUrl();
+    document.getElementById("ec2ui.appname").innerHTML = window.arguments[0].getAppName();
+    document.getElementById("ec2ui.appname1").innerHTML = window.arguments[0].getAppName();
+    document.getElementById("ec2ui.appname2").innerHTML = window.arguments[0].getAppName();
+  }
+  </script>
+
+  <vbox flex="1">
+    <groupbox>
+      <description class="header"><html:span id="ec2ui.appname">APPNAME</html:span> version <html:span id="ec2ui.version">VERSION</html:span> (EC2 API <html:span id="ec2ui.apiversion">API-VERSION</html:span>)</description>
+      <description><html:p><html:span id="ec2ui.appname1">APPNAME</html:span> (<html:span id="ec2ui.appurl">URL</html:span>)
+                   is a Firefox extension for<html:br /> interacting with Amazon's EC2/S3 web services.
+                   The code is fork of ElasticFox-ec2tag<html:br/> extension which was based on original Elasticfox from Amazon</html:p>
+      </description>
+    </groupbox>
+    <vbox>
+      <description><html:span id="ec2ui.appname2">APPNAME</html:span> is licensed under the Apache 2.0 license.
+      </description>
+    </vbox>
+  </vbox>
+</dialog>
