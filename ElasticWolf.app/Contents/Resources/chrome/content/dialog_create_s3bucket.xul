@@ -6,7 +6,7 @@
     buttons="accept,cancel"
     ondialogaccept="return createBucket();"
     ondialogcancel="return true;" onload="init();"
-    title="Create a Bucket" buttonlabelaccept="Create">
+    title="Create S3 Bucket" buttonlabelaccept="Create">
 
     <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
     <script>

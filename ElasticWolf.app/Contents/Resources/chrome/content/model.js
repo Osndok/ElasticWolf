@@ -12,10 +12,19 @@ function Credential(name, accessKey, secretKey, endPoint)
     }
 }
 
-function S3Bucket(name, mtime)
+function User(id, name, path, arn)
+{
+    this.id = id
+    this.name = name
+    this.path = path
+    this.arn = arn
+}
+
+function S3Bucket(name, mtime, owner)
 {
     this.name = name
     this.mtime = mtime
+    this.owner = owner
     this.region = ""
     this.acls = null
     this.keys = []
@@ -31,7 +40,7 @@ function S3BucketAcl(id, name, permission)
     }
 }
 
-function S3BucketKey(bucket, name, type, size, mtime, etag)
+function S3BucketKey(bucket, name, type, size, mtime, owner, etag)
 {
     this.bucket = bucket
     this.name = name
@@ -39,7 +48,7 @@ function S3BucketKey(bucket, name, type, size, mtime, etag)
     this.size = size
     this.mtime = mtime
     this.etag = etag
-    this.acls = []
+    this.owner = owner
 }
 
 function AccountIdName(id, name)
@@ -513,6 +522,7 @@ var ec2ui_model = {
         networkAcls: 13,
         networkInterfaces: 14,
         s3buckets: 15,
+        users: 16
     },
 
     amiIdManifestMap : {},
@@ -546,6 +556,7 @@ var ec2ui_model = {
         this.updateNetworkAcls(null);
         this.updateNetworkInterfaces(null);
         this.updateS3Buckets(null);
+        this.updateUsers(null);
     },
 
     getModel : function(name)
@@ -603,6 +614,8 @@ var ec2ui_model = {
             return this.networkInterfaces;
         case "s3buckets":
             return this.s3buckets;
+        case "users":
+            return this.users;
         }
         return []
     },
@@ -688,6 +701,9 @@ var ec2ui_model = {
         case "s3buckets":
             ec2ui_session.controller.listS3Buckets();
             break;
+        case "users":
+            ec2ui_session.controller.listUsers();
+            break;
         }
         return []
     },
@@ -706,6 +722,20 @@ var ec2ui_model = {
             this.componentInterests[interest] = [];
         }
         this.componentInterests[interest].push(component);
+    },
+
+    updateUsers : function(list)
+    {
+        this.users = list;
+        this.notifyComponents("users");
+    },
+
+    getUsers : function()
+    {
+        if (this.users == null) {
+            ec2ui_session.controller.listUsers();
+        }
+        return this.users;
     },
 
     updateS3Buckets : function(list)

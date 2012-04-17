@@ -14,6 +14,7 @@
                     <toolbarbutton image="images/left.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.back()" tooltiptext="Back" />
                     <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.create();" tooltiptext="Create Bucket/Key" />
                     <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.remove();" tooltiptext="Delete Bucket/Key" />
+                    <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.manageAcls();" tooltiptext="Manage ACLs" />
                     <toolbarbutton image="images/download.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.download();" tooltiptext="Download Bucket Key" />
                     <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.upload();" tooltiptext="Upload file to Bucket Key" />
                 </toolbar>
@@ -32,19 +33,6 @@
                     </treecols>
                     <treechildren />
                 </tree>
-            </groupbox>
-
-            <splitter style="max-width: 4px; height: 4px;" persist="state" collapse="after" resizebefore="closest">
-                <grippy />
-            </splitter>
-
-            <groupbox orient="vertical" flex="1">
-                <caption label="S3 ACLs" />
-                <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.createACL();" tooltiptext="Add Permission" />
-                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.removeACL();" tooltiptext="Remove permission" />
-                </toolbar>
-                <listbox id="ec2ui.s3.acls" seltype="single" rows="5" flex="1" />
             </groupbox>
        </hbox>
     </vbox>

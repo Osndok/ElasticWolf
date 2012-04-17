@@ -10,8 +10,9 @@ var ec2ui_S3BucketsTreeView = {
         for (var i in list) {
             var n = (this.path[0] + "/" + list[i].name).replace(/[ \/]+$/, '');
             var p = n.split("/");
+            // Next level only
             if (!this.path.length || n.indexOf(path) == 0 && p.length == this.path.length + 1) {
-                list[i].label = p[p.length - 1]
+                list[i].label = p[p.length - 1] + (list[i].name[list[i].name.length - 1] == "/" ? "/" : "")
                 nlist.push(list[i])
             }
         }
@@ -30,8 +31,9 @@ var ec2ui_S3BucketsTreeView = {
                 ec2ui_S3BucketsTreeView.display(item.keys);
             } else {
                 ec2ui_session.showBusyCursor(true);
-                ec2ui_session.controller.listS3BucketKeys(item.name, null, function(bucket, keys) { if (item.name == bucket) ec2ui_S3BucketsTreeView.display(keys); })
-                ec2ui_session.controller.getS3BucketAcl(item.name)
+                ec2ui_session.controller.listS3BucketKeys(item.name, null, function(bucket, keys) {
+                    if (item.name == bucket) ec2ui_S3BucketsTreeView.display(keys);
+                })
             }
         }
     },
@@ -41,21 +43,6 @@ var ec2ui_S3BucketsTreeView = {
         var me = this;
         var item = this.getSelected()
         if (item == null) return
-
-        function wrap(id, acls) {
-            var list = document.getElementById("ec2ui.s3.acls")
-            var count = list.getRowCount()
-            for (var i = count - 1; i > 0; i--) list.removeItemAt(i)
-
-            for (var i in acls) {
-                list.appendItem(acls[i].toStr(), acls[i]);
-            }
-        }
-        if (item.acls) {
-            wrap(item.name, item.acls);
-        } else {
-            ec2ui_session.controller.getS3BucketAcl(item.name, wrap)
-        }
     },
 
     onClick: function(event)
@@ -63,8 +50,11 @@ var ec2ui_S3BucketsTreeView = {
         var me = this;
         var item = this.getSelected()
         if (item == null) return
-        this.path.push(item.name);
-        this.show();
+        // Folder or bucket
+        if (!this.path.length || item.label[item.label.length - 1] == "/") {
+            this.path.push(item.name);
+            this.show();
+        }
     },
 
     refresh: function()
@@ -93,8 +83,8 @@ var ec2ui_S3BucketsTreeView = {
         var me = this;
         var item = this.getSelected();
         if (item == null) return;
+        if (!confirm("Delete " + item.name + "?")) return;
 
-        if (!item || !confirm("Delete bucket " + item.name + "?")) return;
         ec2ui_session.controller.deleteS3Bucket(item.name, function() { me.refresh(true); });
     },
 
@@ -113,13 +103,50 @@ var ec2ui_S3BucketsTreeView = {
         alert('Not implemented yet')
     },
 
-    createACL: function() {
+    manageAcls: function() {
+        var me = this;
+        var item = this.getSelected()
+        if (item == null) return
+        var retVal = { ok : null, item: item, acls: [] };
 
-    },
+        if (!item.acls) {
+            if (!this.path.length) {
+                ec2ui_session.controller.getS3BucketAcl(item.name)
+            } else {
+                ec2ui_session.controller.getS3BucketKeyAcl(item.bucket, item.name)
+            }
+        }
+        window.openDialog("chrome://ec2ui/content/dialog_manage_s3acl.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
 
-    removeACL: function() {
+        if (retVal.ok) {
+            ec2ui_session.showBusyCursor(true);
+            var content = '<AccessControlPolicy><Owner><ID>' +  item.owner  + '</ID></Owner><AccessControlList>';
+            for (var i in retVal.acls) {
+                content += '<Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="' + retVal.acls[i].type + '">';
+                switch (retVal.acls[i].type) {
+                case 'CanonicalUser':
+                    content += '<ID>' + retVal.acls[i].user + '</ID>';
+                    break;
 
-    },
+                case 'AmazonCustomerByEmail':
+                    content += '<EmailAddress>' + retVal.acls[i].user + '</EmailAddress>';
+                    break;
+
+                case 'Group':
+                    content += '<URI>' + retVal.acls[i].user + '<URI>';
+                    break;
+                }
+                content += '</Grantee><Permission>' + retVal.acls[i].permission + '</Permission></Grant>';
+            }
+            content += '</AccessControlList></AccessControlPolicy>';
+
+            if (item.bucket) {
+                ec2ui_session.controller.setS3BucketKeyAcl(item.bucket, item.name, content, function() { me.onSelection(); })
+            } else {
+                ec2ui_session.controller.setS3BucketAcl(item.name, content, function() { me.onSelection(); })
+            }
+        }
+    }
 };
 ec2ui_S3BucketsTreeView.__proto__ = TreeView;
 ec2ui_S3BucketsTreeView.register();

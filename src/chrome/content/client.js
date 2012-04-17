@@ -288,15 +288,14 @@ var ec2ui_client = {
         if (!params) params = {}
 
         // Required headers
-        if (!params["Content-Type"]) params["Content-Type"] = "binary/octet-stream";
-        if (!params["Content-MD5"]) params["Content-MD5"] = "";
         if (!params["Date"]) params["Date"] = curTime;
+        if (!params["Content-Type"]) params["Content-Type"] = "binary/octet-stream";
         if (!params["Content-Length"]) params["Content-Length"] = content ? content.length : 0;
 
         // Construct the string to sign and query string
         var strSig = method + "\n" +
-                     params['Content-MD5'] + "\n" +
-                     params['Content-Type'] + "\n" +
+                     (params['Content-MD5']  || "") + "\n" +
+                     (params['Content-Type'] || "") + "\n" +
                      params['Date'] + "\n";
 
         // Amazon canonical headers
@@ -328,13 +327,13 @@ var ec2ui_client = {
                 rclist.push(p + (query[p] == true ? "" : "=" + query[p]))
             }
         }
-        strSig += "/" + (bucket ?  bucket + "/" : "")  + (rclist.length ? "?" : "") + rclist.sort().join("&");
+        strSig += (bucket ? "/" + bucket : "") + "/" + key + (rclist.length ? "?" : "") + rclist.sort().join("&");
 
         params["Authorization"] = "AWS " + this.accessCode + ":" + b64_hmac_sha1(this.secretKey, strSig);
         params["User-Agent"] = this.getUserAgent();
         params["Connection"] = "close";
 
-        debug("S3 [" + method + " " + url + " " + key + " " + path + "|" + strSig.replace(/\n/g, "|") + "]")
+        debug("S3 [" + method + " " + url + " " + key + " " + path + "|" + strSig.replace(/\n/g, "|") + " " + JSON.stringify(params) + "]")
 
         return { url: url + "/" + key + path, headers: params, sig: strSig, time: curTime }
     },
@@ -543,7 +542,7 @@ var ec2ui_client = {
         retVal.ipAddress = xmlhttp.responseText;
     },
 
-    download: function(url, headers, filename, callback) {
+    download: function(url, headers, filename, callback, progresscb) {
         debug('download: ' + url + '| ' + JSON.stringify(headers) + '| ' + filename)
 
         try {
@@ -559,12 +558,13 @@ var ec2ui_client = {
           persist.persistFlags = Components.interfaces.nsIWebBrowserPersist.PERSIST_FLAGS_REPLACE_EXISTING_FILES;
           persist.progressListener = {
             onProgressChange: function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {
-                window.status =  (aCurTotalProgress/aMaxTotalProgress)*100 + "%";
+                var percent = (aCurTotalProgress/aMaxTotalProgress) * 100;
+                if (progresscb) progresscb(filename, percent);
             },
             onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
-                debug("download: " + aStateFlags + " " + aStatus)
+                debug("download: " + filename + " " + aStateFlags + " " + aStatus)
                 if (aStateFlags & Components.interfaces.nsIWebProgressListener.STATE_STOP) {
-                    if (callback) callback();
+                    if (callback) callback(filename);
                 }
             }
           }

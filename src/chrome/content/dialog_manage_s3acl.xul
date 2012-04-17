@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+
+<dialog id="ec2ui.dialog.createbucket" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    buttons="accept,cancel"
+    ondialogaccept="return createACL();"
+    ondialogcancel="return true;" onload="init();"
+    title="Create S4 Bucket ACL" buttonlabelaccept="Create">
+
+    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+    <script>
+    function createACL() {
+        this.retVal.user = document.getElementById("ec2ui.users").value;
+        this.retVal.acl = document.getElementById("ec2ui.acls").value;
+        this.retVal.ok = true;
+
+        return true;
+    }
+
+    function init() {
+        this.session = window.arguments[0];
+        this.retVal = window.arguments[1];
+
+        document.getElementById("ec2ui.path").value = ()this.retVal.item.bucket || "") + "/" + this.retVal.item.name;
+        var users = this.session.model.getUsers()
+        var menu = document.getElementById("ec2ui.users");
+        menu.removeAllItems();
+        for (var i in users) {
+            menu.appendItem(users[i].name, users[i].id);
+        }
+        menu.selectedIndex = 0
+    }
+    </script>
+
+    <vbox flex="1">
+    <groupbox>
+    <description>Choose user and ACL permission</description>
+    <grid flex="1">
+        <columns>
+            <column />
+            <column />
+        </columns>
+        <rows>
+            <row>
+                <label control="ec2ui.path" value="Path:" />
+                <textbox id="ec2ui.path" readonly="true" />
+            </row>
+            <row>
+                <label control="ec2ui.acls" value="ACL:" />
+                <menulist id="ec2ui.acls">
+                <menupopup>
+                <menuitem label="Read" value="READ"/>
+                <menuitem label="Read ACP" value="READ_ACP"/>
+                <menuitem label="Write" value="WRITE"/>
+                <menuitem label="Write ACP" value="WRITE_ACP"/>
+                <menuitem label="Full Control" value="FULL_CONTROL"/>
+                </menupopup>
+                </menulist>
+            </row>
+            <row>
+                <label control="ec2ui.users" value="Users:" />
+                <menulist id="ec2ui.users" />
+           </row>
+        </rows>
+    </grid>
+    </groupbox>
+</vbox>
+</dialog>

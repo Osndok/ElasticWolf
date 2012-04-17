@@ -1473,12 +1473,12 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback(list);
     },
 
-    createS3Bucket : function(bucket, region, callback)
+    createS3Bucket : function(bucket, region, params, callback)
     {
         if (region) {
             content = "<CreateBucketConstraint><LocationConstraint>" + region + "</LocationConstraint></CreateBucketConstraint>";
         }
-        ec2ui_client.queryS3("PUT", bucket, "", "", {}, content, this, true, "onCompleteCreateS3Bucket", callback);
+        ec2ui_client.queryS3("PUT", bucket, "", "", params, content, this, true, "onCompleteCreateS3Bucket", callback);
     },
 
     onCompleteCreateS3Bucket : function(objResponse)
@@ -1496,11 +1496,12 @@ var ec2ui_controller = {
         var xmlDoc = objResponse.xmlDoc;
 
         var list = new Array();
+        var owner = getNodeValueByName(xmlDoc, "ID")
         var items = xmlDoc.getElementsByTagName("Bucket");
         for ( var i = 0; i < items.length; i++) {
             var name = getNodeValueByName(items[i], "Name");
             var date = getNodeValueByName(items[i], "CreationDate");
-            list.push(new S3Bucket(name, date));
+            list.push(new S3Bucket(name, date, owner));
         }
         ec2ui_model.updateS3Buckets(list);
 
@@ -1531,9 +1532,24 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback(bucket, list);
     },
 
+    setS3BucketAcl : function(bucket, content, callback)
+    {
+        ec2ui_client.queryS3("PUT", bucket, "", "?acl", {}, content, this, true, "onCompleteSetS3BucketAcl", callback);
+    },
+
+    onCompleteSetS3BucketAcl : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+        var bucket = objResponse.data[0];
+        var obj = ec2ui_model.getS3Bucket(bucket)
+        if (obj) obj.acls = null;
+
+        if (objResponse.callback) objResponse.callback(bucket);
+    },
+
     getS3BucketLocation : function(bucket, callback)
     {
-        ec2ui_client.queryS3("GET", bucket, "", "?location", {}, content, this, true, "onCompleteGetS3BucketLocation", callback);
+        ec2ui_client.queryS3("GET", bucket, "", "?location", {}, null, this, true, "onCompleteGetS3BucketLocation", callback);
     },
 
     onCompleteGetS3BucketLocation : function(objResponse)
@@ -1566,7 +1582,8 @@ var ec2ui_controller = {
             var type = getNodeValueByName(items[i], "StorageClass");
             var etag = getNodeValueByName(items[i], "ETag");
             var mtime = getNodeValueByName(items[i], "LastModified");
-            list.push(new S3BucketKey(bucket, id, type, size, mtime, etag));
+            var owner = getNodeValueByName(items[i], "ID")
+            list.push(new S3BucketKey(bucket, id, type, size, mtime, owner, etag));
         }
         var obj = ec2ui_model.getS3Bucket(bucket)
         if (obj) obj.keys = list;
@@ -1601,7 +1618,7 @@ var ec2ui_controller = {
 
     getS3BucketKeyAcl : function(bucket, key, callback)
     {
-        ec2ui_client.queryS3("GET", bucket, key, "?acl", {}, content, this, true, "onCompleteGetS3BucketKeyAcl", callback);
+        ec2ui_client.queryS3("GET", bucket, key, "?acl", {}, null, this, true, "onCompleteGetS3BucketKeyAcl", callback);
     },
 
     onCompleteGetS3BucketKeyAcl : function(objResponse)
@@ -1618,11 +1635,27 @@ var ec2ui_controller = {
             var perms = getNodeValueByName(items[i], "Permission");
             list.push(new S3BucketAcl(id, name, perms));
         }
-        debug("Bucket " + bucket + " Key " + key + "=" + JSON.stringify(list))
         var obj = ec2ui_model.getS3BucketKey(bucket, key)
         if (obj) obj.acls = list;
 
         if (objResponse.callback) objResponse.callback(bucket, list);
+    },
+
+    setS3BucketKeyAcl : function(bucket, key, content, callback)
+    {
+        ec2ui_client.queryS3("PUT", bucket, key, "?acl", {}, content, this, true, "onCompleteSetS3BucketKeyAcl", callback);
+    },
+
+    onCompleteSetS3BucketKeyAcl : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+        var bucket = objResponse.data[0];
+        var key = objResponse.data[1];
+
+        var obj = ec2ui_model.getS3BucketKey(bucket, key)
+        if (obj) obj.acls = null;
+
+        if (objResponse.callback) objResponse.callback(bucket, key);
     },
 
     bundleInstance : function(instanceId, bucket, prefix, activeCred, callback)
@@ -1771,6 +1804,29 @@ var ec2ui_controller = {
         }
 
         ec2ui_model.updateAccessKeys(list);
+        if (objResponse.callback) objResponse.callback(list);
+    },
+
+    listUsers : function(callback)
+    {
+        ec2ui_client.queryIAM("ListUsers", [], this, true, "onCompleteListUsers", callback);
+    },
+
+    onCompleteListUsers : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("member");
+        for ( var i = 0; i < items.length; i++) {
+            var path = getNodeValueByName(items[i], "Path");
+            var name = getNodeValueByName(items[i], "UserName");
+            var id = getNodeValueByName(items[i], "UserId");
+            var arn = getNodeValueByName(items[i], "Arn");
+            list.push(new User(id, name, path, arn));
+        }
+
+        ec2ui_model.updateUsers(list);
         if (objResponse.callback) objResponse.callback(list);
     },
 
