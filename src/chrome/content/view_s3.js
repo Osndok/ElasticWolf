@@ -120,20 +120,20 @@ var ec2ui_S3BucketsTreeView = {
 
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);
-            var content = '<AccessControlPolicy><Owner><ID>' +  item.owner  + '</ID></Owner><AccessControlList>';
+            var content = '<AccessControlPolicy xmlns="http://s3.amazonaws.com/doc/2006-03-01/><Owner><ID>' +  item.owner  + '</ID></Owner><AccessControlList>';
             for (var i in retVal.acls) {
                 content += '<Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="' + retVal.acls[i].type + '">';
                 switch (retVal.acls[i].type) {
                 case 'CanonicalUser':
-                    content += '<ID>' + retVal.acls[i].user + '</ID>';
+                    content += '<ID>' + retVal.acls[i].id + '</ID>';
                     break;
 
                 case 'AmazonCustomerByEmail':
-                    content += '<EmailAddress>' + retVal.acls[i].user + '</EmailAddress>';
+                    content += '<EmailAddress>' + retVal.acls[i].email + '</EmailAddress>';
                     break;
 
                 case 'Group':
-                    content += '<URI>' + retVal.acls[i].user + '<URI>';
+                    content += '<URI>' + retVal.acls[i].group + '<URI>';
                     break;
                 }
                 content += '</Grantee><Permission>' + retVal.acls[i].permission + '</Permission></Grant>';

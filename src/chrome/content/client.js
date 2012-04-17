@@ -288,15 +288,12 @@ var ec2ui_client = {
         if (!params) params = {}
 
         // Required headers
-        if (!params["Date"]) params["Date"] = curTime;
-        if (!params["Content-Type"]) params["Content-Type"] = "binary/octet-stream";
+        if (!params["x-amz-date"]) params["x-amz-date"] = curTime;
+        if (!params["Content-Type"]) params["Content-Type"] = "binary/octet-stream; charset=UTF-8";
         if (!params["Content-Length"]) params["Content-Length"] = content ? content.length : 0;
 
         // Construct the string to sign and query string
-        var strSig = method + "\n" +
-                     (params['Content-MD5']  || "") + "\n" +
-                     (params['Content-Type'] || "") + "\n" +
-                     params['Date'] + "\n";
+        var strSig = method + "\n" + (params['Content-MD5']  || "") + "\n" + (params['Content-Type'] || "") + "\n" + "\n";
 
         // Amazon canonical headers
         var headers = []
@@ -333,7 +330,7 @@ var ec2ui_client = {
         params["User-Agent"] = this.getUserAgent();
         params["Connection"] = "close";
 
-        debug("S3 [" + method + " " + url + " " + key + " " + path + "|" + strSig.replace(/\n/g, "|") + " " + JSON.stringify(params) + "]")
+        debug("S3 [" + method + ":" + url + "/" + key + path + ":" + strSig.replace(/\n/g, "|") + " " + JSON.stringify(params) + " " + content + "]")
 
         return { url: url + "/" + key + path, headers: params, sig: strSig, time: curTime }
     },
