@@ -147,7 +147,7 @@
                 <caption label="Snapshot Permissions" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_SnapshotTreeView.addPermission();" tooltiptext="Add user to the permissions list" />
-                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_SnapshotTreeView.removePermission();" tooltiptext="Remove from the permissions list" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_SnapshotTreeView.deletePermission();" tooltiptext="Remove from the permissions list" />
                     <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ec2ui_SnapshotTreeView.addPublicPermission();" tooltiptext="Make it publically available" />
                 </toolbar>
                 <listbox id="ec2ui.snapshot.permissions.list" seltype="single" rows="4" flex="1" />

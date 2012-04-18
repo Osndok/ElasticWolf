@@ -225,8 +225,6 @@ var ec2ui_controller = {
     onCompleteDescribeSnapshotAttribute : function(objResponse)
     {
         var xmlDoc = objResponse.xmlDoc;
-        debug("DescribeSnapshotAttribute:" + JSON.stringify(xmlDoc))
-
         var list = [];
         var id = getNodeValueByName(xmlDoc, "snapshotId");
 
@@ -235,10 +233,10 @@ var ec2ui_controller = {
             var group = getNodeValueByName(items[i], "group");
             var user = getNodeValueByName(items[i], "userId");
             if (group != '') {
-                lust.push(["Group", group])
+                list.push({ id: group, label: "Group: " + group })
             } else
             if (user != '') {
-                list.push(["UserId", user])
+                list.push({ id: user, label: "UserId: " + user })
             }
         }
 
@@ -248,18 +246,18 @@ var ec2ui_controller = {
     modifySnapshotAttribute: function(id, add, remove, callback) {
         var params = [ ["SnapshotId", id]]
 
-        // Params are lists in format: [ "UserId", user], ["Group", "all" ]
+        // Params are lists in format: [ { "UserId": user} ], [ { "Group": "all" }]
         if (add) {
-            for (var i in add) {
-                params.push(["CreateVolumePermission.Add." + (parseInt(i) + 1) + "." + add[i][0], add[i][1]])
+            for (var i = 0; i < add.length; i++) {
+                params.push(["CreateVolumePermission.Add." + (i + 1) + "." + add[i][0], add[i][1] ])
             }
         }
         if (remove) {
-            for (var i in remove) {
-                params.push(["CreateVolumePermission.Remove." + (parseInt(i) + 1) + "." + remove[i][0], remove[i][1]])
+            for (var i = 0; i < remove.length; i++) {
+                params.push(["CreateVolumePermission.Remove." + (i + 1) + "." + remove[i][0], remove[i][1] ])
             }
         }
-        ec2ui_client.queryEC2("DescribeSnapshotAttribute", params, this, true, "onCompleteModifySnapshotAttribute", callback);
+        ec2ui_client.queryEC2("ModifySnapshotAttribute", params, this, true, "onCompleteModifySnapshotAttribute", callback);
     },
 
     onCompleteModifySnapshotAttribute : function(objResponse)

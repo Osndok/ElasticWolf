@@ -4,63 +4,23 @@
 
 <dialog id="ec2ui.dialog.createbucket" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
-    ondialogaccept="return createACL();"
+    ondialogaccept="return apply();"
     ondialogcancel="return true;" onload="init();"
     title="Create S4 Bucket ACL" buttonlabelaccept="Apply">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
-    <script type="application/x-javascript" src="chrome://ec2ui/content/util.js" />
-    <script>
-    function applyACL() {
-        this.retVal.user = document.getElementById("ec2ui.users").value;
-        this.retVal.ok = false;
-        return true;
-    }
+    <script type="application/x-javascript" src="chrome://ec2ui/content/dialog_manage_s3acl.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/controller.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/session.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/preferences.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
 
-    function init() {
-        this.session = window.arguments[0];
-        this.retVal = window.arguments[1];
-        this.tree = document.getElementById("ec2ui.tree")
-        this.tree.__proto__ = TreeView;
-        this.tree.view = {
-           COLNAMES : [ 'User', 'Read', 'Write', 'FullControl' ],
-           users: [],
-        };
-
-        document.getElementById("ec2ui.path").value = (this.retVal.item.bucket || "") + "/" + this.retVal.item.name;
-        var users = this.session.model.getUsers()
-        var menu = document.getElementById("ec2ui.users");
-        for (var i in users) {
-            menu.appendItem(users[i].name, users[i].id);
-        }
-        menu.selectedIndex = 0
-    }
-
-    function addUser(how) {
-        var id = prompt("Please give the " + how + " for the user...");
-        if (!id) return;
-        switch (how) {
-        case "email":
-            this.tree.users.push({ type: "AmazonCustomerByEmail", email: id } );
-            break;
-
-        default:
-            this.tree.users.push({ type: "CanonicalUser", id: id } );
-        }
-    }
-
-    function removeUser() {
-    }
-    </script>
-
-
-<groupbox flex="1">
+    <groupbox flex="1">
     <textbox id="ec2ui.path" size="40" readonly="true" />
     <hbox flex="1">
         <vbox flex="1">
             <tree seltype="single" id="ec2ui.tree" flex="5" editable="true">
                 <treecols>
-                    <treecol label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                    <treecol label="Name" flex="1" persist="width ordinal hidden sortDirection" />
                     <treecol editable="true" type="checkbox" label="Read" persist="width ordinal hidden" />
                     <treecol editable="true" type="checkbox" label="Write" persist="width ordinal hidden" />
                     <treecol editable="true" type="checkbox" label="FullControl" persist="width ordinal hidden" />
@@ -79,6 +39,6 @@
             </hbox>
         </vbox>
     </hbox>
-</groupbox>
+    </groupbox>
 
 </dialog>

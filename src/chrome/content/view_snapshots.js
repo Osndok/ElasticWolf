@@ -90,7 +90,7 @@ var ec2ui_SnapshotTreeView = {
             }
 
             for (var i in acls) {
-                list.appendItem(acls[i], acls[i]);
+                list.appendItem(acls[i].label, acls[i].id);
             }
             image.acls = acls;
         }
@@ -111,7 +111,7 @@ var ec2ui_SnapshotTreeView = {
     {
         var item = this.getPermissionsList().getSelectedItem(0);
         if (item == null) return null;
-        return item.value;
+        return item;
     },
 
     addPublicPermission: function()
@@ -141,9 +141,9 @@ var ec2ui_SnapshotTreeView = {
         if (image == null) return;
         var perm = this.getSelectedPermission();
         if (!perm) return
-        if (!confirm("Remove permissions " + perm + " from " + image.id + "?")) return;
+        if (!confirm("Remove permissions " + perm.label + " from " + image.id + "?")) return;
         image.acls = null;
-        ec2ui_session.controller.modifySnapshotAttribute(image.id, null, [ [ perm[0], perm[1] ]], function() { me.refresh(true); });
+        ec2ui_session.controller.modifySnapshotAttribute(image.id, null, [ [ perm.label.split(":")[0], perm.value ]], function() { me.refresh(true); });
     },
 
     deleteSnapshot : function () {
