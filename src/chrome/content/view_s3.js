@@ -69,13 +69,24 @@ var ec2ui_S3BucketsTreeView = {
         this.show();
     },
 
+    setStatus: function(file, p)
+    {
+        file = DirIO.fileName(file)
+        document.getElementById("ec2ui.s3.status").value = file + ": " + (p >= 0 && p <= 100 ? Math.round(p) : 100) + "%";
+    },
+
     create: function() {
         var me = this;
-        var retVal = { ok : null, name : null, region : null, params: {} }
+        var retVal = { ok : null, name: null, region : null, params: {}, type: this.path.length ? "Folder" : "Bucket" }
         window.openDialog("chrome://ec2ui/content/dialog_create_s3bucket.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);
-            ec2ui_session.controller.createS3Bucket(retVal.name, retVal.region, retVal.params, function() { me.refresh(true); });
+            if (!this.path.length) {
+                ec2ui_session.controller.createS3Bucket(retVal.name, retVal.region, retVal.params, function() { me.refresh(true); });
+            } else {
+                ec2ui_model.getS3Bucket(this.path[0]).keys = []
+                ec2ui_session.controller.createS3BucketKey(this.path[0], this.path.slice(1).join('/') + retVal.name, retVal.params, null, function() { me.show(); });
+            }
         }
     },
 
@@ -85,7 +96,12 @@ var ec2ui_S3BucketsTreeView = {
         if (item == null) return;
         if (!confirm("Delete " + item.name + "?")) return;
 
-        ec2ui_session.controller.deleteS3Bucket(item.name, function() { me.refresh(true); });
+        if (!item.bucket) {
+            ec2ui_session.controller.deleteS3Bucket(item.name, {}, function() { me.refresh(true); });
+        } else {
+            ec2ui_model.getS3Bucket(item.bucket).keys = [];
+            ec2ui_session.controller.deleteS3BucketKey(item.bucket, item.name, {}, function() { me.show(); });
+        }
     },
 
     download: function() {
@@ -95,12 +111,25 @@ var ec2ui_S3BucketsTreeView = {
 
         var file = ec2ui_session.promptForFile("Save to file", true, DirIO.fileName(item.name))
         if (file) {
-            ec2ui_session.controller.getS3BucketKey(item.bucket, item.name, {}, file, function() { alert(file + ' is downloaded'); })
+            ec2ui_session.controller.getS3BucketKey(item.bucket, item.name, {}, file,
+                    function(f) { meSetStatus(f, 100); },
+                    function(f, p) { me.setStatus(f, p); } )
         }
     },
 
     upload: function() {
-        alert('Not implemented yet')
+        var me = this;
+        if (!this.path.length) return;
+        var item = ec2ui_model.getS3Bucket(this.path[0])
+        item.keys = []
+        var file = ec2ui_session.promptForFile("Upload file")
+        if (file) {
+            var f = FileIO.open(file)
+            var name = f.leafName.replace(/[ \/\\'":]+/g, '')
+            ec2ui_session.controller.putS3BucketKey(item.name, this.path.slice(1).join('/') + name, {}, file,
+                    function(f) { me.show(); },
+                    function(f, p) { me.setStatus(f, p); });
+        }
     },
 
     manageAcls: function() {

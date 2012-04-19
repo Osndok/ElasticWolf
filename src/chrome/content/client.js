@@ -190,7 +190,7 @@ var ec2ui_client = {
                     break;
                 }
             } catch (e) {
-                alert ("An error occurred while calling "+action+"\n"+e);
+                alert ("An error occurred while calling "+ action + "\n" + e);
                 rsp = null;
                 break;
             }
@@ -330,9 +330,9 @@ var ec2ui_client = {
         params["User-Agent"] = this.getUserAgent();
         params["Connection"] = "close";
 
-        debug("S3 [" + method + ":" + url + "/" + key + path + ":" + strSig.replace(/\n/g, "|") + " " + JSON.stringify(params) + " " + content + "]")
+        debug("S3 [" + method + ":" + url + "/" + key + path + ":" + strSig.replace(/\n/g, "|") + " " + JSON.stringify(params) + "]")
 
-        return { url: url + "/" + key + path, headers: params, sig: strSig, time: curTime }
+        return { method: method, url: url + "/" + key + path, headers: params, sig: strSig, time: curTime }
     },
 
     queryS3Impl : function(method, bucket, key, path, params, content, objActions, isSync, reqType, callback) {
@@ -344,7 +344,7 @@ var ec2ui_client = {
             log("Could not create xmlhttp object");
             return null;
         }
-        xmlhttp.open(method, req.url, !isSync);
+        xmlhttp.open(req.method, req.url, !isSync);
 
         for (var p in req.headers) {
             xmlhttp.setRequestHeader(p, req.headers[p]);
@@ -354,9 +354,55 @@ var ec2ui_client = {
         return this.sendRequest(xmlhttp, content, isSync, timerKey, reqType, objActions, callback, [bucket, key, path]);
     },
 
-    downloadS3 : function (method, bucket, key, path, params, file, callback) {
+    downloadS3 : function (method, bucket, key, path, params, file, callback, progresscb) {
         var req = this.queryS3Prepare(method, bucket, key, path, params, null);
-        this.download(req.url, req.headers, file, callback);
+        this.download(req.url, req.headers, file, callback, progresscb);
+    },
+
+    uploadS3: function(bucket, key, path, params, filename, callback, progresscb) {
+        var file = FileIO.streamOpen(filename);
+        if (!file) {
+            alert('Cannot open ' + filename)
+            return false;
+        }
+        var length = file[1].available();
+        params["Content-Length"] = length;
+
+        var req = this.queryS3Prepare("PUT", bucket, key, path, params, null);
+
+        var xmlhttp = this.newInstance();
+        if (!xmlhttp) {
+            log("Could not create xmlhttp object");
+            return null;
+        }
+        xmlhttp.open(req.method, req.url, true);
+        for (var p in req.headers) {
+            xmlhttp.setRequestHeader(p, req.headers[p]);
+        }
+        xmlhttp.send(file[1]);
+
+        var timer = setInterval(function() {
+            try {
+                var a = length - file[1].available();
+                if (progresscb) progresscb(filename, Math.round(a / length * 100));
+            }
+            catch(e) {
+                alert("Error uploading " + filename + "\n" + e)
+            }
+        }, 300);
+
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState != 4) return;
+            FileIO.streamClose(file);
+            clearInterval(timer);
+            if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
+                if (callback) callback(filename);
+            } else {
+                var rsp = this.unpackXMLErrorRsp(xmlhttp);
+                this.errorDialog("S3 responded with an error for "+ bucket + "/" + key + path, rsp.faultCode, rsp.requestId, rsp.faultString)
+            }
+        };
+        return true;
     },
 
     queryS3 : function (method, bucket, key, path, params, content, objActions, isSync, reqType, callback) {
@@ -368,7 +414,7 @@ var ec2ui_client = {
                     // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
                     this.errorCount++;
                     if (this.errorCount < 5) {
-                        if (!this.errorDialog("S3 responded with an error for "+ method + " " + bucket + "/" + key + path, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
+                        if (!this.errorDialog("S3 responded with an error for "+ method + " " + bucket + "/" + key + path, rsp.faultCode, rsp.requestId, rsp.faultString)) {
                             break;
                         }
                         this.errorCount = 0;
@@ -402,10 +448,9 @@ var ec2ui_client = {
             xmlhttp.send(content);
             this.stopTimer(timerKey);
         } catch(e) {
-            if (isSync && !this.stopTimer(timerKey)) {
-                // A timer didn't exist, this is unexpected
-                throw e;
-            }
+            // A timer didn't exist, this is unexpected
+            if (isSync && !this.stopTimer(timerKey)) throw e;
+
             var faultStr = "Please check your EC2/S3 URL for correctness and retry.";
             return this.newResponseObject(null, callback, reqType, true, "Request Error", faultStr, "", data);
         }
@@ -420,7 +465,6 @@ var ec2ui_client = {
             if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
                 responseObject = this.newResponseObject(xmlhttp, callback, reqType, false, "", "", "", data);
             } else {
-                log("Generating ASync Failure Response");
                 responseObject = this.unpackXMLErrorRsp(xmlhttp, reqType, callback, data);
             }
             responseObject.isAsync = true;
@@ -441,14 +485,12 @@ var ec2ui_client = {
             log("Sync Response = " + xmlhttp.status + "("+xmlhttp.readyState+"): " + xmlhttp.responseText);
 
             if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
-                log("Generating Sync Success Response");
                 var resp = this.newResponseObject(xmlhttp, callback, reqType, false, "", "", "", data);
                 if (objActions) {
                     objActions.onResponseComplete(resp);
                 }
                 return resp;
             } else {
-                log("Generating Sync Failure Response");
                 return this.unpackXMLErrorRsp(xmlhttp, reqType, callback, data);
             }
         } else {
@@ -457,24 +499,20 @@ var ec2ui_client = {
     },
 
     unpackXMLErrorRsp : function(xmlhttp, reqType, callback, data) {
-        var faultCode = "Unknown";
+        var faultCode = "Unknown: " + xmlhttp.status;
         var faultString = "An unknown error occurred.";
         var requestId = "";
         var xmlDoc = xmlhttp.responseXML;
-
         if (!xmlDoc) {
             if (xmlhttp.responseText) {
                 xmlDoc = new DOMParser().parseFromString(xmlhttp.responseText, "text/xml");
             }
         }
-
         if (xmlDoc) {
             faultCode = getNodeValueByName(xmlDoc, "Code");
             faultString = getNodeValueByName(xmlDoc, "Message");
             requestId = getNodeValueByName(xmlDoc, "RequestID");
         }
-
-        log("Generated New Error Response Object");
         return this.newResponseObject(xmlhttp, callback, reqType, true, faultCode, faultString, requestId, data);
     },
 

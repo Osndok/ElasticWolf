@@ -5,6 +5,16 @@ var ec2ui_controller = {
         return ec2ui_client.getNsResolver();
     },
 
+    onResponseComplete : function(responseObject)
+    {
+        // For async requests, we should always call back
+        if (!responseObject.isAsync && responseObject.hasErrors) {
+            return;
+        }
+
+        eval("this." + responseObject.requestType + "(responseObject)");
+    },
+
     registerImageInRegion : function(manifestPath, region, callback)
     {
         // Determine the current region
@@ -1589,9 +1599,9 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback(bucket, list);
     },
 
-    deleteS3Bucket : function(bucket, callback)
+    deleteS3Bucket : function(bucket, params, callback)
     {
-        ec2ui_client.queryS3("DELETE", bucket, "", "", {}, null, this, true, "onCompleteDeleteS3Bucket", callback);
+        ec2ui_client.queryS3("DELETE", bucket, "", "", params, null, this, true, "onCompleteDeleteS3Bucket", callback);
     },
 
     onCompleteDeleteS3Bucket : function(objResponse)
@@ -1599,9 +1609,9 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    createS3BucketKey : function(bucket, key, params, callback)
+    createS3BucketKey : function(bucket, key, params, data, callback)
     {
-        ec2ui_client.queryS3("PUT", bucket, key, "", params, null, this, true, "onCompleteCreate3BucketKey", callback);
+        ec2ui_client.queryS3("PUT", bucket, key, "", params, data, this, false, "onCompleteCreateS3BucketKey", callback);
     },
 
     onCompleteCreateS3BucketKey : function(objResponse)
@@ -1609,9 +1619,24 @@ var ec2ui_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    getS3BucketKey : function(bucket, key, params, file, callback)
+    deleteS3BucketKey : function(bucket, key, params, callback)
     {
-        ec2ui_client.downloadS3("GET", bucket, key, "", params, file, callback);
+        ec2ui_client.queryS3("DELETE", bucket, key, "", params, null, this, true, "onCompleteDeleteS3BucketKey", callback);
+    },
+
+    onCompleteDeleteS3BucketKey : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    getS3BucketKey : function(bucket, key, params, file, callback, progresscb)
+    {
+        ec2ui_client.downloadS3("GET", bucket, key, "", params, file, callback, progresscb);
+    },
+
+    putS3BucketKey : function(bucket, key, params, file, callback, progresscb)
+    {
+        ec2ui_client.uploadS3(bucket, key, "", params, file, callback, progresscb);
     },
 
     getS3BucketKeyAcl : function(bucket, key, callback)
@@ -2344,16 +2369,6 @@ var ec2ui_controller = {
         if (objResponse.callback) {
             objResponse.callback(endPointMap);
         }
-    },
-
-    onResponseComplete : function(responseObject)
-    {
-        // For async requests, we should always call back
-        if (!responseObject.isAsync && responseObject.hasErrors) {
-            return;
-        }
-
-        eval("this." + responseObject.requestType + "(responseObject)");
     },
 
     describeLoadBalancers : function(callback)

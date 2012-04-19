@@ -12,13 +12,16 @@
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
                     <toolbarbutton image="images/left.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.back()" tooltiptext="Back" />
-                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.create();" tooltiptext="Create Bucket/Key" />
-                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.remove();" tooltiptext="Delete Bucket/Key" />
+                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.create();" tooltiptext="Create Bucket/Folder" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.remove();" tooltiptext="Delete Bucket/Folder" />
                     <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.manageAcls();" tooltiptext="Manage ACLs" />
-                    <toolbarbutton image="images/download.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.download();" tooltiptext="Download Bucket Key" />
-                    <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.upload();" tooltiptext="Upload file to Bucket Key" />
+                    <toolbarbutton image="images/download.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.download();" tooltiptext="Download file" />
+                    <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.upload();" tooltiptext="Upload file" />
                 </toolbar>
-                <textbox id="ec2ui.s3.path" size="40" readonly="true" />
+                <hbox>
+                <label id="ec2ui.s3.path" flex="1" />
+                <label id="ec2ui.s3.status" style="color:green;text-align:right;" flex="1" />
+                </hbox>
                 <tree id="ec2ui.s3.view" seltype="single" enableColumnDrag="true" ondblclick="ec2ui_S3BucketsTreeView.onClick(event);" onselect="ec2ui_S3BucketsTreeView.onSelection(event);" flex="1">
                     <treecols>
                         <treecol id="s3.label" label="Name" flex="2" sortDirection="ascending" persist="width ordinal hidden sortDirection" />

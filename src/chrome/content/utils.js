@@ -1490,6 +1490,8 @@ var FileIO = {
     sinstreamIID : Components.interfaces.nsIScriptableInputStream,
     suniconvCID : '@mozilla.org/intl/scriptableunicodeconverter',
     suniconvIID : Components.interfaces.nsIScriptableUnicodeConverter,
+    bufstreamCID: "@mozilla.org/network/buffered-input-stream;1",
+    bufstreamIID: Components.interfaces.nsIBufferedInputStream,
 
     exists : function(path)
     {
@@ -1527,17 +1529,39 @@ var FileIO = {
         }
     },
 
+    streamOpen : function(file)
+    {
+        try {
+            var fd = this.open(file);
+            var fStream = Components.classes[this.finstreamCID].createInstance(this.finstreamIID);
+            var sStream = Components.classes[this.bufstreamCID].createInstance(this.bufstreamIID);
+            fStream.init(fd, 1, 0, false);
+            sStream.init(fStream, 9000000);
+            return [fStream, sStream, fd];
+        }
+        catch (e) {
+            return null;
+        }
+    },
+
+    streamClose: function(file)
+    {
+        try { if (file && file[0]) file[0].close(); } catch(e) {}
+        try { if (file && file[1]) file[1].close(); } catch(e) {}
+        try { if (file && file[3]) file[3].close(); } catch(e) {}
+    },
+
     read : function(file, charset)
     {
         try {
             var data = new String();
-            var fiStream = Components.classes[this.finstreamCID].createInstance(this.finstreamIID);
-            var siStream = Components.classes[this.sinstreamCID].createInstance(this.sinstreamIID);
-            fiStream.init(file, 1, 0, false);
-            siStream.init(fiStream);
-            data += siStream.read(-1);
-            siStream.close();
-            fiStream.close();
+            var fStream = Components.classes[this.finstreamCID].createInstance(this.finstreamIID);
+            var sStream = Components.classes[this.sinstreamCID].createInstance(this.sinstreamIID);
+            fStream.init(file, 1, 0, false);
+            sStream.init(fiStream);
+            data += sStream.read(-1);
+            sStream.close();
+            fStream.close();
             if (charset) {
                 data = this.toUnicode(charset, data);
             }
@@ -1551,7 +1575,7 @@ var FileIO = {
     write : function(file, data, mode, charset)
     {
         try {
-            var foStream = Components.classes[this.foutstreamCID].createInstance(this.foutstreamIID);
+            var fStream = Components.classes[this.foutstreamCID].createInstance(this.foutstreamIID);
             if (charset) {
                 data = this.fromUnicode(charset, data);
             }
@@ -1559,9 +1583,9 @@ var FileIO = {
             if (mode == 'a') {
                 flags = 0x02 | 0x10; // wronly | append
             }
-            foStream.init(file, flags, 0600, 0);
-            foStream.write(data, data.length);
-            foStream.close();
+            fStream.init(file, flags, 0600, 0);
+            fStream.write(data, data.length);
+            fStream.close();
             return true;
         }
         catch (e) {

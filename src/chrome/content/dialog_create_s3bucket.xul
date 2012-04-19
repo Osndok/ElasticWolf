@@ -26,19 +26,24 @@
         this.session = window.arguments[0];
         this.retVal = window.arguments[1];
 
-        var regions = this.session.preferences.getS3Regions()
+        document.getElementById("ec2ui.label").value = this.retVal.type + " Name:";
+
         var menu = document.getElementById("ec2ui.regions");
         menu.removeAllItems();
-        for (var i in regions) {
-            menu.appendItem(regions[i].name, regions[i].region);
+        menu.disabled = true;
+        if (this.retVal.type == "Bucket") {
+            var regions = this.session.preferences.getS3Regions()
+            for (var i in regions) {
+                menu.appendItem(regions[i].name, regions[i].region);
+            }
+            menu.selectedIndex = 0;
+            menu.disabled = false;
         }
-        menu.selectedIndex = 0
     }
     </script>
 
     <vbox flex="1">
     <groupbox>
-    <description>Specify Bucket name and optionally region where it will reside</description>
     <grid flex="1">
         <columns>
             <column />
@@ -46,7 +51,7 @@
         </columns>
         <rows>
             <row>
-                <label control="ec2ui.bucket" value="Bucket Name:" />
+                <label id="ec2ui.label" control="ec2ui.bucket" value="Bucket Name:" />
                 <textbox id="ec2ui.bucket" size="20" value="" />
             </row>
             <row>
