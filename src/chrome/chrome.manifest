@@ -1,5 +1,5 @@
 overlay	chrome://browser/content/browser.xul	chrome://ec2ui/content/ec2ui_overlay.xul
 override chrome://navigator/content/navigator.xul	chrome://ec2ui/content/ec2ui_browser.xul
 content	ec2ui	content/
-skin	ec2ui	classic/1.0	skin/
-locale	ec2ui	en-US	locale/en-US/
+skin	ec2ui	classic/	skin/classic/
+locale	ec2ui	en-US		locale/en-US/

@@ -46,9 +46,6 @@ var TreeView = {
     setTree : function(treeBox) {
         this.treeBox = treeBox;
     },
-    getCellText : function(idx, column) {
-        return idx >= this.rowCount ? "" : this.treeList[idx][column.id.split(".").pop()];
-    },
     isEditable : function(idx, column) {
         return true;
     },
@@ -69,12 +66,17 @@ var TreeView = {
     },
     getProgressMode : function(idx, column) {
     },
+    getCellText : function(idx, column) {
+        return idx >= this.rowCount ? "" : this.treeList[idx][column.id.split(".").pop()];
+    },
     getCellValue : function(idx, column) {
+        return idx >= this.rowCount ? "" : this.treeList[idx][column.id.split(".").pop()];
+    },
+    setCellValue: function (idx, column, val) {
+        if (idx >= 0 && idx < this.rowCount) this.treeList[idx][column.id.split(".").pop()] = val;
     },
     notifyModelChanged : function(interest) {
         this.invalidate();
-    },
-    selectionChanged : function() {
     },
     cycleCell : function(idx, column) {
     },
@@ -137,7 +139,8 @@ var TreeView = {
     filter : function(list) {
         return list;
     },
-    selectionChanged: function(event) {},
+    selectionChanged: function(event) {
+    },
     display : function(list) {
         if (!list) {
             list = [];
@@ -340,6 +343,7 @@ function debug(msg)
         this.consoleService.logStringMessage("[" + ec2ui_prefs.getAppName() + "] [" + formatDate(new Date(), "yyyy-MM-dd hh:mm:ss") + "] " + msg);
     }
     catch (e) {
+        alert("debug:" + e)
     }
 }
 

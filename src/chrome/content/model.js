@@ -30,9 +30,10 @@ function S3Bucket(name, mtime, owner)
     this.keys = []
 }
 
-function S3BucketAcl(id, name, permission)
+function S3BucketAcl(id, type, name, permission)
 {
     this.id = id
+    this.type = type
     this.name = name
     this.permission = permission
     this.toStr = function() {

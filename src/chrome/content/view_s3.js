@@ -136,7 +136,7 @@ var ec2ui_S3BucketsTreeView = {
         var me = this;
         var item = this.getSelected()
         if (item == null) return
-        var retVal = { ok : null, item: item, acls: [] };
+        var retVal = { ok : null, content: null };
 
         if (!item.acls) {
             if (!this.path.length) {
@@ -145,34 +145,14 @@ var ec2ui_S3BucketsTreeView = {
                 ec2ui_session.controller.getS3BucketKeyAcl(item.bucket, item.name)
             }
         }
-        window.openDialog("chrome://ec2ui/content/dialog_manage_s3acl.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
+        window.openDialog("chrome://ec2ui/content/dialog_manage_s3acl.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal, item);
 
         if (retVal.ok) {
             ec2ui_session.showBusyCursor(true);
-            var content = '<AccessControlPolicy xmlns="http://s3.amazonaws.com/doc/2006-03-01/><Owner><ID>' +  item.owner  + '</ID></Owner><AccessControlList>';
-            for (var i in retVal.acls) {
-                content += '<Grant><Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="' + retVal.acls[i].type + '">';
-                switch (retVal.acls[i].type) {
-                case 'CanonicalUser':
-                    content += '<ID>' + retVal.acls[i].id + '</ID>';
-                    break;
-
-                case 'AmazonCustomerByEmail':
-                    content += '<EmailAddress>' + retVal.acls[i].email + '</EmailAddress>';
-                    break;
-
-                case 'Group':
-                    content += '<URI>' + retVal.acls[i].group + '<URI>';
-                    break;
-                }
-                content += '</Grantee><Permission>' + retVal.acls[i].permission + '</Permission></Grant>';
-            }
-            content += '</AccessControlList></AccessControlPolicy>';
-
             if (item.bucket) {
-                ec2ui_session.controller.setS3BucketKeyAcl(item.bucket, item.name, content, function() { me.onSelection(); })
+                ec2ui_session.controller.setS3BucketKeyAcl(item.bucket, item.name, retVal.content, function() { me.onSelection(); })
             } else {
-                ec2ui_session.controller.setS3BucketAcl(item.name, content, function() { me.onSelection(); })
+                ec2ui_session.controller.setS3BucketAcl(item.name, retVal.content, function() { me.onSelection(); })
             }
         }
     }

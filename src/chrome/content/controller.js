@@ -1530,9 +1530,23 @@ var ec2ui_controller = {
         var items = xmlDoc.getElementsByTagName("Grant");
         for ( var i = 0; i < items.length; i++) {
             var id = getNodeValueByName(items[i], "ID");
+            var type = items[i].getElementsByTagName("Grantee")[0].getAttribute("xsi:type");
+            var uri = getNodeValueByName(items[i], "URI");
+            var email = getNodeValueByName(items[i], "EmailAddress");
             var name = getNodeValueByName(items[i], "DisplayName");
             var perms = getNodeValueByName(items[i], "Permission");
-            list.push(new S3BucketAcl(id, name, perms));
+            switch (type) {
+            case "AmazonCustomerByEmail":
+                id = email
+                name = email
+                break;
+
+            case "Group":
+                id = uri
+                name = uri.split("/").pop()
+                break;
+            }
+            list.push(new S3BucketAcl(id, type, name, perms));
         }
         var obj = ec2ui_model.getS3Bucket(bucket)
         if (obj) obj.acls = list;
@@ -1654,9 +1668,23 @@ var ec2ui_controller = {
         var items = xmlDoc.getElementsByTagName("Grant");
         for ( var i = 0; i < items.length; i++) {
             var id = getNodeValueByName(items[i], "ID");
+            var type = items[i].getElementsByTagName("Grantee")[0].getAttribute("xsi:type");
+            var uri = getNodeValueByName(items[i], "URI");
+            var email = getNodeValueByName(items[i], "EmailAddress");
             var name = getNodeValueByName(items[i], "DisplayName");
             var perms = getNodeValueByName(items[i], "Permission");
-            list.push(new S3BucketAcl(id, name, perms));
+            switch (type) {
+            case "AmazonCustomerByEmail":
+                id = email
+                name = email
+                break;
+
+            case "Group":
+                id = uri
+                name = uri.split("/").pop()
+                break;
+            }
+            list.push(new S3BucketAcl(id, type, name, perms));
         }
         var obj = ec2ui_model.getS3BucketKey(bucket, key)
         if (obj) obj.acls = list;

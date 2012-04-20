@@ -22,7 +22,7 @@
                 <label id="ec2ui.s3.path" flex="1" />
                 <label id="ec2ui.s3.status" style="color:green;text-align:right;" flex="1" />
                 </hbox>
-                <tree id="ec2ui.s3.view" seltype="single" enableColumnDrag="true" ondblclick="ec2ui_S3BucketsTreeView.onClick(event);" onselect="ec2ui_S3BucketsTreeView.onSelection(event);" flex="1">
+                <tree id="ec2ui.s3.view" seltype="single" enableColumnDrag="true" ondblclick="ec2ui_S3BucketsTreeView.onClick(event);" onselect="ec2ui_S3BucketsTreeView.onSelection(event);" flex="1" >
                     <treecols>
                         <treecol id="s3.label" label="Name" flex="2" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

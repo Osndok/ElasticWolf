@@ -161,6 +161,7 @@ var ec2ui_client = {
     },
 
     queryEC2 : function (action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion) {
+        return
         if (this.accessCode == null || this.accessCode == "") {
             log ("No Access Code for user");
             return;
