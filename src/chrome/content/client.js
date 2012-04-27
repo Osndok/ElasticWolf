@@ -10,7 +10,7 @@ var ec2ui_client = {
     errorCount: 0,
     timers : {},
 
-    VERSION: "1.22",
+    VERSION: "1.23",
     NAME: 'ElasticWolf',
     API_VERSION : '2011-12-15',
     ELB_API_VERSION : '2011-04-05',
@@ -161,7 +161,6 @@ var ec2ui_client = {
     },
 
     queryEC2 : function (action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion) {
-        return
         if (this.accessCode == null || this.accessCode == "") {
             log ("No Access Code for user");
             return;
