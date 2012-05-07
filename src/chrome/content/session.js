@@ -725,35 +725,39 @@ var ec2ui_session = {
         var keyfile = ec2ui_prefs.getPrivateKeyFile(name);
         var pubfile = ec2ui_prefs.getPublicKeyFile(name);
         var openssl = ec2ui_prefs.getOpenSSLCommand();
+        var conffile = ec2ui_prefs.getKeyHome() + DirIO.sep + "openssl.cnf"
 
         FileIO.remove(certfile);
         FileIO.remove(keyfile);
         FileIO.remove(pubfile);
+        FileIO.remove(conffile);
 
         // Create openssl config file
-        var conffile = ec2ui_prefs.getKeyHome() + DirIO.sep + "openssl.cnf"
         var confdata = "[req]\nprompt=no\ndistinguished_name=n\nx509_extensions=c\n[c]\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always,issuer\nbasicConstraints=CA:true\n[n]\nCN=EC2\nOU=EC2\nemailAddress=ec2@amazonaws.com\n"
         FileIO.write(FileIO.open(conffile), confdata)
 
         // Create private and cert files
         ec2ui_prefs.setEnv("OPENSSL_CONF", conffile);
         this.launchProcess(openssl, [ "genrsa", "-out", keyfile, "1024" ], true);
-        if (!FileIO.exists(keyfile)) {
+        if (!waitForFile(keyfile, 5000)) {
             debug("ERROR: no private key generated")
             return 0
         }
         FileIO.open(keyfile).permissions = 0600;
 
         this.launchProcess(openssl, [ "req", "-new", "-x509", "-nodes", "-sha1", "-days", "730", "-key", keyfile, "-out", certfile, "-config", conffile ], true);
-        FileIO.remove(conffile);
-        if (!FileIO.exists(certfile)) {
+        if (!waitForFile(certfile, 5000)) {
             debug("ERROR: no certificate generated")
             return 0
         }
 
         // Create public file
         this.launchProcess(openssl, [ "rsa", "-in", keyfile, "-pubout", "-out", pubfile ], true)
-
+        // Wait a little because if process is running in the background on Windows it may take some time but we return immediately
+        if (!waitForFile(pubfile, 5000)) {
+            debug("ERROR: no public file generated")
+            return 0
+        }
         return FileIO.toString(certfile)
     },
 

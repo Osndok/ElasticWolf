@@ -46,6 +46,9 @@ var ec2ui_KeypairTreeView = {
         var file = ec2ui_session.promptForFile("Select the public key file to upload:")
         if (file) {
             var body = readPublicKey(file)
+            if (body == '') {
+                return alert('Unable to read public key file ' + file);
+            }
             ec2ui_session.controller.importKeypair(name, body, wrap);
         }
     },
@@ -60,21 +63,24 @@ var ec2ui_KeypairTreeView = {
         if (file) {
             ec2ui_prefs.setKeyHome(file);
         }
+        ec2ui_session.showBusyCursor(true);
 
         // Create new certificate file using openssl and return cert value
         var body = ec2ui_session.generateCertificate(name);
         if (!body) {
-            alert("Could not create certificate");
-            return;
+            return alert("Could not create certificate and key pair files");
         }
-        ec2ui_session.showBusyCursor(true);
 
         // Delay to avoid "not valid yet" error due to clock drift
         setTimeout(function() { ec2ui_session.controller.UploadSigningCertificate(body, function() {ec2ui_CertTreeView.refresh();alert("Certificate is uploaded sucessfully")}); }, 30000);
 
         // Import new public key as new keypair
-        var pub = readPublicKey(ec2ui_prefs.getPublicKeyFile(name));
-        ec2ui_session.controller.importKeypair(name, pub, function() {me.refresh();});
+        var file = ec2ui_prefs.getPublicKeyFile(name);
+        var pubkey = readPublicKey(file);
+        if (pubkey == '') {
+            return alert('Unable to read public key file ' + file);
+        }
+        ec2ui_session.controller.importKeypair(name, pubkey, function() {me.refresh();});
     },
 
     deleteSelected  : function () {

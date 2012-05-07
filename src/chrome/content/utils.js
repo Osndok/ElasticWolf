@@ -13,6 +13,25 @@ function empty()
 {
 }
 
+function sleep(ms)
+{
+    var thread = Components.classes["@mozilla.org/thread-manager;1"].getService(Components.interfaces.nsIThreadManager).currentThread;
+    var start = new Date().getTime();
+    while (new Date().getTime() - start < ms) {
+        thread.processNextEvent(true);
+    }
+}
+
+function waitForFile(file, ms)
+{
+    var thread = Components.classes["@mozilla.org/thread-manager;1"].getService(Components.interfaces.nsIThreadManager).currentThread;
+    var start = new Date().getTime();
+    while (!FileIO.exists(file) && new Date().getTime() - start < ms) {
+        thread.processNextEvent(true);
+    }
+    return FileIO.exists(file);
+}
+
 function generateCSVForObject(obj)
 {
     var pairs = new Array();
@@ -166,6 +185,363 @@ var TreeView = {
     }
 };
 
+var FileIO = {
+    localfileCID : '@mozilla.org/file/local;1',
+    localfileIID : Components.interfaces.nsILocalFile,
+    finstreamCID : '@mozilla.org/network/file-input-stream;1',
+    finstreamIID : Components.interfaces.nsIFileInputStream,
+    foutstreamCID : '@mozilla.org/network/file-output-stream;1',
+    foutstreamIID : Components.interfaces.nsIFileOutputStream,
+    sinstreamCID : '@mozilla.org/scriptableinputstream;1',
+    sinstreamIID : Components.interfaces.nsIScriptableInputStream,
+    suniconvCID : '@mozilla.org/intl/scriptableunicodeconverter',
+    suniconvIID : Components.interfaces.nsIScriptableUnicodeConverter,
+    bufstreamCID: "@mozilla.org/network/buffered-input-stream;1",
+    bufstreamIID: Components.interfaces.nsIBufferedInputStream,
+
+    exists : function(path)
+    {
+        try {
+            var file = Components.classes[this.localfileCID].createInstance(this.localfileIID);
+            file.initWithPath(path);
+            return file.exists();
+        }
+        catch (e) {
+            return false;
+        }
+    },
+
+    remove : function(path)
+    {
+        try {
+            var file = Components.classes[this.localfileCID].createInstance(this.localfileIID);
+            file.initWithPath(path);
+            return file.remove(false);
+        }
+        catch (e) {
+            return false;
+        }
+    },
+
+    open : function(path)
+    {
+        try {
+            var file = Components.classes[this.localfileCID].createInstance(this.localfileIID);
+            file.initWithPath(path);
+            return file;
+        }
+        catch (e) {
+            return false;
+        }
+    },
+
+    streamOpen : function(file)
+    {
+        try {
+            var fd = this.open(file);
+            var fStream = Components.classes[this.finstreamCID].createInstance(this.finstreamIID);
+            var sStream = Components.classes[this.bufstreamCID].createInstance(this.bufstreamIID);
+            fStream.init(fd, 1, 0, false);
+            sStream.init(fStream, 9000000);
+            return [fStream, sStream, fd];
+        }
+        catch (e) {
+            return null;
+        }
+    },
+
+    streamClose: function(file)
+    {
+        try { if (file && file[0]) file[0].close(); } catch(e) {}
+        try { if (file && file[1]) file[1].close(); } catch(e) {}
+        try { if (file && file[3]) file[3].close(); } catch(e) {}
+    },
+
+    read : function(file, charset)
+    {
+        try {
+            var data = new String();
+            var fStream = Components.classes[this.finstreamCID].createInstance(this.finstreamIID);
+            var sStream = Components.classes[this.sinstreamCID].createInstance(this.sinstreamIID);
+            fStream.init(file, 1, 0, false);
+            sStream.init(fStream);
+            data += sStream.read(-1);
+            sStream.close();
+            fStream.close();
+            if (charset) {
+                data = this.toUnicode(charset, data);
+            }
+            return data;
+        }
+        catch (e) {
+            debug("FileIO: read: " + e)
+            return false;
+        }
+    },
+
+    write : function(file, data, mode, charset)
+    {
+        try {
+            var fStream = Components.classes[this.foutstreamCID].createInstance(this.foutstreamIID);
+            if (charset) {
+                data = this.fromUnicode(charset, data);
+            }
+            var flags = 0x02 | 0x08 | 0x20; // wronly | create | truncate
+            if (mode == 'a') {
+                flags = 0x02 | 0x10; // wronly | append
+            }
+            fStream.init(file, flags, 0600, 0);
+            fStream.write(data, data.length);
+            fStream.close();
+            return true;
+        }
+        catch (e) {
+            debug("FileIO: write: " + e)
+            return false;
+        }
+    },
+
+    create : function(file)
+    {
+        try {
+            file.create(0x00, 0600);
+            return true;
+        }
+        catch (e) {
+            debug(e)
+            return false;
+        }
+    },
+
+    unlink : function(file)
+    {
+        try {
+            file.remove(false);
+            return true;
+        }
+        catch (e) {
+            return false;
+        }
+    },
+
+    path : function(file)
+    {
+        try {
+            return 'file:///' + file.path.replace(/\\/g, '\/').replace(/^\s*\/?/, '').replace(/\ /g, '%20');
+        }
+        catch (e) {
+            return false;
+        }
+    },
+
+    toUnicode : function(charset, data)
+    {
+        try {
+            var uniConv = Components.classes[this.suniconvCID].createInstance(this.suniconvIID);
+            uniConv.charset = charset;
+            data = uniConv.ConvertToUnicode(data);
+        }
+        catch (e) {
+
+        }
+        return data;
+    },
+
+    toString : function(path)
+    {
+        var data = "";
+        try {
+            data = this.read(this.open(path))
+        }
+        catch (e) {
+            debug("toString:" + path + ": " + e)
+        }
+        return data
+    },
+
+    fromUnicode : function(charset, data)
+    {
+        try {
+            var uniConv = Components.classes[this.suniconvCID].createInstance(this.suniconvIID);
+            uniConv.charset = charset;
+            data = uniConv.ConvertFromUnicode(data);
+        }
+        catch (e) {
+        }
+        return data;
+    }
+
+}
+
+// Directory service get properties
+// ProfD profile directory
+// DefProfRt user (for example /root/.mozilla)
+// UChrm %profile%/chrome
+// DefRt %installation%/defaults
+// PrfDef %installation%/defaults/pref
+// ProfDefNoLoc %installation%/defaults/profile
+// APlugns %installation%/plugins
+// AChrom %installation%/chrome
+// ComsD %installation%/components
+// CurProcD installation (usually)
+// Home OS root (for example /root)
+// TmpD OS tmp (for example /tmp)
+// ProfLD Local Settings on windows; where the network cache and fastload files
+// are stored
+// resource:app application directory in a XULRunner app
+// Desk Desktop directory (for example ~/Desktop on Linux, C:\Documents and
+// Settings\username\Desktop on Windows)
+// Progs User start menu programs directory (for example C:\Documents and
+// Settings\username\Start Menu\Programs)
+
+var DirIO = {
+     sep : navigator.platform.toLowerCase().indexOf('win') > -1 ? '\\' : '/',
+     dirservCID : '@mozilla.org/file/directory_service;1',
+     propsIID : Components.interfaces.nsIProperties,
+     fileIID : Components.interfaces.nsIFile,
+
+     get : function(type)
+     {
+         try {
+             return Components.classes[this.dirservCID].createInstance(this.propsIID).get(type, this.fileIID);
+         }
+         catch (e) {
+             return false;
+         }
+     },
+
+     open : function(path)
+     {
+         return FileIO.open(path);
+     },
+
+     create : function(dir, mode)
+     {
+         try {
+             dir.create(0x01, 0600);
+             return true;
+         }
+         catch (e) {
+             debug(e)
+             return false;
+         }
+     },
+
+     mkpath: function(path)
+     {
+         try {
+             var i = 0
+             var dirs = path.split(this.sep);
+             if (dirs.length == 0) return 0
+             if (isWindows(navigator.platform)) {
+                 path = dirs[0];
+                 i++;
+             } else {
+                 path = ""
+             }
+             while (i < dirs.length) {
+                 path += this.sep + dirs[i];
+                 if (!FileIO.exists(path) && !DirIO.create(FileIO.open(path))) {
+                     return false
+                 }
+                 i++;
+             }
+             return true;
+         }
+         catch (e) {
+             debug(e)
+             return false;
+         }
+     },
+
+     read : function(dir, recursive)
+     {
+         var list = new Array();
+         try {
+             if (dir.isDirectory()) {
+                 if (recursive == null) {
+                     recursive = false;
+                 }
+                 var files = dir.directoryEntries;
+                 list = this._read(files, recursive);
+             }
+         }
+         catch (e) {
+         }
+         return list;
+     },
+
+     _read : function(dirEntry, recursive)
+     {
+         var list = new Array();
+         try {
+             while (dirEntry.hasMoreElements()) {
+                 list.push(dirEntry.getNext().QueryInterface(FileIO.localfileIID));
+             }
+             if (recursive) {
+                 var list2 = new Array();
+                 for ( var i = 0; i < list.length; ++i) {
+                     if (list[i].isDirectory()) {
+                         files = list[i].directoryEntries;
+                         list2 = this._read(files, recursive);
+                     }
+                 }
+                 for (i = 0; i < list2.length; ++i) {
+                     list.push(list2[i]);
+                 }
+             }
+         }
+         catch (e) {
+         }
+         return list;
+     },
+
+     unlink : function(dir, recursive)
+     {
+         try {
+             if (recursive == null) {
+                 recursive = false;
+             }
+             dir.remove(recursive);
+             return true;
+         }
+         catch (e) {
+             return false;
+         }
+     },
+
+     path : function(dir)
+     {
+         return FileIO.path(dir);
+     },
+
+     split : function(str, join)
+     {
+         var arr = str.split(/\/|\\/), i;
+         str = new String();
+         for (i = 0; i < arr.length; ++i) {
+             str += arr[i] + ((i != arr.length - 1) ? join : '');
+         }
+         return str;
+     },
+
+     join : function(str, split)
+     {
+         var arr = str.split(split), i;
+         str = new String();
+         for (i = 0; i < arr.length; ++i) {
+             str += arr[i] + ((i != arr.length - 1) ? this.sep : '');
+         }
+         return str;
+     },
+
+     fileName: function(path)
+     {
+         var arr = path.split(/\/|\\/)
+         return arr.length ? arr[arr.length - 1] : ""
+     },
+}
+
 function sortView(document, cols, list)
 {
     // cols is a list of column ids. The portion after the first. must
@@ -293,7 +669,7 @@ function readPublicKey(file)
 {
     var body = ""
     var lines = FileIO.toString(file).split("\n");
-    for ( var i = 0; i < lines.length; i++) {
+    for (var i = 0; i < lines.length; i++) {
         if (lines[i].indexOf("---") == -1) {
             body += lines[i].trim()
         }
@@ -1481,361 +1857,6 @@ function binb2b64(binarray)
         }
     }
     return str;
-}
-
-var FileIO = {
-    localfileCID : '@mozilla.org/file/local;1',
-    localfileIID : Components.interfaces.nsILocalFile,
-    finstreamCID : '@mozilla.org/network/file-input-stream;1',
-    finstreamIID : Components.interfaces.nsIFileInputStream,
-    foutstreamCID : '@mozilla.org/network/file-output-stream;1',
-    foutstreamIID : Components.interfaces.nsIFileOutputStream,
-    sinstreamCID : '@mozilla.org/scriptableinputstream;1',
-    sinstreamIID : Components.interfaces.nsIScriptableInputStream,
-    suniconvCID : '@mozilla.org/intl/scriptableunicodeconverter',
-    suniconvIID : Components.interfaces.nsIScriptableUnicodeConverter,
-    bufstreamCID: "@mozilla.org/network/buffered-input-stream;1",
-    bufstreamIID: Components.interfaces.nsIBufferedInputStream,
-
-    exists : function(path)
-    {
-        try {
-            var file = Components.classes[this.localfileCID].createInstance(this.localfileIID);
-            file.initWithPath(path);
-            return file.exists();
-        }
-        catch (e) {
-            return false;
-        }
-    },
-
-    remove : function(path)
-    {
-        try {
-            var file = Components.classes[this.localfileCID].createInstance(this.localfileIID);
-            file.initWithPath(path);
-            return file.remove(false);
-        }
-        catch (e) {
-            return false;
-        }
-    },
-
-    open : function(path)
-    {
-        try {
-            var file = Components.classes[this.localfileCID].createInstance(this.localfileIID);
-            file.initWithPath(path);
-            return file;
-        }
-        catch (e) {
-            return false;
-        }
-    },
-
-    streamOpen : function(file)
-    {
-        try {
-            var fd = this.open(file);
-            var fStream = Components.classes[this.finstreamCID].createInstance(this.finstreamIID);
-            var sStream = Components.classes[this.bufstreamCID].createInstance(this.bufstreamIID);
-            fStream.init(fd, 1, 0, false);
-            sStream.init(fStream, 9000000);
-            return [fStream, sStream, fd];
-        }
-        catch (e) {
-            return null;
-        }
-    },
-
-    streamClose: function(file)
-    {
-        try { if (file && file[0]) file[0].close(); } catch(e) {}
-        try { if (file && file[1]) file[1].close(); } catch(e) {}
-        try { if (file && file[3]) file[3].close(); } catch(e) {}
-    },
-
-    read : function(file, charset)
-    {
-        try {
-            var data = new String();
-            var fStream = Components.classes[this.finstreamCID].createInstance(this.finstreamIID);
-            var sStream = Components.classes[this.sinstreamCID].createInstance(this.sinstreamIID);
-            fStream.init(file, 1, 0, false);
-            sStream.init(fiStream);
-            data += sStream.read(-1);
-            sStream.close();
-            fStream.close();
-            if (charset) {
-                data = this.toUnicode(charset, data);
-            }
-            return data;
-        }
-        catch (e) {
-            return false;
-        }
-    },
-
-    write : function(file, data, mode, charset)
-    {
-        try {
-            var fStream = Components.classes[this.foutstreamCID].createInstance(this.foutstreamIID);
-            if (charset) {
-                data = this.fromUnicode(charset, data);
-            }
-            var flags = 0x02 | 0x08 | 0x20; // wronly | create | truncate
-            if (mode == 'a') {
-                flags = 0x02 | 0x10; // wronly | append
-            }
-            fStream.init(file, flags, 0600, 0);
-            fStream.write(data, data.length);
-            fStream.close();
-            return true;
-        }
-        catch (e) {
-            return false;
-        }
-    },
-
-    create : function(file)
-    {
-        try {
-            file.create(0x00, 0600);
-            return true;
-        }
-        catch (e) {
-            debug(e)
-            return false;
-        }
-    },
-
-    unlink : function(file)
-    {
-        try {
-            file.remove(false);
-            return true;
-        }
-        catch (e) {
-            return false;
-        }
-    },
-
-    path : function(file)
-    {
-        try {
-            return 'file:///' + file.path.replace(/\\/g, '\/').replace(/^\s*\/?/, '').replace(/\ /g, '%20');
-        }
-        catch (e) {
-            return false;
-        }
-    },
-
-    toUnicode : function(charset, data)
-    {
-        try {
-            var uniConv = Components.classes[this.suniconvCID].createInstance(this.suniconvIID);
-            uniConv.charset = charset;
-            data = uniConv.ConvertToUnicode(data);
-        }
-        catch (e) {
-            // foobar!
-        }
-        return data;
-    },
-
-    toString : function(path)
-    {
-        var data = ""
-        try {
-            var fp = this.open(path)
-            var data = this.read(fp)
-        }
-        catch (e) {
-        }
-        return data ? data : ""
-    },
-
-    fromUnicode : function(charset, data)
-    {
-        try {
-            var uniConv = Components.classes[this.suniconvCID].createInstance(this.suniconvIID);
-            uniConv.charset = charset;
-            data = uniConv.ConvertFromUnicode(data);
-        }
-        catch (e) {
-        }
-        return data;
-    }
-
-}
-
-// Directory service get properties
-// ProfD profile directory
-// DefProfRt user (for example /root/.mozilla)
-// UChrm %profile%/chrome
-// DefRt %installation%/defaults
-// PrfDef %installation%/defaults/pref
-// ProfDefNoLoc %installation%/defaults/profile
-// APlugns %installation%/plugins
-// AChrom %installation%/chrome
-// ComsD %installation%/components
-// CurProcD installation (usually)
-// Home OS root (for example /root)
-// TmpD OS tmp (for example /tmp)
-// ProfLD Local Settings on windows; where the network cache and fastload files
-// are stored
-// resource:app application directory in a XULRunner app
-// Desk Desktop directory (for example ~/Desktop on Linux, C:\Documents and
-// Settings\username\Desktop on Windows)
-// Progs User start menu programs directory (for example C:\Documents and
-// Settings\username\Start Menu\Programs)
-
-var DirIO = {
-    sep : navigator.platform.toLowerCase().indexOf('win') > -1 ? '\\' : '/',
-    dirservCID : '@mozilla.org/file/directory_service;1',
-    propsIID : Components.interfaces.nsIProperties,
-    fileIID : Components.interfaces.nsIFile,
-
-    get : function(type)
-    {
-        try {
-            return Components.classes[this.dirservCID].createInstance(this.propsIID).get(type, this.fileIID);
-        }
-        catch (e) {
-            return false;
-        }
-    },
-
-    open : function(path)
-    {
-        return FileIO.open(path);
-    },
-
-    create : function(dir, mode)
-    {
-        try {
-            dir.create(0x01, 0600);
-            return true;
-        }
-        catch (e) {
-            debug(e)
-            return false;
-        }
-    },
-
-    mkpath: function(path)
-    {
-        try {
-            var i = 0
-            var dirs = path.split(this.sep);
-            if (dirs.length == 0) return 0
-            if (isWindows(navigator.platform)) {
-                path = dirs[0];
-                i++;
-            } else {
-                path = ""
-            }
-            while (i < dirs.length) {
-                path += this.sep + dirs[i];
-                if (!FileIO.exists(path) && !DirIO.create(FileIO.open(path))) {
-                    return false
-                }
-                i++;
-            }
-            return true;
-        }
-        catch (e) {
-            debug(e)
-            return false;
-        }
-    },
-
-    read : function(dir, recursive)
-    {
-        var list = new Array();
-        try {
-            if (dir.isDirectory()) {
-                if (recursive == null) {
-                    recursive = false;
-                }
-                var files = dir.directoryEntries;
-                list = this._read(files, recursive);
-            }
-        }
-        catch (e) {
-        }
-        return list;
-    },
-
-    _read : function(dirEntry, recursive)
-    {
-        var list = new Array();
-        try {
-            while (dirEntry.hasMoreElements()) {
-                list.push(dirEntry.getNext().QueryInterface(FileIO.localfileIID));
-            }
-            if (recursive) {
-                var list2 = new Array();
-                for ( var i = 0; i < list.length; ++i) {
-                    if (list[i].isDirectory()) {
-                        files = list[i].directoryEntries;
-                        list2 = this._read(files, recursive);
-                    }
-                }
-                for (i = 0; i < list2.length; ++i) {
-                    list.push(list2[i]);
-                }
-            }
-        }
-        catch (e) {
-        }
-        return list;
-    },
-
-    unlink : function(dir, recursive)
-    {
-        try {
-            if (recursive == null) {
-                recursive = false;
-            }
-            dir.remove(recursive);
-            return true;
-        }
-        catch (e) {
-            return false;
-        }
-    },
-
-    path : function(dir)
-    {
-        return FileIO.path(dir);
-    },
-
-    split : function(str, join)
-    {
-        var arr = str.split(/\/|\\/), i;
-        str = new String();
-        for (i = 0; i < arr.length; ++i) {
-            str += arr[i] + ((i != arr.length - 1) ? join : '');
-        }
-        return str;
-    },
-
-    join : function(str, split)
-    {
-        var arr = str.split(split), i;
-        str = new String();
-        for (i = 0; i < arr.length; ++i) {
-            str += arr[i] + ((i != arr.length - 1) ? this.sep : '');
-        }
-        return str;
-    },
-
-    fileName: function(path)
-    {
-        var arr = path.split(/\/|\\/)
-        return arr.length ? arr[arr.length - 1] : ""
-    },
 }
 
 // Copyright (c) 2005 Tom Wu

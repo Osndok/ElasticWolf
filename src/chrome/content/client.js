@@ -10,7 +10,7 @@ var ec2ui_client = {
     errorCount: 0,
     timers : {},
 
-    VERSION: "1.23",
+    VERSION: "1.24",
     NAME: 'ElasticWolf',
     API_VERSION : '2011-12-15',
     ELB_API_VERSION : '2011-04-05',

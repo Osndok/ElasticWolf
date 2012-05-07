@@ -3,12 +3,15 @@
 <!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 
 <dialog id="ec2ui.dialog.keypair.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	buttons="accept" ondialogaccept="return true;" onload="init();" title="Key Pair Details">
+    buttons="accept" ondialogaccept="return true;" onload="init();" title="Key Pair Details">
 
+    <script type="application/x-javascript" src="chrome://ec2ui/content/client.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/controller.js" />
+    <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
     <script type="application/x-javascript" src="chrome://ec2ui/content/preferences.js" />
-	<script type="application/x-javascript">
+    <script type="application/x-javascript">
     function init() {
         var keypair = window.arguments[0];
         document.getElementById("ec2ui.keypair.name").value = keypair.name;
@@ -17,25 +20,25 @@
         document.getElementById("ec2ui.keypair.privatefile").value = ec2ui_prefs.getPrivateKeyFile(keypair.name);
         document.getElementById("ec2ui.keypair.certfile").value = ec2ui_prefs.getCertificateFile(keypair.name);
     }
-	</script>
+    </script>
 
-	<vbox flex="1">
-		<grid flex="1">
-			<columns>
-				<column />
-				<column />
-				<column />
-			</columns>
-			<rows>
-				<row>
-					<label control="ec2ui.keypair.name" value="Name:" />
-					<textbox id="ec2ui.keypair.name" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ec2ui.keypair.fingerprint" value="Fingerprint:" />
-					<textbox id="ec2ui.keypair.fingerprint" size="40" readonly="true" />
-				</row>
-				<row>
+    <vbox flex="1">
+        <grid flex="1">
+            <columns>
+                <column />
+                <column />
+                <column />
+            </columns>
+            <rows>
+                <row>
+                    <label control="ec2ui.keypair.name" value="Name:" />
+                    <textbox id="ec2ui.keypair.name" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ec2ui.keypair.fingerprint" value="Fingerprint:" />
+                    <textbox id="ec2ui.keypair.fingerprint" size="40" readonly="true" />
+                </row>
+                <row>
                     <label control="ec2ui.keypair.publicfile" value="Public Key File:" />
                     <textbox id="ec2ui.keypair.publicfile" size="60" readonly="true" />
                 </row>
@@ -47,8 +50,8 @@
                     <label control="ec2ui.keypair.certfile" value="Certificate file:" />
                     <textbox id="ec2ui.keypair.certfile" size="60" readonly="true" />
                 </row>
-			</rows>
-		</grid>
-	</vbox>
+            </rows>
+        </grid>
+    </vbox>
 </dialog>
 
