@@ -144,10 +144,10 @@ var ec2ui_SecurityGroupsTreeView = {
             }
 
             // 1st enable SSH
-            ec2ui_session.controller.authorizeSourceCIDR(retVal,"tcp",protPortMap["ssh"],protPortMap["ssh"],cidr,null);
+            ec2ui_session.controller.authorizeSourceCIDR('Ingress', retVal, "tcp", protPortMap["ssh"], protPortMap["ssh"], cidr, null);
 
             // enable RDP and refresh the view
-            ec2ui_session.controller.authorizeSourceCIDR(retVal,"tcp",protPortMap["rdp"],protPortMap["rdp"],cidr,wrap);
+            ec2ui_session.controller.authorizeSourceCIDR('Ingress', retVal, "tcp", protPortMap["rdp"], protPortMap["rdp"], cidr, wrap);
         } else {
             // User wants to customize the firewall...
             ec2ui_PermissionsTreeView.grantPermission();

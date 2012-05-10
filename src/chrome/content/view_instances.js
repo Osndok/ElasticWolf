@@ -1119,7 +1119,7 @@ var ec2ui_InstancesTreeView = {
                 // Authorize first available group
                 for (var i in groups) {
                     if (groups[i]) {
-                        ec2ui_session.controller.authorizeSourceCIDR(groups[i],transport,port,port,hostCIDR,wrap);
+                        ec2ui_session.controller.authorizeSourceCIDR('Ingress', groups[i], transport, port, port, hostCIDR, wrap);
                         result = true
                         break;
                     }
@@ -1219,9 +1219,11 @@ var ec2ui_InstancesTreeView = {
             if (!FileIO.exists(keyFile)) {
                 keyFile = this.promptForKeyFile(instance.keyName);
             }
-            if (keyFile) {
-                params.push(["key", keyFile])
+            if (!keyFile || !FileIO.exists(keyFile)) {
+                alert('Cannot connect without private key file for keypair ' + instance.keyName)
+                return;
             }
+            params.push(["key", keyFile])
         }
 
         if (args.indexOf("${login}") >= 0 && ec2ui_prefs.getSSHUser() == "") {

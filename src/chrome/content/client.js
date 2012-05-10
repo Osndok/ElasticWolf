@@ -10,7 +10,7 @@ var ec2ui_client = {
     errorCount: 0,
     timers : {},
 
-    VERSION: "1.24",
+    VERSION: "1.25",
     NAME: 'ElasticWolf',
     API_VERSION : '2011-12-15',
     ELB_API_VERSION : '2011-04-05',
@@ -536,7 +536,6 @@ var ec2ui_client = {
         xmlhttp.overrideMimeType('text/xml');
 
         var timerKey = new Date().getTime();
-        // We'll wait up to 10 seconds for a response
         this.startTimer(timerKey, 10 * 1000, xmlhttp.abort);
         try {
             xmlhttp.send(null);
@@ -547,9 +546,6 @@ var ec2ui_client = {
                 throw e;
             }
         }
-
-        log("XMLHTTP is in state: "+xmlhttp.readyState);
-
         return this.processXMLHTTPResponse(xmlhttp, stylesheet, true, timerKey, null, null);
     },
 
@@ -561,6 +557,7 @@ var ec2ui_client = {
         }
         xmlhttp.open("GET", "http://checkip.amazonaws.com/" + reqType, false);
         xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
+        xmlhttp.overrideMimeType('text/plain');
 
         var timerKey = new Date().getTime();
         this.startTimer(timerKey, 10000, xmlhttp.abort);
@@ -573,7 +570,6 @@ var ec2ui_client = {
                 throw e;
             }
         }
-
         retVal.ipAddress = xmlhttp.responseText;
     },
 

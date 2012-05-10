@@ -741,6 +741,7 @@ var ec2ui_session = {
         this.launchProcess(openssl, [ "genrsa", "-out", keyfile, "1024" ], true);
         if (!waitForFile(keyfile, 5000)) {
             debug("ERROR: no private key generated")
+            FileIO.remove(conffile);
             return 0
         }
         FileIO.open(keyfile).permissions = 0600;
@@ -748,6 +749,7 @@ var ec2ui_session = {
         this.launchProcess(openssl, [ "req", "-new", "-x509", "-nodes", "-sha1", "-days", "730", "-key", keyfile, "-out", certfile, "-config", conffile ], true);
         if (!waitForFile(certfile, 5000)) {
             debug("ERROR: no certificate generated")
+            FileIO.remove(conffile);
             return 0
         }
 
@@ -756,8 +758,11 @@ var ec2ui_session = {
         // Wait a little because if process is running in the background on Windows it may take some time but we return immediately
         if (!waitForFile(pubfile, 5000)) {
             debug("ERROR: no public file generated")
+            FileIO.remove(conffile);
             return 0
         }
+        FileIO.remove(conffile);
+
         return FileIO.toString(certfile)
     },
 
