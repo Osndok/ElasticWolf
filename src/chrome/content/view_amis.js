@@ -539,8 +539,6 @@ var ec2ui_AMIsTreeView = {
     {
         var target = ec2ui_AMIsTreeView;
         target.displayLaunchPermissions([]);
-        ec2ui_session.controller.describeVpcs();
-        ec2ui_session.controller.describeSubnets();
         target.displayImagesOfType();
     },
 };
