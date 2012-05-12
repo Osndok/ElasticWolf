@@ -11,8 +11,7 @@
 
 <!ENTITY ec2ui.tabs.instances.label "Instances">
 <!ENTITY ec2ui.tabs.images.label "Images">
-<!ENTITY ec2ui.tabs.keypairs.label "Key Pairs">
-<!ENTITY ec2ui.tabs.accesskeys.label "Access Keys">
+<!ENTITY ec2ui.tabs.auth.label "Access">
 <!ENTITY ec2ui.tabs.certs.label "Certificates">
 <!ENTITY ec2ui.tabs.secgroups.label "Security Groups">
 <!ENTITY ec2ui.tabs.availzones.label "AZ">

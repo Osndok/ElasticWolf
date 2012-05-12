@@ -9,8 +9,9 @@ var ec2ui_client = {
     secretKey : null,
     errorCount: 0,
     timers : {},
+    enabled: true,
 
-    VERSION: "1.25",
+    VERSION: "1.26",
     NAME: 'ElasticWolf',
     API_VERSION : '2011-12-15',
     ELB_API_VERSION : '2011-04-05',
@@ -171,7 +172,7 @@ var ec2ui_client = {
         }
 
         var rsp = null;
-        while(true) {
+        while (this.enabled) {
             try {
                 rsp = this.queryEC2Impl(action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion);
                 if (rsp.hasErrors) {
@@ -407,7 +408,8 @@ var ec2ui_client = {
 
     queryS3 : function (method, bucket, key, path, params, content, objActions, isSync, reqType, callback) {
         var rsp = null;
-        while(true) {
+
+        while (this.enabled) {
             try {
                 rsp = this.queryS3Impl(method, bucket, key, path, params, content, objActions, isSync, reqType, callback);
                 if (rsp.hasErrors) {

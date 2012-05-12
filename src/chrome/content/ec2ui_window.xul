@@ -4,8 +4,7 @@
 
 <?xul-overlay href="chrome://ec2ui/content/view_instances.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_amis.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/view_keypairs.xul"?>
-<?xul-overlay href="chrome://ec2ui/content/view_accesskeys.xul"?>
+<?xul-overlay href="chrome://ec2ui/content/view_auth.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_securitygroups.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_azone.xul"?>
 <?xul-overlay href="chrome://ec2ui/content/view_eip.xul"?>
@@ -35,8 +34,7 @@
   <script type="application/x-javascript" src="chrome://ec2ui/content/manager_accountid.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/manager_credential.js" />
 
-  <script type="application/x-javascript" src="chrome://ec2ui/content/view_keypairs.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/view_accesskeys.js" />
+  <script type="application/x-javascript" src="chrome://ec2ui/content/view_auth.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_certs.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_instances.js" />
   <script type="application/x-javascript" src="chrome://ec2ui/content/view_securitygroups.js" />
@@ -86,8 +84,7 @@
       <tabs id="ec2ui.tabs" onselect="ec2ui_session.tabSelectionChanged(event);" style="font-size:x-small;">
         <tab label="&ec2ui.tabs.instances.label;" />
         <tab label="&ec2ui.tabs.images.label;" />
-        <tab label="&ec2ui.tabs.keypairs.label;" />
-        <tab label="&ec2ui.tabs.accesskeys.label;" />
+        <tab label="&ec2ui.tabs.auth.label;" />
         <tab label="&ec2ui.tabs.secgroups.label;" />
         <tab label="&ec2ui.tabs.eips.label;" />
         <tab label="&ec2ui.tabs.volumes.label;" />
@@ -105,8 +102,7 @@
       <tabpanels flex="1">
         <tabpanel id="instances_tab"/>
         <tabpanel id="images_tab"/>
-        <tabpanel id="keypairs_tab"/>
-        <tabpanel id="accesskeys_tab"/>
+        <tabpanel id="auth_tab"/>
         <tabpanel id="security_groups_tab"/>
         <tabpanel id="eip_tab"/>
         <tabpanel id="volumes_tab"/>

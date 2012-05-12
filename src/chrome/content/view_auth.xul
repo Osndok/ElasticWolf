@@ -4,7 +4,41 @@
 <!DOCTYPE overlay SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    <tabpanel id="keypairs_tab" flex="1">
+    <tabpanel id="auth_tab" flex="1">
+    <vbox flex="1">
+
+    <groupbox flex="1" id="accesskeys.tree.holder" orient="vertical">
+        <caption label="&ec2ui.captions.accesskeys.label;" />
+        <popupset>
+            <menupopup id="accesskey.tree.contextmenu">
+                <menuitem oncommand="ec2ui_AccessKeyTreeView.viewDetails()" label="View Details" />
+                <menuitem oncommand="ec2ui_AccessKeyTreeView.createAccessKey()" label="Create a new access key" />
+                <menuitem oncommand="ec2ui_AccessKeyTreeView.switchCredentials();" label="Use this access key for credentials" />
+                <menuitem oncommand="ec2ui_AccessKeyTreeView.deleteSelected();" label="Delete this access key" />
+                <menuitem oncommand="ec2ui_AccessKeyTreeView.exportSelected();" label="Export this access key into text file" />
+            </menupopup>
+        </popupset>
+        <toolbar style="padding: 0px 3px; -moz-box-align: center">
+            <toolbarbutton image="images/refresh.png" tooltiptext="&ec2ui.refresh.tip;" oncommand="ec2ui_AccessKeyTreeView.refresh()" />
+            <toolbarbutton image="images/add.png" tooltiptext="&ec2ui.accesskeys.create.tip;" oncommand="ec2ui_AccessKeyTreeView.createAccessKey();" />
+            <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.accesskeys.delete.tip;" oncommand="ec2ui_AccessKeyTreeView.deleteSelected();" />
+            <toolbarbutton image="images/attach.png" tooltiptext="&ec2ui.accesskeys.switch.tip;" oncommand="ec2ui_AccessKeyTreeView.switchCredentials();" />
+        </toolbar>
+        <tree enableColumnDrag="true" id="ec2ui.accesskeys.view" flex="1">
+            <treecols>
+                <treecol id="accesskey.name" label="&ec2ui.accesskeys.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                <splitter class="tree-splitter" />
+                <treecol id="accesskey.status" label="&ec2ui.accesskeys.status.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                <treecol id="accesskey.current" label="&ec2ui.accesskeys.current.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+            </treecols>
+            <treechildren id="accesskey.tree.children" context="accesskey.tree.contextmenu" />
+        </tree>
+    </groupbox>
+
+     <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
+        <grippy />
+      </splitter>
+
         <groupbox flex="1" id="keypairs.tree.holder" orient="vertical">
             <caption label="&ec2ui.captions.keypairs.label;" />
             <popupset>
@@ -34,8 +68,8 @@
             </tree>
         </groupbox>
 
-        <splitter style="max-width: 4px; height: 4px;" persist="state" collapse="after" resizebefore="closest">
-            <grippy />
+        <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
+          <grippy />
         </splitter>
 
         <groupbox flex="1" id="certs.tree.holder" orient="vertical">
@@ -60,6 +94,6 @@
                 <treechildren id="certs.tree.children" context="certs.tree.contextmenu" />
             </tree>
         </groupbox>
-
+    </vbox>
     </tabpanel>
 </overlay>

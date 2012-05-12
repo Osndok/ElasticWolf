@@ -171,10 +171,8 @@ var ec2ui_session = {
             this.model.getImages();
             this.showBusyCursor(false);
             break;
-        case "Access Keys":
+        case "Access":
             eval("ec2ui_AccessKeyTreeView." + toCall);
-            break;
-        case "Key Pairs":
             eval("ec2ui_KeypairTreeView." + toCall);
             eval("ec2ui_CertTreeView." + toCall);
             break;
