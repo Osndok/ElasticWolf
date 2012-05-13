@@ -24,6 +24,7 @@ var ec2_InstanceLauncher = {
         this.retVal.minCount = document.getElementById("ec2ui.newinstances.min").value.trim();
         this.retVal.maxCount = document.getElementById("ec2ui.newinstances.max").value.trim();
         this.retVal.tag = document.getElementById("ec2ui.newinstances.tag").value.trim();
+        this.retVal.name = document.getElementById("ec2ui.newinstances.name").value.trim();
         this.retVal.securityGroups = this.used;
 
         var subnet = document.getElementById("ec2ui.newinstances.subnetId").value;

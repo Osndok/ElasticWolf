@@ -1108,6 +1108,17 @@ var ec2ui_model = {
         return this.instances;
     },
 
+    getInstanceById: function(id) {
+        if (this.instances) {
+            for (var i in this.instances) {
+                if (this.instances[i].id == id) {
+                    return this.instances[i];
+                }
+            }
+        }
+        return null;
+    },
+
     updateKeypairs : function(list)
     {
         this.keypairs = list;

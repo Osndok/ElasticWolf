@@ -176,13 +176,11 @@ var ec2ui_AMIsTreeView = {
     newInstanceCallback : function(list)
     {
         var tag = ec2ui_AMIsTreeView.newInstanceTag;
-        debug("Tag:" + tag)
-
         // Reset the saved tag
         ec2ui_AMIsTreeView.newInstance = "";
         if (tag && tag.length > 0) {
             var inst = null;
-            for ( var i in list) {
+            for (var i in list) {
                 inst = list[i];
                 inst.tag = tag;
                 ec2ui_session.setResourceTag(inst.id, tag);
@@ -199,15 +197,16 @@ var ec2ui_AMIsTreeView = {
     {
         var image = this.getSelectedImage();
         if (image == null) return;
-        var retVal = {
-            ok : null
-        };
+        var retVal = { ok : null };
         this.newInstanceTag = null;
 
         window.openDialog("chrome://ec2ui/content/dialog_new_instances.xul", null, "chrome,centerscreen,modal,resizable", image, ec2ui_session, retVal);
 
         if (retVal.ok) {
             this.newInstanceTag = retVal.tag || "";
+            if (retVal.name) {
+                this.newInstanceTag += "Name:" + retVal.name;
+            }
             ec2ui_session.controller.runInstances(retVal.imageId, retVal.kernelId, retVal.ramdiskId, retVal.minCount, retVal.maxCount, retVal.keyName, retVal.securityGroups,
                     retVal.userData, retVal.properties, retVal.instanceType, retVal.placement, retVal.subnetId, retVal.ipAddress, this.newInstanceCallback);
         }

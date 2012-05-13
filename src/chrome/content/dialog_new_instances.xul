@@ -60,7 +60,11 @@
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.newinstances.tag" value="New Instance(s) Tag:" />
+                    <label control="ec2ui.newinstances.tag" value="Instance Name:" />
+                    <textbox id="ec2ui.newinstances.name" size="40" value="" />
+                </row>
+                <row>
+                    <label control="ec2ui.newinstances.tag" value="Instance Tag (not Name:):" />
                     <textbox id="ec2ui.newinstances.tag" size="40" value="" />
                 </row>
                 <row>

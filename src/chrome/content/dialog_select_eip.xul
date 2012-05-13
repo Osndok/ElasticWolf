@@ -41,10 +41,9 @@
                 if ((isVpc(this.instance) &amp;&amp; eip.domain != "vpc") || (!isVpc(this.instance) &amp;&amp; eip.domain == "vpc")) {
                     continue
                 }
-                if (!eip.instanceid) {
-                    eipMenu.appendItem(eip.address + (eip.tag ? ": " + eip.tag : ""));
-                    this.eipList.push(eip);
-                }
+                var instance = this.session.model.getInstanceById(eip.instanceid);
+                eipMenu.appendItem(eip.address + (eip.tag ? ": " + eip.tag : "") + (instance ? " / " + instance.id + ":" + instance.name : ""));
+                this.eipList.push(eip);
             }
             eipMenu.selectedIndex = 0;
         }
