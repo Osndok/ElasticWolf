@@ -1,4 +1,4 @@
-var ec2_InstanceSummary = {
+var ew_InstanceSummary = {
     init : function() {
       var instanceList = window.arguments[0];
       var endpoint = window.arguments[1];
@@ -49,16 +49,16 @@ var ec2_InstanceSummary = {
         }
        }
 
-      document.getElementById("ec2ui.summary.total").value = data.total;
-      document.getElementById("ec2ui.summary.linux_monthly_amount").value = '$ ' + __calcLinuxMonthlyAmount__(data.instanceType, endpoint);
-      document.getElementById("ec2ui.summary.windows_monthly_amount").value = '$ ' + __calcWindowsMonthlyAmount__(data.instanceType, endpoint);
+      document.getElementById("ew.summary.total").value = data.total;
+      document.getElementById("ew.summary.linux_monthly_amount").value = '$ ' + __calcLinuxMonthlyAmount__(data.instanceType, endpoint);
+      document.getElementById("ew.summary.windows_monthly_amount").value = '$ ' + __calcWindowsMonthlyAmount__(data.instanceType, endpoint);
       var amounts = __calcRILinuxMonthlyAmount__(data.instanceType, endpoint);
-      document.getElementById("ec2ui.summary.ri_linux_monthly_amount").value = '$ ' + amounts[2] + ' (1yr: $ ' + amounts[0] + ' / 3yr: $ ' + amounts[1] + ')';
+      document.getElementById("ew.summary.ri_linux_monthly_amount").value = '$ ' + amounts[2] + ' (1yr: $ ' + amounts[0] + ' / 3yr: $ ' + amounts[1] + ')';
       amounts = __calcRIWindowsMonthlyAmount__(data.instanceType, endpoint);
-      document.getElementById("ec2ui.summary.ri_windows_monthly_amount").value = '$ ' + amounts[2] + ' (1yr: $ ' + amounts[0] + ' / 3yr: $ ' + amounts[1] + ')';
-      document.getElementById("ec2ui.summary.state").value = JSON.stringify(data.state, null, "  ");
-      document.getElementById("ec2ui.summary.instanceType").value = JSON.stringify(data.instanceType, null, "  ");
-      document.getElementById("ec2ui.summary.group").value = JSON.stringify(data.group, null, "  ");
-      document.getElementById("ec2ui.summary.availabilityZone").value = JSON.stringify(data.availabilityZone, null, "  ");
+      document.getElementById("ew.summary.ri_windows_monthly_amount").value = '$ ' + amounts[2] + ' (1yr: $ ' + amounts[0] + ' / 3yr: $ ' + amounts[1] + ')';
+      document.getElementById("ew.summary.state").value = JSON.stringify(data.state, null, "  ");
+      document.getElementById("ew.summary.instanceType").value = JSON.stringify(data.instanceType, null, "  ");
+      document.getElementById("ew.summary.group").value = JSON.stringify(data.group, null, "  ");
+      document.getElementById("ew.summary.availabilityZone").value = JSON.stringify(data.availabilityZone, null, "  ");
     }
 }

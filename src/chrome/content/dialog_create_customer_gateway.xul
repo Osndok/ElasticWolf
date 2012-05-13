@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.createcustomergateway"
+<dialog id="ew.dialog.createcustomergateway"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
     ondialogaccept="return create();" ondialogcancel="return true;" onload="init();"
     title="Create a new Customer Gateway" buttonlabelaccept="Create Customer Gateway">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
     <script>
     function create() {
-        this.retVal.ipaddress = document.getElementById("ec2ui.newcustomergateway.ipaddress").value.trim();
-        this.retVal.bgpasn = document.getElementById("ec2ui.newcustomergateway.bgpasn").value.trim();
-        this.retVal.type = document.getElementById("ec2ui.newcustomergateway.type").value.trim();
+        this.retVal.ipaddress = document.getElementById("ew.newcustomergateway.ipaddress").value.trim();
+        this.retVal.bgpasn = document.getElementById("ew.newcustomergateway.bgpasn").value.trim();
+        this.retVal.type = document.getElementById("ew.newcustomergateway.type").value.trim();
         this.retVal.ok = true;
         return true;
     }
 
     function init() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         this.retVal = window.arguments[1];
 
-        var type = document.getElementById("ec2ui.newcustomergateway.type");
+        var type = document.getElementById("ew.newcustomergateway.type");
         type.value = "ipsec.1";
     }
     </script>
@@ -36,28 +36,28 @@
             <rows>
                 <!-- type -->
                 <row>
-                    <label control="ec2ui.newcustomergateway.type"
+                    <label control="ew.newcustomergateway.type"
                            value="Type: "/>
-                    <hbox><textbox id="ec2ui.newcustomergateway.type" size="20"
+                    <hbox><textbox id="ew.newcustomergateway.type" size="20"
                                    value=""/>
                     </hbox>
                 </row>
 
                 <!-- bgp asn -->
                 <row>
-                    <label control="ec2ui.newcustomergateway.bgpasn"
+                    <label control="ew.newcustomergateway.bgpasn"
                            value="BGP ASN: "/>
-                    <hbox><textbox id="ec2ui.newcustomergateway.bgpasn" size="20"
+                    <hbox><textbox id="ew.newcustomergateway.bgpasn" size="20"
                                    value=""/>
                     </hbox>
                 </row>
 
                 <!-- ip address -->
                 <row>
-                    <label control="ec2ui.newcustomergateway.ipaddress"
+                    <label control="ew.newcustomergateway.ipaddress"
                            value="IP Address:" />
                     <hbox>
-                        <textbox id="ec2ui.newcustomergateway.ipaddress" size="20"
+                        <textbox id="ew.newcustomergateway.ipaddress" size="20"
                             value="" />
                     </hbox>
                 </row>

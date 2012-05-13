@@ -1,4 +1,4 @@
-var ec2ui_AMIsTreeView = {
+var ew_AMIsTreeView = {
     COLNAMES : [ 'ami.id', 'ami.location', 'ami.state', 'ami.owner', 'ami.ownerAlias', 'ami.isPublic', 'ami.arch', 'ami.platform', 'ami.rootDeviceType', 'ami.name', 'ami.description', 'ami.tag' ],
     launchPermissionList : new Array(),
     imageIdRegex : regExs["all"],
@@ -11,7 +11,7 @@ var ec2ui_AMIsTreeView = {
         var fDisabled = (image == null);
 
         if (fDisabled) {
-            document.getElementById("ec2ui.images.contextmenu").hidePopup();
+            document.getElementById("ew.images.contextmenu").hidePopup();
             return;
         }
 
@@ -38,21 +38,21 @@ var ec2ui_AMIsTreeView = {
             document.getElementById("amis.context.deleteSnapshotAndDeregister").disabled = true;
         }
 
-        var type = document.getElementById("ec2ui_AMIsTreeView.image.type").value;
+        var type = document.getElementById("ew_AMIsTreeView.image.type").value;
         document.getElementById("amis.context.fadd").disabled = type == "fav";
         document.getElementById("amis.context.fdelete").disabled = type != "fav";
     },
 
     imageTypeChanged : function()
     {
-        document.getElementById("ec2ui.images.search").value = "";
+        document.getElementById("ew.images.search").value = "";
         this.displayImagesOfType();
     },
 
     manageFavorites: function(remove) {
         var image = this.getSelectedImage();
         if (image == null) return;
-        var favs = ec2ui_prefs.getStringPreference(ec2ui_prefs.AMI_FAVORITES, "").split("^");
+        var favs = ew_prefs.getStringPreference(ew_prefs.AMI_FAVORITES, "").split("^");
         debug(remove + ":" + favs)
         if (remove) {
             var i = favs.indexOf(image.id)
@@ -64,7 +64,7 @@ var ec2ui_AMIsTreeView = {
                 favs.push(image.id)
             }
         }
-        ec2ui_prefs.setStringPreference(ec2ui_prefs.AMI_FAVORITES, favs.join("^"));
+        ew_prefs.setStringPreference(ew_prefs.AMI_FAVORITES, favs.join("^"));
         if (remove) {
             this.invalidate();
         }
@@ -72,13 +72,13 @@ var ec2ui_AMIsTreeView = {
 
     displayImagesOfType : function()
     {
-        var type = document.getElementById("ec2ui_AMIsTreeView.image.type");
+        var type = document.getElementById("ew_AMIsTreeView.image.type");
         if (type.value == "fav") {
-            var favs = ec2ui_prefs.getStringPreference(ec2ui_prefs.AMI_FAVORITES, "").split("^");
+            var favs = ew_prefs.getStringPreference(ew_prefs.AMI_FAVORITES, "").split("^");
             var images = []
-            for (var i in ec2ui_model.images) {
-                if (favs.indexOf(ec2ui_model.images[i].id) >= 0) {
-                    images.push(ec2ui_model.images[i])
+            for (var i in ew_model.images) {
+                if (favs.indexOf(ew_model.images[i].id) >= 0) {
+                    images.push(ew_model.images[i])
                 }
             }
             this.displayImages(images);
@@ -88,11 +88,11 @@ var ec2ui_AMIsTreeView = {
         // Initialize the owner display filter to the empty string
         this.ownerDisplayFilter = "";
         if (type.value == "my_ami" || type.value == "my_ami_rdt_ebs") {
-            var groups = ec2ui_model.getSecurityGroups();
+            var groups = ew_model.getSecurityGroups();
 
             if (groups) {
                 var group = groups[0];
-                var currentUser = ec2ui_session.lookupAccountId(group.ownerId);
+                var currentUser = ew_session.lookupAccountId(group.ownerId);
                 this.imageIdRegex = regExs["ami"];
 
                 if (type.value == "my_ami")
@@ -121,7 +121,7 @@ var ec2ui_AMIsTreeView = {
             this.rootDeviceType = "";
         }
 
-        var images = ec2ui_model.images;
+        var images = ew_model.images;
         images = this.filterRootDevice(images);
         images = this.filterOwnerDisplay(images);
         images = this.filterImages(images, currentUser);
@@ -165,7 +165,7 @@ var ec2ui_AMIsTreeView = {
 
     searchChanged : function(event)
     {
-        //document.getElementById("ec2ui_AMIsTreeView.image.type").selectedIndex = 1;
+        //document.getElementById("ew_AMIsTreeView.image.type").selectedIndex = 1;
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
         }
@@ -175,21 +175,21 @@ var ec2ui_AMIsTreeView = {
 
     newInstanceCallback : function(list)
     {
-        var tag = ec2ui_AMIsTreeView.newInstanceTag;
+        var tag = ew_AMIsTreeView.newInstanceTag;
         // Reset the saved tag
-        ec2ui_AMIsTreeView.newInstance = "";
+        ew_AMIsTreeView.newInstance = "";
         if (tag && tag.length > 0) {
             var inst = null;
             for (var i in list) {
                 inst = list[i];
                 inst.tag = tag;
-                ec2ui_session.setResourceTag(inst.id, tag);
-                __tagging2ec2__([ inst.id ], ec2ui_session, tag);
+                ew_session.setResourceTag(inst.id, tag);
+                __tagging2ec2__([ inst.id ], ew_session, tag);
             }
         }
-        ec2ui_InstancesTreeView.refresh();
-        ec2ui_InstancesTreeView.selectByInstanceIds(list);
-        var tabPanel = document.getElementById("ec2ui.primary.tabs");
+        ew_InstancesTreeView.refresh();
+        ew_InstancesTreeView.selectByInstanceIds(list);
+        var tabPanel = document.getElementById("ew.primary.tabs");
         tabPanel.selectedIndex = 0;
     },
 
@@ -200,14 +200,14 @@ var ec2ui_AMIsTreeView = {
         var retVal = { ok : null };
         this.newInstanceTag = null;
 
-        window.openDialog("chrome://ec2ui/content/dialog_new_instances.xul", null, "chrome,centerscreen,modal,resizable", image, ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_new_instances.xul", null, "chrome,centerscreen,modal,resizable", image, ew_session, retVal);
 
         if (retVal.ok) {
             this.newInstanceTag = retVal.tag || "";
             if (retVal.name) {
                 this.newInstanceTag += "Name:" + retVal.name;
             }
-            ec2ui_session.controller.runInstances(retVal.imageId, retVal.kernelId, retVal.ramdiskId, retVal.minCount, retVal.maxCount, retVal.keyName, retVal.securityGroups,
+            ew_session.controller.runInstances(retVal.imageId, retVal.kernelId, retVal.ramdiskId, retVal.minCount, retVal.maxCount, retVal.keyName, retVal.securityGroups,
                     retVal.userData, retVal.properties, retVal.instanceType, retVal.placement, retVal.subnetId, retVal.ipAddress, this.newInstanceCallback);
         }
     },
@@ -218,23 +218,23 @@ var ec2ui_AMIsTreeView = {
         var wrap = function(x)
         {
             alert("Image with Manifest: " + manifest + " was registered");
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
                 me.selectByImageId(x);
             }
         }
-        ec2ui_session.controller.registerImageInRegion(manifest, region, wrap);
+        ew_session.controller.registerImageInRegion(manifest, region, wrap);
     },
 
     registerNewImage : function()
     {
         var me = this;
         var retVal = {  ok : null, manifestPath : null };
-        window.openDialog("chrome://ec2ui/content/dialog_register_image.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_register_image.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
             var s3bucket = retVal.manifestPath.split('/')[0];
-            var bucketReg = ec2ui_session.controller.getS3BucketLocation(s3bucket, function(bucket, region) {
+            var bucketReg = ew_session.controller.getS3BucketLocation(s3bucket, function(bucket, region) {
                 me.callRegisterImageInRegion(retVal.manifestPath, region);
             });
         }
@@ -258,12 +258,12 @@ var ec2ui_AMIsTreeView = {
         var me = this;
         var wrap = function()
         {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
         log("Deregistering image: " + image.id);
-        ec2ui_session.controller.deregisterImage(image.id, wrap);
+        ew_session.controller.deregisterImage(image.id, wrap);
     },
 
     migrateImage : function()
@@ -291,7 +291,7 @@ var ec2ui_AMIsTreeView = {
         alert("Not implemented yet");
         return;
 
-        window.openDialog("chrome://ec2ui/content/dialog_migrate_ami.xul", null, "chrome,centerscreen,modal,resizable", image, ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_migrate_ami.xul", null, "chrome,centerscreen,modal,resizable", image, ew_session, retVal);
 
         if (retVal.ok) {
             this.currentlyMigrating = true;
@@ -301,7 +301,7 @@ var ec2ui_AMIsTreeView = {
             retVal.ok = false;
 
             // TODO: Finish up AMI migration with visual prompts
-            //window.openDialog("chrome://ec2ui/content/dialog_copy_S3_keys.xul", null, "chrome, dialog, centerscreen, resizable=yes", ec2ui_session, retVal);
+            //window.openDialog("chrome://ew/content/dialog_copy_S3_keys.xul", null, "chrome, dialog, centerscreen, resizable=yes", ew_session, retVal);
         }
     },
 
@@ -338,7 +338,7 @@ var ec2ui_AMIsTreeView = {
             var retVal = {
                 ok : null
             };
-            window.openDialog("chrome://ec2ui/content/dialog_delete_ami.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, image.location, retVal);
+            window.openDialog("chrome://ew/content/dialog_delete_ami.xul", null, "chrome,centerscreen,modal,resizable", ew_session, image.location, retVal);
 
             if (retVal.ok) {
                 // Keys have been deleted. Let's deregister this image
@@ -365,24 +365,24 @@ var ec2ui_AMIsTreeView = {
             var me = this;
             var snap_wrap = function()
             {
-                if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                    ec2ui_SnapshotTreeView.refresh();
+                if (ew_prefs.isRefreshOnChangeEnabled()) {
+                    ew_SnapshotTreeView.refresh();
                 }
             }
 
             var dereg_wrap = function()
             {
-                ec2ui_session.controller.deleteSnapshot(snapshot, snap_wrap);
+                ew_session.controller.deleteSnapshot(snapshot, snap_wrap);
                 me.refresh();
             }
 
-            ec2ui_session.controller.deregisterImage(ami, dereg_wrap);
+            ew_session.controller.deregisterImage(ami, dereg_wrap);
         }
     },
 
     getLaunchPermissionsList : function()
     {
-        return document.getElementById("ec2ui.launchpermissions.list");
+        return document.getElementById("ew.launchpermissions.list");
     },
 
     getSelectedLaunchPermission : function()
@@ -416,7 +416,7 @@ var ec2ui_AMIsTreeView = {
 
     launchPermissionsCallback : function(list)
     {
-        ec2ui_AMIsTreeView.displayLaunchPermissions(list);
+        ew_AMIsTreeView.displayLaunchPermissions(list);
     },
 
     refreshLaunchPermissions : function()
@@ -425,7 +425,7 @@ var ec2ui_AMIsTreeView = {
         if (image == null) return;
         if (image.state == "deregistered") return;
 
-        ec2ui_session.controller.describeLaunchPermissions(image.id, this.launchPermissionsCallback);
+        ew_session.controller.describeLaunchPermissions(image.id, this.launchPermissionsCallback);
     },
 
     addGlobalLaunchPermission : function()
@@ -449,12 +449,12 @@ var ec2ui_AMIsTreeView = {
         var me = this;
         var wrap = function()
         {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refreshLaunchPermissions();
                 me.selectLaunchPermissionByName(name);
             }
         }
-        ec2ui_session.controller.addLaunchPermission(image.id, name, wrap);
+        ew_session.controller.addLaunchPermission(image.id, name, wrap);
     },
 
     removeLaunchPermission : function()
@@ -470,11 +470,11 @@ var ec2ui_AMIsTreeView = {
         var me = this;
         var wrap = function()
         {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refreshLaunchPermissions();
             }
         }
-        ec2ui_session.controller.revokeLaunchPermission(image.id, name, wrap);
+        ew_session.controller.revokeLaunchPermission(image.id, name, wrap);
     },
 
     resetLaunchPermissions : function()
@@ -488,11 +488,11 @@ var ec2ui_AMIsTreeView = {
         var me = this;
         var wrap = function()
         {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refreshLaunchPermissions();
             }
         }
-        ec2ui_session.controller.resetLaunchPermissions(image.id, wrap);
+        ew_session.controller.resetLaunchPermissions(image.id, wrap);
     },
 
     displayLaunchPermissions : function(permList)
@@ -516,7 +516,7 @@ var ec2ui_AMIsTreeView = {
         var perm = null;
         for ( var i in permList) {
             perm = permList[i];
-            list.appendItem(ec2ui_session.lookupAccountId(perm), perm);
+            list.appendItem(ew_session.lookupAccountId(perm), perm);
         }
     },
 
@@ -524,25 +524,25 @@ var ec2ui_AMIsTreeView = {
     {
         BaseImagesView.selectionChanged.call(this, event);
 
-        if (ec2ui_prefs.isAutoFetchLaunchPermissionsEnabled()) {
+        if (ew_prefs.isAutoFetchLaunchPermissionsEnabled()) {
             this.refreshLaunchPermissions();
         }
     },
 
     getSearchText : function()
     {
-        return document.getElementById('ec2ui.images.search').value;
+        return document.getElementById('ew.images.search').value;
     },
 
     invalidate : function()
     {
-        var target = ec2ui_AMIsTreeView;
+        var target = ew_AMIsTreeView;
         target.displayLaunchPermissions([]);
         target.displayImagesOfType();
     },
 };
 
 // poor-man's inheritance
-ec2ui_AMIsTreeView.__proto__ = BaseImagesView;
+ew_AMIsTreeView.__proto__ = BaseImagesView;
 
-ec2ui_AMIsTreeView.register();
+ew_AMIsTreeView.register();

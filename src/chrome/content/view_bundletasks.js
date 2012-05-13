@@ -1,4 +1,4 @@
-var ec2ui_BundleTasksTreeView = {
+var ew_BundleTasksTreeView = {
     COLNAMES: [
         'bun.id',
         'bun.instanceId',
@@ -74,7 +74,7 @@ var ec2ui_BundleTasksTreeView = {
     },
 
     getSearchText: function() {
-        return document.getElementById('ec2ui.bundleTasks.search').value;
+        return document.getElementById('ew.bundleTasks.search').value;
     },
 
     startRefreshTimer : function() {
@@ -83,16 +83,16 @@ var ec2ui_BundleTasksTreeView = {
             clearTimeout(this.refreshTimer);
         }
 
-        ec2ui_session.addTabToRefreshList("ec2ui_BundleTasksTreeView");
+        ew_session.addTabToRefreshList("ew_BundleTasksTreeView");
         // Set the UI up to refresh every 10 seconds
-        this.refreshTimer = setTimeout(ec2ui_BundleTasksTreeView.refresh, 10*1000);
+        this.refreshTimer = setTimeout(ew_BundleTasksTreeView.refresh, 10*1000);
     },
 
     stopRefreshTimer : function() {
         log("Stopping Refresh Timer");
         if (this.refreshTimer) {
             clearTimeout(this.refreshTimer);
-            ec2ui_session.removeTabFromRefreshList("ec2ui_BundleTasksTreeView");
+            ew_session.removeTabFromRefreshList("ew_BundleTasksTreeView");
         }
     },
 
@@ -107,17 +107,17 @@ var ec2ui_BundleTasksTreeView = {
     register: function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'bundleTasks');
+            ew_model.registerInterest(this, 'bundleTasks');
         }
     },
 
     refresh : function() {
-        ec2ui_session.controller.describeBundleTasks();
+        ew_session.controller.describeBundleTasks();
     },
 
     invalidate: function() {
-        var me = ec2ui_BundleTasksTreeView;
-        me.displayBundleTasks(me.filterTasks(ec2ui_session.model.bundleTasks));
+        var me = ew_BundleTasksTreeView;
+        me.displayBundleTasks(me.filterTasks(ew_session.model.bundleTasks));
     },
 
     notifyModelChanged: function(interest) {
@@ -172,13 +172,13 @@ var ec2ui_BundleTasksTreeView = {
             return;
         }
 
-        window.openDialog("chrome://ec2ui/content/dialog_bundle_task_details.xul", null, "chrome,centerscreen,modal,resizable", task);
+        window.openDialog("chrome://ew/content/dialog_bundle_task_details.xul", null, "chrome,centerscreen,modal,resizable", task);
     },
 
     pendingBundleTasks : function() {
         // Walk the list of bundle tasks to see whether there is a task
         // whose state needs to be refreshed
-        var tasks = ec2ui_session.model.bundleTasks;
+        var tasks = ew_session.model.bundleTasks;
         var fPending = false;
 
         for (var i in tasks) {
@@ -206,7 +206,7 @@ var ec2ui_BundleTasksTreeView = {
             this.selection.clearSelection();
         }
 
-        if (ec2ui_prefs.isRefreshBundleViewEnabled()) {
+        if (ew_prefs.isRefreshBundleViewEnabled()) {
             // Determine if there are any pending bundle tasks
             if (this.pendingBundleTasks()) {
                 this.startRefreshTimer();
@@ -232,13 +232,13 @@ var ec2ui_BundleTasksTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
                 me.selectByBundleId();
             }
         }
 
-        ec2ui_session.controller.cancelBundleTask(selected.id, wrap);
+        ew_session.controller.cancelBundleTask(selected.id, wrap);
     },
 
     copyToClipBoard : function(fieldName) {
@@ -285,16 +285,16 @@ var ec2ui_BundleTasksTreeView = {
     registerBundledImage : function (bucket, prefix) {
         var manifestPath = bucket + "/" + prefix + ".manifest.xml";
         var wrap = function(x) {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                ec2ui_AMIsTreeView.refresh();
-                ec2ui_AMIsTreeView.selectByImageId(x);
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
+                ew_AMIsTreeView.refresh();
+                ew_AMIsTreeView.selectByImageId(x);
                 // Navigate to the AMIs tab
-                var tabPanel = document.getElementById("ec2ui.primary.tabs");
+                var tabPanel = document.getElementById("ew.primary.tabs");
                 tabPanel.selectedIndex = 1;
             }
         }
-        var region = ec2ui_session.controller.getS3BucketLocation(bucket);
-        ec2ui_session.controller.registerImageInRegion(manifestPath,
+        var region = ew_session.controller.getS3BucketLocation(bucket);
+        ew_session.controller.registerImageInRegion(manifestPath,
                                                        region,
                                                        wrap);
     },
@@ -314,4 +314,4 @@ var ec2ui_BundleTasksTreeView = {
     },
 };
 
-ec2ui_BundleTasksTreeView.register();
+ew_BundleTasksTreeView.register();

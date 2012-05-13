@@ -1,27 +1,27 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.volume.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+<dialog id="ew.dialog.volume.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept" ondialogaccept="return true;" onload="init();" title="Volume Details">
 
   <script type="application/x-javascript">
     function init() {
         var volume = window.arguments[0];
-        document.getElementById("ec2ui.volume.id").value = volume.id;
-        document.getElementById("ec2ui.volume.size").value = volume.size;
-        document.getElementById("ec2ui.volume.snapshotId").value = volume.snapshotId;
-        document.getElementById("ec2ui.volume.availabilityZone").value = volume.availabilityZone;
-        document.getElementById("ec2ui.volume.status").value = volume.status;
-        document.getElementById("ec2ui.volume.createTime").value = volume.createTime;
-        document.getElementById("ec2ui.volume.instanceId").value = volume.instanceId;
-        document.getElementById("ec2ui.volume.device").value = volume.device;
-        document.getElementById("ec2ui.volume.attachStatus").value = volume.attachStatus;
-        document.getElementById("ec2ui.volume.attachTime").value = volume.attachTime || "";
-        document.getElementById("ec2ui.volume.tag").value = volume.tag || "";
+        document.getElementById("ew.volume.id").value = volume.id;
+        document.getElementById("ew.volume.size").value = volume.size;
+        document.getElementById("ew.volume.snapshotId").value = volume.snapshotId;
+        document.getElementById("ew.volume.availabilityZone").value = volume.availabilityZone;
+        document.getElementById("ew.volume.status").value = volume.status;
+        document.getElementById("ew.volume.createTime").value = volume.createTime;
+        document.getElementById("ew.volume.instanceId").value = volume.instanceId;
+        document.getElementById("ew.volume.device").value = volume.device;
+        document.getElementById("ew.volume.attachStatus").value = volume.attachStatus;
+        document.getElementById("ew.volume.attachTime").value = volume.attachTime || "";
+        document.getElementById("ew.volume.tag").value = volume.tag || "";
     }
   </script>
-  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
 
   <vbox flex="1">
     <grid flex="1">
@@ -32,48 +32,48 @@
       </columns>
       <rows>
         <row>
-          <label control="ec2ui.volume.id" value="&ec2ui.volumes.id.label;" />
-          <textbox id="ec2ui.volume.id" size="40" readonly="true" />
+          <label control="ew.volume.id" value="&ew.volumes.id.label;" />
+          <textbox id="ew.volume.id" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.size" value="&ec2ui.volumes.size.label;" />
-          <textbox id="ec2ui.volume.size" size="40" readonly="true" />
+          <label control="ew.volume.size" value="&ew.volumes.size.label;" />
+          <textbox id="ew.volume.size" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.snapshotId" value="&ec2ui.snapshots.id.label;" />
-          <textbox id="ec2ui.volume.snapshotId" size="40" readonly="true" />
+          <label control="ew.volume.snapshotId" value="&ew.snapshots.id.label;" />
+          <textbox id="ew.volume.snapshotId" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.availabilityZone" value="&ec2ui.availabilityZone.label;" />
-          <textbox id="ec2ui.volume.availabilityZone" size="40" readonly="true" />
+          <label control="ew.volume.availabilityZone" value="&ew.availabilityZone.label;" />
+          <textbox id="ew.volume.availabilityZone" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.status" value="&ec2ui.volumes.status.label;" />
-          <textbox id="ec2ui.volume.status" size="40" readonly="true" />
+          <label control="ew.volume.status" value="&ew.volumes.status.label;" />
+          <textbox id="ew.volume.status" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.createTime" value="&ec2ui.volumes.createTime.label;" />
-          <textbox id="ec2ui.volume.createTime" size="40" readonly="true" />
+          <label control="ew.volume.createTime" value="&ew.volumes.createTime.label;" />
+          <textbox id="ew.volume.createTime" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.instanceId" value="&ec2ui.instances.id.label;" />
-          <textbox id="ec2ui.volume.instanceId" size="40" readonly="true" />
+          <label control="ew.volume.instanceId" value="&ew.instances.id.label;" />
+          <textbox id="ew.volume.instanceId" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.device" value="&ec2ui.volumes.attachment.device.label;" />
-          <textbox id="ec2ui.volume.device" size="40" readonly="true" />
+          <label control="ew.volume.device" value="&ew.volumes.attachment.device.label;" />
+          <textbox id="ew.volume.device" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.attachStatus" value="&ec2ui.volumes.attachment.status.label;" />
-          <textbox id="ec2ui.volume.attachStatus" size="40" readonly="true" />
+          <label control="ew.volume.attachStatus" value="&ew.volumes.attachment.status.label;" />
+          <textbox id="ew.volume.attachStatus" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.attachTime" value="&ec2ui.volumes.attachment.attachTime.label;" />
-          <textbox id="ec2ui.volume.attachTime" size="40" readonly="true" />
+          <label control="ew.volume.attachTime" value="&ew.volumes.attachment.attachTime.label;" />
+          <textbox id="ew.volume.attachTime" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.volume.tag" value="Tag" />
-          <textbox id="ec2ui.volume.tag" size="40" readonly="true" />
+          <label control="ew.volume.tag" value="Tag" />
+          <textbox id="ew.volume.tag" size="40" readonly="true" />
         </row>
       </rows>
     </grid>

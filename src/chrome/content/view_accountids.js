@@ -1,4 +1,4 @@
-var ec2ui_accountIdsTreeView = {
+var ew_accountIdsTreeView = {
     COLNAMES : ['accountids.accountid','accountids.displayname'],
     treeBox: null,
     selection: null,

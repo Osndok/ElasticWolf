@@ -1,35 +1,35 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://ec2ui/skin/ec2ui.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<?xml-stylesheet href="chrome://ew/skin/ew.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabpanel id="auth_tab" flex="1">
     <vbox flex="1">
 
     <groupbox flex="1" id="accesskeys.tree.holder" orient="vertical">
-        <caption label="&ec2ui.captions.accesskeys.label;" />
+        <caption label="&ew.captions.accesskeys.label;" />
         <popupset>
             <menupopup id="accesskey.tree.contextmenu">
-                <menuitem oncommand="ec2ui_AccessKeyTreeView.viewDetails()" label="View Details" />
-                <menuitem oncommand="ec2ui_AccessKeyTreeView.createAccessKey()" label="Create a new access key" />
-                <menuitem oncommand="ec2ui_AccessKeyTreeView.switchCredentials();" label="Use this access key for credentials" />
-                <menuitem oncommand="ec2ui_AccessKeyTreeView.deleteSelected();" label="Delete this access key" />
-                <menuitem oncommand="ec2ui_AccessKeyTreeView.exportSelected();" label="Export this access key into text file" />
+                <menuitem oncommand="ew_AccessKeyTreeView.viewDetails()" label="View Details" />
+                <menuitem oncommand="ew_AccessKeyTreeView.createAccessKey()" label="Create a new access key" />
+                <menuitem oncommand="ew_AccessKeyTreeView.switchCredentials();" label="Use this access key for credentials" />
+                <menuitem oncommand="ew_AccessKeyTreeView.deleteSelected();" label="Delete this access key" />
+                <menuitem oncommand="ew_AccessKeyTreeView.exportSelected();" label="Export this access key into text file" />
             </menupopup>
         </popupset>
         <toolbar style="padding: 0px 3px; -moz-box-align: center">
-            <toolbarbutton image="images/refresh.png" tooltiptext="&ec2ui.refresh.tip;" oncommand="ec2ui_AccessKeyTreeView.refresh()" />
-            <toolbarbutton image="images/add.png" tooltiptext="&ec2ui.accesskeys.create.tip;" oncommand="ec2ui_AccessKeyTreeView.createAccessKey();" />
-            <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.accesskeys.delete.tip;" oncommand="ec2ui_AccessKeyTreeView.deleteSelected();" />
-            <toolbarbutton image="images/attach.png" tooltiptext="&ec2ui.accesskeys.switch.tip;" oncommand="ec2ui_AccessKeyTreeView.switchCredentials();" />
+            <toolbarbutton image="images/refresh.png" tooltiptext="&ew.refresh.tip;" oncommand="ew_AccessKeyTreeView.refresh()" />
+            <toolbarbutton image="images/add.png" tooltiptext="&ew.accesskeys.create.tip;" oncommand="ew_AccessKeyTreeView.createAccessKey();" />
+            <toolbarbutton image="images/delete.png" tooltiptext="&ew.accesskeys.delete.tip;" oncommand="ew_AccessKeyTreeView.deleteSelected();" />
+            <toolbarbutton image="images/attach.png" tooltiptext="&ew.accesskeys.switch.tip;" oncommand="ew_AccessKeyTreeView.switchCredentials();" />
         </toolbar>
-        <tree enableColumnDrag="true" id="ec2ui.accesskeys.view" flex="1">
+        <tree enableColumnDrag="true" id="ew.accesskeys.view" flex="1">
             <treecols>
-                <treecol id="accesskey.name" label="&ec2ui.accesskeys.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                <treecol id="accesskey.name" label="&ew.accesskeys.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                 <splitter class="tree-splitter" />
-                <treecol id="accesskey.status" label="&ec2ui.accesskeys.status.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
-                <treecol id="accesskey.current" label="&ec2ui.accesskeys.current.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                <treecol id="accesskey.status" label="&ew.accesskeys.status.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                <treecol id="accesskey.current" label="&ew.accesskeys.current.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
             </treecols>
             <treechildren id="accesskey.tree.children" context="accesskey.tree.contextmenu" />
         </tree>
@@ -40,28 +40,28 @@
       </splitter>
 
         <groupbox flex="1" id="keypairs.tree.holder" orient="vertical">
-            <caption label="&ec2ui.captions.keypairs.label;" />
+            <caption label="&ew.captions.keypairs.label;" />
             <popupset>
                 <menupopup id="keypair.tree.contextmenu">
-                    <menuitem oncommand="ec2ui_KeypairTreeView.viewDetails()" label="&ec2ui.keypairs.details.tip;" />
-                    <menuitem oncommand="ec2ui_KeypairTreeView.createKeypair()" label="&ec2ui.keypairs.create.tip;" />
-                    <menuitem oncommand="ec2ui_KeypairTreeView.deleteSelected();" label="&ec2ui.keypairs.create.tip;" />
+                    <menuitem oncommand="ew_KeypairTreeView.viewDetails()" label="&ew.keypairs.details.tip;" />
+                    <menuitem oncommand="ew_KeypairTreeView.createKeypair()" label="&ew.keypairs.create.tip;" />
+                    <menuitem oncommand="ew_KeypairTreeView.deleteSelected();" label="&ew.keypairs.create.tip;" />
                 </menupopup>
             </popupset>
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                <toolbarbutton image="images/refresh.png" tooltiptext="&ec2ui.refresh.tip;" oncommand="ec2ui_KeypairTreeView.refresh()" />
-                <toolbarbutton image="images/add.png" tooltiptext="&ec2ui.keypairs.create.tip;" oncommand="ec2ui_KeypairTreeView.createKeypair();" />
-                <toolbarbutton image="images/import.png" tooltiptext="&ec2ui.keypairs.import.tip;" oncommand="ec2ui_KeypairTreeView.importKeypair();" />
-                <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.keypairs.delete.tip;" oncommand="ec2ui_KeypairTreeView.deleteSelected();" />
-                <toolbarbutton image="images/gen.png" tooltiptext="&ec2ui.keypairs.generate.tip;" oncommand="ec2ui_KeypairTreeView.createCertAndKeypair();" />
-                <toolbarbutton image="images/info.png" tooltiptext="&ec2ui.keypairs.details.tip;" oncommand="ec2ui_KeypairTreeView.viewDetails()"/>
-                <toolbarbutton image="images/shell.png" tooltiptext="&ec2ui.keypairs.shell.tip;" oncommand="ec2ui_KeypairTreeView.runShell()"/>
+                <toolbarbutton image="images/refresh.png" tooltiptext="&ew.refresh.tip;" oncommand="ew_KeypairTreeView.refresh()" />
+                <toolbarbutton image="images/add.png" tooltiptext="&ew.keypairs.create.tip;" oncommand="ew_KeypairTreeView.createKeypair();" />
+                <toolbarbutton image="images/import.png" tooltiptext="&ew.keypairs.import.tip;" oncommand="ew_KeypairTreeView.importKeypair();" />
+                <toolbarbutton image="images/delete.png" tooltiptext="&ew.keypairs.delete.tip;" oncommand="ew_KeypairTreeView.deleteSelected();" />
+                <toolbarbutton image="images/gen.png" tooltiptext="&ew.keypairs.generate.tip;" oncommand="ew_KeypairTreeView.createCertAndKeypair();" />
+                <toolbarbutton image="images/info.png" tooltiptext="&ew.keypairs.details.tip;" oncommand="ew_KeypairTreeView.viewDetails()"/>
+                <toolbarbutton image="images/shell.png" tooltiptext="&ew.keypairs.shell.tip;" oncommand="ew_KeypairTreeView.runShell()"/>
             </toolbar>
-            <tree enableColumnDrag="true" id="ec2ui.keypairs.view" flex="1">
+            <tree enableColumnDrag="true" id="ew.keypairs.view" flex="1">
                 <treecols>
-                    <treecol id="keypair.name" label="&ec2ui.keypairs.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    <treecol id="keypair.name" label="&ew.keypairs.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
-                    <treecol id="keypair.fingerprint" label="&ec2ui.keypairs.fingerprint.label;" flex="4" persist="width ordinal hidden sortDirection" />
+                    <treecol id="keypair.fingerprint" label="&ew.keypairs.fingerprint.label;" flex="4" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                 </treecols>
                 <treechildren id="keypair.tree.children" context="keypair.tree.contextmenu" />
@@ -73,22 +73,22 @@
         </splitter>
 
         <groupbox flex="1" id="certs.tree.holder" orient="vertical">
-            <caption label="&ec2ui.captions.certs.label;" />
+            <caption label="&ew.captions.certs.label;" />
             <popupset>
                 <menupopup id="certs.tree.contextmenu">
-                    <menuitem oncommand="ec2ui_CertTreeView.createCert()" label="&ec2ui.certs.create.tip;" />
-                    <menuitem oncommand="ec2ui_CertTreeView.deleteSelected();" label="&ec2ui.certs.delete.tip;" />
+                    <menuitem oncommand="ew_CertTreeView.createCert()" label="&ew.certs.create.tip;" />
+                    <menuitem oncommand="ew_CertTreeView.deleteSelected();" label="&ew.certs.delete.tip;" />
                 </menupopup>
             </popupset>
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                <toolbarbutton image="images/refresh.png" oncommand="ec2ui_CertTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
-                <toolbarbutton image="images/add.png" tooltiptext="&ec2ui.certs.create.tip;" oncommand="ec2ui_CertTreeView.createCert();" />
-                <toolbarbutton image="images/import.png" tooltiptext="&ec2ui.certs.upload.tip;" oncommand="ec2ui_CertTreeView.uploadCert();" />
-                <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.certs.delete.tip;" oncommand="ec2ui_CertTreeView.deleteSelected();" />
+                <toolbarbutton image="images/refresh.png" oncommand="ew_CertTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
+                <toolbarbutton image="images/add.png" tooltiptext="&ew.certs.create.tip;" oncommand="ew_CertTreeView.createCert();" />
+                <toolbarbutton image="images/import.png" tooltiptext="&ew.certs.upload.tip;" oncommand="ew_CertTreeView.uploadCert();" />
+                <toolbarbutton image="images/delete.png" tooltiptext="&ew.certs.delete.tip;" oncommand="ew_CertTreeView.deleteSelected();" />
             </toolbar>
-            <tree enableColumnDrag="true" id="ec2ui.certs.view" flex="1">
+            <tree enableColumnDrag="true" id="ew.certs.view" flex="1">
                 <treecols>
-                    <treecol id="certs.name" label="&ec2ui.certs.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    <treecol id="certs.name" label="&ew.certs.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                 </treecols>
                 <treechildren id="certs.tree.children" context="certs.tree.contextmenu" />

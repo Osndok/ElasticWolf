@@ -150,52 +150,53 @@ function WrappedMap(map)
     return this;
 };
 
-var ec2ui_prefs = {
-    ACTIVE_USER_NAME : "ec2ui.active.credentials.name",
-    ACTIVE_ENDPOINT : "ec2ui.active.endpoint",
-    RDP_COMMAND : "ec2ui.tools.rdp.command",
-    RDP_ARGS : "ec2ui.tools.rdp.args",
-    SSH_COMMAND : "ec2ui.tools.ssh.command",
-    SSH_ARGS : "ec2ui.tools.ssh.args",
-    SSH_USER : "ec2ui.tools.ssh.user",
-    DEBUG_ENABLED : "ec2ui.debugging.enabled",
-    OFFLINE : "ec2ui.offline.enabled",
-    QUERY_ON_START : "ec2ui.queryonstart.enabled",
-    REFRESH_ON_CHANGE : "ec2ui.refreshonchange.enabled",
-    REFRESH_BUNDLE_VIEW : "ec2ui.refreshBundleView.enabled",
-    AUTOFETCH_LP : "ec2ui.autofetchlaunchpermissions.enabled",
-    OPEN_IN_NEW_TAB : "ec2ui.usenewtab.enabled",
-    EC2_URL : "ec2ui.url",
-    EC2_KEYHOME: "ec2ui.keyhome",
-    CURRENT_TAB : "ec2ui.current.tab",
-    REQUEST_TIMEOUT : "ec2ui.timeout.request",
-    KNOWN_ACCOUNT_IDS : "ec2ui.known.account.ids",
-    LAST_EC2_PKEY_FILE : "ec2ui.last.ec2privatekey.file",
-    ENDPOINTS : "ec2ui.endpoints",
-    IMAGE_TAGS : "ec2ui.imagetags",
-    EIP_TAGS : "ec2ui.eiptags",
-    INSTANCE_TAGS : "ec2ui.instancetags",
-    VOLUME_TAGS : "ec2ui.volumetags",
-    SNAPSHOT_TAGS : "ec2ui.snapshotTags",
-    VPC_TAGS : "ec2ui.vpcTags",
-    SUBNET_TAGS : "ec2ui.subnetTags",
-    VGW_TAGS : "ec2ui.vgwTags",
-    VPN_TAGS : "ec2ui.vpnTags",
-    CGW_TAGS : "ec2ui.cgwTags",
-    DHCP_OPTIONS_TAGS : "ec2ui.dhcpOptionsTags",
-    CONCURRENT_S3_CONN : "ec2ui.concurrent.S3.conns",
-    PROMPT_OPEN_PORT : "ec2ui.prompt.open.port",
-    OPEN_CONNECTION_PORT : "ec2ui.open.connection.port",
-    OPENSSL_COMMAND : "ec2ui.tools.openssl.command",
-    SHELL_COMMAND : "ec2ui.tools.shell.command",
-    AMI_FAVORITES: "ec2ui.ami.favorites",
-    EC2_TOOLS_PATH: "ec2ui.tools.path.ec2_home",
-    IAM_TOOLS_PATH: "ec2ui.tools.path.aws_iam_home",
-    AMI_TOOLS_PATH: "ec2ui.tools.path.ec2_amitool_home",
-    AWS_AUTOSCALING_TOOLS_PATH: "ec2ui.tools.path.aws_auto_scaling_home",
-    CLOUDWATCH_TOOLS_PATH: "ec2ui.tools.path.aws_cloudwatch_home",
-    JAVA_TOOLS_PATH: "ec2ui.tools.path.java_home",
-    S3_PROTO: "ec2ui.s3.proto",
+var ew_prefs = {
+    ACTIVE_USER_NAME : "ew.active.credentials.name",
+    ACTIVE_ENDPOINT : "ew.active.endpoint",
+    RDP_COMMAND : "ew.tools.rdp.command",
+    RDP_ARGS : "ew.tools.rdp.args",
+    SSH_COMMAND : "ew.tools.ssh.command",
+    SSH_ARGS : "ew.tools.ssh.args",
+    SSH_USER : "ew.tools.ssh.user",
+    HTTP_ENABLED : "ew.http.enabled",
+    DEBUG_ENABLED : "ew.debugging.enabled",
+    OFFLINE : "ew.offline.enabled",
+    QUERY_ON_START : "ew.queryonstart.enabled",
+    REFRESH_ON_CHANGE : "ew.refreshonchange.enabled",
+    REFRESH_BUNDLE_VIEW : "ew.refreshBundleView.enabled",
+    AUTOFETCH_LP : "ew.autofetchlaunchpermissions.enabled",
+    OPEN_IN_NEW_TAB : "ew.usenewtab.enabled",
+    EW_URL : "ew.url",
+    EW_KEYHOME: "ew.keyhome",
+    CURRENT_TAB : "ew.current.tab",
+    REQUEST_TIMEOUT : "ew.timeout.request",
+    KNOWN_ACCOUNT_IDS : "ew.known.account.ids",
+    LAST_EW_PKEY_FILE : "ew.last.ec2privatekey.file",
+    ENDPOINTS : "ew.endpoints",
+    IMAGE_TAGS : "ew.imagetags",
+    EIP_TAGS : "ew.eiptags",
+    INSTANCE_TAGS : "ew.instancetags",
+    VOLUME_TAGS : "ew.volumetags",
+    SNAPSHOT_TAGS : "ew.snapshotTags",
+    VPC_TAGS : "ew.vpcTags",
+    SUBNET_TAGS : "ew.subnetTags",
+    VGW_TAGS : "ew.vgwTags",
+    VPN_TAGS : "ew.vpnTags",
+    CGW_TAGS : "ew.cgwTags",
+    DHCP_OPTIONS_TAGS : "ew.dhcpOptionsTags",
+    CONCURRENT_S3_CONN : "ew.concurrent.S3.conns",
+    PROMPT_OPEN_PORT : "ew.prompt.open.port",
+    OPEN_CONNECTION_PORT : "ew.open.connection.port",
+    OPENSSL_COMMAND : "ew.tools.openssl.command",
+    SHELL_COMMAND : "ew.tools.shell.command",
+    AMI_FAVORITES: "ew.ami.favorites",
+    EC2_TOOLS_PATH: "ew.tools.path.ec2_home",
+    IAM_TOOLS_PATH: "ew.tools.path.aws_iam_home",
+    AMI_TOOLS_PATH: "ew.tools.path.ec2_amitool_home",
+    AWS_AUTOSCALING_TOOLS_PATH: "ew.tools.path.aws_auto_scaling_home",
+    CLOUDWATCH_TOOLS_PATH: "ew.tools.path.aws_cloudwatch_home",
+    JAVA_TOOLS_PATH: "ew.tools.path.java_home",
+    S3_PROTO: "ew.s3.proto",
     endpoints : null,
 
     prefs : null,
@@ -215,6 +216,7 @@ var ec2ui_prefs = {
             this.setServiceURL(this.getServiceURL());
             this.setCurrentTab(this.getCurrentTab());
             this.setDebugEnabled(this.isDebugEnabled());
+            this.setHttpEnabled(this.isHttpEnabled());
             this.setOfflineEnabled(this.isOfflineEnabled());
             this.setOpenInNewTabEnabled(this.isOpenInNewTabEnabled());
             this.setAutoFetchLaunchPermissionsEnabled(this.isAutoFetchLaunchPermissionsEnabled());
@@ -279,7 +281,7 @@ var ec2ui_prefs = {
     },
     setServiceURL : function(value)
     {
-        this.setStringPreference(this.EC2_URL, value);
+        this.setStringPreference(this.EW_URL, value);
     },
     setCurrentTab : function(value)
     {
@@ -288,6 +290,10 @@ var ec2ui_prefs = {
     setDebugEnabled : function(enabled)
     {
         this.setBoolPreference(this.DEBUG_ENABLED, enabled);
+    },
+    setHttpEnabled : function(enabled)
+    {
+        this.setBoolPreference(this.HTTP_ENABLED, enabled);
     },
     setOfflineEnabled : function(enabled)
     {
@@ -335,7 +341,7 @@ var ec2ui_prefs = {
     },
     setKeyHome : function(value)
     {
-        this.setStringPreference(this.EC2_KEYHOME, value);
+        this.setStringPreference(this.EW_KEYHOME, value);
     },
     getDirSeparator : function()
     {
@@ -343,7 +349,7 @@ var ec2ui_prefs = {
     },
     getAppName : function()
     {
-        return ec2ui_client.getAppName();
+        return ew_client.getAppName();
     },
     getAppPath : function()
     {
@@ -351,7 +357,7 @@ var ec2ui_prefs = {
     },
     getKeyHome : function()
     {
-        return this.getStringPreference(this.EC2_KEYHOME, this.getHome() + this.getDirSeparator() + this.getAppName());
+        return this.getStringPreference(this.EW_KEYHOME, this.getHome() + this.getDirSeparator() + this.getAppName());
     },
     getUserHome : function()
     {
@@ -391,7 +397,7 @@ var ec2ui_prefs = {
     },
     getServiceURL : function()
     {
-        return this.getStringPreference(this.EC2_URL, "https://ec2.us-east-1.amazonaws.com");
+        return this.getStringPreference(this.EW_URL, "https://ec2.us-east-1.amazonaws.com");
     },
     getCurrentTab : function()
     {
@@ -404,6 +410,10 @@ var ec2ui_prefs = {
     isDebugEnabled : function()
     {
         return this.getBoolPreference(this.DEBUG_ENABLED, false);
+    },
+    isHttpEnabled : function()
+    {
+        return this.getBoolPreference(this.HTTP_ENABLED, true);
     },
     isOfflineEnabled : function()
     {
@@ -621,17 +631,17 @@ var ec2ui_prefs = {
     {
         var idx = args.indexOf('#!');
         if (idx == -1) {
-            return ec2ui_prefs.getTemplateProcessed(args, params);
+            return ew_prefs.getTemplateProcessed(args, params);
         }
 
         // Batch file
         if (!this.makeKeyHome()) return null
 
         var batch = args.substr(idx + 2).replace(/\#\!/g, "\r\n") + "\r\n";
-        batch = ec2ui_prefs.getTemplateProcessed(batch, params);
+        batch = ew_prefs.getTemplateProcessed(batch, params);
 
         var file = this.getKeyHome() + DirIO.sep + filename + (isWindows(navigator.platform) ? ".bat" : ".sh");
-        args = ec2ui_prefs.getTemplateProcessed(args.substr(0, idx) + " " + quotepath(file), params);
+        args = ew_prefs.getTemplateProcessed(args.substr(0, idx) + " " + quotepath(file), params);
 
         var fd = FileIO.open(file);
         FileIO.write(fd, batch);
@@ -662,12 +672,12 @@ var ec2ui_prefs = {
 
     getEC2PKeyForUser : function(user)
     {
-        return this.getStringPreference(this.LAST_EC2_PKEY_FILE + "." + user + "." + this.getLastUsedEndpoint(), "");
+        return this.getStringPreference(this.LAST_EW_PKEY_FILE + "." + user + "." + this.getLastUsedEndpoint(), "");
     },
 
     setEC2PKeyForUser : function(value, user)
     {
-        this.setStringPreference(this.LAST_EC2_PKEY_FILE + "." + user + "." + this.getLastUsedEndpoint(), value);
+        this.setStringPreference(this.LAST_EW_PKEY_FILE + "." + user + "." + this.getLastUsedEndpoint(), value);
     },
 
     getHome : function()
@@ -726,7 +736,7 @@ var ec2ui_prefs = {
             log("Endpoints callback");
             me.endpoints = regionMap;
         }
-        ec2ui_session.controller.describeRegions(wrap);
+        ew_session.controller.describeRegions(wrap);
     },
 
     // These ones manage a pseudo-complex pref. This preference is a JSON

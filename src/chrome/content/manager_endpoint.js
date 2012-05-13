@@ -1,16 +1,18 @@
-var ec2ui_endpointManager = {
+var ew_endpointManager = {
+    session: null,
     endpointmap : null,
 
     initDialog : function() {
-        this.endpointmap = window.arguments[0];
+        this.session = window.arguments[0];
+        this.endpointmap = this.session.endpointmap;
 
-        document.getElementById("ec2ui.endpoints.view").view = ec2ui_endpointsTreeView;
-        ec2ui_endpointsTreeView.setMapping(this.endpointmap);
+        document.getElementById("ew.endpoints.view").view = ew_endpointsTreeView;
+        ew_endpointsTreeView.setMapping(this.endpointmap);
 
-        var lastEndpointName = ec2ui_prefs.getLastUsedEndpoint();
+        var lastEndpointName = ew_prefs.getLastUsedEndpoint();
         if (lastEndpointName != null) {
             var index = this.indexOfEndpointName(lastEndpointName);
-            ec2ui_endpointsTreeView.selectEndpointName(index);
+            ew_endpointsTreeView.selectEndpointName(index);
         }
     },
 
@@ -25,31 +27,37 @@ var ec2ui_endpointManager = {
         return -1;
     },
 
+    switchEndpoint : function() {
+        var name = document.getElementById("ew.endpoints.name").value;
+        if (name == null || name == "") return;
+        this.session.switchEndpoints(name);
+    },
+
     removeEndpoint : function() {
-        var name = document.getElementById("ec2ui.endpoints.name").value;
+        var name = document.getElementById("ew.endpoints.name").value;
         if (name == null || name == "") return;
 
         this.endpointmap.removeKey(name);
-        ec2ui_endpointsTreeView.setMapping(this.endpointmap);
+        ew_endpointsTreeView.setMapping(this.endpointmap);
     },
 
     addEndpoint: function(name, url) {
         this.endpointmap.put(name, new Endpoint(name, url));
-        ec2ui_endpointsTreeView.setMapping(this.endpointmap);
+        ew_endpointsTreeView.setMapping(this.endpointmap);
     },
-    
+
     saveEndpoint : function() {
-        var name = document.getElementById("ec2ui.endpoints.name").value.trim() || "";
-        var url = document.getElementById("ec2ui.endpoints.url").value.trim() || "";
+        var name = document.getElementById("ew.endpoints.name").value.trim() || "";
+        var url = document.getElementById("ew.endpoints.url").value.trim() || "";
         if (name.length == 0 || url.length == 0) return;
         this.addEndpoint(name, url);
     },
 
     selectMapping : function() {
-        var sel = ec2ui_endpointsTreeView.getSelectedEndPoint();
+        var sel = ew_endpointsTreeView.getSelectedEndPoint();
         if (sel != null) {
-            document.getElementById("ec2ui.endpoints.name").value = sel.name;
-            document.getElementById("ec2ui.endpoints.url").value = sel.url;
+            document.getElementById("ew.endpoints.name").value = sel.name;
+            document.getElementById("ew.endpoints.url").value = sel.url;
         }
     }
 }

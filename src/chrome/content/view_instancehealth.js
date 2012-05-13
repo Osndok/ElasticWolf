@@ -1,4 +1,4 @@
-var ec2ui_InstanceHealthTreeView = {
+var ew_InstanceHealthTreeView = {
     COLNAMES : ['InstanceHealth.Description','InstanceHealth.State','InstanceHealth.InstanceId','InstanceHealth.ReasonCode'],
     treeBox : null,
     selection : null,
@@ -45,16 +45,16 @@ var ec2ui_InstanceHealthTreeView = {
     register: function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'InstanceHealth');
+            ew_model.registerInterest(this, 'InstanceHealth');
         }
     },
 
     invalidate: function() {
-        this.displayInstanceHealth(ec2ui_session.model.InstanceHealth);
+        this.displayInstanceHealth(ew_session.model.InstanceHealth);
     },
 
     refresh: function() {
-        ec2ui_session.controller.describeInstanceHealth();
+        ew_session.controller.describeInstanceHealth();
     },
 
     notifyModelChanged: function(interest) {
@@ -75,4 +75,4 @@ var ec2ui_InstanceHealthTreeView = {
     }
 };
 
-ec2ui_InstanceHealthTreeView.register();
+ew_InstanceHealthTreeView.register();

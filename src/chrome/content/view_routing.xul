@@ -1,32 +1,32 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://ec2ui/skin/ec2ui.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<?xml-stylesheet href="chrome://ew/skin/ew.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabpanel id="routing_tab" flex="1">
     <vbox flex="1">
-        <label control="ec2ui.routing.vpcid" value="Filter by VPC:" />
-        <menulist id="ec2ui.routing.vpcid" oncommand="ec2ui_RouteTablesTreeView.vpcIdSelected();"/>
+        <label control="ew.routing.vpcid" value="Filter by VPC:" />
+        <menulist id="ew.routing.vpcid" oncommand="ew_RouteTablesTreeView.vpcIdSelected();"/>
 
             <groupbox flex="1" orient="vertical">
-                <caption label="&ec2ui.captions.internetgateways.label;" />
+                <caption label="&ew.captions.internetgateways.label;" />
                 <popupset>
-                    <menupopup id="ec2ui.internetgateways.contextmenu">
-                        <menuitem oncommand="ec2ui_InternetGatewayTreeView.createInternetGateway();" label="&ec2ui.internetgateways.add.tip;" />
-                        <menuitem oncommand="ec2ui_InternetGatewayTreeView.deleteInternetGateway();" label="&ec2ui.internetgateways.remove.tip;" />
-                        <menuitem oncommand="ec2ui_InternetGatewayTreeView.attachInternetGateway();" label="&ec2ui.internetgateways.attach.tip;" />
-                        <menuitem oncommand="ec2ui_InternetGatewayTreeView.detachInternetGateway();" label="&ec2ui.internetgateways.detach.tip;" />
+                    <menupopup id="ew.internetgateways.contextmenu">
+                        <menuitem oncommand="ew_InternetGatewayTreeView.createInternetGateway();" label="&ew.internetgateways.add.tip;" />
+                        <menuitem oncommand="ew_InternetGatewayTreeView.deleteInternetGateway();" label="&ew.internetgateways.remove.tip;" />
+                        <menuitem oncommand="ew_InternetGatewayTreeView.attachInternetGateway();" label="&ew.internetgateways.attach.tip;" />
+                        <menuitem oncommand="ew_InternetGatewayTreeView.detachInternetGateway();" label="&ew.internetgateways.detach.tip;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
-                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.createInternetGateway();" tooltiptext="&ec2ui.internetgateways.add.tip;" />
-                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.deleteInternetGateway();" tooltiptext="&ec2ui.internetgateways.remove.tip;" />
-                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.attachInternetGateway();" tooltiptext="&ec2ui.internetgateways.attach.tip;" />
-                    <toolbarbutton image="images/stop.png" style="-moz-box-pack:center;" oncommand="ec2ui_InternetGatewayTreeView.detachInternetGateway();" tooltiptext="&ec2ui.internetgateways.detach.tip;" />
+                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
+                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.createInternetGateway();" tooltiptext="&ew.internetgateways.add.tip;" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.deleteInternetGateway();" tooltiptext="&ew.internetgateways.remove.tip;" />
+                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.attachInternetGateway();" tooltiptext="&ew.internetgateways.attach.tip;" />
+                    <toolbarbutton image="images/stop.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.detachInternetGateway();" tooltiptext="&ew.internetgateways.detach.tip;" />
                 </toolbar>
-                <tree id="ec2ui.internetgateways.view" seltype="single" enableColumnDrag="true" flex="1">
+                <tree id="ew.internetgateways.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="igw.id" label="ID" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -34,7 +34,7 @@
                         <splitter class="tree-splitter" />
                         <treecol id="igw.tags" label="Tags" flex="1" persist="width ordinal hidden sortDirection" />
                     </treecols>
-                    <treechildren context="ec2ui.internetgateways.contextmenu" />
+                    <treechildren context="ew.internetgateways.contextmenu" />
                 </tree>
             </groupbox>
 
@@ -44,35 +44,35 @@
 
             <hbox flex="2">
             <groupbox orient="vertical" flex="1">
-                <caption label="&ec2ui.captions.routetables.label;" />
+                <caption label="&ew.captions.routetables.label;" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox flex="10">
-                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_RouteTablesTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
-                        <toolbarbutton image="images/add.png" tooltiptext="&ec2ui.routetable.create.tip;" oncommand="ec2ui_RouteTablesTreeView.createTable();" />
-                        <toolbarbutton image="images/delete.png" tooltiptext="&ec2ui.routetable.delete.tip;" oncommand="ec2ui_RouteTablesTreeView.deleteSelected();" />
+                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_RouteTablesTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
+                        <toolbarbutton image="images/add.png" tooltiptext="&ew.routetable.create.tip;" oncommand="ew_RouteTablesTreeView.createTable();" />
+                        <toolbarbutton image="images/delete.png" tooltiptext="&ew.routetable.delete.tip;" oncommand="ew_RouteTablesTreeView.deleteSelected();" />
                     </hbox>
                 </toolbar>
-                <tree id="ec2ui.routetables.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_RouteTablesTreeView.selectionChanged(event);" flex="1">
+                <tree id="ew.routetables.view" seltype="single" enableColumnDrag="true" onselect="ew_RouteTablesTreeView.selectionChanged(event);" flex="1">
                     <treecols>
                         <treecol id="routeTable.id" label="ID" flex="2" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="routeTable.vpcId" label="VPC" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                     </treecols>
-                    <treechildren context="ec2ui.routetables.contextmenu" />
+                    <treechildren context="ew.routetables.contextmenu" />
                 </tree>
             </groupbox>
 
             <vbox flex="1">
             <groupbox orient="vertical" flex="1">
-                <caption label="&ec2ui.captions.routes.label;" />
+                <caption label="&ew.captions.routes.label;" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox>
-                        <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_RoutesTreeView.createRoute();" tooltiptext="&ec2ui.routes.create.tip;" />
-                        <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_RoutesTreeView.deleteRoute();" tooltiptext="&ec2ui.routes.delete.tip;" />
+                        <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_RoutesTreeView.createRoute();" tooltiptext="&ew.routes.create.tip;" />
+                        <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_RoutesTreeView.deleteRoute();" tooltiptext="&ew.routes.delete.tip;" />
                     </hbox>
                 </toolbar>
-                <tree id="ec2ui.routes.view" enableColumnDrag="true" flex="1">
+                <tree id="ew.routes.view" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="route.cidr" label="CIDR" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -85,14 +85,14 @@
             </groupbox>
 
             <groupbox orient="vertical" flex="1">
-                <caption label="&ec2ui.captions.route.associations.label;" />
+                <caption label="&ew.captions.route.associations.label;" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox>
-                        <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ec2ui_RouteAssociationsTreeView.createAssociation();" tooltiptext="&ec2ui.route.associations.create.tip;" />
-                        <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ec2ui_RouteAssociationsTreeView.deleteAssociation();" tooltiptext="&ec2ui.route.associations.delete.tip;" />
+                        <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_RouteAssociationsTreeView.createAssociation();" tooltiptext="&ew.route.associations.create.tip;" />
+                        <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_RouteAssociationsTreeView.deleteAssociation();" tooltiptext="&ew.route.associations.delete.tip;" />
                     </hbox>
                 </toolbar>
-                <tree id="ec2ui.route.associations.view" enableColumnDrag="true" flex="1">
+                <tree id="ew.route.associations.view" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="assoc.id" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

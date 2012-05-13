@@ -1,35 +1,35 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.createvpngateway"
+<dialog id="ew.dialog.createvpngateway"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
     ondialogaccept="return createVpnGateway();" ondialogcancel="return true;" onload="init();"
     title="Create a new VPN Gateway" buttonlabelaccept="Create VPN Gateway">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
     <script>
     function createVpnGateway() {
-        this.retVal.type = document.getElementById("ec2ui.newvpngateway.type").value.trim();
-        this.retVal.az = document.getElementById("ec2ui.newvpngateway.az").value.trim();
+        this.retVal.type = document.getElementById("ew.newvpngateway.type").value.trim();
+        this.retVal.az = document.getElementById("ew.newvpngateway.az").value.trim();
         this.retVal.ok = true;
         return true;
     }
 
     function init() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         this.retVal = window.arguments[1];
 
-        var availZoneMenu = document.getElementById("ec2ui.newvpngateway.az");
+        var availZoneMenu = document.getElementById("ew.newvpngateway.az");
         availZoneMenu.appendItem("&lt;any&gt;", null);
-        var availZones = this.ec2ui_session.model.getAvailabilityZones();
+        var availZones = this.ew_session.model.getAvailabilityZones();
         for (var i in availZones) {
             availZoneMenu.appendItem(availZones[i].name + " (" + availZones[i].state + ")", availZones[i].name);
         }
         availZoneMenu.selectedIndex = 0;
 
-        var type = document.getElementById("ec2ui.newvpngateway.type");
+        var type = document.getElementById("ew.newvpngateway.type");
         type.value = "ipsec.1";
     }
     </script>
@@ -43,19 +43,19 @@
             <rows>
                 <!-- Type -->
                 <row>
-                    <label control="ec2ui.newvpngateway.type"
+                    <label control="ew.newvpngateway.type"
                            value="Type: "/>
-                    <hbox><textbox id="ec2ui.newvpngateway.type" size="20"
+                    <hbox><textbox id="ew.newvpngateway.type" size="20"
                                    value=""/>
                     </hbox>
                 </row>
 
                 <!-- Availability Zone -->
                 <row>
-                    <label control="ec2ui.newvpngateway.az"
+                    <label control="ew.newvpngateway.az"
                         value="Availability Zone: "/>
                     <hbox>
-                        <menulist id="ec2ui.newvpngateway.az"/>
+                        <menulist id="ew.newvpngateway.az"/>
                     </hbox>
                 </row>
             </rows>

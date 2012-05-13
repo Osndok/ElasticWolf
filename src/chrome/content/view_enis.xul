@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://ec2ui/skin/ec2ui.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<?xml-stylesheet href="chrome://ew/skin/ew.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabpanel id="enis_tab" flex="1">
@@ -9,19 +9,19 @@
             <groupbox flex="1" orient="vertical">
                 <caption label="Elastic Network Interfaces" />
                 <popupset>
-                    <menupopup id="ec2ui.enis.contextmenu">
-                        <menuitem oncommand="ec2ui_NetworkInterfacesTreeView.createInterface();" label="Create ENI" />
-                        <menuitem oncommand="ec2ui_NetworkInterfacesTreeView.deleteInterface();" label="Delete ENI" />
-                        <menuitem oncommand="ec2ui_NetworkInterfacesTreeView.attacheInterface();" label="Attach to instance" />
+                    <menupopup id="ew.enis.contextmenu">
+                        <menuitem oncommand="ew_NetworkInterfacesTreeView.createInterface();" label="Create ENI" />
+                        <menuitem oncommand="ew_NetworkInterfacesTreeView.deleteInterface();" label="Delete ENI" />
+                        <menuitem oncommand="ew_NetworkInterfacesTreeView.attacheInterface();" label="Attach to instance" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_NetworkInterfacesTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
-                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkInterfacesTreeView.createInterface();" tooltiptext="Create ENI" />
-                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkInterfacesTreeView.deleteInterface();" tooltiptext="Delete ENI" />
-                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkInterfacesTreeViewa.attachInterface();" tooltiptext="Attach to instance" />
+                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
+                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.createInterface();" tooltiptext="Create ENI" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.deleteInterface();" tooltiptext="Delete ENI" />
+                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeViewa.attachInterface();" tooltiptext="Attach to instance" />
                 </toolbar>
-                <tree id="ec2ui.enis.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_NetworkInterfacesTreeView.selectionChanged(event);" flex="1">
+                <tree id="ew.enis.view" seltype="single" enableColumnDrag="true" onselect="ew_NetworkInterfacesTreeView.selectionChanged(event);" flex="1">
                     <treecols>
                         <treecol id="eni.id" label="ID" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -39,7 +39,7 @@
                         <splitter class="tree-splitter" />
                         <treecol id="eni.sourceDestCheck" label="IP" flex="2" persist="width ordinal hidden sortDirection" />
                     </treecols>
-                    <treechildren context="ec2ui.enis.contextmenu" />
+                    <treechildren context="ew.enis.contextmenu" />
                 </tree>
             </groupbox>
 
@@ -54,7 +54,7 @@
                     <hbox>
                     </hbox>
                 </toolbar>
-                <tree id="ec2ui.enis.attachments.view" enableColumnDrag="true" flex="1">
+                <tree id="ew.enis.attachments.view" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="att.id" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

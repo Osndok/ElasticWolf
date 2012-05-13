@@ -1,4 +1,4 @@
-var ec2ui_S3Acl = {
+var ew_S3Acl = {
     list: [],
     treeBox : null,
     selection : null,
@@ -70,8 +70,8 @@ var ec2ui_S3Acl = {
         this.retVal = window.arguments[1];
         this.item = window.arguments[2];
 
-        document.getElementById("ec2ui.path").value = (this.item.bucket || "") + "/" + this.item.name;
-        document.getElementById("ec2ui.tree").view = this
+        document.getElementById("ew.path").value = (this.item.bucket || "") + "/" + this.item.name;
+        document.getElementById("ew.tree").view = this
 
         this.list.push({ id: "http://acs.amazonaws.com/groups/global/AllUsers", name: "Everyone", type: "Group", read: false, write: false, read_acp: false, write_acp: false, full_control: false } );
         this.list.push({ id: "http://acs.amazonaws.com/groups/global/AuthenticatedUsers", name: "Authenticated", type: "Group",  read: false, write: false, read_acp: false, write_acp: false, full_control: false } );

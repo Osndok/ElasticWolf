@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.bundleTask.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+<dialog id="ew.dialog.bundleTask.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept" ondialogaccept="return true;" onload="init();" title="Bundle Task Details">
 
   <script type="application/x-javascript">
    function init() {
       var task = window.arguments[0];
-      document.getElementById("ec2ui.bundleTask.id").value = task.id;
-      document.getElementById("ec2ui.bundleTask.state").value = task.state;
-      document.getElementById("ec2ui.bundleTask.startTime").value = task.startTime;
-      document.getElementById("ec2ui.bundleTask.updateTime").value = task.updateTime;
-      document.getElementById("ec2ui.bundleTask.s3bucket").value = task.s3bucket;
-      document.getElementById("ec2ui.bundleTask.s3prefix").value = task.s3prefix;
-      document.getElementById("ec2ui.bundleTask.errorMsg").value = task.errorMsg;
-      document.getElementById("ec2ui.bundleTask.instanceId").value = task.instanceId;
+      document.getElementById("ew.bundleTask.id").value = task.id;
+      document.getElementById("ew.bundleTask.state").value = task.state;
+      document.getElementById("ew.bundleTask.startTime").value = task.startTime;
+      document.getElementById("ew.bundleTask.updateTime").value = task.updateTime;
+      document.getElementById("ew.bundleTask.s3bucket").value = task.s3bucket;
+      document.getElementById("ew.bundleTask.s3prefix").value = task.s3prefix;
+      document.getElementById("ew.bundleTask.errorMsg").value = task.errorMsg;
+      document.getElementById("ew.bundleTask.instanceId").value = task.instanceId;
    }
   </script>
-  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
 
   <vbox flex="1">
     <grid flex="1">
@@ -29,36 +29,36 @@
       </columns>
       <rows>
         <row>
-          <label control="ec2ui.bundleTask.id" value="Bundle ID:" />
-          <textbox id="ec2ui.bundleTask.id" size="50" readonly="true" />
+          <label control="ew.bundleTask.id" value="Bundle ID:" />
+          <textbox id="ew.bundleTask.id" size="50" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.bundleTask.instanceId" value="Instance ID:" />
-          <textbox id="ec2ui.bundleTask.instanceId" size="50" readonly="true" />
+          <label control="ew.bundleTask.instanceId" value="Instance ID:" />
+          <textbox id="ew.bundleTask.instanceId" size="50" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.bundleTask.state" value="State:" />
-          <textbox id="ec2ui.bundleTask.state" size="50" readonly="true" />
+          <label control="ew.bundleTask.state" value="State:" />
+          <textbox id="ew.bundleTask.state" size="50" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.bundleTask.startTime" value="Start Time:" />
-          <textbox id="ec2ui.bundleTask.startTime" size="50" readonly="true" />
+          <label control="ew.bundleTask.startTime" value="Start Time:" />
+          <textbox id="ew.bundleTask.startTime" size="50" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.bundleTask.updateTime" value="Update Time:" />
-          <textbox id="ec2ui.bundleTask.updateTime" size="50" readonly="true" />
+          <label control="ew.bundleTask.updateTime" value="Update Time:" />
+          <textbox id="ew.bundleTask.updateTime" size="50" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.bundleTask.s3bucket" value="S3 Bucket:" />
-          <textbox id="ec2ui.bundleTask.s3bucket" size="50" readonly="true" />
+          <label control="ew.bundleTask.s3bucket" value="S3 Bucket:" />
+          <textbox id="ew.bundleTask.s3bucket" size="50" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.bundleTask.s3prefix" value="S3 Prefix:" />
-          <textbox id="ec2ui.bundleTask.s3prefix" size="50" readonly="true" />
+          <label control="ew.bundleTask.s3prefix" value="S3 Prefix:" />
+          <textbox id="ew.bundleTask.s3prefix" size="50" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.bundleTask.errorMsg" value="Error Message:" />
-          <textbox id="ec2ui.bundleTask.errorMsg" size="50" readonly="true" />
+          <label control="ew.bundleTask.errorMsg" value="Error Message:" />
+          <textbox id="ew.bundleTask.errorMsg" size="50" readonly="true" />
         </row>
       </rows>
     </grid>

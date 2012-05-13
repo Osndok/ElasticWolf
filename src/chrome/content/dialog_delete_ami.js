@@ -1,20 +1,20 @@
-var ec2ui_AMIDeleter = {
+var ew_AMIDeleter = {
     session : null,
     imageLoc : null,
 
     getProgressMeter : function() {
         if (document)
-            return document.getElementById("ec2ui.delete.ami.progress");
+            return document.getElementById("ew.delete.ami.progress");
     },
 
     getCurrentOperation : function() {
         if (document)
-            return document.getElementById("ec2ui.delete.ami.current");
+            return document.getElementById("ew.delete.ami.current");
     },
 
     getCurrentDialog : function() {
         if (document)
-            return document.getElementById("ec2ui.dialog.delete.ami");
+            return document.getElementById("ew.dialog.delete.ami");
     },
 
     indicateBusy : function(fShow) {

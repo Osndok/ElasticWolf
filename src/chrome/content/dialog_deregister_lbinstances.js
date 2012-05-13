@@ -1,9 +1,9 @@
-var ec2ui_DeregisterInstances = {
-    ec2ui_session : null,
+var ew_DeregisterInstances = {
+    ew_session : null,
     retVal : null,
     loadbalancer : null,
     launch : function() {
-        this.retVal.LoadBalancerName = document.getElementById("ec2ui.deregisterlb.LoadBalancerName").value.trim();
+        this.retVal.LoadBalancerName = document.getElementById("ew.deregisterlb.LoadBalancerName").value.trim();
 	var listBox = document.getElementById('Deregister_Instances');
 	var idx = 0;
 	var nRowCount = listBox.getRowCount();
@@ -29,18 +29,18 @@ var ec2ui_DeregisterInstances = {
         return true;
     },
     init : function() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         this.retVal = window.arguments[1];
 	this.loadbalancer = window.arguments[2];
 	var loadbalancer = window.arguments[2];
 	var loadbalancername = loadbalancer.LoadBalancerName;
 	var registerdinstance = loadbalancer.InstanceId;
 
-	document.getElementById("ec2ui.deregisterlb.LoadBalancerName").value = loadbalancer.LoadBalancerName;
+	document.getElementById("ew.deregisterlb.LoadBalancerName").value = loadbalancer.LoadBalancerName;
 	var configureInstances = document.getElementById('Deregister_Instances');
         
         var Idx = 0;
-	var Instancedetails = this.ec2ui_session.model.getInstances();
+	var Instancedetails = this.ew_session.model.getInstances();
         
 	var registerid = new Array();
 	
@@ -118,7 +118,7 @@ var ec2ui_DeregisterInstances = {
           cell.removeAttribute('checked');
       }else{
           cell.setAttribute('checked','true');
-          this.ec2ui_session.modal.getInstances();
+          this.ew_session.modal.getInstances();
       }	
   }
  

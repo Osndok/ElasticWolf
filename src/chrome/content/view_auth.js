@@ -1,20 +1,20 @@
-var ec2ui_KeypairTreeView = {
+var ew_KeypairTreeView = {
     COLNAMES : ['keypair.name','keypair.fingerprint'],
     model: "keypairs",
 
     viewDetails : function(event) {
         var keypair = this.getSelected();
         if (keypair == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_keypair_details.xul", null, "chrome,centerscreen,modal,resizable", keypair);
+        window.openDialog("chrome://ew/content/dialog_keypair_details.xul", null, "chrome,centerscreen,modal,resizable", keypair);
     },
 
     runShell: function() {
         var keypair = this.getSelected();
-        ec2ui_session.launchShell(keypair ? keypair.name: null);
+        ew_session.launchShell(keypair ? keypair.name: null);
     },
 
     createKeypair : function () {
-        if (ec2ui_client.isGovCloud()) {
+        if (ew_client.isGovCloud()) {
             alert("This function is disabled in GovCloud mode")
             return
         }
@@ -24,13 +24,13 @@ var ec2ui_KeypairTreeView = {
         var me = this;
         var wrap = function(name, key) {
             // Save key in the file
-            var file = ec2ui_prefs.getPrivateKeyFile(name)
+            var file = ew_prefs.getPrivateKeyFile(name)
             var fp = FileIO.open(file)
             FileIO.write(fp, key + "\n\n", "");
             me.refresh();
             me.select({name: name});
         }
-        ec2ui_session.controller.createKeypair(name, wrap);
+        ew_session.controller.createKeypair(name, wrap);
     },
 
     importKeypair : function () {
@@ -43,13 +43,13 @@ var ec2ui_KeypairTreeView = {
             me.select({name: name});
         }
         // Create new private key file using openssl and return key value
-        var file = ec2ui_session.promptForFile("Select the public key file to upload:")
+        var file = ew_session.promptForFile("Select the public key file to upload:")
         if (file) {
             var body = readPublicKey(file)
             if (body == '') {
                 return alert('Unable to read public key file ' + file);
             }
-            ec2ui_session.controller.importKeypair(name, body, wrap);
+            ew_session.controller.importKeypair(name, body, wrap);
         }
     },
 
@@ -59,28 +59,28 @@ var ec2ui_KeypairTreeView = {
         name = name.trim();
         var me = this;
 
-        var file = ec2ui_session.promptForDir("Choose where to store keys and certificate or Cancel to use " + ec2ui_prefs.getKeyHome(), true)
+        var file = ew_session.promptForDir("Choose where to store keys and certificate or Cancel to use " + ew_prefs.getKeyHome(), true)
         if (file) {
-            ec2ui_prefs.setKeyHome(file);
+            ew_prefs.setKeyHome(file);
         }
-        ec2ui_session.showBusyCursor(true);
+        ew_session.showBusyCursor(true);
 
         // Create new certificate file using openssl and return cert value
-        var body = ec2ui_session.generateCertificate(name);
+        var body = ew_session.generateCertificate(name);
         if (!body) {
             return alert("Could not create certificate and key pair files");
         }
 
         // Delay to avoid "not valid yet" error due to clock drift
-        setTimeout(function() { ec2ui_session.controller.UploadSigningCertificate(body, function() {ec2ui_CertTreeView.refresh();alert("Certificate is uploaded sucessfully")}); }, 30000);
+        setTimeout(function() { ew_session.controller.UploadSigningCertificate(body, function() {ew_CertTreeView.refresh();alert("Certificate is uploaded sucessfully")}); }, 30000);
 
         // Import new public key as new keypair
-        var file = ec2ui_prefs.getPublicKeyFile(name);
+        var file = ew_prefs.getPublicKeyFile(name);
         var pubkey = readPublicKey(file);
         if (pubkey == '') {
             return alert('Unable to read public key file ' + file);
         }
-        ec2ui_session.controller.importKeypair(name, pubkey, function() {me.refresh();});
+        ew_session.controller.importKeypair(name, pubkey, function() {me.refresh();});
     },
 
     deleteSelected  : function () {
@@ -88,14 +88,14 @@ var ec2ui_KeypairTreeView = {
         if (keypair == null) return;
         if (!confirm("Delete key pair "+keypair.name+"?")) return;
         var me = this;
-        ec2ui_session.controller.deleteKeypair(keypair.name, function() {me.refresh();});
+        ew_session.controller.deleteKeypair(keypair.name, function() {me.refresh();});
     }
 };
 
-ec2ui_KeypairTreeView.__proto__ = TreeView;
-ec2ui_KeypairTreeView.register();
+ew_KeypairTreeView.__proto__ = TreeView;
+ew_KeypairTreeView.register();
 
-var ec2ui_AccessKeyTreeView = {
+var ew_AccessKeyTreeView = {
         COLNAMES : ['accesskey.name',"accesskey.status", "accesskey.current"],
         model: "accesskeys",
 
@@ -103,22 +103,22 @@ var ec2ui_AccessKeyTreeView = {
             var key = this.getSelected();
             if (key == null) return;
             key.secret = this.getAccessKeySecret(key.name)
-            window.openDialog("chrome://ec2ui/content/dialog_accesskey_details.xul", null, "chrome,centerscreen,modal,resizable", key);
+            window.openDialog("chrome://ew/content/dialog_accesskey_details.xul", null, "chrome,centerscreen,modal,resizable", key);
         },
 
         createAccessKey : function () {
             var me = this;
             var wrap = function(key, secret) {
-                ec2ui_session.savePassword('AccessKey:' + key, secret);
+                ew_session.savePassword('AccessKey:' + key, secret);
                 me.refresh()
             }
-            ec2ui_session.controller.createAccessKey(wrap);
+            ew_session.controller.createAccessKey(wrap);
         },
 
         getAccessKeySecret : function(key) {
-            var secret = ec2ui_session.getPassword('AccessKey:' + key)
-            if (secret == "" && key == ec2ui_session.client.accessCode) {
-                secret = ec2ui_session.client.secretKey
+            var secret = ew_session.getPassword('AccessKey:' + key)
+            if (secret == "" && key == ew_session.client.accessCode) {
+                secret = ew_session.client.secretKey
             }
             return secret
         },
@@ -130,14 +130,14 @@ var ec2ui_AccessKeyTreeView = {
                 alert("You cannot delete current access key")
                 return;
             }
-            if (!ec2ui_session.promptYesNo("Confirm", "Delete access key "+key.name+"?")) return;
+            if (!ew_session.promptYesNo("Confirm", "Delete access key "+key.name+"?")) return;
 
             var me = this;
             var wrap = function() {
-                ec2ui_session.deletePassword('AccessKey:' + key.name)
+                ew_session.deletePassword('AccessKey:' + key.name)
                 me.refresh();
             }
-            ec2ui_session.controller.deleteAccessKey(key.name, wrap);
+            ew_session.controller.deleteAccessKey(key.name, wrap);
         },
 
         exportSelected  : function () {
@@ -148,7 +148,7 @@ var ec2ui_AccessKeyTreeView = {
                 alert("No secret key available for this access key")
                 return
             }
-            var path = ec2ui_session.promptForFile("Choose file where to export this access key", true)
+            var path = ew_session.promptForFile("Choose file where to export this access key", true)
             if (path) {
                 FileIO.write(FileIO.open(path), "AWSAccessKeyId=" + key.name + "\nAWSSecretKey=" + key.secret + "\n")
             }
@@ -163,11 +163,11 @@ var ec2ui_AccessKeyTreeView = {
                 return;
             }
 
-            if (!ec2ui_session.promptYesNo("Confirm", "Use access key "+key.name+" for authentication for user " + ec2ui_prefs.getLastUsedAccount() + "?, current access key/secret will be discarded.")) return;
-            ec2ui_session.client.setCredentials(key.name, key.secret);
-            ec2ui_session.updateCredentials(ec2ui_session.getActiveCredential(), key.name, key.secret);
+            if (!ew_session.promptYesNo("Confirm", "Use access key "+key.name+" for authentication for user " + ew_prefs.getLastUsedAccount() + "?, current access key/secret will be discarded.")) return;
+            ew_session.client.setCredentials(key.name, key.secret);
+            ew_session.updateCredentials(ew_session.getActiveCredential(), key.name, key.secret);
             this.refresh();
         }
 };
-ec2ui_AccessKeyTreeView.__proto__ = TreeView;
-ec2ui_AccessKeyTreeView.register();
+ew_AccessKeyTreeView.__proto__ = TreeView;
+ew_AccessKeyTreeView.register();

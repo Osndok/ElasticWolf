@@ -1,37 +1,38 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.managetools" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+<dialog id="ew.dialog.managetools" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,extra1,extra2,cancel" ondialogaccept="return saveDialog()" ondialogcancel="return true;"
     ondialogextra1="resetDialog();" buttonlabelextra1="Reset" buttonlabelextra2="Check For Updates"
-    onload="return initDialog();" title="Manage EC2 Tools" buttonlabelcancel="Close" ondialogextra2="ec2ui_client.checkForUpdates()">
+    onload="return initDialog();" title="Manage EC2 Tools" buttonlabelcancel="Close" ondialogextra2="ew_client.checkForUpdates()">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
-    <script type="application/x-javascript" src="chrome://ec2ui/content/client.js" />
-    <script type="application/x-javascript" src="chrome://ec2ui/content/preferences.js" />
-    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
-    <script type="application/x-javascript" src="chrome://ec2ui/content/session.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/client.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/session.js" />
     <script type="application/x-javascript">
    function initDialog() {
-      ec2ui_prefs.init();
-      document.getElementById("ec2ui.tools.home").value = ec2ui_prefs.getHome();
-      document.getElementById("ec2ui.tools.profile").value = ec2ui_prefs.getProfileHome();
-      document.getElementById("ec2ui.tools.keyhome").value = ec2ui_prefs.getKeyHome();
-      document.getElementById("ec2ui.tools.ssh.command").value = ec2ui_prefs.getSSHCommand();
-      document.getElementById("ec2ui.tools.ssh.args").value = ec2ui_prefs.getSSHArgs();
-      document.getElementById("ec2ui.tools.ssh.user").value = ec2ui_prefs.getSSHUser();
-      document.getElementById("ec2ui.tools.rdp.command").value = ec2ui_prefs.getRDPCommand();
-      document.getElementById("ec2ui.tools.rdp.args").value = ec2ui_prefs.getRDPArgs();
-      document.getElementById("ec2ui.tools.openssl.command").value = ec2ui_prefs.getOpenSSLCommand();
-      document.getElementById("ec2ui.tools.shell.command").value = ec2ui_prefs.getShellCommand();
-      document.getElementById("ec2ui.tools.path.ec2").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.EC2_TOOLS_PATH, "");
-      document.getElementById("ec2ui.tools.path.iam").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.IAM_TOOLS_PATH, "");
-      document.getElementById("ec2ui.tools.path.ami").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.AMI_TOOLS_PATH, "");
-      document.getElementById("ec2ui.tools.path.autoscale").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.AWS_AUTOSCALING_TOOLS_PATH, "");
-      document.getElementById("ec2ui.tools.path.cloudwatch").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.CLOUDWATCH_TOOLS_PATH, "");
-      document.getElementById("ec2ui.tools.path.java").value = ec2ui_prefs.getStringPreference(ec2ui_prefs.JAVA_TOOLS_PATH, ec2ui_prefs.getDefaultJavaHome());
-      document.getElementById("ec2ui.tools.debug").checked = ec2ui_prefs.isDebugEnabled();
+      ew_prefs.init();
+      document.getElementById("ew.tools.home").value = ew_prefs.getHome();
+      document.getElementById("ew.tools.profile").value = ew_prefs.getProfileHome();
+      document.getElementById("ew.tools.keyhome").value = ew_prefs.getKeyHome();
+      document.getElementById("ew.tools.ssh.command").value = ew_prefs.getSSHCommand();
+      document.getElementById("ew.tools.ssh.args").value = ew_prefs.getSSHArgs();
+      document.getElementById("ew.tools.ssh.user").value = ew_prefs.getSSHUser();
+      document.getElementById("ew.tools.rdp.command").value = ew_prefs.getRDPCommand();
+      document.getElementById("ew.tools.rdp.args").value = ew_prefs.getRDPArgs();
+      document.getElementById("ew.tools.openssl.command").value = ew_prefs.getOpenSSLCommand();
+      document.getElementById("ew.tools.shell.command").value = ew_prefs.getShellCommand();
+      document.getElementById("ew.tools.path.ec2").value = ew_prefs.getStringPreference(ew_prefs.EC2_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.iam").value = ew_prefs.getStringPreference(ew_prefs.IAM_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.ami").value = ew_prefs.getStringPreference(ew_prefs.AMI_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.autoscale").value = ew_prefs.getStringPreference(ew_prefs.AWS_AUTOSCALING_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.cloudwatch").value = ew_prefs.getStringPreference(ew_prefs.CLOUDWATCH_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.java").value = ew_prefs.getStringPreference(ew_prefs.JAVA_TOOLS_PATH, ew_prefs.getDefaultJavaHome());
+      document.getElementById("ew.tools.debug").checked = ew_prefs.isDebugEnabled();
+      document.getElementById("ew.tools.http").checked = ew_prefs.isHttpEnabled();
       return true;
    }
    function resetDialog() {
@@ -42,29 +43,30 @@
    }
 
    function saveDialog() {
-      ec2ui_prefs.setKeyHome(document.getElementById("ec2ui.tools.keyhome").value.toString());
-      ec2ui_prefs.setSSHCommand(document.getElementById("ec2ui.tools.ssh.command").value.toString());
-      ec2ui_prefs.setSSHArgs(document.getElementById("ec2ui.tools.ssh.args").value.toString());
-      ec2ui_prefs.setSSHUser(document.getElementById("ec2ui.tools.ssh.user").value.toString());
-      ec2ui_prefs.setRDPCommand(document.getElementById("ec2ui.tools.rdp.command").value.toString());
-      ec2ui_prefs.setRDPArgs(document.getElementById("ec2ui.tools.rdp.args").value.toString());
-      ec2ui_prefs.setOpenSSLCommand(document.getElementById("ec2ui.tools.openssl.command").value.toString());
-      ec2ui_prefs.setShellCommand(document.getElementById("ec2ui.tools.shell.command").value.toString());
-      ec2ui_prefs.setStringPreference(ec2ui_prefs.EC2_TOOLS_PATH, document.getElementById("ec2ui.tools.path.ec2").value.toString());
-      ec2ui_prefs.setStringPreference(ec2ui_prefs.IAM_TOOLS_PATH, document.getElementById("ec2ui.tools.path.iam").value.toString());
-      ec2ui_prefs.setStringPreference(ec2ui_prefs.AMI_TOOLS_PATH, document.getElementById("ec2ui.tools.path.ami").value.toString());
-      ec2ui_prefs.setStringPreference(ec2ui_prefs.AWS_AUTOSCALING_TOOLS_PATH, document.getElementById("ec2ui.tools.path.autoscale").value.toString());
-      ec2ui_prefs.setStringPreference(ec2ui_prefs.CLOUDWATCH_TOOLS_PATH, document.getElementById("ec2ui.tools.path.cloudwatch").value.toString());
-      ec2ui_prefs.setStringPreference(ec2ui_prefs.JAVA_TOOLS_PATH, document.getElementById("ec2ui.tools.path.java").value.toString());
-      ec2ui_prefs.setDebugEnabled(document.getElementById("ec2ui.tools.debug").checked);
+      ew_prefs.setKeyHome(document.getElementById("ew.tools.keyhome").value.toString());
+      ew_prefs.setSSHCommand(document.getElementById("ew.tools.ssh.command").value.toString());
+      ew_prefs.setSSHArgs(document.getElementById("ew.tools.ssh.args").value.toString());
+      ew_prefs.setSSHUser(document.getElementById("ew.tools.ssh.user").value.toString());
+      ew_prefs.setRDPCommand(document.getElementById("ew.tools.rdp.command").value.toString());
+      ew_prefs.setRDPArgs(document.getElementById("ew.tools.rdp.args").value.toString());
+      ew_prefs.setOpenSSLCommand(document.getElementById("ew.tools.openssl.command").value.toString());
+      ew_prefs.setShellCommand(document.getElementById("ew.tools.shell.command").value.toString());
+      ew_prefs.setStringPreference(ew_prefs.EC2_TOOLS_PATH, document.getElementById("ew.tools.path.ec2").value.toString());
+      ew_prefs.setStringPreference(ew_prefs.IAM_TOOLS_PATH, document.getElementById("ew.tools.path.iam").value.toString());
+      ew_prefs.setStringPreference(ew_prefs.AMI_TOOLS_PATH, document.getElementById("ew.tools.path.ami").value.toString());
+      ew_prefs.setStringPreference(ew_prefs.AWS_AUTOSCALING_TOOLS_PATH, document.getElementById("ew.tools.path.autoscale").value.toString());
+      ew_prefs.setStringPreference(ew_prefs.CLOUDWATCH_TOOLS_PATH, document.getElementById("ew.tools.path.cloudwatch").value.toString());
+      ew_prefs.setStringPreference(ew_prefs.JAVA_TOOLS_PATH, document.getElementById("ew.tools.path.java").value.toString());
+      ew_prefs.setDebugEnabled(document.getElementById("ew.tools.debug").checked);
+      ew_prefs.setHttpEnabled(document.getElementById("ew.tools.http").checked);
       return true;
    }
 
    function browse(id, forFile) {
       if (forFile) {
-         var path = ec2ui_session.promptForFile("Choose command:");
+         var path = ew_session.promptForFile("Choose command:");
       } else {
-         var path = ec2ui_session.promptForDir("Choose directory where tools are located:");
+         var path = ew_session.promptForDir("Choose directory where tools are located:");
       }
       if (path) {
           document.getElementById(id).value = path;
@@ -80,105 +82,111 @@
             </columns>
             <rows>
                 <row>
-                    <label control="ec2ui.tools.home" value="User home directory:" />
+                    <label control="ew.tools.home" value="User home directory:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.home" size="60" readonly="true" />
+                        <textbox id="ew.tools.home" size="60" readonly="true" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.profile" value="Profile directory:" />
+                    <label control="ew.tools.profile" value="Profile directory:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.profile" size="60" readonly="true" />
+                        <textbox id="ew.tools.profile" size="60" readonly="true" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.keyhome" value="Directory for private key files:" />
+                    <label control="ew.tools.keyhome" value="Directory for private key files:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.keyhome" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.keyhome')" />
+                        <textbox id="ew.tools.keyhome" size="60" /> <button label="Browse" oncommand="browse('ew.tools.keyhome')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.ssh.command" value="SSH Command:" />
+                    <label control="ew.tools.ssh.command" value="SSH Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.ssh.command" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.ssh.command', true)" />
+                        <textbox id="ew.tools.ssh.command" size="60" /> <button label="Browse" oncommand="browse('ew.tools.ssh.command', true)" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.ssh.args" value="SSH Arguments:" />
+                    <label control="ew.tools.ssh.args" value="SSH Arguments:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.ssh.args" size="120" />
+                        <textbox id="ew.tools.ssh.args" size="120" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.ssh.user" value="SSH User:" />
+                    <label control="ew.tools.ssh.user" value="SSH User:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.ssh.user" size="20" />
+                        <textbox id="ew.tools.ssh.user" size="20" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.openssl.command" value="OPENSSL Command:" />
+                    <label control="ew.tools.openssl.command" value="OPENSSL Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.openssl.command" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.openssl.command', true)" />
+                        <textbox id="ew.tools.openssl.command" size="60" /> <button label="Browse" oncommand="browse('ew.tools.openssl.command', true)" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.shell.command" value="SHELL Command:" />
+                    <label control="ew.tools.shell.command" value="SHELL Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.shell.command" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.shell.command', true)" />
+                        <textbox id="ew.tools.shell.command" size="60" /> <button label="Browse" oncommand="browse('ew.tools.shell.command', true)" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.rdp.command" value="RDP Command:" />
+                    <label control="ew.tools.rdp.command" value="RDP Command:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.rdp.command" size="80" /> <button label="Browse" oncommand="browse('ec2ui.tools.rdp.command', true)" />
+                        <textbox id="ew.tools.rdp.command" size="80" /> <button label="Browse" oncommand="browse('ew.tools.rdp.command', true)" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.rdp.args" value="RDP Arguments:" />
+                    <label control="ew.tools.rdp.args" value="RDP Arguments:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.rdp.args" size="80" />
+                        <textbox id="ew.tools.rdp.args" size="80" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.path.java" value="Java Home Path:" />
+                    <label control="ew.tools.path.java" value="Java Home Path:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.path.java" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.java')" />
+                        <textbox id="ew.tools.path.java" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.java')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.path.ec2" value="EC2 API Command-line Tools Home:" />
+                    <label control="ew.tools.path.ec2" value="EC2 API Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.path.ec2" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.ec2')" />
+                        <textbox id="ew.tools.path.ec2" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.ec2')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.path.iam" value="IAM Command-line Tools Home:" />
+                    <label control="ew.tools.path.iam" value="IAM Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.path.iam" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.iam')" />
+                        <textbox id="ew.tools.path.iam" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.iam')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.path.ami" value="AMI Command-line Tools Home:" />
+                    <label control="ew.tools.path.ami" value="AMI Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.path.ami" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.ami')" />
+                        <textbox id="ew.tools.path.ami" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.ami')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.path.cloudwatch" value="Cloud Watch Command-line Tools Home:" />
+                    <label control="ew.tools.path.cloudwatch" value="Cloud Watch Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.path.cloudwatch" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.cloudwatch')" />
+                        <textbox id="ew.tools.path.cloudwatch" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.cloudwatch')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.path.autoscale" value="AWS Auto Scaling Command-line Tools Home:" />
+                    <label control="ew.tools.path.autoscale" value="AWS Auto Scaling Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ec2ui.tools.path.autoscale" size="60" /> <button label="Browse" oncommand="browse('ec2ui.tools.path.autoscale')" />
+                        <textbox id="ew.tools.path.autoscale" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.autoscale')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ec2ui.tools.debug" value="Enable debug output:" />
+                    <label control="ew.tools.debug" value="Enable debug output:" />
                     <hbox>
-                        <checkbox id="ec2ui.tools.debug" />
+                        <checkbox id="ew.tools.debug" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ew.tools.debug" value="Enable HTTP requests:" />
+                    <hbox>
+                        <checkbox id="ew.tools.http" />
                     </hbox>
                 </row>
             </rows>

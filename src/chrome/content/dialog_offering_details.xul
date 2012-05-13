@@ -1,26 +1,26 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.offering.detail"
+<dialog id="ew.dialog.offering.detail"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept" ondialogaccept="return true;" onload="init();" title="Reserved Instances Offering Details">
 
   <script type="application/x-javascript">
     function init() {
         var image = window.arguments[0];
-        document.getElementById("ec2ui.offering.id").value = image.id;
-        document.getElementById("ec2ui.offering.instType").value = image.instanceType;
-        document.getElementById("ec2ui.offering.azone").value = image.azone;
-        document.getElementById("ec2ui.offering.duration").value = image.duration;
-        document.getElementById("ec2ui.offering.fixedPrice").value = image.fixedPrice;
-        document.getElementById("ec2ui.offering.usagePrice").value = image.usagePrice;
-        document.getElementById("ec2ui.offering.description").value = image.description;
-        document.getElementById("ec2ui.offering.offering").value = image.offering;
-        document.getElementById("ec2ui.offering.tenancy").value = image.tenancy;
+        document.getElementById("ew.offering.id").value = image.id;
+        document.getElementById("ew.offering.instType").value = image.instanceType;
+        document.getElementById("ew.offering.azone").value = image.azone;
+        document.getElementById("ew.offering.duration").value = image.duration;
+        document.getElementById("ew.offering.fixedPrice").value = image.fixedPrice;
+        document.getElementById("ew.offering.usagePrice").value = image.usagePrice;
+        document.getElementById("ew.offering.description").value = image.description;
+        document.getElementById("ew.offering.offering").value = image.offering;
+        document.getElementById("ew.offering.tenancy").value = image.tenancy;
     }
   </script>
-  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
 
   <vbox flex="1">
     <grid flex="1">
@@ -31,40 +31,40 @@
       </columns>
       <rows>
         <row>
-          <label control="ec2ui.offering.id" value="&ec2ui.offerings.id.label;:" />
-          <textbox id="ec2ui.offering.id" size="40" readonly="true" />
+          <label control="ew.offering.id" value="&ew.offerings.id.label;:" />
+          <textbox id="ew.offering.id" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.offering.instType" value="&ec2ui.offerings.instType.label;:" />
-          <textbox id="ec2ui.offering.instType" size="40" readonly="true" />
+          <label control="ew.offering.instType" value="&ew.offerings.instType.label;:" />
+          <textbox id="ew.offering.instType" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.offering.azone" value="&ec2ui.availabilityZone.label;:" />
-          <textbox id="ec2ui.offering.azone" size="40" readonly="true" />
+          <label control="ew.offering.azone" value="&ew.availabilityZone.label;:" />
+          <textbox id="ew.offering.azone" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.offering.duration" value="&ec2ui.offerings.duration.label;:" />
-          <textbox id="ec2ui.offering.duration" size="40" readonly="true" />
+          <label control="ew.offering.duration" value="&ew.offerings.duration.label;:" />
+          <textbox id="ew.offering.duration" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.offering.fixedPrice" value="&ec2ui.offerings.fixedPrice.label;:" />
-          <textbox id="ec2ui.offering.fixedPrice" size="40" readonly="true" />
+          <label control="ew.offering.fixedPrice" value="&ew.offerings.fixedPrice.label;:" />
+          <textbox id="ew.offering.fixedPrice" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.offering.usagePrice" value="&ec2ui.offerings.usagePrice.label;:" />
-          <textbox id="ec2ui.offering.usagePrice" size="40" readonly="true" />
+          <label control="ew.offering.usagePrice" value="&ew.offerings.usagePrice.label;:" />
+          <textbox id="ew.offering.usagePrice" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.offering.offering" value="&ec2ui.offerings.offering.label;:" />
-          <textbox id="ec2ui.offering.offering" size="40" readonly="true" />
+          <label control="ew.offering.offering" value="&ew.offerings.offering.label;:" />
+          <textbox id="ew.offering.offering" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.offering.tenancy" value="&ec2ui.offerings.tenancy.label;:" />
-          <textbox id="ec2ui.offering.tenancy" size="40" readonly="true" />
+          <label control="ew.offering.tenancy" value="&ew.offerings.tenancy.label;:" />
+          <textbox id="ew.offering.tenancy" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.offering.description" value="&ec2ui.description.label;:" />
-          <textbox id="ec2ui.offering.description" multiline="true" cols="50" rows="3"
+          <label control="ew.offering.description" value="&ew.description.label;:" />
+          <textbox id="ew.offering.description" multiline="true" cols="50" rows="3"
             wrap="true" style="font-family: monospace;" readonly="true"/>
         </row>
       </rows>

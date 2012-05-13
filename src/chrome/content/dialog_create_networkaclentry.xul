@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.networkaclentry" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="Network ACL Entry"
+<dialog id="ew.dialog.networkaclentry" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" title="Network ACL Entry"
     buttons="accept,cancel" ondialogaccept="return create();" ondialogcancel="return true;" onload="init();" buttonlabelaccept="Create">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
-    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
 
     <script>
     function init() {
         this.acl = window.arguments[0];
-        this.ec2ui_session = window.arguments[1];
+        this.ew_session = window.arguments[1];
         this.retVal = window.arguments[2];
 
         var protos = [ "Any", "-1", "ICMP","1", "UDP","17", "TCP","6",
@@ -30,33 +30,33 @@
                        "CRTP","126", "CRUDP","127", "SSCOPMCE","128", "IPLT","129", "SPS","130", "PIPE","131", "SCTP","132", "FC","133", "RSVP-E2E-IGNORE","134", "Mobility","135",
                        "UDPLite","136", "MPLS-in-IP","137", "manet","138", "HIP","139", "Shim6","140", "WESP","141", "ROHC","142" ]
 
-        var protoMenu = document.getElementById("ec2ui.acl.proto");
+        var protoMenu = document.getElementById("ew.acl.proto");
         protoMenu.removeAllItems();
         for (var i = 0; i &lt; protos.length; i+= 2) {
             protoMenu.appendItem(protos[i], protos[i + 1])
         }
 
-        document.getElementById("ec2ui.acl.port.from").disabled = true
-        document.getElementById("ec2ui.acl.port.to").disabled = true
-        document.getElementById("ec2ui.acl.icmp.code").disabled = true
-        document.getElementById("ec2ui.acl.icmp.type").disabled = true
+        document.getElementById("ew.acl.port.from").disabled = true
+        document.getElementById("ew.acl.port.to").disabled = true
+        document.getElementById("ew.acl.icmp.code").disabled = true
+        document.getElementById("ew.acl.icmp.type").disabled = true
     }
 
     function create() {
-        this.retVal.num = document.getElementById("ec2ui.acl.num").value.trim();
-        this.retVal.action = document.getElementById("ec2ui.acl.action").value.trim();
-        this.retVal.egress = document.getElementById("ec2ui.acl.egress").value.trim() == "egress" ? true : false;
-        this.retVal.proto = document.getElementById("ec2ui.acl.proto").value.trim();
-        this.retVal.cidr = document.getElementById("ec2ui.acl.cidr").value.trim();
+        this.retVal.num = document.getElementById("ew.acl.num").value.trim();
+        this.retVal.action = document.getElementById("ew.acl.action").value.trim();
+        this.retVal.egress = document.getElementById("ew.acl.egress").value.trim() == "egress" ? true : false;
+        this.retVal.proto = document.getElementById("ew.acl.proto").value.trim();
+        this.retVal.cidr = document.getElementById("ew.acl.cidr").value.trim();
         if (this.retVal.num == "" || this.retVal.proto == "" || this.retVal.cidr == "") {
             alert("Rule number, Protocol and CIDR are required")
             return false;
         }
 
-        this.retVal.icmpcode = document.getElementById("ec2ui.acl.icmp.code").value.trim();
-        this.retVal.icmptype = document.getElementById("ec2ui.acl.icmp.type").value.trim();
-        this.retVal.portfrom = document.getElementById("ec2ui.acl.port.from").value.trim();
-        this.retVal.portto = document.getElementById("ec2ui.acl.port.to").value.trim();
+        this.retVal.icmpcode = document.getElementById("ew.acl.icmp.code").value.trim();
+        this.retVal.icmptype = document.getElementById("ew.acl.icmp.type").value.trim();
+        this.retVal.portfrom = document.getElementById("ew.acl.port.from").value.trim();
+        this.retVal.portto = document.getElementById("ew.acl.port.to").value.trim();
 
         switch (this.retVal.proto) {
         case "1":
@@ -83,30 +83,30 @@
         return true;
     }
     function onproto() {
-        var protoMenu = document.getElementById("ec2ui.acl.proto");
+        var protoMenu = document.getElementById("ew.acl.proto");
         if (protoMenu.selectedIndex >= 0) {
             protoMenu.value = protoMenu.selectedItem.value
         }
 
-        document.getElementById("ec2ui.acl.port.box").disabled = true
-        document.getElementById("ec2ui.acl.port.from").disabled = true
-        document.getElementById("ec2ui.acl.port.to").disabled = true
-        document.getElementById("ec2ui.acl.icmp.box").disabled = true
-        document.getElementById("ec2ui.acl.icmp.code").disabled = true
-        document.getElementById("ec2ui.acl.icmp.type").disabled = true
+        document.getElementById("ew.acl.port.box").disabled = true
+        document.getElementById("ew.acl.port.from").disabled = true
+        document.getElementById("ew.acl.port.to").disabled = true
+        document.getElementById("ew.acl.icmp.box").disabled = true
+        document.getElementById("ew.acl.icmp.code").disabled = true
+        document.getElementById("ew.acl.icmp.type").disabled = true
 
         switch (protoMenu.value) {
         case "1":
-            document.getElementById("ec2ui.acl.icmp.box").disabled = false
-            document.getElementById("ec2ui.acl.icmp.code").disabled = false
-            document.getElementById("ec2ui.acl.icmp.type").disabled = false
+            document.getElementById("ew.acl.icmp.box").disabled = false
+            document.getElementById("ew.acl.icmp.code").disabled = false
+            document.getElementById("ew.acl.icmp.type").disabled = false
             break;
 
         case "6":
         case "17":
-            document.getElementById("ec2ui.acl.port.box").disabled = false
-            document.getElementById("ec2ui.acl.port.from").disabled = false
-            document.getElementById("ec2ui.acl.port.to").disabled = false
+            document.getElementById("ew.acl.port.box").disabled = false
+            document.getElementById("ew.acl.port.from").disabled = false
+            document.getElementById("ew.acl.port.to").disabled = false
             break;
         }
     }
@@ -120,16 +120,16 @@
             </columns>
             <rows flex="1">
                 <row>
-                    <label control="ec2ui.acl.num" value="Rule Number:" />
-                    <textbox id="ec2ui.acl.num" />
+                    <label control="ew.acl.num" value="Rule Number:" />
+                    <textbox id="ew.acl.num" />
                 </row>
                 <row>
-                    <label control="ec2ui.acl.proto" value="Protocol:" />
-                    <menulist id="ec2ui.acl.proto" editable="true" oncommand="onproto(event)" onchange="onproto(event)"/>
+                    <label control="ew.acl.proto" value="Protocol:" />
+                    <menulist id="ew.acl.proto" editable="true" oncommand="onproto(event)" onchange="onproto(event)"/>
                 </row>
                 <row>
-                    <label control="ec2ui.acl.action" value="Action:" />
-                    <menulist id="ec2ui.acl.action" value="allow" >
+                    <label control="ew.acl.action" value="Action:" />
+                    <menulist id="ew.acl.action" value="allow" >
                     <menupopup>
                         <menuitem label="Allow" value="allow"/>
                         <menuitem label="Deny" value="deny"/>
@@ -137,8 +137,8 @@
                     </menulist>
                 </row>
                 <row>
-                    <label control="ec2ui.acl.egress" value="Type:" />
-                    <menulist id="ec2ui.acl.egress" value="ingress" >
+                    <label control="ew.acl.egress" value="Type:" />
+                    <menulist id="ew.acl.egress" value="ingress" >
                     <menupopup>
                         <menuitem label="Ingress" value="ingress"/>
                         <menuitem label="Egress" value="egress"/>
@@ -146,12 +146,12 @@
                     </menulist>
                 </row>
                 <row>
-                    <label control="ec2ui.acl.cidr" value="CIDR Block:"/>
-                    <textbox id="ec2ui.acl.cidr"  value="0.0.0.0/0" />
+                    <label control="ew.acl.cidr" value="CIDR Block:"/>
+                    <textbox id="ew.acl.cidr"  value="0.0.0.0/0" />
                 </row>
              </rows>
         </grid>
-        <groupbox flex="1" id="ec2ui.acl.port.box">
+        <groupbox flex="1" id="ew.acl.port.box">
         <caption label="Port Range" />
         <grid flex="1">
         <columns flex="1">
@@ -160,18 +160,18 @@
         </columns>
         <rows>
         <row>
-          <label control="ec2ui.acl.port.from" value="From: " />
-          <textbox id="ec2ui.acl.port.from" />
+          <label control="ew.acl.port.from" value="From: " />
+          <textbox id="ew.acl.port.from" />
         </row>
         <row>
-          <label control="ec2ui.acl.port.to" value="To: " />
-          <textbox id="ec2ui.acl.port.to" />
+          <label control="ew.acl.port.to" value="To: " />
+          <textbox id="ew.acl.port.to" />
         </row>
         </rows>
         </grid>
         </groupbox>
 
-        <groupbox flex="1" id="ec2ui.acl.icmp.box">
+        <groupbox flex="1" id="ew.acl.icmp.box">
         <caption label="ICMP" />
         <grid flex="1">
         <columns flex="1">
@@ -180,12 +180,12 @@
         </columns>
         <rows>
         <row>
-            <label control="ec2ui.acl.icmp.code" value="Code: " />
-            <textbox id="ec2ui.acl.icmp.code" />
+            <label control="ew.acl.icmp.code" value="Code: " />
+            <textbox id="ew.acl.icmp.code" />
         </row>
         <row>
-           <label control="ec2ui.acl.icmp.type" value="Type:" />
-           <textbox id="ec2ui.acl.icmp.type" />
+           <label control="ew.acl.icmp.type" value="Type:" />
+           <textbox id="ew.acl.icmp.type" />
         </row>
         </rows>
         </grid>

@@ -1,4 +1,4 @@
-var ec2ui_ElasticIPTreeView = {
+var ew_ElasticIPTreeView = {
     COLNAMES : ['eip.address','eip.instanceid','eip.instanceName','eip.allocationId','eip.associationId','eip.domain','eip.tag'],
     treeBox : null,
     selection : null,
@@ -48,16 +48,16 @@ var ec2ui_ElasticIPTreeView = {
     register: function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'addresses');
+            ew_model.registerInterest(this, 'addresses');
         }
     },
 
     invalidate: function() {
-        this.displayEIPs(ec2ui_session.model.addresses);
+        this.displayEIPs(ew_session.model.addresses);
     },
 
     refresh: function() {
-        ec2ui_session.controller.describeAddresses();
+        ew_session.controller.describeAddresses();
     },
 
     notifyModelChanged: function(interest) {
@@ -86,12 +86,12 @@ var ec2ui_ElasticIPTreeView = {
         }
         if (selected.length != 1) return;
 
-        window.openDialog("chrome://ec2ui/content/dialog_eip_details.xul", null, "chrome,centerscreen,modal,resizable", selected[0]);
+        window.openDialog("chrome://ew/content/dialog_eip_details.xul", null, "chrome,centerscreen,modal,resizable", selected[0]);
     },
 
     enableOrDisableItems : function() {
         var eipSel = this.getSelectedEip();
-        document.getElementById("ec2ui.addresses.contextmenu").disabled = (eipSel == null);
+        document.getElementById("ew.addresses.contextmenu").disabled = (eipSel == null);
 
         if (eipSel == null) return;
 
@@ -126,8 +126,8 @@ var ec2ui_ElasticIPTreeView = {
     },
 
     allocateAddress : function() {
-        if (!ec2ui_session.client.isGovCloud()) {
-            var vpc = ec2ui_session.promptYesNo("Confirm", "Is this Elastic IP to be used for VPC?");
+        if (!ew_session.client.isGovCloud()) {
+            var vpc = ew_session.promptYesNo("Confirm", "Is this Elastic IP to be used for VPC?");
         } else {
             var vpc = true
         }
@@ -136,24 +136,24 @@ var ec2ui_ElasticIPTreeView = {
             me.refresh();
             me.selectByAddress(address);
         }
-        ec2ui_session.controller.allocateAddress(vpc, wrap);
+        ew_session.controller.allocateAddress(vpc, wrap);
     },
 
     releaseAddress : function() {
         var eip = this.getSelectedEip();
         if (eip == null) return;
-        if (!ec2ui_session.promptYesNo("Confirm", "Release "+eip.address+"?")) return;
+        if (!ew_session.promptYesNo("Confirm", "Release "+eip.address+"?")) return;
 
         var me = this;
         var wrap = function() {
             me.refresh();
         }
-        ec2ui_session.controller.releaseAddress(eip, wrap);
+        ew_session.controller.releaseAddress(eip, wrap);
     },
 
     getUnassociatedInstanceIds : function() {
         var instanceIds = new Array();
-        var instList = ec2ui_model.getInstances();
+        var instList = ew_model.getInstances();
         var i = 0;
 
         var inst = null;
@@ -229,7 +229,7 @@ var ec2ui_ElasticIPTreeView = {
             me.refresh();
             me.selectByAddress(eip.address);
         }
-        ec2ui_session.controller.associateAddress(eip, eip.instanceid, wrap);
+        ew_session.controller.associateAddress(eip, eip.instanceid, wrap);
         return true;
     },
 
@@ -249,7 +249,7 @@ var ec2ui_ElasticIPTreeView = {
         var wrap = function() {
             me.refresh();
         }
-        ec2ui_session.controller.disassociateAddress(eip, wrap);
+        ew_session.controller.disassociateAddress(eip, wrap);
     },
 
     tag : function() {
@@ -259,7 +259,7 @@ var ec2ui_ElasticIPTreeView = {
             return;
         }
 
-        tagResource(eip, ec2ui_session, "address");
+        tagResource(eip, ew_session, "address");
         this.selectByAddress(eip.address);
     },
 
@@ -284,4 +284,4 @@ var ec2ui_ElasticIPTreeView = {
 
 };
 
-ec2ui_ElasticIPTreeView.register();
+ew_ElasticIPTreeView.register();

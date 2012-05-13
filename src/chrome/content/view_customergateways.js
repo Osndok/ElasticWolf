@@ -1,4 +1,4 @@
-var ec2ui_CustomerGatewayTreeView = {
+var ew_CustomerGatewayTreeView = {
     COLNAMES:
     ['customerGateway.id', 'customerGateway.ipAddress',
      'customerGateway.bgpAsn', 'customerGateway.state',
@@ -7,18 +7,18 @@ var ec2ui_CustomerGatewayTreeView = {
     imageIdRegex : new RegExp("^cgw-"),
 
     getSearchText : function() {
-        return document.getElementById('ec2ui.customergateways.search').value;
+        return document.getElementById('ew.customergateways.search').value;
     },
 
     refresh : function() {
-        ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeCustomerGateways();
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(true);
+        ew_session.controller.describeCustomerGateways();
+        ew_session.showBusyCursor(false);
     },
 
     invalidate : function() {
-        var target = ec2ui_CustomerGatewayTreeView;
-        target.displayImages(target.filterImages(ec2ui_model.customerGateways));
+        var target = ew_CustomerGatewayTreeView;
+        target.displayImages(target.filterImages(ew_model.customerGateways));
     },
 
     searchChanged : function(event) {
@@ -32,7 +32,7 @@ var ec2ui_CustomerGatewayTreeView = {
     register : function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'customerGateways');
+            ew_model.registerInterest(this, 'customerGateways');
         }
     },
 
@@ -42,28 +42,28 @@ var ec2ui_CustomerGatewayTreeView = {
 
     enableOrDisableItems : function() {
         var image = this.getSelectedImage();
-        document.getElementById("ec2ui.customergateways.contextmenu").disabled = (image == null);
+        document.getElementById("ew.customergateways.contextmenu").disabled = (image == null);
     },
 
     createCustomerGateway : function () {
         var retVal = {ok:null,type:null, ipaddress:null, bgpasn:null}
-        window.openDialog("chrome://ec2ui/content/dialog_create_customer_gateway.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_create_customer_gateway.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ec2ui_session.showBusyCursor(true);
+            ew_session.showBusyCursor(true);
             var me = this;
             var wrap = function(id) {
                 me.refresh();
                 me.selectByImageId(id);
             }
-            ec2ui_session.controller.createCustomerGateway(
+            ew_session.controller.createCustomerGateway(
                 retVal.type,
                 retVal.ipaddress,
                 retVal.bgpasn,
                 wrap
             );
 
-            ec2ui_session.showBusyCursor(false);
+            ew_session.showBusyCursor(false);
         }
     },
 
@@ -79,18 +79,18 @@ var ec2ui_CustomerGatewayTreeView = {
             me.refresh();
             me.selectByImageId(id);
         }
-        ec2ui_session.controller.deleteCustomerGateway(cgw.id, wrap);
+        ew_session.controller.deleteCustomerGateway(cgw.id, wrap);
     },
 
     createVpnConnection : function() {
         var cgw = this.getSelectedImage();
         if (cgw == null) return;
 
-        ec2ui_VpnConnectionTreeView.createVpnConnection(cgw.id, null);
+        ew_VpnConnectionTreeView.createVpnConnection(cgw.id, null);
     },
 };
 
 // poor-man's inheritance
-ec2ui_CustomerGatewayTreeView.__proto__ = BaseImagesView;
+ew_CustomerGatewayTreeView.__proto__ = BaseImagesView;
 
-ec2ui_CustomerGatewayTreeView.register();
+ew_CustomerGatewayTreeView.register();

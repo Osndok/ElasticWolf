@@ -1,4 +1,4 @@
-var ec2ui_LoadbalancerTreeView = {
+var ew_LoadbalancerTreeView = {
     COLNAMES : ['loadbalancer.LoadBalancerName','loadbalancer.CreatedTime','loadbalancer.DNSName','loadbalancer.InstanceId',
                 'loadbalancer.Protocol','loadbalancer.LoadBalancerPort','loadbalancer.InstancePort',
                 'loadbalancer.Interval','loadbalancer.Timeout','loadbalancer.HealthyThreshold','loadbalancer.UnhealthyThreshold',
@@ -79,22 +79,22 @@ var ec2ui_LoadbalancerTreeView = {
         if (index == -1) return;
 
         var loadbalancer = this.loadbalancerList[index];
-        ec2ui_session.controller.describeInstanceHealth(loadbalancer.LoadBalancerName);
+        ew_session.controller.describeInstanceHealth(loadbalancer.LoadBalancerName);
     },
 
     register: function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'loadbalancer');
+            ew_model.registerInterest(this, 'loadbalancer');
         }
     },
 
     invalidate: function() {
-        this.displayLoadbalancer(ec2ui_session.model.loadbalancer);
+        this.displayLoadbalancer(ew_session.model.loadbalancer);
     },
 
     refresh: function() {
-        ec2ui_session.controller.describeLoadBalancers();
+        ew_session.controller.describeLoadBalancers();
     },
 
     notifyModelChanged: function(interest) {
@@ -109,18 +109,18 @@ var ec2ui_LoadbalancerTreeView = {
             return;
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
-        ec2ui_session.controller.deleteLoadBalancer(loadbalancer.LoadBalancerName, wrap);     
+        ew_session.controller.deleteLoadBalancer(loadbalancer.LoadBalancerName, wrap);     
     },
     
     viewDetails : function(){
         var loadbalancer = this.getSelectedLoadbalancer();
         if (loadbalancer == null) return;
         window.openDialog(
-            "chrome://ec2ui/content/dialog_loadbalancer_details.xul",
+            "chrome://ew/content/dialog_loadbalancer_details.xul",
             null,
             "chrome,centerscreen,modal,resizable",
             loadbalancer);
@@ -129,23 +129,23 @@ var ec2ui_LoadbalancerTreeView = {
     create: function() {
         var retVal = {ok:null};
         window.openDialog(
-            "chrome://ec2ui/content/dialog_create_loadbalancer.xul",
+            "chrome://ew/content/dialog_create_loadbalancer.xul",
             null,
             "chrome,centerscreen,modal,resizable",
-            ec2ui_session,
+            ew_session,
             retVal,
             null
            );
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
         if (retVal.ok) {
                 var Zone = retVal.placement;
-                ec2ui_session.controller.CreateLoadBalancer(retVal.LoadBalancerName,retVal.Protocol,retVal.elbport,retVal.instanceport,Zone);
-                ec2ui_session.controller.ConfigureHealthCheck(retVal.LoadBalancerName,retVal.pingprotocol,retVal.pingport,retVal.pingpath,retVal.Interval,retVal.Timeout,retVal.HealthyThreshold,retVal.UnhealthyThreshold);
+                ew_session.controller.CreateLoadBalancer(retVal.LoadBalancerName,retVal.Protocol,retVal.elbport,retVal.instanceport,Zone);
+                ew_session.controller.ConfigureHealthCheck(retVal.LoadBalancerName,retVal.pingprotocol,retVal.pingport,retVal.pingpath,retVal.Interval,retVal.Timeout,retVal.HealthyThreshold,retVal.UnhealthyThreshold);
                 var Instancechk = retVal.Instances;
                 var newStr = Instancechk.substring(",", Instancechk.length-1);
                 var instanceid = new String(newStr);
@@ -153,7 +153,7 @@ var ec2ui_LoadbalancerTreeView = {
                 RegInstance = instanceid.split(",");
                 for(var a=0;a<RegInstance.length;a++)
                 {
-                    ec2ui_session.controller.RegisterInstancesWithLoadBalancer(retVal.LoadBalancerName,RegInstance[a]);
+                    ew_session.controller.RegisterInstancesWithLoadBalancer(retVal.LoadBalancerName,RegInstance[a]);
                 }
                 wrap();
         }
@@ -164,21 +164,21 @@ var ec2ui_LoadbalancerTreeView = {
         if (loadbalancer == null) return;
         var retVal = {ok:null};
         window.openDialog(
-            "chrome://ec2ui/content/dialog_configure_healthcheck.xul",
+            "chrome://ew/content/dialog_configure_healthcheck.xul",
             null,
             "chrome,centerscreen,modal,resizable",
             loadbalancer,
-            ec2ui_session,
+            ew_session,
             retVal            
            );
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
         if (retVal.ok) {
-            ec2ui_session.controller.EditHealthCheck(loadbalancer.LoadBalancerName,retVal.Target,retVal.Interval,retVal.Timeout,retVal.HealthyThreshold,retVal.UnhealthyThreshold,wrap);
+            ew_session.controller.EditHealthCheck(loadbalancer.LoadBalancerName,retVal.Target,retVal.Interval,retVal.Timeout,retVal.HealthyThreshold,retVal.UnhealthyThreshold,wrap);
         }
     },
     
@@ -187,16 +187,16 @@ var ec2ui_LoadbalancerTreeView = {
         if (loadbalancer == null) return;
         var retVal = {ok:null};
          window.openDialog(
-            "chrome://ec2ui/content/dialog_register_lbinstances.xul",
+            "chrome://ew/content/dialog_register_lbinstances.xul",
             null,
             "chrome,centerscreen,modal,resizable",
-            ec2ui_session,
+            ew_session,
             retVal,
             loadbalancer
             );
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
@@ -208,7 +208,7 @@ var ec2ui_LoadbalancerTreeView = {
 	    RegInstance = instanceid.split(",");
 	    for(var a=0;a<RegInstance.length;a++)
 	    {
-                ec2ui_session.controller.RegisterInstancesWithLoadBalancer(retVal.LoadBalancerName,RegInstance[a]);
+                ew_session.controller.RegisterInstancesWithLoadBalancer(retVal.LoadBalancerName,RegInstance[a]);
 	    }
             wrap();
         }    
@@ -219,16 +219,16 @@ var ec2ui_LoadbalancerTreeView = {
         if (loadbalancer == null) return;
         var retVal = {ok:null};
          window.openDialog(
-            "chrome://ec2ui/content/dialog_deregister_lbinstances.xul",
+            "chrome://ew/content/dialog_deregister_lbinstances.xul",
             null,
             "chrome,centerscreen,modal,resizable",
-            ec2ui_session,
+            ew_session,
             retVal,
             loadbalancer
             );
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
@@ -240,7 +240,7 @@ var ec2ui_LoadbalancerTreeView = {
 	    RegInstance = instanceid.split(",");
 	    for(var a=0;a<RegInstance.length;a++)
 	    {    
-                ec2ui_session.controller.DeregisterInstancesWithLoadBalancer(retVal.LoadBalancerName,RegInstance[a]);
+                ew_session.controller.DeregisterInstancesWithLoadBalancer(retVal.LoadBalancerName,RegInstance[a]);
             }
             wrap();
         }
@@ -251,16 +251,16 @@ var ec2ui_LoadbalancerTreeView = {
         if (loadbalancer == null) return;
         var retVal = {ok:null};
         window.openDialog(
-            "chrome://ec2ui/content/dialog_enable_lbazone.xul",
+            "chrome://ew/content/dialog_enable_lbazone.xul",
             null,
             "chrome,centerscreen,modal,resizable",
-            ec2ui_session,
+            ew_session,
             retVal,
             loadbalancer
         );
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
@@ -272,7 +272,7 @@ var ec2ui_LoadbalancerTreeView = {
 	    Zone = zones.split(",");
 	    for(var a=0;a<Zone.length;a++)
 	    {
-            ec2ui_session.controller.Enableazonewithloadbalancer(retVal.LoadBalancerName,Zone[a]);
+            ew_session.controller.Enableazonewithloadbalancer(retVal.LoadBalancerName,Zone[a]);
             }
             wrap();
         } 
@@ -283,16 +283,16 @@ var ec2ui_LoadbalancerTreeView = {
         if (loadbalancer == null) return;
         var retVal = {ok:null};
         window.openDialog(
-            "chrome://ec2ui/content/dialog_disable_lbazone.xul",
+            "chrome://ew/content/dialog_disable_lbazone.xul",
             null,
             "chrome,centerscreen,modal,resizable",
-            ec2ui_session,
+            ew_session,
             retVal,
             loadbalancer
         );
          var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
@@ -304,7 +304,7 @@ var ec2ui_LoadbalancerTreeView = {
 	    Zone = zones.split(",");
 	    for(var a=0;a<Zone.length;a++)
 	    {
-                ec2ui_session.controller.Disableazonewithloadbalancer(retVal.LoadBalancerName,Zone[a]);
+                ew_session.controller.Disableazonewithloadbalancer(retVal.LoadBalancerName,Zone[a]);
             }
             wrap();
         } 
@@ -323,21 +323,21 @@ var ec2ui_LoadbalancerTreeView = {
     disablestickness :function(){
         var loadbalancer = this.getSelectedLoadbalancer();
         if (loadbalancer == null) return;
-        var confirmed = confirm(ec2ui_utils.getMessageProperty("ec2ui.msg.loadbalancerview.confirm.delete")+loadbalancer.LoadBalancerName+"?");
+        var confirmed = confirm(ew_utils.getMessageProperty("ew.msg.loadbalancerview.confirm.delete")+loadbalancer.LoadBalancerName+"?");
         if (!confirmed)
             return;
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
         if(loadbalancer.APolicyName == ""){
             var policy =  loadbalancer.CPolicyName;
-            ec2ui_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy, wrap); 
+            ew_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy, wrap); 
         }else{
             var policy = loadbalancer.APolicyName;
-            ec2ui_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy, wrap);
+            ew_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy, wrap);
         }
         
     },
@@ -349,9 +349,9 @@ var ec2ui_LoadbalancerTreeView = {
         var cname = loadbalancer.CookieName;
         var policy = loadbalancer.APolicyName;
         if(cname){
-            ec2ui_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy);
+            ew_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy);
         }
-        var CookieName = prompt(ec2ui_utils.getMessageProperty("ec2ui.msg.loadbalancerview.confirm.CookieName"));
+        var CookieName = prompt(ew_utils.getMessageProperty("ew.msg.loadbalancerview.confirm.CookieName"));
         if (CookieName == null)
             return;
         CookieName = CookieName.trim();
@@ -363,11 +363,11 @@ var ec2ui_LoadbalancerTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
-        ec2ui_session.controller.CreateAppCookieSP(loadbalancername,CookieName,wrap);
+        ew_session.controller.CreateAppCookieSP(loadbalancername,CookieName,wrap);
     },
     
     loadbalancerstickness :function(){
@@ -377,9 +377,9 @@ var ec2ui_LoadbalancerTreeView = {
         var policy = loadbalancer.CPolicyName;
         var CookieExpirationPeriod = loadbalancer.CookieExpirationPeriod;
         if(CookieExpirationPeriod){
-           ec2ui_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy);  
+           ew_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy);  
         }
-        var CookieExpirationPeriod = prompt(ec2ui_utils.getMessageProperty("ec2ui.msg.loadbalancerview.confirm.CookieExpirationPeriod"));
+        var CookieExpirationPeriod = prompt(ew_utils.getMessageProperty("ew.msg.loadbalancerview.confirm.CookieExpirationPeriod"));
         if (CookieExpirationPeriod == null)
             return;
         CookieExpirationPeriod = CookieExpirationPeriod.trim();
@@ -391,11 +391,11 @@ var ec2ui_LoadbalancerTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
-        ec2ui_session.controller.CreateLBCookieSP(loadbalancername,CookieExpirationPeriod, wrap);
+        ew_session.controller.CreateLBCookieSP(loadbalancername,CookieExpirationPeriod, wrap);
     },
     
     enableOrDisableItems : function(){
@@ -455,11 +455,11 @@ var ec2ui_LoadbalancerTreeView = {
         this.treeBox.rowCountChanged(0, this.loadbalancerList.length);
         this.sort();
         this.selection.clearSelection();
-        ec2ui_InstanceHealthTreeView.displayInstanceHealth([]);
+        ew_InstanceHealthTreeView.displayInstanceHealth([]);
         if (loadbalancerList.length > 0) {
             this.selection.select(0);
         }
     }
 };
 
-ec2ui_LoadbalancerTreeView.register();
+ew_LoadbalancerTreeView.register();

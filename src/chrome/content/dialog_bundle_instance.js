@@ -1,14 +1,14 @@
-var ec2_InstanceBundler = {
+var ew_InstanceBundler = {
     id : null,
-    ec2ui_session : null,
+    ew_session : null,
     retVal : null,
 
     getBucketName : function() {
-        return document.getElementById("ec2ui.bundleInstance.bucketName");
+        return document.getElementById("ew.bundleInstance.bucketName");
     },
 
     getPrefix : function() {
-        return document.getElementById("ec2ui.bundleInstance.prefix");
+        return document.getElementById("ew.bundleInstance.prefix");
     },
 
     bundleInstance : function() {
@@ -39,10 +39,10 @@ var ec2_InstanceBundler = {
 
     init : function() {
         this.id = window.arguments[0];
-        this.ec2ui_session = window.arguments[1];
+        this.ew_session = window.arguments[1];
         this.retVal = window.arguments[2];
 
-        document.getElementById("ec2ui.bundleInstance.instanceid").value = this.id;
+        document.getElementById("ew.bundleInstance.instanceid").value = this.id;
         if (this.retVal.bucketName) this.getBucketName().value = this.retVal.bucketName || "";
         if (this.retVal.prefix) this.getPrefix().value = this.retVal.prefix || "";
         this.getBucketName().select();

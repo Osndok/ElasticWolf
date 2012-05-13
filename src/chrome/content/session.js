@@ -1,5 +1,5 @@
 //main object that holds the current session information
-var ec2ui_session = {
+var ew_session = {
     accessCode : "",
     secretKey : "",
     initialized : false,
@@ -25,46 +25,46 @@ var ec2ui_session = {
     initialize : function()
     {
         if (!this.initialized) {
-            this.controller = ec2ui_controller;
-            this.model = ec2ui_model;
-            this.client = ec2ui_client;
-            this.preferences = ec2ui_prefs;
-            ec2ui_prefs.init();
+            this.controller = ew_controller;
+            this.model = ew_model;
+            this.client = ew_client;
+            this.preferences = ew_prefs;
+            ew_prefs.init();
 
-            document.title = ec2ui_prefs.getAppName();
-            document.getElementById("ec2ui.images.view").view = ec2ui_AMIsTreeView;
-            document.getElementById("ec2ui.keypairs.view").view = ec2ui_KeypairTreeView;
-            document.getElementById("ec2ui.certs.view").view = ec2ui_CertTreeView;
-            document.getElementById("ec2ui.accesskeys.view").view = ec2ui_AccessKeyTreeView;
-            document.getElementById("ec2ui.instances.view").view = ec2ui_InstancesTreeView;
-            document.getElementById("ec2ui.securitygroups.view").view = ec2ui_SecurityGroupsTreeView;
-            document.getElementById("ec2ui.permissions.view").view = ec2ui_PermissionsTreeView;
-            document.getElementById("ec2ui.eip.view").view = ec2ui_ElasticIPTreeView;
-            document.getElementById("ec2ui.azones.view").view = ec2ui_AvailZoneTreeView;
-            document.getElementById("ec2ui.volumes.view").view = ec2ui_VolumeTreeView;
-            document.getElementById("ec2ui.snapshots.view").view = ec2ui_SnapshotTreeView;
-            document.getElementById("ec2ui.bundleTasks.view").view = ec2ui_BundleTasksTreeView;
-            document.getElementById("ec2ui.offerings.view").view = ec2ui_LeaseOfferingsTreeView;
-            document.getElementById("ec2ui.rsvdInst.view").view = ec2ui_ReservedInstancesTreeView;
-            document.getElementById("ec2ui.loadbalancer.view").view = ec2ui_LoadbalancerTreeView;
-            document.getElementById("ec2ui.instancehealth.view").view = ec2ui_InstanceHealthTreeView;
-            document.getElementById("ec2ui.vpcs.view").view = ec2ui_VpcTreeView;
-            document.getElementById("ec2ui.subnets.view").view = ec2ui_SubnetTreeView;
-            document.getElementById("ec2ui.dhcpoptions.view").view = ec2ui_DhcpoptsTreeView;
-            document.getElementById("ec2ui.vpngateways.view").view = ec2ui_VpnGatewayTreeView;
-            document.getElementById("ec2ui.vpnconnections.view").view = ec2ui_VpnConnectionTreeView;
-            document.getElementById("ec2ui.customergateways.view").view = ec2ui_CustomerGatewayTreeView;
-            document.getElementById("ec2ui.vpnattachments.view").view = ec2ui_VpnAttachmentTreeView;
-            document.getElementById("ec2ui.internetgateways.view").view = ec2ui_InternetGatewayTreeView;
-            document.getElementById("ec2ui.routetables.view").view = ec2ui_RouteTablesTreeView;
-            document.getElementById("ec2ui.routes.view").view = ec2ui_RoutesTreeView;
-            document.getElementById("ec2ui.route.associations.view").view = ec2ui_RouteAssociationsTreeView;
-            document.getElementById("ec2ui.acls.view").view = ec2ui_NetworkAclsTreeView;
-            document.getElementById("ec2ui.acls.associations.view").view = ec2ui_NetworkAclAssociationsTreeView;
-            document.getElementById("ec2ui.acls.rules.view").view = ec2ui_NetworkAclRulesTreeView;
-            document.getElementById("ec2ui.enis.view").view = ec2ui_NetworkInterfacesTreeView;
-            document.getElementById("ec2ui.enis.attachments.view").view = ec2ui_NetworkInterfaceAttachmentsTreeView;
-            document.getElementById("ec2ui.s3.view").view = ec2ui_S3BucketsTreeView;
+            document.title = ew_prefs.getAppName();
+            document.getElementById("ew.images.view").view = ew_AMIsTreeView;
+            document.getElementById("ew.keypairs.view").view = ew_KeypairTreeView;
+            document.getElementById("ew.certs.view").view = ew_CertTreeView;
+            document.getElementById("ew.accesskeys.view").view = ew_AccessKeyTreeView;
+            document.getElementById("ew.instances.view").view = ew_InstancesTreeView;
+            document.getElementById("ew.securitygroups.view").view = ew_SecurityGroupsTreeView;
+            document.getElementById("ew.permissions.view").view = ew_PermissionsTreeView;
+            document.getElementById("ew.eip.view").view = ew_ElasticIPTreeView;
+            document.getElementById("ew.azones.view").view = ew_AvailZoneTreeView;
+            document.getElementById("ew.volumes.view").view = ew_VolumeTreeView;
+            document.getElementById("ew.snapshots.view").view = ew_SnapshotTreeView;
+            document.getElementById("ew.bundleTasks.view").view = ew_BundleTasksTreeView;
+            document.getElementById("ew.offerings.view").view = ew_LeaseOfferingsTreeView;
+            document.getElementById("ew.rsvdInst.view").view = ew_ReservedInstancesTreeView;
+            document.getElementById("ew.loadbalancer.view").view = ew_LoadbalancerTreeView;
+            document.getElementById("ew.instancehealth.view").view = ew_InstanceHealthTreeView;
+            document.getElementById("ew.vpcs.view").view = ew_VpcTreeView;
+            document.getElementById("ew.subnets.view").view = ew_SubnetTreeView;
+            document.getElementById("ew.dhcpoptions.view").view = ew_DhcpoptsTreeView;
+            document.getElementById("ew.vpngateways.view").view = ew_VpnGatewayTreeView;
+            document.getElementById("ew.vpnconnections.view").view = ew_VpnConnectionTreeView;
+            document.getElementById("ew.customergateways.view").view = ew_CustomerGatewayTreeView;
+            document.getElementById("ew.vpnattachments.view").view = ew_VpnAttachmentTreeView;
+            document.getElementById("ew.internetgateways.view").view = ew_InternetGatewayTreeView;
+            document.getElementById("ew.routetables.view").view = ew_RouteTablesTreeView;
+            document.getElementById("ew.routes.view").view = ew_RoutesTreeView;
+            document.getElementById("ew.route.associations.view").view = ew_RouteAssociationsTreeView;
+            document.getElementById("ew.acls.view").view = ew_NetworkAclsTreeView;
+            document.getElementById("ew.acls.associations.view").view = ew_NetworkAclAssociationsTreeView;
+            document.getElementById("ew.acls.rules.view").view = ew_NetworkAclRulesTreeView;
+            document.getElementById("ew.enis.view").view = ew_NetworkInterfacesTreeView;
+            document.getElementById("ew.enis.attachments.view").view = ew_NetworkInterfaceAttachmentsTreeView;
+            document.getElementById("ew.s3.view").view = ew_S3BucketsTreeView;
 
             // Enable about:blank to work if noscript is installed
             if ("@maone.net/noscript-service;1" in Components.classes) {
@@ -102,7 +102,7 @@ var ec2ui_session = {
         // At this moment, we only act on the ami argument
         var fSync = false;
         var amiToLaunch = this.args.ami;
-        var tabBox = document.getElementById("ec2ui.primary.tabs");
+        var tabBox = document.getElementById("ew.primary.tabs");
         if (amiToLaunch && amiToLaunch.match(regExs["ami"])) {
             fSync = true;
             if (tabBox.selectedIndex != 1) {
@@ -111,9 +111,9 @@ var ec2ui_session = {
             this.showBusyCursor(true);
             // this is a synchronous call, meaning
             // an ami launch was requested
-            ec2ui_AMIsTreeView.selectByImageId(amiToLaunch);
+            ew_AMIsTreeView.selectByImageId(amiToLaunch);
             this.showBusyCursor(false);
-            ec2ui_AMIsTreeView.launchNewInstances();
+            ew_AMIsTreeView.launchNewInstances();
         } else {
             // Since this is an async call, and the UI has
             // not switched over to the Images Tab,
@@ -145,7 +145,7 @@ var ec2ui_session = {
         if (!this.initialized) {
             return;
         }
-        var tabs = document.getElementById("ec2ui.tabs");
+        var tabs = document.getElementById("ew.tabs");
 
         var toCall = "invalidate()";
         if (this.getActiveCredential() != null) {
@@ -163,7 +163,7 @@ var ec2ui_session = {
 
         switch (tabs.selectedItem.label) {
         case 'Instances':
-            eval("ec2ui_InstancesTreeView." + toCall);
+            eval("ew_InstancesTreeView." + toCall);
             break;
         case 'Images':
             this.showBusyCursor(true);
@@ -172,68 +172,68 @@ var ec2ui_session = {
             this.showBusyCursor(false);
             break;
         case "Access":
-            eval("ec2ui_AccessKeyTreeView." + toCall);
-            eval("ec2ui_KeypairTreeView." + toCall);
-            eval("ec2ui_CertTreeView." + toCall);
+            eval("ew_AccessKeyTreeView." + toCall);
+            eval("ew_KeypairTreeView." + toCall);
+            eval("ew_CertTreeView." + toCall);
             break;
         case "Security Groups":
-            eval("ec2ui_SecurityGroupsTreeView." + toCall);
+            eval("ew_SecurityGroupsTreeView." + toCall);
             break;
         case "Elastic IPs":
-            eval("ec2ui_ElasticIPTreeView." + toCall);
+            eval("ew_ElasticIPTreeView." + toCall);
             break;
         case "Vols and Snaps":
-            eval("ec2ui_VolumeTreeView." + toCall);
-            eval("ec2ui_SnapshotTreeView." + toCall);
+            eval("ew_VolumeTreeView." + toCall);
+            eval("ew_SnapshotTreeView." + toCall);
             break;
         case "BT":
-            eval("ec2ui_BundleTasksTreeView." + toCall);
+            eval("ew_BundleTasksTreeView." + toCall);
             break;
         case "AZ":
-            eval("ec2ui_AvailZoneTreeView." + toCall);
+            eval("ew_AvailZoneTreeView." + toCall);
             break;
         case "RI":
-            eval("ec2ui_LeaseOfferingsTreeView." + toCall);
-            eval("ec2ui_ReservedInstancesTreeView." + toCall);
+            eval("ew_LeaseOfferingsTreeView." + toCall);
+            eval("ew_ReservedInstancesTreeView." + toCall);
             break;
         case "VPC":
-            eval("ec2ui_VpcTreeView." + toCall);
-            eval("ec2ui_SubnetTreeView." + toCall);
-            eval("ec2ui_DhcpoptsTreeView." + toCall);
+            eval("ew_VpcTreeView." + toCall);
+            eval("ew_SubnetTreeView." + toCall);
+            eval("ew_DhcpoptsTreeView." + toCall);
             break;
         case "VPNC":
-            eval("ec2ui_VpnConnectionTreeView." + toCall);
-            eval("ec2ui_VpnGatewayTreeView." + toCall);
-            eval("ec2ui_CustomerGatewayTreeView." + toCall);
-            eval("ec2ui_VpnAttachmentTreeView." + toCall);
+            eval("ew_VpnConnectionTreeView." + toCall);
+            eval("ew_VpnGatewayTreeView." + toCall);
+            eval("ew_CustomerGatewayTreeView." + toCall);
+            eval("ew_VpnAttachmentTreeView." + toCall);
             break;
         case "ELB":
-            eval("ec2ui_LoadbalancerTreeView." + toCall);
+            eval("ew_LoadbalancerTreeView." + toCall);
             break;
         case "Routing":
-            eval("ec2ui_InternetGatewayTreeView." + toCall);
-            eval("ec2ui_RouteTablesTreeView." + toCall);
+            eval("ew_InternetGatewayTreeView." + toCall);
+            eval("ew_RouteTablesTreeView." + toCall);
             break;
         case "ACLs":
-            eval("ec2ui_NetworkAclsTreeView." + toCall);
+            eval("ew_NetworkAclsTreeView." + toCall);
             break;
         case "ENIs":
-            eval("ec2ui_NetworkInterfacesTreeView." + toCall);
+            eval("ew_NetworkInterfacesTreeView." + toCall);
             break;
         case "S3":
-            eval("ec2ui_S3BucketsTreeView." + toCall);
+            eval("ew_S3BucketsTreeView." + toCall);
             break;
         default:
             log("This is an invalid tab: " + tabs.selectedItem.label);
             break;
         }
 
-        ec2ui_prefs.setCurrentTab(tabs.selectedIndex);
+        ew_prefs.setCurrentTab(tabs.selectedIndex);
     },
 
     getCredentials : function () {
         var credentials = new Array();
-        var list = ec2ui_session.getPasswordList("Cred:")
+        var list = ew_session.getPasswordList("Cred:")
         for (var i = 0; i < list.length; i++) {
             var pw = list[i][1].split(";;");
             if (pw.length > 1) {
@@ -270,10 +270,10 @@ var ec2ui_session = {
 
     loadCredentials : function()
     {
-        var activeCredsMenu = document.getElementById("ec2ui.active.credentials.list");
+        var activeCredsMenu = document.getElementById("ew.active.credentials.list");
         activeCredsMenu.removeAllItems();
 
-        var lastUsedCred = ec2ui_prefs.getLastUsedAccount();
+        var lastUsedCred = ew_prefs.getLastUsedAccount();
         this.credentials = this.getCredentials();
         for ( var i in this.credentials) {
             activeCredsMenu.insertItemAt(i, this.credentials[i].name, this.credentials[i].name);
@@ -292,7 +292,7 @@ var ec2ui_session = {
 
     getActiveCredential : function()
     {
-        var activeCredsMenu = document.getElementById("ec2ui.active.credentials.list");
+        var activeCredsMenu = document.getElementById("ew.active.credentials.list");
 
         if (this.credentials != null && this.credentials.length > 0) {
             if (activeCredsMenu.selectedIndex == -1) {
@@ -308,18 +308,18 @@ var ec2ui_session = {
         if (!cred) {
             cred = this.getActiveCredential();
         } else {
-            document.getElementById("ec2ui.active.credentials.list").value = cred.name;
+            document.getElementById("ew.active.credentials.list").value = cred.name;
         }
 
         if (cred != null) {
             debug("switch credentials to " + cred.name)
-            ec2ui_prefs.setLastUsedAccount(cred.name);
+            ew_prefs.setLastUsedAccount(cred.name);
             this.client.setCredentials(cred.accessKey, cred.secretKey);
 
             if (cred.endPoint && cred.endPoint != "") {
                 var endpoint = new Endpoint("", cred.endPoint)
                 this.client.setEndpoint(endpoint);
-                var activeEndpoints = document.getElementById("ec2ui.active.endpoints.list");
+                var activeEndpoints = document.getElementById("ew.active.endpoints.list");
                 for ( var i = 0; i < activeEndpoints.itemCount; i++) {
                     if (activeEndpoints.getItemAtIndex(i).value == endpoint.name) {
                         activeEndpoints.selectedIndex = i
@@ -331,7 +331,7 @@ var ec2ui_session = {
                     this.endpointmap.put(endpoint.name, endpoint);
                     log("add endpoint " + endpoint.name)
                 }
-                ec2ui_prefs.setLastUsedEndpoint(endpoint.name);
+                ew_prefs.setLastUsedEndpoint(endpoint.name);
             }
             this.loadAllTags();
 
@@ -339,34 +339,35 @@ var ec2ui_session = {
             this.model.invalidate();
 
             // Set the active tab to the last tab we were viewing
-            document.getElementById("ec2ui.tabs").selectedIndex = ec2ui_prefs.getCurrentTab();
+            document.getElementById("ew.tabs").selectedIndex = ew_prefs.getCurrentTab();
 
             // The current tab's view needs to either be invalidated or refreshed
             this.tabSelectionChanged();
         }
     },
 
-    getActiveEndpoint : function()
+    getActiveEndpoint : function(name)
     {
-        var activeEndpointname = document.getElementById("ec2ui.active.endpoints.list").value;
-        log("active endpoint: " + activeEndpointname)
+        var activeEndpointname = name || document.getElementById("ew.active.endpoints.list").value;
+
         if (activeEndpointname == null || activeEndpointname.length == 0) {
-            activeEndpointname = ec2ui_prefs.getLastUsedEndpoint();
+            activeEndpointname = ew_prefs.getLastUsedEndpoint();
         }
         if (this.endpointmap == null) {
-            return new Endpoint(activeEndpointname, ec2ui_prefs.getServiceURL());
+            return new Endpoint(activeEndpointname, ew_prefs.getServiceURL());
         } else {
             return this.endpointmap.get(activeEndpointname);
         }
     },
 
-    switchEndpoints : function()
+    switchEndpoints : function(name)
     {
-        var activeEndpoint = this.getActiveEndpoint();
+        var activeEndpoint = this.getActiveEndpoint(name);
 
         if (activeEndpoint != null) {
-            ec2ui_prefs.setLastUsedEndpoint(activeEndpoint.name);
-            ec2ui_prefs.setServiceURL(activeEndpoint.url);
+            debug("switch to " + activeEndpoint.name)
+            ew_prefs.setLastUsedEndpoint(activeEndpoint.name);
+            ew_prefs.setServiceURL(activeEndpoint.url);
             this.client.setEndpoint(activeEndpoint);
             this.loadAllTags();
 
@@ -374,7 +375,7 @@ var ec2ui_session = {
             this.model.invalidate();
 
             // Set the active tab to the last tab we were viewing
-            document.getElementById("ec2ui.tabs").selectedIndex = ec2ui_prefs.getCurrentTab();
+            document.getElementById("ew.tabs").selectedIndex = ew_prefs.getCurrentTab();
 
             // The current tab's view needs to either
             // be invalidated or refreshed
@@ -387,7 +388,7 @@ var ec2ui_session = {
             if (promptService.confirmEx(window, "EC2 Endpoint Needed", text, promptService.STD_YES_NO_BUTTONS | promptService.BUTTON_POS_0_DEFAULT, "", "", "", null, {})) {
                 // Reset the endpoint stored in the client and prefs
                 this.client.setEndpoint(new Endpoint());
-                ec2ui_prefs.setServiceURL("");
+                ew_prefs.setServiceURL("");
             } else {
                 this.manageEndpoints();
             }
@@ -396,10 +397,10 @@ var ec2ui_session = {
 
     loadEndpointMap : function()
     {
-        this.endpointmap = ec2ui_prefs.getEndpointMap();
-        var activeEndpointsMenu = document.getElementById("ec2ui.active.endpoints.list");
+        this.endpointmap = ew_prefs.getEndpointMap();
+        var activeEndpointsMenu = document.getElementById("ew.active.endpoints.list");
         activeEndpointsMenu.removeAllItems();
-        var lastUsedEndpoint = ec2ui_prefs.getLastUsedEndpoint();
+        var lastUsedEndpoint = ew_prefs.getLastUsedEndpoint();
         var endpointlist = this.endpointmap.toArray(function(k, v) { return new Endpoint(k, v.url) });
 
         for ( var i in endpointlist) {
@@ -412,31 +413,28 @@ var ec2ui_session = {
 
     manageEndpoints : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_manage_endpoints.xul", null, "chrome,centerscreen,modal,resizable", this.endpointmap);
+        window.openDialog("chrome://ew/content/dialog_manage_endpoints.xul", null, "chrome,centerscreen,modal,resizable", this, this);
         this.loadEndpointMap();
     },
 
     getEndpoints : function()
     {
-        return this.endpointmap.toArray(function(k, v)
-        {
-            return new Endpoint(k, v.url)
-        });
+        return this.endpointmap.toArray(function(k, v) { return new Endpoint(k, v.url) });
     },
 
     loadAllTags : function()
     {
-        this.imageTags = ec2ui_prefs.getImageTags();
-        this.instanceTags = ec2ui_prefs.getInstanceTags();
-        this.volumeTags = ec2ui_prefs.getVolumeTags();
-        this.snapshotTags = ec2ui_prefs.getSnapshotTags();
-        this.eipTags = ec2ui_prefs.getEIPTags();
-        this.vpcTags = ec2ui_prefs.getVpcTags();
-        this.subnetTags = ec2ui_prefs.getSubnetTags();
-        this.dhcpOptionsTags = ec2ui_prefs.getDhcpOptionsTags();
-        this.vpnTags = ec2ui_prefs.getVpnConnectionTags();
-        this.cgwTags = ec2ui_prefs.getCustomerGatewayTags();
-        this.vgwTags = ec2ui_prefs.getVpnGatewayTags();
+        this.imageTags = ew_prefs.getImageTags();
+        this.instanceTags = ew_prefs.getInstanceTags();
+        this.volumeTags = ew_prefs.getVolumeTags();
+        this.snapshotTags = ew_prefs.getSnapshotTags();
+        this.eipTags = ew_prefs.getEIPTags();
+        this.vpcTags = ew_prefs.getVpcTags();
+        this.subnetTags = ew_prefs.getSubnetTags();
+        this.dhcpOptionsTags = ew_prefs.getDhcpOptionsTags();
+        this.vpnTags = ew_prefs.getVpnConnectionTags();
+        this.cgwTags = ew_prefs.getCustomerGatewayTags();
+        this.vgwTags = ew_prefs.getVpnGatewayTags();
     },
 
     setResourceTag : function(id, tag)
@@ -444,37 +442,37 @@ var ec2ui_session = {
         if (!tag || tag.length == 0) return;
 
         tag = escape(tag);
-        if (id.match(ec2ui_InstancesTreeView.instanceIdRegex)) {
+        if (id.match(ew_InstancesTreeView.instanceIdRegex)) {
             this.instanceTags.put(id, tag, "setInstanceTags");
         } else
-        if (id.match(ec2ui_AMIsTreeView.imageIdRegex)) {
+        if (id.match(ew_AMIsTreeView.imageIdRegex)) {
             this.imageTags.put(id, tag, "setImageTags");
         } else
-        if (id.match(ec2ui_VolumeTreeView.imageIdRegex)) {
+        if (id.match(ew_VolumeTreeView.imageIdRegex)) {
             this.volumeTags.put(id, tag, "setVolumeTags");
         } else
-        if (id.match(ec2ui_SnapshotTreeView.imageIdRegex)) {
+        if (id.match(ew_SnapshotTreeView.imageIdRegex)) {
             this.snapshotTags.put(id, tag, "setSnapshotTags");
         } else
-        if (id.match(ec2ui_ElasticIPTreeView.imageIdRegex)) {
+        if (id.match(ew_ElasticIPTreeView.imageIdRegex)) {
             this.eipTags.put(id, tag, "setEIPTags");
         } else
-        if (id.match(ec2ui_VpcTreeView.imageIdRegex)) {
+        if (id.match(ew_VpcTreeView.imageIdRegex)) {
             this.vpcTags.put(id, tag, "setVpcTags");
         } else
-        if (id.match(ec2ui_SubnetTreeView.imageIdRegex)) {
+        if (id.match(ew_SubnetTreeView.imageIdRegex)) {
             this.subnetTags.put(id, tag, "setSubnetTags");
         } else
-        if (id.match(ec2ui_DhcpoptsTreeView.imageIdRegex)) {
+        if (id.match(ew_DhcpoptsTreeView.imageIdRegex)) {
             this.dhcpOptionsTags.put(id, tag, "setDhcpOptionsTags");
         } else
-        if (id.match(ec2ui_VpnConnectionTreeView.imageIdRegex)) {
+        if (id.match(ew_VpnConnectionTreeView.imageIdRegex)) {
             this.vpnTags.put(id, tag, "setVpnConnectionTags");
         } else
-        if (id.match(ec2ui_VpnGatewayTreeView.imageIdRegex)) {
+        if (id.match(ew_VpnGatewayTreeView.imageIdRegex)) {
             this.vgwTags.put(id, tag, "setVpnGatewayTags");
         } else
-        if (id.match(ec2ui_CustomerGatewayTreeView.imageIdRegex)) {
+        if (id.match(ew_CustomerGatewayTreeView.imageIdRegex)) {
             this.cgwTags.put(id, tag, "setCustomerGatewayTags");
         }
     },
@@ -482,37 +480,37 @@ var ec2ui_session = {
     getResourceTag : function(id)
     {
         var tag = "";
-        if (id.match(ec2ui_InstancesTreeView.instanceIdRegex)) {
+        if (id.match(ew_InstancesTreeView.instanceIdRegex)) {
             tag = this.instanceTags.get(id);
         } else
-        if (id.match(ec2ui_VolumeTreeView.imageIdRegex)) {
+        if (id.match(ew_VolumeTreeView.imageIdRegex)) {
             tag = this.volumeTags.get(id);
         } else
-        if (id.match(ec2ui_SnapshotTreeView.imageIdRegex)) {
+        if (id.match(ew_SnapshotTreeView.imageIdRegex)) {
             tag = this.snapshotTags.get(id);
         } else
         if (id.match(regExs["ami"])) {
             tag = this.imageTags.get(id);
         } else
-        if (id.match(ec2ui_ElasticIPTreeView.imageIdRegex)) {
+        if (id.match(ew_ElasticIPTreeView.imageIdRegex)) {
             tag = this.eipTags.get(id);
         } else
-        if (id.match(ec2ui_VpcTreeView.imageIdRegex)) {
+        if (id.match(ew_VpcTreeView.imageIdRegex)) {
             tag = this.vpcTags.get(id);
         } else
-        if (id.match(ec2ui_SubnetTreeView.imageIdRegex)) {
+        if (id.match(ew_SubnetTreeView.imageIdRegex)) {
             tag = this.subnetTags.get(id);
         } else
-        if (id.match(ec2ui_DhcpoptsTreeView.imageIdRegex)) {
+        if (id.match(ew_DhcpoptsTreeView.imageIdRegex)) {
             tag = this.dhcpOptionsTags.get(id);
         } else
-        if (id.match(ec2ui_VpnConnectionTreeView.imageIdRegex)) {
+        if (id.match(ew_VpnConnectionTreeView.imageIdRegex)) {
             tag = this.vpnTags.get(id);
         } else
-        if (id.match(ec2ui_VpnGatewayTreeView.imageIdRegex)) {
+        if (id.match(ew_VpnGatewayTreeView.imageIdRegex)) {
             tag = this.vgwTags.get(id);
         } else
-        if (id.match(ec2ui_CustomerGatewayTreeView.imageIdRegex)) {
+        if (id.match(ew_CustomerGatewayTreeView.imageIdRegex)) {
             tag = this.cgwTags.get(id);
         }
 
@@ -555,124 +553,124 @@ var ec2ui_session = {
         switch (resourceType) {
         case this.model.resourceMap.instances:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setInstanceTags(tags);
+            ew_prefs.setInstanceTags(tags);
 
             this.instanceTags = null;
             // Retrieve the appropriate data structure from the store
-            this.instanceTags = ec2ui_prefs.getInstanceTags();
+            this.instanceTags = ew_prefs.getInstanceTags();
             break;
 
         case this.model.resourceMap.volumes:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setVolumeTags(tags);
+            ew_prefs.setVolumeTags(tags);
 
             this.volumeTags = null;
             // Retrieve the appropriate data structure from the store
-            this.volumeTags = ec2ui_prefs.getVolumeTags();
+            this.volumeTags = ew_prefs.getVolumeTags();
             break;
 
         case this.model.resourceMap.snapshots:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setSnapshotTags(tags);
+            ew_prefs.setSnapshotTags(tags);
 
             this.snapshotTags = null;
             // Retrieve the appropriate data structure from the store
-            this.snapshotTags = ec2ui_prefs.getSnapshotTags();
+            this.snapshotTags = ew_prefs.getSnapshotTags();
             break;
 
         case this.model.resourceMap.images:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setImageTags(tags);
+            ew_prefs.setImageTags(tags);
 
             this.imageTags = null;
             // Retrieve the appropriate data structure from the store
-            this.imageTags = ec2ui_prefs.getImageTags();
+            this.imageTags = ew_prefs.getImageTags();
             break;
 
         case this.model.resourceMap.eips:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setEIPTags(tags);
+            ew_prefs.setEIPTags(tags);
 
             this.eipTags = null;
             // Retrieve the appropriate data structure from the store
-            this.eipTags = ec2ui_prefs.getEIPTags();
+            this.eipTags = ew_prefs.getEIPTags();
             break;
 
         case this.model.resourceMap.vpcs:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setVpcTags(tags);
+            ew_prefs.setVpcTags(tags);
 
             this.vpcTags = null;
             // Retrieve the appropriate data structure from the store
-            this.vpcTags = ec2ui_prefs.getVpcTags();
+            this.vpcTags = ew_prefs.getVpcTags();
             break;
 
         case this.model.resourceMap.subnets:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setSubnetTags(tags);
+            ew_prefs.setSubnetTags(tags);
 
             this.subnetTags = null;
             // Retrieve the appropriate data structure from the store
-            this.subnetTags = ec2ui_prefs.getSubnetTags();
+            this.subnetTags = ew_prefs.getSubnetTags();
             break;
 
         case this.model.resourceMap.dhcpOptions:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setDhcpOptionsTags(tags);
+            ew_prefs.setDhcpOptionsTags(tags);
 
             this.dhcpOptionsTags = null;
             // Retrieve the appropriate data structure from the store
-            this.dhcpOptionsTags = ec2ui_prefs.getDhcpOptionsTags();
+            this.dhcpOptionsTags = ew_prefs.getDhcpOptionsTags();
             break;
 
         case this.model.resourceMap.vpnConnections:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setVpnConnectionTags(tags);
+            ew_prefs.setVpnConnectionTags(tags);
 
             this.vpnTags = null;
             // Retrieve the appropriate data structure from the store
-            this.vpnTags = ec2ui_prefs.getVpnConnectionTags();
+            this.vpnTags = ew_prefs.getVpnConnectionTags();
             break;
 
         case this.model.resourceMap.vpnGateways:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setVpnGatewayTags(tags);
+            ew_prefs.setVpnGatewayTags(tags);
 
             this.vgwTags = null;
             // Retrieve the appropriate data structure from the store
-            this.vgwTags = ec2ui_prefs.getVpnGatewayTags();
+            this.vgwTags = ew_prefs.getVpnGatewayTags();
             break;
 
         case this.model.resourceMap.customerGateways:
             // The Tags must first be persisted to the prefs store
-            ec2ui_prefs.setCustomerGatewayTags(tags);
+            ew_prefs.setCustomerGatewayTags(tags);
 
             this.cgwTags = null;
             // Retrieve the appropriate data structure from the store
-            this.cgwTags = ec2ui_prefs.getCustomerGatewayTags();
+            this.cgwTags = ew_prefs.getCustomerGatewayTags();
             break;
         }
     },
 
     manageCredentials : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ec2ui_session);
+        window.openDialog("chrome://ew/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ew_session);
         this.loadCredentials();
     },
 
     manageTools : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_manage_tools.xul", null, "chrome,centerscreen,modal, resizable");
+        window.openDialog("chrome://ew/content/dialog_manage_tools.xul", null, "chrome,centerscreen,modal, resizable");
     },
 
     loadAccountIdMap : function()
     {
-        this.accountidmap = ec2ui_prefs.getAccountIdMap();
+        this.accountidmap = ew_prefs.getAccountIdMap();
     },
 
     manageAccountIds : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_manage_accountids.xul", null, "chrome,centerscreen,modal,resizable", this.accountidmap);
+        window.openDialog("chrome://ew/content/dialog_manage_accountids.xul", null, "chrome,centerscreen,modal,resizable", this.accountidmap);
         this.loadAccountIdMap();
     },
 
@@ -689,23 +687,23 @@ var ec2ui_session = {
 
     displayAbout : function()
     {
-        window.openDialog("chrome://ec2ui/content/dialog_about.xul", null, "chrome,centerscreen,modal,resizable", this.client);
+        window.openDialog("chrome://ew/content/dialog_about.xul", null, "chrome,centerscreen,modal,resizable", this.client);
     },
 
     showBusyCursor : function(fShow)
     {
         if (fShow) {
-            document.getElementById("ec2ui-window").setAttribute("wait-cursor", true);
+            document.getElementById("ew-window").setAttribute("wait-cursor", true);
         } else {
-            document.getElementById("ec2ui-window").removeAttribute("wait-cursor");
+            document.getElementById("ew-window").removeAttribute("wait-cursor");
         }
     },
 
     openMainWindow : function()
     {
-        var url = "chrome://ec2ui/content/ec2ui_window.xul";
-        ec2ui_prefs.init();
-        if (ec2ui_prefs.isOpenInNewTabEnabled()) {
+        var url = "chrome://ew/content/ew_window.xul";
+        ew_prefs.init();
+        if (ew_prefs.isOpenInNewTabEnabled()) {
             getBrowser().selectedTab = getBrowser().addTab(url);
         } else {
             getBrowser().selectedBrowser.contentDocument.location = url;
@@ -715,15 +713,15 @@ var ec2ui_session = {
     generateCertificate : function(name)
     {
         // Make sure we have directory
-        if (!ec2ui_prefs.makeKeyHome()) {
+        if (!ew_prefs.makeKeyHome()) {
             return 0
         }
 
-        var certfile = ec2ui_prefs.getCertificateFile(name);
-        var keyfile = ec2ui_prefs.getPrivateKeyFile(name);
-        var pubfile = ec2ui_prefs.getPublicKeyFile(name);
-        var openssl = ec2ui_prefs.getOpenSSLCommand();
-        var conffile = ec2ui_prefs.getKeyHome() + DirIO.sep + "openssl.cnf"
+        var certfile = ew_prefs.getCertificateFile(name);
+        var keyfile = ew_prefs.getPrivateKeyFile(name);
+        var pubfile = ew_prefs.getPublicKeyFile(name);
+        var openssl = ew_prefs.getOpenSSLCommand();
+        var conffile = ew_prefs.getKeyHome() + DirIO.sep + "openssl.cnf"
 
         FileIO.remove(certfile);
         FileIO.remove(keyfile);
@@ -735,7 +733,7 @@ var ec2ui_session = {
         FileIO.write(FileIO.open(conffile), confdata)
 
         // Create private and cert files
-        ec2ui_prefs.setEnv("OPENSSL_CONF", conffile);
+        ew_prefs.setEnv("OPENSSL_CONF", conffile);
         this.launchProcess(openssl, [ "genrsa", "-out", keyfile, "1024" ], true);
         if (!waitForFile(keyfile, 5000)) {
             debug("ERROR: no private key generated")
@@ -767,37 +765,37 @@ var ec2ui_session = {
     launchShell : function(name)
     {
         // Make sure we have directory
-        if (!ec2ui_prefs.makeKeyHome()) {
+        if (!ew_prefs.makeKeyHome()) {
             return 0
         }
 
         // Save current acces key into file
-        FileIO.write(FileIO.open(ec2ui_prefs.getCredentialFile(name)), "AWSAccessKeyId=" + ec2ui_client.accessCode + "\nAWSSecretKey=" + ec2ui_client.secretKey + "\n")
+        FileIO.write(FileIO.open(ew_prefs.getCredentialFile(name)), "AWSAccessKeyId=" + ew_client.accessCode + "\nAWSSecretKey=" + ew_client.secretKey + "\n")
 
         // Setup environment
-        ec2ui_prefs.setEnv("EC2_URL", ec2ui_client.serviceURL);
-        ec2ui_prefs.setEnv("EC2_PRIVATE_KEY", ec2ui_prefs.getPrivateKeyFile(name));
-        ec2ui_prefs.setEnv("EC2_CERT", ec2ui_prefs.getCertificateFile(name));
-        ec2ui_prefs.setEnv("AWS_CREDENTIAL_FILE", ec2ui_prefs.getCredentialFile(name));
-        ec2ui_prefs.setEnv("AWS_IAM_URL", ec2ui_client.getIAMURL());
+        ew_prefs.setEnv("EC2_URL", ew_client.serviceURL);
+        ew_prefs.setEnv("EC2_PRIVATE_KEY", ew_prefs.getPrivateKeyFile(name));
+        ew_prefs.setEnv("EC2_CERT", ew_prefs.getCertificateFile(name));
+        ew_prefs.setEnv("AWS_CREDENTIAL_FILE", ew_prefs.getCredentialFile(name));
+        ew_prefs.setEnv("AWS_IAM_URL", ew_client.getIAMURL());
 
         // Current PATH
-        var path = ec2ui_prefs.getEnv("PATH");
+        var path = ew_prefs.getEnv("PATH");
         var sep = isWindows(navigator.platform) ? ";" : ":";
 
         // Update path to the command line tools
-        var paths = [ec2ui_prefs.JAVA_TOOLS_PATH, ec2ui_prefs.EC2_TOOLS_PATH, ec2ui_prefs.IAM_TOOLS_PATH, ec2ui_prefs.AMI_TOOLS_PATH, ec2ui_prefs.CLOUDWATCH_TOOLS_PATH, ec2ui_prefs.AWS_AUTOSCALING_TOOLS_PATH];
+        var paths = [ew_prefs.JAVA_TOOLS_PATH, ew_prefs.EC2_TOOLS_PATH, ew_prefs.IAM_TOOLS_PATH, ew_prefs.AMI_TOOLS_PATH, ew_prefs.CLOUDWATCH_TOOLS_PATH, ew_prefs.AWS_AUTOSCALING_TOOLS_PATH];
         for(var i in paths) {
-            var p = ec2ui_prefs.getStringPreference(paths[i], "");
+            var p = ew_prefs.getStringPreference(paths[i], "");
             if (p == "") {
                 continue;
             }
-            ec2ui_prefs.setEnv(paths[i].split(".").pop().toUpperCase(), p);
+            ew_prefs.setEnv(paths[i].split(".").pop().toUpperCase(), p);
             path += sep + p + DirIO.sep + "bin";
         }
         debug(path)
-        ec2ui_prefs.setEnv("PATH", path);
-        this.launchProcess(ec2ui_prefs.getShellCommand(), []);
+        ew_prefs.setEnv("PATH", path);
+        this.launchProcess(ew_prefs.getShellCommand(), []);
     },
 
     launchProcess : function(cmd, args, block)
@@ -857,7 +855,7 @@ var ec2ui_session = {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, save ? nsIFilePicker.modeSave : nsIFilePicker.modeOpen);
-        fp.displayDirectory = FileIO.open(ec2ui_prefs.getKeyHome());
+        fp.displayDirectory = FileIO.open(ew_prefs.getKeyHome());
         fp.defaultString = filename || ""
         if (fp.show() != nsIFilePicker.returnCancel) {
             return fp.file.path;
@@ -870,7 +868,7 @@ var ec2ui_session = {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, nsIFilePicker.modeGetFolder);
-        fp.displayDirectory = FileIO.open(ec2ui_prefs.getKeyHome());
+        fp.displayDirectory = FileIO.open(ew_prefs.getKeyHome());
         if (fp.show() != nsIFilePicker.returnCancel) {
             return fp.file.path;
         }

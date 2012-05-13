@@ -1,4 +1,4 @@
-var ec2ui_InstancesTreeView = {
+var ew_InstancesTreeView = {
     COLNAMES : [
        'instance.name',
        'instance.resId',
@@ -139,9 +139,9 @@ var ec2ui_InstancesTreeView = {
         }
 
         if (instances.length == 1) {
-            tagEC2Resource(instances[0], ec2ui_session);
+            tagEC2Resource(instances[0], ew_session);
         } else {
-            ec2ui_utils.tagMultipleEC2Resources(instances, ec2ui_session);
+            ew_utils.tagMultipleEC2Resources(instances, ew_session);
         }
 
         this.selectByInstanceIds(instances);
@@ -153,21 +153,21 @@ var ec2ui_InstancesTreeView = {
             return;
         }
         instance.eip = this.getEIP(instance);
-        var mani = ec2ui_session.model.getAmiManifestForId(instance.imageId);
+        var mani = ew_session.model.getAmiManifestForId(instance.imageId);
         if (mani.length == 0) {
             // Need to call describe Image
-            ec2ui_session.controller.describeImage(instance.imageId);
+            ew_session.controller.describeImage(instance.imageId);
         }
-        window.openDialog("chrome://ec2ui/content/dialog_instance_details.xul", null, "chrome,centerscreen,modeless,resizable", ec2ui_session, instance);
+        window.openDialog("chrome://ew/content/dialog_instance_details.xul", null, "chrome,centerscreen,modeless,resizable", ew_session, instance);
     },
 
     getSearchText: function() {
-        return document.getElementById('ec2ui.instances.search').value;
+        return document.getElementById('ew.instances.search').value;
     },
 
     invalidate : function() {
-        var target = ec2ui_InstancesTreeView;
-        target.displayInstances(target.filterInstances(ec2ui_model.instances));
+        var target = ew_InstancesTreeView;
+        target.displayInstances(target.filterInstances(ew_model.instances));
     },
 
     searchChanged : function(event) {
@@ -181,8 +181,8 @@ var ec2ui_InstancesTreeView = {
     filterInstances : function(instances) {
         // No longer need to lowercase this because the patt is created with "i"
         var searchText = this.getSearchText();
-        var filterTerm = document.getElementById("ec2ui.instances.noterminated").checked;
-        var filterStop = document.getElementById("ec2ui.instances.nostopped").checked;
+        var filterTerm = document.getElementById("ew.instances.noterminated").checked;
+        var filterStop = document.getElementById("ew.instances.nostopped").checked;
         if (searchText.length == 0 &&
             !(filterTerm || filterStop)) {
             return instances;
@@ -225,7 +225,7 @@ var ec2ui_InstancesTreeView = {
     getInstanceDetail : function(instance, column) {
         var detail = eval(column);
         if (column.indexOf("ownerId") > 0) {
-            detail = ec2ui_session.lookupAccountId(detail);
+            detail = ew_session.lookupAccountId(detail);
         }
         return detail || "";
     },
@@ -237,12 +237,12 @@ var ec2ui_InstancesTreeView = {
 
         do {
             var bucketReg = null;
-            window.openDialog("chrome://ec2ui/content/dialog_bundle_instance.xul", null, "chrome,centerscreen,modal,resizable", instance.id, ec2ui_session, retVal);
+            window.openDialog("chrome://ew/content/dialog_bundle_instance.xul", null, "chrome,centerscreen,modal,resizable", instance.id, ew_session, retVal);
 
-            ec2ui_session.showBusyCursor(true);
+            ew_session.showBusyCursor(true);
             if (retVal.ok) {
                 // Create the bucket if it doesn't exist
-                retVal.ok = ec2ui_session.controller.createS3Bucket(retVal.bucketName);
+                retVal.ok = ew_session.controller.createS3Bucket(retVal.bucketName);
             } else {
                 // The user doesn't want to proceed!
                 // If you get rid of this, the dialog keeps popping back up!
@@ -250,8 +250,8 @@ var ec2ui_InstancesTreeView = {
             }
 
             if (retVal.ok) {
-                var reg = ec2ui_utils.determineRegionFromString(ec2ui_session.getActiveEndpoint().name);
-                bucketReg = ec2ui_session.controller.getS3BucketLocation(retVal.bucketName) || reg;
+                var reg = ew_utils.determineRegionFromString(ew_session.getActiveEndpoint().name);
+                bucketReg = ew_session.controller.getS3BucketLocation(retVal.bucketName) || reg;
                 log(reg + ": active region ");
                 log(bucketReg + ": bucket's region ");
                 retVal.ok = (reg == bucketReg);
@@ -263,7 +263,7 @@ var ec2ui_InstancesTreeView = {
 
             // Determine whether the user owns the specified bucket
             if (retVal.ok) {
-                retVal.ok = ec2ui_session.controller.writeS3KeyInBucket(retVal.bucketName, retVal.prefix + ".manifest.xml", "ec2ui-write-test", bucketReg);
+                retVal.ok = ew_session.controller.writeS3KeyInBucket(retVal.bucketName, retVal.prefix + ".manifest.xml", "ew-write-test", bucketReg);
 
                 if (!retVal.ok) {
                     alert ("ERROR: It appears that you don't have write permissions on the bucket: " + retVal.bucketName);
@@ -271,7 +271,7 @@ var ec2ui_InstancesTreeView = {
             }
         } while (!retVal.ok);
 
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(false);
 
         if (retVal.ok) {
             var wrap = function(list) {
@@ -283,13 +283,13 @@ var ec2ui_InstancesTreeView = {
                 // select list[0].id
 
                 // Navigate to the Bundle Tasks tab
-                ec2ui_BundleTasksTreeView.refresh();
-                ec2ui_BundleTasksTreeView.selectByBundleId(list[0].id);
-                var tabPanel = document.getElementById("ec2ui.primary.tabs");
+                ew_BundleTasksTreeView.refresh();
+                ew_BundleTasksTreeView.selectByBundleId(list[0].id);
+                var tabPanel = document.getElementById("ew.primary.tabs");
                 tabPanel.selectedIndex = 8;
             }
 
-            ec2ui_session.controller.bundleInstance(instance.id, retVal.bucketName, retVal.prefix, ec2ui_session.getActiveCredential(), wrap);
+            ew_session.controller.bundleInstance(instance.id, retVal.bucketName, retVal.prefix, ew_session.getActiveCredential(), wrap);
         }
     },
 
@@ -298,22 +298,22 @@ var ec2ui_InstancesTreeView = {
         var instance = this.getSelectedInstance();
         if (instance == null) return;
 
-        window.openDialog("chrome://ec2ui/content/dialog_create_image.xul", null, "chrome,centerscreen,modal,resizable", instance.id, ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_create_image.xul", null, "chrome,centerscreen,modal,resizable", instance.id, ew_session, retVal);
         if (retVal.ok) {
             var wrap = function(id) {
                 alert("A new EBS-backed AMI is being created and will\nbe available in a moment.\n\nThe AMI ID is: "+id);
             }
-            ec2ui_session.controller.createImage(instance.id, retVal.amiName, retVal.amiDescription, retVal.noReboot, wrap);
+            ew_session.controller.createImage(instance.id, retVal.amiName, retVal.amiDescription, retVal.noReboot, wrap);
         }
     },
 
     isInstanceReadyToUse : function(instance) {
         var ret = false;
         if (isWindows(instance.platform)) {
-            var consoleRsp = ec2ui_session.controller.getConsoleOutput(instance.id);
+            var consoleRsp = ew_session.controller.getConsoleOutput(instance.id);
             // Parse the response to determine whether the instance is ready to
             // use
-            var output = ec2ui_session.controller.onCompleteGetConsoleOutput(consoleRsp);
+            var output = ew_session.controller.onCompleteGetConsoleOutput(consoleRsp);
             if (output.indexOf("Windows is Ready to use") >= 0) {
                 ret = true;
             }
@@ -343,39 +343,39 @@ var ec2ui_InstancesTreeView = {
         }
 
         // Determine if there is actually an EBS volume to attach to
-        var volumes = ec2ui_session.model.getVolumes();
+        var volumes = ew_session.model.getVolumes();
         if (volumes == null || volumes.length == 0) {
             // There are no volumes to attach to.
             var fRet = confirm ("Would you like to create a new EBS volume to attach to this instance?");
             if (fRet) {
-                fRet = ec2ui_VolumeTreeView.createVolume();
+                fRet = ew_VolumeTreeView.createVolume();
             }
 
             if (fRet) {
-                volumes = ec2ui_session.model.getVolumes();
+                volumes = ew_session.model.getVolumes();
             } else {
                 return;
             }
         }
 
         var retVal = {ok:null, volumeId:null, device:null};
-        window.openDialog("chrome://ec2ui/content/dialog_attach_ebs_volume.xul",null, "chrome,centerscreen,modal,resizable", ec2ui_session, instance, retVal);
+        window.openDialog("chrome://ew/content/dialog_attach_ebs_volume.xul",null, "chrome,centerscreen,modal,resizable", ew_session, instance, retVal);
         if (retVal.ok) {
             log(instance.id + " to be associated with " + retVal.volumeId);
 
-            ec2ui_VolumeTreeView.attachEBSVolume(
+            ew_VolumeTreeView.attachEBSVolume(
                 retVal.volumeId,
                 instance.id,
                 retVal.device
                 );
 
             // Navigate to the Volumes Tab
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                ec2ui_VolumeTreeView.refresh();
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
+                ew_VolumeTreeView.refresh();
             }
-            var tabPanel = document.getElementById("ec2ui.primary.tabs");
+            var tabPanel = document.getElementById("ew.primary.tabs");
             tabPanel.selectedIndex = 6;
-            ec2ui_VolumeTreeView.selectByImageId(retVal.volumeId);
+            ew_VolumeTreeView.selectByImageId(retVal.volumeId);
         }
     },
 
@@ -391,28 +391,28 @@ var ec2ui_InstancesTreeView = {
         }
 
         // Determine if there is actually an EIP to associate with
-        var addresses = ec2ui_session.model.getAddresses();
+        var addresses = ew_session.model.getAddresses();
         if (addresses == null || addresses.length == 0) {
             // There are no addresses to associate with.
             var fAddEIP = confirm ("Would you like to create a new Elastic IP to associate with this instance?");
             if (fAddEIP) {
-                var tabPanel = document.getElementById("ec2ui.primary.tabs");
+                var tabPanel = document.getElementById("ew.primary.tabs");
                 tabPanel.selectedIndex = 5;
-                ec2ui_ElasticIPTreeView.allocateAddress();
+                ew_ElasticIPTreeView.allocateAddress();
             }
             return;
         }
 
         var retVal = {ok:null,eipMap:null};
-        window.openDialog("chrome://ec2ui/content/dialog_select_eip.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, instance, retVal);
+        window.openDialog("chrome://ew/content/dialog_select_eip.xul", null, "chrome,centerscreen,modal,resizable", ew_session, instance, retVal);
         if (retVal.ok) {
             log(retVal.eipMap.address + " to be associated with " + retVal.eipMap.instanceId);
-            ec2ui_ElasticIPTreeView.associateAddress(retVal.eipMap);
+            ew_ElasticIPTreeView.associateAddress(retVal.eipMap);
         }
     },
 
     getEIP: function(instance) {
-        var addresses = ec2ui_session.model.getAddresses();
+        var addresses = ew_session.model.getAddresses();
         var addr = null;
         for (var i in addresses) {
             addr = addresses[i];
@@ -527,9 +527,9 @@ var ec2ui_InstancesTreeView = {
     },
 
     promptForKeyFile : function(keyName) {
-        var keyFile = ec2ui_session.promptForFile("Select the EC2 Private Key File for key: " + keyName);
+        var keyFile = ew_session.promptForFile("Select the EC2 Private Key File for key: " + keyName);
         if (keyFile) {
-            ec2ui_prefs.setLastEC2PKeyFile(keyFile);
+            ew_prefs.setLastEC2PKeyFile(keyFile);
         }
         log("getkey: " + keyName + "=" + keyFile);
         return keyFile;
@@ -558,7 +558,7 @@ var ec2ui_InstancesTreeView = {
         }
 
         if (fSuccess) {
-            var prvKeyFile = ec2ui_prefs.getPrivateKeyFile(instance.keyName);
+            var prvKeyFile = ew_prefs.getPrivateKeyFile(instance.keyName);
         }
 
         log("Private Key File: " + prvKeyFile);
@@ -575,7 +575,7 @@ var ec2ui_InstancesTreeView = {
 
             if (!fSuccess) {
                 // Has a default key file been saved for this user account?
-                var savedKeyFile = ec2ui_prefs.getLastEC2PKeyFile();
+                var savedKeyFile = ew_prefs.getLastEC2PKeyFile();
                 if (savedKeyFile.length > 0 && prvKeyFile != savedKeyFile) {
                     prvKeyFile = savedKeyFile;
                     log("Using default private key file");
@@ -643,7 +643,7 @@ var ec2ui_InstancesTreeView = {
             return;
         }
 
-        ec2ui_session.showBusyCursor(true);
+        ew_session.showBusyCursor(true);
         this.instPassword = "";
         this.fSilent = fSilent;
         var me = this;
@@ -651,7 +651,7 @@ var ec2ui_InstancesTreeView = {
             me.getInstancePasswordImpl(output, me.fSilent);
         }
         this.fetchConsoleOutput(wrap, instance);
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(false);
         return this.instPassword;
     },
 
@@ -703,22 +703,22 @@ var ec2ui_InstancesTreeView = {
         this.selectedInstanceId = instance.id;
 
         // Ensure the instance's image is selected
-        ec2ui_AMIsTreeView.selectByImageId(instance.imageId);
+        ew_AMIsTreeView.selectByImageId(instance.imageId);
     },
 
     register: function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'instances');
+            ew_model.registerInterest(this, 'instances');
         }
     },
 
     refresh : function() {
         this.selectionChanged();
-        ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeInstances();
+        ew_session.showBusyCursor(true);
+        ew_session.controller.describeInstances();
         this.sort();
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(false);
     },
 
     notifyModelChanged: function(interest) {
@@ -728,7 +728,7 @@ var ec2ui_InstancesTreeView = {
     enableOrDisableItems  : function(event) {
         var index =  this.selection.currentIndex;
         var fDisabled = (index == -1);
-        document.getElementById("ec2ui.instances.contextmenu").disabled = fDisabled;
+        document.getElementById("ew.instances.contextmenu").disabled = fDisabled;
 
         if (fDisabled) return;
 
@@ -778,11 +778,11 @@ var ec2ui_InstancesTreeView = {
 
         var me = this;
         var wrap = function(list) {
-            ec2ui_InstancesTreeView.refresh();
-            ec2ui_InstancesTreeView.selectByInstanceIds(list);
+            ew_InstancesTreeView.refresh();
+            ew_InstancesTreeView.selectByInstanceIds(list);
         }
         count = count.trim();
-        ec2ui_session.controller.runInstances(instance.imageId, instance.kernelId, instance.ramdiskId, count, count, instance.keyName, instance.groupList, null, null, instance.instanceType, instance.placement, instance.subnetId, null, wrap);
+        ew_session.controller.runInstances(instance.imageId, instance.kernelId, instance.ramdiskId, count, count, instance.keyName, instance.groupList, null, null, instance.instanceType, instance.placement, instance.subnetId, null, wrap);
     },
 
     terminateInstance : function() {
@@ -798,10 +798,10 @@ var ec2ui_InstancesTreeView = {
             return;
 
         var wrap = function() {
-            ec2ui_InstancesTreeView.refresh();
-            ec2ui_InstancesTreeView.selectByInstanceIds();
+            ew_InstancesTreeView.refresh();
+            ew_InstancesTreeView.selectByInstanceIds();
         }
-        ec2ui_session.controller.terminateInstances(instanceIds, wrap);
+        ew_session.controller.terminateInstances(instanceIds, wrap);
     },
 
     stopInstance : function() {
@@ -825,10 +825,10 @@ var ec2ui_InstancesTreeView = {
             return;
 
         var wrap = function() {
-            ec2ui_InstancesTreeView.refresh();
-            ec2ui_InstancesTreeView.selectByInstanceIds();
+            ew_InstancesTreeView.refresh();
+            ew_InstancesTreeView.selectByInstanceIds();
         }
-        ec2ui_session.controller.stopInstances(instanceIds, force, wrap);
+        ew_session.controller.stopInstances(instanceIds, force, wrap);
     },
 
     showUserData : function() {
@@ -847,7 +847,7 @@ var ec2ui_InstancesTreeView = {
         }
 
         function __describeInstanceAttribute__(instanceId, instanceLabel) {
-            ec2ui_session.controller.describeInstanceAttribute(instanceId, "userData", function(value) {
+            ew_session.controller.describeInstanceAttribute(instanceId, "userData", function(value) {
                 pushStatusToArray(instanceLabel, (value ? Base64.decode(value) : "(empty)"));
             });
         }
@@ -874,15 +874,15 @@ var ec2ui_InstancesTreeView = {
         var instanceLabel = instanceLabels[0]
         var returnValue = {accepted:false , result:null};
 
-        ec2ui_session.controller.describeInstanceAttribute(instanceId, "userData", function(value) {
-            openDialog('chrome://ec2ui/content/dialog_user_data.xul', null, 'chrome,centerscreen,modal,width=400,height=250', instanceLabel, (value ? Base64.decode(value) : ''), returnValue);
+        ew_session.controller.describeInstanceAttribute(instanceId, "userData", function(value) {
+            openDialog('chrome://ew/content/dialog_user_data.xul', null, 'chrome,centerscreen,modal,width=400,height=250', instanceLabel, (value ? Base64.decode(value) : ''), returnValue);
 
             if (returnValue.result == null) {
                 return;
             }
 
             var attribute = ['UserData', Base64.encode(returnValue.result)];
-            ec2ui_session.controller.modifyInstanceAttribute(instanceId, attribute);
+            ew_session.controller.modifyInstanceAttribute(instanceId, attribute);
         });
     },
 
@@ -903,17 +903,17 @@ var ec2ui_InstancesTreeView = {
         var instanceLabel = instanceLabels[0]
         var returnValue = {accepted:false , result:null};
 
-        ec2ui_session.controller.describeInstanceAttribute(instanceId, "instanceType", function(value) {
-            openDialog('chrome://ec2ui/content/dialog_instance_type.xul', null, 'chrome,centerscreen,modal', instanceLabel, value, returnValue);
+        ew_session.controller.describeInstanceAttribute(instanceId, "instanceType", function(value) {
+            openDialog('chrome://ew/content/dialog_instance_type.xul', null, 'chrome,centerscreen,modal', instanceLabel, value, returnValue);
 
             if (returnValue.result == null) {
                 return;
             }
 
             var attribute = ['InstanceType', returnValue.result];
-            ec2ui_session.controller.modifyInstanceAttribute(instanceId, attribute, function() {
-                ec2ui_InstancesTreeView.refresh();
-                ec2ui_InstancesTreeView.selectByInstanceIds();
+            ew_session.controller.modifyInstanceAttribute(instanceId, attribute, function() {
+                ew_InstancesTreeView.refresh();
+                ew_InstancesTreeView.selectByInstanceIds();
             });
         });
     },
@@ -934,7 +934,7 @@ var ec2ui_InstancesTreeView = {
         }
 
         function __describeInstanceAttribute__(instanceId, instanceLabel) {
-            ec2ui_session.controller.describeInstanceAttribute(instanceId, "disableApiTermination", function(value) {
+            ew_session.controller.describeInstanceAttribute(instanceId, "disableApiTermination", function(value) {
                 value = (value == "true");
                 pushStatusToArray(instanceLabel, (value ? "enable" : "disable"));
             });
@@ -950,7 +950,7 @@ var ec2ui_InstancesTreeView = {
         var instanceId = instanceIds[0];
         var me = this;
 
-        ec2ui_session.controller.describeInstanceAttribute(instanceId, "disableApiTermination", function(value) {
+        ew_session.controller.describeInstanceAttribute(instanceId, "disableApiTermination", function(value) {
             value = (value == "true")
             var msg = null;
 
@@ -969,7 +969,7 @@ var ec2ui_InstancesTreeView = {
     },
 
     doChangeTerminationProtection : function(instanceId, enable) {
-        ec2ui_session.controller.modifyInstanceAttribute(instanceId, ["DisableApiTermination", enable]);
+        ew_session.controller.modifyInstanceAttribute(instanceId, ["DisableApiTermination", enable]);
     },
 
     startInstance : function() {
@@ -979,12 +979,12 @@ var ec2ui_InstancesTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                ec2ui_InstancesTreeView.refresh();
-                ec2ui_InstancesTreeView.selectByInstanceIds();
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
+                ew_InstancesTreeView.refresh();
+                ew_InstancesTreeView.selectByInstanceIds();
             }
         }
-        ec2ui_session.controller.startInstances(instanceIds, wrap);
+        ew_session.controller.startInstances(instanceIds, wrap);
     },
 
     fetchConsoleOutput : function(callback, instance) {
@@ -1002,22 +1002,22 @@ var ec2ui_InstancesTreeView = {
 
         if (wrap == null) {
             wrap = function(id, timestamp, output) {
-                if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+                if (ew_prefs.isRefreshOnChangeEnabled()) {
                     me.refresh();
                     me.showConsoleOutput(id, timestamp, output);
                 }
             }
         }
 
-        ec2ui_session.controller.getConsoleOutput(instance.id, wrap);
+        ew_session.controller.getConsoleOutput(instance.id, wrap);
     },
 
     showConsoleOutput : function(id, timestamp, output) {
-        window.openDialog("chrome://ec2ui/content/dialog_console_output.xul", null, "chrome,centerscreen,modal,resizable", id, timestamp, output);
+        window.openDialog("chrome://ew/content/dialog_console_output.xul", null, "chrome,centerscreen,modal,resizable", id, timestamp, output);
     },
 
     showInstancesSummary : function() {
-        window.openDialog("chrome://ec2ui/content/dialog_summary.xul", null, "chrome,centerscreen,modal,resizable", this.instanceList, ec2ui_session.getActiveEndpoint().name);
+        window.openDialog("chrome://ew/content/dialog_summary.xul", null, "chrome,centerscreen,modal,resizable", this.instanceList, ew_session.getActiveEndpoint().name);
     },
 
     copyToClipBoard : function(fieldName) {
@@ -1036,7 +1036,7 @@ var ec2ui_InstancesTreeView = {
     },
 
     authorizeProtocolPortForGroup : function (transport, protocol, port, groups) {
-        if (!ec2ui_prefs.getOpenConnectionPort()) {
+        if (!ew_prefs.getOpenConnectionPort()) {
             return;
         }
 
@@ -1045,11 +1045,11 @@ var ec2ui_InstancesTreeView = {
         var openCIDR = "0.0.0.0/0";
 
         // host CIDR
-        ec2ui_session.client.queryCheckIP("", result);
+        ew_session.client.queryCheckIP("", result);
         var hostCIDR = result.ipAddress.trim() + "/32";
 
         // network CIDR
-        ec2ui_session.client.queryCheckIP("block", result);
+        ew_session.client.queryCheckIP("block", result);
         var networkCIDR = result.ipAddress.trim();
 
         debug("Host: " + hostCIDR + ", net:" + networkCIDR)
@@ -1093,9 +1093,9 @@ var ec2ui_InstancesTreeView = {
 
         if (fAdd) {
             var result = false;
-            if (ec2ui_prefs.getPromptForPortOpening()) {
+            if (ew_prefs.getPromptForPortOpening()) {
                 port = port.toString();
-                var msg = ec2ui_prefs.getAppName() + " needs to open " + transport.toUpperCase() + " port " + port + " (" + protocol + ") to continue. Click Ok to authorize this action";
+                var msg = ew_prefs.getAppName() + " needs to open " + transport.toUpperCase() + " port " + port + " (" + protocol + ") to continue. Click Ok to authorize this action";
 
                 // default the checkbox to false
                 var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
@@ -1104,8 +1104,8 @@ var ec2ui_InstancesTreeView = {
 
                 if (check.value) {
                     // The user asked not to be prompted again
-                    ec2ui_prefs.setPromptForPortOpening(false);
-                    ec2ui_prefs.setOpenConnectionPort(result);
+                    ew_prefs.setPromptForPortOpening(false);
+                    ew_prefs.setOpenConnectionPort(result);
                 }
             } else {
                 result = true;
@@ -1114,12 +1114,12 @@ var ec2ui_InstancesTreeView = {
             if (result) {
                 result = false;
                 var wrap = function() {
-                    ec2ui_SecurityGroupsTreeView.refresh();
+                    ew_SecurityGroupsTreeView.refresh();
                 }
                 // Authorize first available group
                 for (var i in groups) {
                     if (groups[i]) {
-                        ec2ui_session.controller.authorizeSourceCIDR('Ingress', groups[i], transport, port, port, hostCIDR, wrap);
+                        ew_session.controller.authorizeSourceCIDR('Ingress', groups[i], transport, port, port, hostCIDR, wrap);
                         result = true
                         break;
                     }
@@ -1143,7 +1143,7 @@ var ec2ui_InstancesTreeView = {
 
     openConnectionPort : function(instance) {
         // Get the group in which this instance was launched
-        var groups = ec2ui_model.getSecurityGroups();
+        var groups = ew_model.getSecurityGroups();
         var instGroups = new Array(instance.groupList.length);
         for (var j in instance.groupList) {
             instGroups[j] = null;
@@ -1167,9 +1167,9 @@ var ec2ui_InstancesTreeView = {
 
     // ipType: 0 - private, 1 - public, 2 - elastic, 3 - public or elastic, 4 - dns name
     connectTo : function(instance, ipType) {
-        ec2ui_session.showBusyCursor(true);
-        var args = ec2ui_prefs.getSSHArgs();
-        var cmd = ec2ui_prefs.getSSHCommand();
+        ew_session.showBusyCursor(true);
+        var args = ew_prefs.getSSHArgs();
+        var cmd = ew_prefs.getSSHCommand();
 
         var hostname = !ipType ? instance.privateIpAddress :
                        ipType == 1 || ipType == 3 ? getIPFromHostname(instance) :
@@ -1190,8 +1190,8 @@ var ec2ui_InstancesTreeView = {
         }
 
         if (isWindows(instance.platform)) {
-            args = ec2ui_prefs.getRDPArgs();
-            cmd = ec2ui_prefs.getRDPCommand();
+            args = ew_prefs.getRDPArgs();
+            cmd = ew_prefs.getRDPCommand();
             if (isMac(navigator.platform)) {
                 // On Mac OS X, we use a totally different connection mechanism that isn't particularly extensible
                 this.getAdminPassword(false, instance);
@@ -1215,7 +1215,7 @@ var ec2ui_InstancesTreeView = {
         } else
 
         if (args.indexOf("${key}") >= 0) {
-            var keyFile = ec2ui_prefs.getPrivateKeyFile(instance.keyName);
+            var keyFile = ew_prefs.getPrivateKeyFile(instance.keyName);
             if (!FileIO.exists(keyFile)) {
                 keyFile = this.promptForKeyFile(instance.keyName);
             }
@@ -1226,7 +1226,7 @@ var ec2ui_InstancesTreeView = {
             params.push(["key", keyFile])
         }
 
-        if (args.indexOf("${login}") >= 0 && ec2ui_prefs.getSSHUser() == "") {
+        if (args.indexOf("${login}") >= 0 && ew_prefs.getSSHUser() == "") {
             var login = prompt("Please provide SSH user name:");
             if (login && login != "") {
                 params.push(["login", login])
@@ -1234,17 +1234,17 @@ var ec2ui_InstancesTreeView = {
         }
 
         // Common substitution
-        args = ec2ui_prefs.getArgsProcessed(args, params, hostname);
+        args = ew_prefs.getArgsProcessed(args, params, hostname);
 
         // Finally, split args into an array
         args = tokenise(args);
 
-        ec2ui_session.launchProcess(cmd, args);
-        ec2ui_session.showBusyCursor(false);
+        ew_session.launchProcess(cmd, args);
+        ew_session.showBusyCursor(false);
     },
 
     rdpToMac : function(hostname, cmd) {
-        var filename = ec2ui_prefs.getHome() + "/" + ec2ui_prefs.getAppName() + "/" + hostname + ".rdp";
+        var filename = ew_prefs.getHome() + "/" + ew_prefs.getAppName() + "/" + hostname + ".rdp";
         var config = FileIO.open(filename)
 
         if (!config.exists()) {
@@ -1263,7 +1263,7 @@ var ec2ui_InstancesTreeView = {
             FileIO.write(config, xml);
         }
 
-        ec2ui_session.launchProcess(cmd, [filename]);
+        ew_session.launchProcess(cmd, [filename]);
     },
 
     rebootInstance  : function() {
@@ -1282,12 +1282,12 @@ var ec2ui_InstancesTreeView = {
 
         var me = this;
         var wrap = function(list) {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
                 me.selectByInstanceIds(list);
             }
         }
-        ec2ui_session.controller.rebootInstances(instanceIds, wrap);
+        ew_session.controller.rebootInstances(instanceIds, wrap);
     },
 
     pendingInstances : function(instances) {
@@ -1315,7 +1315,7 @@ var ec2ui_InstancesTreeView = {
             clearTimeout(this.refreshTimer);
         }
 
-        ec2ui_session.addTabToRefreshList("ec2ui_InstancesTreeView");
+        ew_session.addTabToRefreshList("ew_InstancesTreeView");
         // Set the UI up to refresh every 10 seconds
         var me = this;
         var wrap = function () { me.refresh(); };
@@ -1326,7 +1326,7 @@ var ec2ui_InstancesTreeView = {
         log("Stopping Refresh Timer");
         if (this.refreshTimer) {
             clearTimeout(this.refreshTimer);
-            ec2ui_session.removeTabFromRefreshList("ec2ui_InstancesTreeView");
+            ew_session.removeTabFromRefreshList("ew_InstancesTreeView");
         }
     },
 
@@ -1340,7 +1340,7 @@ var ec2ui_InstancesTreeView = {
         } else {
             this.selection.clearSelection();
         }
-        if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+        if (ew_prefs.isRefreshOnChangeEnabled()) {
             // Determine if there are any pending instances
             if (this.pendingInstances(instanceList)) {
                 this.startRefreshTimer();
@@ -1356,4 +1356,4 @@ var ec2ui_InstancesTreeView = {
     }
 };
 
-ec2ui_InstancesTreeView.register();
+ew_InstancesTreeView.register();

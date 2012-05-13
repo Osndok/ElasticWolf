@@ -1,34 +1,34 @@
-var ec2_RegisterImageDialogFromSnapshot = {
+var ew_RegisterImageDialogFromSnapshot = {
     id : null,
-    ec2ui_session : null,
+    ew_session : null,
     retVal : null,
 
     getAmiName : function() {
-        return document.getElementById("ec2ui.registerImageFromSnapshot.amiName");
+        return document.getElementById("ew.registerImageFromSnapshot.amiName");
     },
 
     getAmiDescription : function() {
-        return document.getElementById("ec2ui.registerImageFromSnapshot.amiDescription");
+        return document.getElementById("ew.registerImageFromSnapshot.amiDescription");
     },
 
     getArchitecture : function() {
-        return document.getElementById("ec2ui.registerImageFromSnapshot.architecture");
+        return document.getElementById("ew.registerImageFromSnapshot.architecture");
     },
 
     getKernelId : function() {
-        return document.getElementById("ec2ui.registerImageFromSnapshot.kernelId");
+        return document.getElementById("ew.registerImageFromSnapshot.kernelId");
     },
 
     getRamdiskId : function() {
-        return document.getElementById("ec2ui.registerImageFromSnapshot.ramdiskId");
+        return document.getElementById("ew.registerImageFromSnapshot.ramdiskId");
     },
 
     getDeviceName : function() {
-        return document.getElementById("ec2ui.registerImageFromSnapshot.deviceName");
+        return document.getElementById("ew.registerImageFromSnapshot.deviceName");
     },
 
     getDeleteOnTermination : function() {
-        return document.getElementById("ec2ui.registerImageFromSnapshot.deleteOnTermination");
+        return document.getElementById("ew.registerImageFromSnapshot.deleteOnTermination");
     },
 
     registerImage : function() {
@@ -66,10 +66,10 @@ var ec2_RegisterImageDialogFromSnapshot = {
 
     init : function() {
         this.id = window.arguments[0];
-        this.ec2ui_session = window.arguments[1];
+        this.ew_session = window.arguments[1];
         this.retVal = window.arguments[2];
 
-        document.getElementById("ec2ui.registerImageFromSnapshot.snapshotid").value = this.id;
+        document.getElementById("ew.registerImageFromSnapshot.snapshotid").value = this.id;
         this.getAmiName().select();
     }
 }

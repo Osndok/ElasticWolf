@@ -1,31 +1,31 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.ami.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+<dialog id="ew.dialog.ami.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept" ondialogaccept="return true;" onload="init();" title="AMI Details">
 
   <script type="application/x-javascript">
     function init() {
         var image = window.arguments[0];
-        document.getElementById("ec2ui.ami.id").value = image.id;
-        document.getElementById("ec2ui.ami.location").value = image.location;
-        document.getElementById("ec2ui.ami.state").value = image.state;
-        document.getElementById("ec2ui.ami.aki").value = image.aki;
-        document.getElementById("ec2ui.ami.ari").value = image.ari;
-        document.getElementById("ec2ui.ami.ownerid").value = image.owner;
-        document.getElementById("ec2ui.ami.ownerAlias").value = image.ownerAlias;
-        document.getElementById("ec2ui.ami.ispublic").value = image.isPublic;
-        document.getElementById("ec2ui.ami.arch").value = image.arch;
-        document.getElementById("ec2ui.ami.platform").value = image.platform;
-        document.getElementById("ec2ui.ami.snapshotId").value = image.snapshotId;
-        document.getElementById("ec2ui.ami.rootDeviceType").value = image.rootDeviceType;
-        document.getElementById("ec2ui.ami.name").value = image.name;
-        document.getElementById("ec2ui.ami.description").value = image.description;
-        document.getElementById("ec2ui.ami.tag").value = image.tag || "";
+        document.getElementById("ew.ami.id").value = image.id;
+        document.getElementById("ew.ami.location").value = image.location;
+        document.getElementById("ew.ami.state").value = image.state;
+        document.getElementById("ew.ami.aki").value = image.aki;
+        document.getElementById("ew.ami.ari").value = image.ari;
+        document.getElementById("ew.ami.ownerid").value = image.owner;
+        document.getElementById("ew.ami.ownerAlias").value = image.ownerAlias;
+        document.getElementById("ew.ami.ispublic").value = image.isPublic;
+        document.getElementById("ew.ami.arch").value = image.arch;
+        document.getElementById("ew.ami.platform").value = image.platform;
+        document.getElementById("ew.ami.snapshotId").value = image.snapshotId;
+        document.getElementById("ew.ami.rootDeviceType").value = image.rootDeviceType;
+        document.getElementById("ew.ami.name").value = image.name;
+        document.getElementById("ew.ami.description").value = image.description;
+        document.getElementById("ew.ami.tag").value = image.tag || "";
     }
   </script>
-  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
 
   <vbox flex="1">
     <grid flex="1">
@@ -36,50 +36,50 @@
       </columns>
       <rows>
         <row>
-          <label control="ec2ui.ami.id" value="Image ID:" />
-          <textbox id="ec2ui.ami.id" size="40" readonly="true" />
-          <label control="ec2ui.ami.location" value="Manifest:" />
-          <textbox id="ec2ui.ami.location" size="40" readonly="true" />
+          <label control="ew.ami.id" value="Image ID:" />
+          <textbox id="ew.ami.id" size="40" readonly="true" />
+          <label control="ew.ami.location" value="Manifest:" />
+          <textbox id="ew.ami.location" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.ami.aki" value="AKI:" />
-          <textbox id="ec2ui.ami.aki" size="40" readonly="true" />
-          <label control="ec2ui.ami.ari" value="ARI:" />
-          <textbox id="ec2ui.ami.ari" size="40" readonly="true" />
+          <label control="ew.ami.aki" value="AKI:" />
+          <textbox id="ew.ami.aki" size="40" readonly="true" />
+          <label control="ew.ami.ari" value="ARI:" />
+          <textbox id="ew.ami.ari" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.ami.state" value="State:" />
-          <textbox id="ec2ui.ami.state" size="40" readonly="true" />
-          <label control="ec2ui.ami.ownerid" value="Owner ID:" />
-          <textbox id="ec2ui.ami.ownerid" size="40" readonly="true" />
+          <label control="ew.ami.state" value="State:" />
+          <textbox id="ew.ami.state" size="40" readonly="true" />
+          <label control="ew.ami.ownerid" value="Owner ID:" />
+          <textbox id="ew.ami.ownerid" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.ami.ispublic" value="Visibility:" />
-          <textbox id="ec2ui.ami.ispublic" size="40" readonly="true" />
-          <label control="ec2ui.ami.arch" value="Architecture:" />
-          <textbox id="ec2ui.ami.arch" size="40" readonly="true" />
+          <label control="ew.ami.ispublic" value="Visibility:" />
+          <textbox id="ew.ami.ispublic" size="40" readonly="true" />
+          <label control="ew.ami.arch" value="Architecture:" />
+          <textbox id="ew.ami.arch" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.ami.platform" value="Platform:" />
-          <textbox id="ec2ui.ami.platform" size="40" readonly="true" />
-          <label control="ec2ui.ami.snapshotId" value="Snapshot ID:" />
-          <textbox id="ec2ui.ami.snapshotId" size="40" readonly="true" />
+          <label control="ew.ami.platform" value="Platform:" />
+          <textbox id="ew.ami.platform" size="40" readonly="true" />
+          <label control="ew.ami.snapshotId" value="Snapshot ID:" />
+          <textbox id="ew.ami.snapshotId" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.ami.rootDeviceType" value="Root Device:" />
-          <textbox id="ec2ui.ami.rootDeviceType" size="40" readonly="true" />
-          <label control="ec2ui.ami.name" value="Name:" />
-          <textbox id="ec2ui.ami.name" size="40" readonly="true" />
+          <label control="ew.ami.rootDeviceType" value="Root Device:" />
+          <textbox id="ew.ami.rootDeviceType" size="40" readonly="true" />
+          <label control="ew.ami.name" value="Name:" />
+          <textbox id="ew.ami.name" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.ami.ownerAlias" value="Owner Alias:" />
-          <textbox id="ec2ui.ami.ownerAlias" size="40" readonly="true" />
-          <label control="ec2ui.ami.tag" value="Tag:" />
-          <textbox id="ec2ui.ami.tag" size="40" readonly="true" />
+          <label control="ew.ami.ownerAlias" value="Owner Alias:" />
+          <textbox id="ew.ami.ownerAlias" size="40" readonly="true" />
+          <label control="ew.ami.tag" value="Tag:" />
+          <textbox id="ew.ami.tag" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.ami.description" value="Description" />
-          <textbox id="ec2ui.ami.description" size="40" readonly="true" />
+          <label control="ew.ami.description" value="Description" />
+          <textbox id="ew.ami.description" size="40" readonly="true" />
         </row>
       </rows>
     </grid>

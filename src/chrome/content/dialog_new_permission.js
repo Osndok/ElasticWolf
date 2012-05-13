@@ -1,10 +1,10 @@
-var ec2_Authorizer = {
+var ew_Authorizer = {
   group : null,
   unusedSecGroupsList : null,
   usedSecGroupsList : null,
   unused : new Array(),
   used : new Array(),
-  ec2ui_session : null,
+  ew_session : null,
   retval : null,
 
   authorize : function() {
@@ -12,11 +12,11 @@ var ec2_Authorizer = {
     var newPerm = new Object();
 
     // Need to get the IP etc.
-    var radioSel = document.getElementById("ec2ui.newpermission.hostnet.group").selectedItem.value;
+    var radioSel = document.getElementById("ew.newpermission.hostnet.group").selectedItem.value;
 
     switch (radioSel) {
     case "host":
-        var textbox = document.getElementById("ec2ui.newpermission.source.host");
+        var textbox = document.getElementById("ew.newpermission.source.host");
         if (textbox.value == "") {
           alert("Please provide a source host");
           textbox.select();
@@ -32,7 +32,7 @@ var ec2_Authorizer = {
         break;
 
     case "range":
-        var textbox = document.getElementById("ec2ui.newpermission.source.range");
+        var textbox = document.getElementById("ew.newpermission.source.range");
         if (textbox.value == "") {
           alert("Please provide a source host range");
           textbox.select();
@@ -45,8 +45,8 @@ var ec2_Authorizer = {
         break;
 
     case "group":
-        var group = document.getElementById("ec2ui.newpermission.source.group");
-        var user = document.getElementById("ec2ui.newpermission.source.user");
+        var group = document.getElementById("ew.newpermission.source.group");
+        var user = document.getElementById("ew.newpermission.source.user");
         if (!user.value || !group.value) {
           alert("Please provide a source group / user");
           return false;
@@ -55,13 +55,13 @@ var ec2_Authorizer = {
     }
 
     newPerm.cidrIp = cidrStr;
-    var protocol = document.getElementById("ec2ui.newpermission.protocol").value;
+    var protocol = document.getElementById("ew.newpermission.protocol").value;
     if (protocol == "other") {
-        protocol = document.getElementById("ec2ui.newpermission.other").value;
+        protocol = document.getElementById("ew.newpermission.other").value;
         if (protocol == "tcp" || protocol == "udp") {
           // UDP/TCP
-          var fromTextBox = document.getElementById("ec2ui.newpermission.fromport");
-          var toTextBox   = document.getElementById("ec2ui.newpermission.toport");
+          var fromTextBox = document.getElementById("ew.newpermission.fromport");
+          var toTextBox   = document.getElementById("ew.newpermission.toport");
           if (!this.validateMinPort(fromTextBox)) {
             return false;
           }
@@ -74,13 +74,13 @@ var ec2_Authorizer = {
         } else
         if (protocol == "icmp") {
           // icmp
-          newPerm.fromPort = document.getElementById("ec2ui.newpermission.icmptype").value.trim();
-          newPerm.toPort = document.getElementById("ec2ui.newpermission.icmpcode").value.trim();
+          newPerm.fromPort = document.getElementById("ew.newpermission.icmptype").value.trim();
+          newPerm.toPort = document.getElementById("ew.newpermission.icmpcode").value.trim();
         }
     } else {
-        newPerm.toPort = document.getElementById("ec2ui.newpermission.knownport").value.trim();
-        newPerm.fromPort = document.getElementById("ec2ui.newpermission.knownport").value.trim();
-        protocol = document.getElementById("ec2ui.newpermission.protocol.menuitem").value;
+        newPerm.toPort = document.getElementById("ew.newpermission.knownport").value.trim();
+        newPerm.fromPort = document.getElementById("ew.newpermission.knownport").value.trim();
+        protocol = document.getElementById("ew.newpermission.protocol.menuitem").value;
     }
 
     newPerm.ipProtocol = protocol;
@@ -90,7 +90,7 @@ var ec2_Authorizer = {
         // If the user chooses to change these settings,
         // bring the dialog back in focus.
         if (!fOpen) {
-            document.getElementById("ec2ui.newpermission.toport").select();
+            document.getElementById("ew.newpermission.toport").select();
             return false;
         }
     }
@@ -138,13 +138,13 @@ var ec2_Authorizer = {
   },
 
   validateSourceUserGroup : function() {
-    var user = document.getElementById("ec2ui.newpermission.source.user");
+    var user = document.getElementById("ew.newpermission.source.user");
     if (user.value == "") {
       alert("Please provide a source user ID");
       user.select();
       return false;
     }
-    var group = document.getElementById("ec2ui.newpermission.source.group");
+    var group = document.getElementById("ew.newpermission.source.group");
     if (group.value == "") {
       alert("Please provide a source security group name");
       group.select();
@@ -155,57 +155,57 @@ var ec2_Authorizer = {
 
   displayProtocolDetails : function(fDisplay) {
     if (fDisplay) {
-      ec2_Authorizer.selectProtocolDataDeck(1);
-      ec2_Authorizer.selectProtocolDeck(1);
+      ew_Authorizer.selectProtocolDataDeck(1);
+      ew_Authorizer.selectProtocolDeck(1);
     } else {
       this.selectProtocolDataDeck(0);
       this.selectProtocolDeck(0);
-      var protocol = document.getElementById("ec2ui.newpermission.protocol").value;
-      document.getElementById("ec2ui.newpermission.knownport").value = protPortMap[protocol];
+      var protocol = document.getElementById("ew.newpermission.protocol").value;
+      document.getElementById("ew.newpermission.knownport").value = protPortMap[protocol];
     }
   },
 
   getHostAddress : function() {
     var retVal = {ipAddress:"0.0.0.0"};
-    this.ec2ui_session.client.queryCheckIP("", retVal);
-    var hostIP = document.getElementById("ec2ui.newpermission.source.host");
+    this.ew_session.client.queryCheckIP("", retVal);
+    var hostIP = document.getElementById("ew.newpermission.source.host");
     hostIP.value = retVal.ipAddress.replace(/\s/g,'') + "/32";
-    document.getElementById("ec2ui.newpermission.hostnet.group").selectedIndex = 0;
+    document.getElementById("ew.newpermission.hostnet.group").selectedIndex = 0;
   },
 
   getHostNetwork : function() {
     var retVal = {ipAddress:"0.0.0.0"};
-    this.ec2ui_session.client.queryCheckIP("block", retVal);
-    var hostSubnet = document.getElementById("ec2ui.newpermission.source.range");
+    this.ew_session.client.queryCheckIP("block", retVal);
+    var hostSubnet = document.getElementById("ew.newpermission.source.range");
     hostSubnet.value = retVal.ipAddress.replace(/\s/g,'');
-    document.getElementById("ec2ui.newpermission.hostnet.group").selectedIndex = 1;
+    document.getElementById("ew.newpermission.hostnet.group").selectedIndex = 1;
   },
 
   selectProtocolDeck : function(index) {
-    var deck = document.getElementById("ec2ui.newpermission.deck.protocol");
+    var deck = document.getElementById("ew.newpermission.deck.protocol");
     deck.selectedIndex = index;
   },
 
   selectProtocolDataDeck : function(index) {
-    var deck = document.getElementById("ec2ui.newpermission.deck.protocol.data");
+    var deck = document.getElementById("ew.newpermission.deck.protocol.data");
     deck.selectedIndex = index;
   },
 
   init : function() {
     this.group = window.arguments[0];
-    this.ec2ui_session = window.arguments[1];
+    this.ew_session = window.arguments[1];
     this.retVal = window.arguments[2];
 
     if (this.group == null) {
         return true;
     }
-    var permCaption = document.getElementById("ec2ui.newpermission.add.caption");
+    var permCaption = document.getElementById("ew.newpermission.add.caption");
     permCaption.label = "Add New " + this.retVal.type + " Permission for Security Group: " + this.group.name;
 
-    var user = document.getElementById("ec2ui.newpermission.source.user");
+    var user = document.getElementById("ew.newpermission.source.user");
     user.value = this.group.ownerId;
-    var securityGroups = this.ec2ui_session.model.getSecurityGroups();
-    var groupMenu = document.getElementById("ec2ui.newpermission.source.group");
+    var securityGroups = this.ew_session.model.getSecurityGroups();
+    var groupMenu = document.getElementById("ew.newpermission.source.group");
     groupMenu.appendItem("", "");
     for(var i in securityGroups) {
         if ((this.group.vpcId != "" && securityGroups[i].vpcId == "") || (this.group.vpcId == "" && securityGroups[i].vpcId != "")) {
@@ -218,8 +218,8 @@ var ec2_Authorizer = {
     }
 
     // Initialize the Protocol Port for the selected protocol.
-    var protocol = document.getElementById("ec2ui.newpermission.protocol").value;
-    document.getElementById("ec2ui.newpermission.knownport").value = protPortMap[protocol];
+    var protocol = document.getElementById("ew.newpermission.protocol").value;
+    document.getElementById("ew.newpermission.knownport").value = protPortMap[protocol];
   }
 };
 

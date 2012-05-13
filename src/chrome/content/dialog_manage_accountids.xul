@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.manageaccountids" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+<dialog id="ew.dialog.manageaccountids" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="extra2,extra1,cancel" ondialogcancel="return true;"
-  ondialogextra1="ec2ui_accountIdManager.saveAccount();"
-  ondialogextra2="ec2ui_accountIdManager.removeAccount();"
+  ondialogextra1="ew_accountIdManager.saveAccount();"
+  ondialogextra2="ew_accountIdManager.removeAccount();"
   buttonlabelcancel="Close" buttonlabelextra1="Add" buttonlabelextra2="Remove"
   defaultButton="extra1" buttonpack="end" buttonalign="end"
-  onload="ec2ui_accountIdManager.initDialog();" title="Manage Account IDs" >
+  onload="ew_accountIdManager.initDialog();" title="Manage Account IDs" >
 
-  <script type="application/x-javascript" src="chrome://ec2ui/content/preferences.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/manager_accountid.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/view_accountids.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/manager_accountid.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/view_accountids.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
 
   <vbox flex="1">
-    <tree id="ec2ui.accountids.view"
-      onselect="ec2ui_accountIdManager.selectMapping();" flex="1" rows="5">
+    <tree id="ew.accountids.view"
+      onselect="ew_accountIdManager.selectMapping();" flex="1" rows="5">
       <treecols>
         <treecol id="accountids.accountid" label="Account ID"
           flex="1" persist="width ordinal hidden" />
@@ -34,12 +34,12 @@
       </columns>
       <rows>
         <row>
-          <label control="ec2ui.accountids.accountid" value="Account ID:" />
-          <textbox id="ec2ui.accountids.accountid" size="20" />
+          <label control="ew.accountids.accountid" value="Account ID:" />
+          <textbox id="ew.accountids.accountid" size="20" />
         </row>
         <row>
-          <label control="ec2ui.accountids.displayname" value="Display Name:" />
-          <textbox id="ec2ui.accountids.displayname" size="40" />
+          <label control="ew.accountids.displayname" value="Display Name:" />
+          <textbox id="ew.accountids.displayname" size="40" />
         </row>
       </rows>
     </grid>

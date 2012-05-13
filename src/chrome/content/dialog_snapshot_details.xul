@@ -1,26 +1,26 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.snapshot.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+<dialog id="ew.dialog.snapshot.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept" ondialogaccept="return true;" onload="init();" title="Snapshot Details">
 
   <script type="application/x-javascript">
     function init() {
         var snapshot = window.arguments[0];
-        document.getElementById("ec2ui.snapshot.id").value = snapshot.id;
-        document.getElementById("ec2ui.snapshot.volumeId").value = snapshot.volumeId;
-        document.getElementById("ec2ui.snapshot.status").value = snapshot.status;
-        document.getElementById("ec2ui.snapshot.startTime").value = snapshot.startTime;
-        document.getElementById("ec2ui.snapshot.progress").value = snapshot.progress;
-        document.getElementById("ec2ui.snapshot.tag").value = snapshot.tag || "";
-        document.getElementById("ec2ui.snapshot.owner").value = snapshot.owner || "";
-        document.getElementById("ec2ui.snapshot.ownerAlias").value = snapshot.ownerAlias || "";
-        document.getElementById("ec2ui.snapshot.description").value = snapshot.description;
-        document.getElementById("ec2ui.snapshot.volumeSize").value = snapshot.volumeSize;
+        document.getElementById("ew.snapshot.id").value = snapshot.id;
+        document.getElementById("ew.snapshot.volumeId").value = snapshot.volumeId;
+        document.getElementById("ew.snapshot.status").value = snapshot.status;
+        document.getElementById("ew.snapshot.startTime").value = snapshot.startTime;
+        document.getElementById("ew.snapshot.progress").value = snapshot.progress;
+        document.getElementById("ew.snapshot.tag").value = snapshot.tag || "";
+        document.getElementById("ew.snapshot.owner").value = snapshot.owner || "";
+        document.getElementById("ew.snapshot.ownerAlias").value = snapshot.ownerAlias || "";
+        document.getElementById("ew.snapshot.description").value = snapshot.description;
+        document.getElementById("ew.snapshot.volumeSize").value = snapshot.volumeSize;
     }
   </script>
-  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
 
   <vbox flex="1">
     <grid flex="1">
@@ -31,44 +31,44 @@
       </columns>
       <rows>
         <row>
-          <label control="ec2ui.snapshot.id" value="&ec2ui.snapshots.id.label;" />
-          <textbox id="ec2ui.snapshot.id" size="40" readonly="true" />
+          <label control="ew.snapshot.id" value="&ew.snapshots.id.label;" />
+          <textbox id="ew.snapshot.id" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.snapshot.volumeId" value="&ec2ui.volumes.id.label;" />
-          <textbox id="ec2ui.snapshot.volumeId" size="40" readonly="true" />
+          <label control="ew.snapshot.volumeId" value="&ew.volumes.id.label;" />
+          <textbox id="ew.snapshot.volumeId" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.snapshot.description" value="&ec2ui.description.label;" />
-          <textbox id="ec2ui.snapshot.description" size="40" readonly="true" />
+          <label control="ew.snapshot.description" value="&ew.description.label;" />
+          <textbox id="ew.snapshot.description" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.snapshot.volumeSize" value="&ec2ui.snapshots.volumeSize.label;" />
-          <textbox id="ec2ui.snapshot.volumeSize" size="40" readonly="true" />
+          <label control="ew.snapshot.volumeSize" value="&ew.snapshots.volumeSize.label;" />
+          <textbox id="ew.snapshot.volumeSize" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.snapshot.owner" value="&ec2ui.snapshots.owner.label;" />
-          <textbox id="ec2ui.snapshot.owner" size="40" readonly="true" />
+          <label control="ew.snapshot.owner" value="&ew.snapshots.owner.label;" />
+          <textbox id="ew.snapshot.owner" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.snapshot.ownerAlias" value="&ec2ui.snapshots.ownerAlias.label;" />
-          <textbox id="ec2ui.snapshot.ownerAlias" size="40" readonly="true" />
+          <label control="ew.snapshot.ownerAlias" value="&ew.snapshots.ownerAlias.label;" />
+          <textbox id="ew.snapshot.ownerAlias" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.snapshot.status" value="&ec2ui.snapshots.status.label;" />
-          <textbox id="ec2ui.snapshot.status" size="40" readonly="true" />
+          <label control="ew.snapshot.status" value="&ew.snapshots.status.label;" />
+          <textbox id="ew.snapshot.status" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.snapshot.startTime" value="&ec2ui.snapshots.startTime.label;"/>
-          <textbox id="ec2ui.snapshot.startTime" size="40" readonly="true" />
+          <label control="ew.snapshot.startTime" value="&ew.snapshots.startTime.label;"/>
+          <textbox id="ew.snapshot.startTime" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.snapshot.progress" value="&ec2ui.snapshots.progress.label;" />
-          <textbox id="ec2ui.snapshot.progress" size="40" readonly="true" />
+          <label control="ew.snapshot.progress" value="&ew.snapshots.progress.label;" />
+          <textbox id="ew.snapshot.progress" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.snapshot.progress" value="Tag" />
-          <textbox id="ec2ui.snapshot.tag" size="40" readonly="true" />
+          <label control="ew.snapshot.progress" value="Tag" />
+          <textbox id="ew.snapshot.tag" size="40" readonly="true" />
         </row>
       </rows>
     </grid>

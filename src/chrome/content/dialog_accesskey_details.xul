@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 
-<dialog id="ec2ui.dialog.accesskey.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+<dialog id="ew.dialog.accesskey.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept" ondialogaccept="return true;" onload="init();" title="Access Key Details">
 
     <script type="application/x-javascript">
     function init() {
         var key = window.arguments[0];
-        document.getElementById("ec2ui.accesskey.name").value = key.name;
-        document.getElementById("ec2ui.accesskey.secret").value = key.secret;
+        document.getElementById("ew.accesskey.name").value = key.name;
+        document.getElementById("ew.accesskey.secret").value = key.secret;
     }
     </script>
 
@@ -16,12 +16,12 @@
         <grid flex="1">
             <rows>
                 <row>
-                    <label control="ec2ui.accesskey.name" value="Access Key Id:" />
-                    <textbox id="ec2ui.accesskey.name" size="32" readonly="true" />
+                    <label control="ew.accesskey.name" value="Access Key Id:" />
+                    <textbox id="ew.accesskey.name" size="32" readonly="true" />
                 </row>
                 <row>
-                    <label control="ec2ui.accesskey.secret" value="Access Key Secret:" />
-                    <textbox id="ec2ui.accesskey.secret" size="64" readonly="true" />
+                    <label control="ew.accesskey.secret" value="Access Key Secret:" />
+                    <textbox id="ew.accesskey.secret" size="64" readonly="true" />
                 </row>
             </rows>
         </grid>

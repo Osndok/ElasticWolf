@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.migrate.ami"
+<dialog id="ew.dialog.migrate.ami"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml"
   buttons="accept,cancel"
   ondialogcancel="return true;"
-  ondialogaccept="return ec2_AMIMigrator.migrateAMI();"
+  ondialogaccept="return ew_AMIMigrator.migrateAMI();"
   buttonlabelcancel="Cancel" buttonlabelaccept="Migrate"
   defaultButton="accept" buttonpack="end" buttonalign="end"
-  onload="ec2_AMIMigrator.init();" title="Migrate AMI to another Region" >
+  onload="ew_AMIMigrator.init();" title="Migrate AMI to another Region" >
 
-  <script type="application/x-javascript" src="chrome://ec2ui/content/dialog_migrate_ami.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/dialog_migrate_ami.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
 
   <vbox flex="1">
     <grid flex="1">
@@ -24,29 +24,29 @@
       </columns>
       <rows>
         <row>
-          <label control="ec2ui.migrateAMI.regions" value="To Region: " />
-          <menulist id="ec2ui.migrateAMI.regions" selectedIndex="0"
-            oncommand="ec2_AMIMigrator.regionChanged();" />
+          <label control="ew.migrateAMI.regions" value="To Region: " />
+          <menulist id="ew.migrateAMI.regions" selectedIndex="0"
+            oncommand="ew_AMIMigrator.regionChanged();" />
         </row>
         <row>
-          <label control="ec2ui.migrateAMI.id" value="AMI ID:" />
-          <textbox id="ec2ui.migrateAMI.id" disabled="true" />
+          <label control="ew.migrateAMI.id" value="AMI ID:" />
+          <textbox id="ew.migrateAMI.id" disabled="true" />
         </row>
         <row>
-          <label control="ec2ui.migrateAMI.bucket.source"
+          <label control="ew.migrateAMI.bucket.source"
             value="Source Bucket:" />
-          <textbox id="ec2ui.migrateAMI.bucketName.source" disabled="true"
+          <textbox id="ew.migrateAMI.bucketName.source" disabled="true"
             size="45" value="" />
         </row>
         <row>
-          <label control="ec2ui.migrateAMI.bucket.dest"
+          <label control="ew.migrateAMI.bucket.dest"
             value="Destination Bucket:" />
-          <textbox id="ec2ui.migrateAMI.bucketName.dest"
+          <textbox id="ew.migrateAMI.bucketName.dest"
             size="45" value="" />
         </row>
         <row>
-          <label control="ec2ui.migrateAMI.prefix" value="Prefix: " />
-          <textbox id="ec2ui.migrateAMI.prefix" size="45" value="" />
+          <label control="ew.migrateAMI.prefix" value="Prefix: " />
+          <textbox id="ew.migrateAMI.prefix" size="45" value="" />
         </row>
       </rows>
     </grid>

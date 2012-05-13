@@ -1,24 +1,24 @@
-var ec2ui_LeaseOfferingsTreeView = { COLNAMES :
+var ew_LeaseOfferingsTreeView = { COLNAMES :
     [ 'offering.id', 'offering.instanceType', 'offering.azone', 'offering.duration', 'offering.fixedPrice', 'offering.usagePrice', 'offering.offering', 'offering.tenancy', 'offering.description' ],
 
     imageIdRegex : new RegExp(".*"),
 
     getSearchText : function()
     {
-        return document.getElementById('ec2ui.offerings.search').value;
+        return document.getElementById('ew.offerings.search').value;
     },
 
     refresh : function()
     {
-        ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeLeaseOfferings();
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(true);
+        ew_session.controller.describeLeaseOfferings();
+        ew_session.showBusyCursor(false);
     },
 
     invalidate : function()
     {
-        var target = ec2ui_LeaseOfferingsTreeView;
-        target.displayImages(target.filterImages(ec2ui_model.offerings));
+        var target = ew_LeaseOfferingsTreeView;
+        target.displayImages(target.filterImages(ew_model.offerings));
     },
 
     searchChanged : function(event)
@@ -34,21 +34,21 @@ var ec2ui_LeaseOfferingsTreeView = { COLNAMES :
     {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'offerings');
+            ew_model.registerInterest(this, 'offerings');
         }
     },
 
     displayImages : function(imageList)
     {
-        if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+        if (ew_prefs.isRefreshOnChangeEnabled()) {
             // Determine if there are any pending operations
             if (this.pendingUpdates()) {
-                this.startRefreshTimer("", ec2ui_LeaseOfferingsTreeView.refresh);
+                this.startRefreshTimer("", ew_LeaseOfferingsTreeView.refresh);
             } else {
-                this.stopRefreshTimer("ec2ui_LeaseOfferingsTreeView");
+                this.stopRefreshTimer("ew_LeaseOfferingsTreeView");
             }
         } else {
-            this.stopRefreshTimer("ec2ui_LeaseOfferingsTreeView");
+            this.stopRefreshTimer("ew_LeaseOfferingsTreeView");
         }
 
         BaseImagesView.displayImages.call(this, imageList);
@@ -58,7 +58,7 @@ var ec2ui_LeaseOfferingsTreeView = { COLNAMES :
     {
         var image = this.getSelectedImage();
         if (image == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_offering_details.xul", null, "chrome,centerscreen,modal,resizable", image);
+        window.openDialog("chrome://ew/content/dialog_offering_details.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
     purchaseOffering : function()
@@ -71,7 +71,7 @@ var ec2ui_LeaseOfferingsTreeView = { COLNAMES :
 
         while (fRepeat) {
             // Hand off receiving user input to a dialog
-            window.openDialog("chrome://ec2ui/content/dialog_purchase_offering.xul", null, "chrome,centerscreen,modal,resizable", image, retVal);
+            window.openDialog("chrome://ew/content/dialog_purchase_offering.xul", null, "chrome,centerscreen,modal,resizable", image, retVal);
 
             fRepeat = retVal.ok;
             if (retVal.ok) {
@@ -97,14 +97,14 @@ var ec2ui_LeaseOfferingsTreeView = { COLNAMES :
                     // The user wants to purchase this offering
                     var wrap = function(id)
                     {
-                        if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                            ec2ui_ReservedInstancesTreeView.refresh();
-                            ec2ui_ReservedInstancesTreeView.selectByImageId(id);
+                        if (ew_prefs.isRefreshOnChangeEnabled()) {
+                            ew_ReservedInstancesTreeView.refresh();
+                            ew_ReservedInstancesTreeView.selectByImageId(id);
                         }
                     }
 
                     // purchase this lease offering
-                    ec2ui_session.controller.purchaseOffering(retVal.id, retVal.count, wrap);
+                    ew_session.controller.purchaseOffering(retVal.id, retVal.count, wrap);
                 } else
                     if (button == 0) {
                         // The user wants to edit the order
@@ -124,6 +124,6 @@ var ec2ui_LeaseOfferingsTreeView = { COLNAMES :
 };
 
 // poor-man's inheritance
-ec2ui_LeaseOfferingsTreeView.__proto__ = BaseImagesView;
+ew_LeaseOfferingsTreeView.__proto__ = BaseImagesView;
 
-ec2ui_LeaseOfferingsTreeView.register();
+ew_LeaseOfferingsTreeView.register();

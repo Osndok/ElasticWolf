@@ -1,11 +1,11 @@
-var ec2ui_NetworkInterfacesTreeView = {
+var ew_NetworkInterfacesTreeView = {
     COLNAMES : [ 'eni.id', 'eni.status', 'eni.descr', 'eni.subnetId', 'eni.vpcId', 'acl.macAddress', 'eni.privateIpAddress', 'eni.sourceDestCheck' ],
     model : "networkInterfaces",
 
     display : function(list)
     {
         for (var i in list) {
-            var subnet = ec2ui_model.getSubnetById(list[i].subnetId)
+            var subnet = ew_model.getSubnetById(list[i].subnetId)
             if (subnet) {
                 list[i].subnetId += "/" + subnet.cidr
             }
@@ -18,32 +18,32 @@ var ec2ui_NetworkInterfacesTreeView = {
         var eni = this.getSelected()
         if (eni == null) return
 
-        ec2ui_NetworkInterfaceAttachmentsTreeView.display(eni.instances);
+        ew_NetworkInterfaceAttachmentsTreeView.display(eni.instances);
     },
 
     viewDetails : function(event)
     {
         var item = this.getSelected();
         if (item == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_eni_details.xul", null, "chrome,centerscreen,modal,resizable", item);
+        window.openDialog("chrome://ew/content/dialog_eni_details.xul", null, "chrome,centerscreen,modal,resizable", item);
     },
 
     createInterface : function()
     {
-        var subnets = ec2ui_session.model.getSubnets();
+        var subnets = ew_session.model.getSubnets();
         if (!subnets) {
             alert("No subnets available, try later")
             return;
         }
-        var rc = ec2ui_session.promptList("Create Network Interface", "Select Subnet", subnets);
+        var rc = ew_session.promptList("Create Network Interface", "Select Subnet", subnets);
         if (rc < 0) {
             return;
         }
 
-        ec2ui_session.showBusyCursor(true);
+        ew_session.showBusyCursor(true);
         var me = this;
-        ec2ui_session.controller.createNetworkInterface(subnets[rc].id, function() { me.refresh(); });
-        ec2ui_session.showBusyCursor(false);
+        ew_session.controller.createNetworkInterface(subnets[rc].id, function() { me.refresh(); });
+        ew_session.showBusyCursor(false);
     },
 
     deleteInterface : function()
@@ -51,7 +51,7 @@ var ec2ui_NetworkInterfacesTreeView = {
         var eni = this.getSelected();
         if (!eni || !confirm("Delete Network Interface " + eni.id + "?")) return;
         var me = this;
-        ec2ui_session.controller.deleteNetworkInterface(eni.id, function() { me.refresh(); });
+        ew_session.controller.deleteNetworkInterface(eni.id, function() { me.refresh(); });
     },
 
     attachInterface : function()
@@ -63,12 +63,12 @@ var ec2ui_NetworkInterfacesTreeView = {
         }
     },
 };
-ec2ui_NetworkInterfacesTreeView.__proto__ = TreeView;
-ec2ui_NetworkInterfacesTreeView.register();
+ew_NetworkInterfacesTreeView.__proto__ = TreeView;
+ew_NetworkInterfacesTreeView.register();
 
-var ec2ui_NetworkInterfaceAttachmentsTreeView = {
+var ew_NetworkInterfaceAttachmentsTreeView = {
    COLNAMES : [ "att.id", "att.instanceId", "att.descr" ],
 
 };
-ec2ui_NetworkInterfaceAttachmentsTreeView.__proto__ = TreeView;
+ew_NetworkInterfaceAttachmentsTreeView.__proto__ = TreeView;
 

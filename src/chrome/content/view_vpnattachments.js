@@ -1,10 +1,10 @@
-var ec2ui_VpnAttachmentTreeView = {
+var ew_VpnAttachmentTreeView = {
     COLNAMES : [ 'vpnAttachment.vgwId', 'vpnAttachment.vpcId', 'vpnAttachment.state' ],
 
     invalidate : function()
     {
-        var target = ec2ui_VpnAttachmentTreeView;
-        var vgw = ec2ui_VpnGatewayTreeView.getSelectedImage();
+        var target = ew_VpnAttachmentTreeView;
+        var vgw = ew_VpnGatewayTreeView.getSelectedImage();
         var attachments = null;
         if (vgw != null) {
             attachments = vgw.attachments;
@@ -26,13 +26,13 @@ var ec2ui_VpnAttachmentTreeView = {
     {
         if (!this.registered) {
             this.registered = true;
-            // ec2ui_model.registerInterest(this, 'vpnGateways');
+            // ew_model.registerInterest(this, 'vpnGateways');
         }
     },
 
     refresh : function()
     {
-        ec2ui_VpnGatewayTreeView.refresh();
+        ew_VpnGatewayTreeView.refresh();
     },
 
     displayImages : function(imageList)
@@ -43,7 +43,7 @@ var ec2ui_VpnAttachmentTreeView = {
     enableOrDisableItems : function()
     {
         var image = this.getSelectedImage();
-        document.getElementById("ec2ui.vpnattachments.contextmenu").disabled = (image == null);
+        document.getElementById("ew.vpnattachments.contextmenu").disabled = (image == null);
     },
 
     deleteVpnAttachment : function()
@@ -60,7 +60,7 @@ var ec2ui_VpnAttachmentTreeView = {
             me.refresh();
             me.selectByImageId(id);
         }
-        ec2ui_session.controller.detachVpnGatewayFromVpc(att.vgwId, att.vpcId, wrap);
+        ew_session.controller.detachVpnGatewayFromVpc(att.vgwId, att.vpcId, wrap);
     },
 
     attachToVpc : function(vpcid, vgwid)
@@ -70,24 +70,24 @@ var ec2ui_VpnAttachmentTreeView = {
             vgwid : vgwid,
             vpcid : vpcid
         }
-        window.openDialog("chrome://ec2ui/content/dialog_attach_vpn_gateway.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_attach_vpn_gateway.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ec2ui_session.showBusyCursor(true);
+            ew_session.showBusyCursor(true);
             var me = this;
             var wrap = function(id)
             {
                 me.refresh();
                 me.selectByImageId(id);
             }
-            ec2ui_session.controller.attachVpnGatewayToVpc(retVal.vgwid, retVal.vpcid, wrap);
+            ew_session.controller.attachVpnGatewayToVpc(retVal.vgwid, retVal.vpcid, wrap);
 
-            ec2ui_session.showBusyCursor(false);
+            ew_session.showBusyCursor(false);
         }
     },
 };
 
 // poor-man's inheritance
-ec2ui_VpnAttachmentTreeView.__proto__ = BaseImagesView;
+ew_VpnAttachmentTreeView.__proto__ = BaseImagesView;
 
-ec2ui_VpnAttachmentTreeView.register();
+ew_VpnAttachmentTreeView.register();

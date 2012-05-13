@@ -1,4 +1,4 @@
-var ec2ui_credentialsTreeView = {
+var ew_credentialsTreeView = {
     COLNAMES: ['credential.name','credential.accessKey', 'credential.endPoint'],
     treeBox: null,
     selection: null,

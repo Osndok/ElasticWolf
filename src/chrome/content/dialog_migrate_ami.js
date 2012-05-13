@@ -1,4 +1,4 @@
-var ec2_AMIMigrator = {
+var ew_AMIMigrator = {
     image : null,
     session : null,
     retVal : null,
@@ -6,19 +6,19 @@ var ec2_AMIMigrator = {
     regionSelected : null,
 
     getSourceBucketName : function() {
-        return document.getElementById("ec2ui.migrateAMI.bucketName.source");
+        return document.getElementById("ew.migrateAMI.bucketName.source");
     },
 
     getDestBucketName : function() {
-        return document.getElementById("ec2ui.migrateAMI.bucketName.dest");
+        return document.getElementById("ew.migrateAMI.bucketName.dest");
     },
 
     getPrefix : function() {
-        return document.getElementById("ec2ui.migrateAMI.prefix");
+        return document.getElementById("ew.migrateAMI.prefix");
     },
 
     getRegionList : function() {
-        return document.getElementById("ec2ui.migrateAMI.regions");
+        return document.getElementById("ew.migrateAMI.regions");
     },
 
     validateBucketName : function() {
@@ -34,7 +34,7 @@ var ec2_AMIMigrator = {
 
     regionChanged : function() {
         var parts = this.image.location.split('/');
-        var reg = ec2ui_utils.determineRegionFromString(this.getRegionList().selectedItem.label);
+        var reg = ew_utils.determineRegionFromString(this.getRegionList().selectedItem.label);
         this.regionSelected = reg;
         this.getDestBucketName().value = parts[0] + "-" + reg.toLowerCase();
     },
@@ -92,9 +92,9 @@ var ec2_AMIMigrator = {
             return false;
         }
 
-        document.getElementById("ec2ui.migrateAMI.id").value = this.image.id;
+        document.getElementById("ew.migrateAMI.id").value = this.image.id;
         var reg = this.getRegionList().selectedItem.label;
-        reg = ec2ui_utils.determineRegionFromString(reg);
+        reg = ew_utils.determineRegionFromString(reg);
         this.regionSelected = reg;
         this.getSourceBucketName().value = parts[0];
         this.getDestBucketName().value = parts[0] + "-" + reg.toLowerCase();

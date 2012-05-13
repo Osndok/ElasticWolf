@@ -1,4 +1,4 @@
-var ec2ui_ReservedInstancesTreeView = {
+var ew_ReservedInstancesTreeView = {
     COLNAMES: ['rsvdInst.id',
                'rsvdInst.instanceType',
                'rsvdInst.tenancy',
@@ -13,18 +13,18 @@ var ec2ui_ReservedInstancesTreeView = {
     imageIdRegex : new RegExp(".*"),
 
     getSearchText : function() {
-        return document.getElementById('ec2ui.rsvdInst.search').value;
+        return document.getElementById('ew.rsvdInst.search').value;
     },
 
     refresh : function() {
-        ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeReservedInstances();
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(true);
+        ew_session.controller.describeReservedInstances();
+        ew_session.showBusyCursor(false);
     },
 
     invalidate : function() {
-        var target = ec2ui_ReservedInstancesTreeView;
-        target.displayImages(target.filterImages(ec2ui_model.reservedInstances));
+        var target = ew_ReservedInstancesTreeView;
+        target.displayImages(target.filterImages(ew_model.reservedInstances));
     },
 
     searchChanged : function(event) {
@@ -38,26 +38,26 @@ var ec2ui_ReservedInstancesTreeView = {
     register : function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'reservedInstances');
+            ew_model.registerInterest(this, 'reservedInstances');
         }
     },
 
     viewDetails : function(event) {
         var image = this.getSelectedImage();
         if (image == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_reserved_instances_details.xul", null, "chrome,centerscreen,modal,resizable", image);
+        window.openDialog("chrome://ew/content/dialog_reserved_instances_details.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
     displayImages : function (imageList) {
-        if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+        if (ew_prefs.isRefreshOnChangeEnabled()) {
         // Determine if there are any pending operations
         if (this.pendingUpdates()) {
-            this.startRefreshTimer("ec2ui_ReservedInstancesTreeView", ec2ui_ReservedInstancesTreeView.refresh);
+            this.startRefreshTimer("ew_ReservedInstancesTreeView", ew_ReservedInstancesTreeView.refresh);
         } else {
-            this.stopRefreshTimer("ec2ui_ReservedInstancesTreeView");
+            this.stopRefreshTimer("ew_ReservedInstancesTreeView");
         }
     } else {
-        this.stopRefreshTimer("ec2ui_ReservedInstancesTreeView");
+        this.stopRefreshTimer("ew_ReservedInstancesTreeView");
     }
 
     BaseImagesView.displayImages.call(this, imageList);
@@ -66,7 +66,7 @@ var ec2ui_ReservedInstancesTreeView = {
     pendingUpdates : function() {
         // Walk the list of reservedInst to see whether the
         // state of any of them needs to be refreshed
-        var list = ec2ui_session.model.reservedInstances;
+        var list = ew_session.model.reservedInstances;
         var fPending = false;
 
         if (list == null) {
@@ -85,6 +85,6 @@ var ec2ui_ReservedInstancesTreeView = {
 };
 
 // poor-man's inheritance
-ec2ui_ReservedInstancesTreeView.__proto__ = BaseImagesView;
+ew_ReservedInstancesTreeView.__proto__ = BaseImagesView;
 
-ec2ui_ReservedInstancesTreeView.register();
+ew_ReservedInstancesTreeView.register();

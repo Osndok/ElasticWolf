@@ -1,9 +1,9 @@
-var ec2_ImageRegistrar = {
-    ec2ui_session : null,
+var ew_ImageRegistrar = {
+    ew_session : null,
     retVal : null,
 
     getTextBox : function() {
-        return document.getElementById("ec2ui.newimage.manifest");
+        return document.getElementById("ew.newimage.manifest");
     },
 
     registerImage : function() {
@@ -45,7 +45,7 @@ var ec2_ImageRegistrar = {
     },
 
     init : function() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         this.retVal = window.arguments[1];
     }
 }

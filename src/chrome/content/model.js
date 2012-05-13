@@ -475,7 +475,7 @@ String.prototype.trim = function()
 
 // Global model: home to things like lists of data that need to be shared (known
 // AMIs, keypairs etc)
-var ec2ui_model = {
+var ew_model = {
     components : new Array(),
     componentInterests : new Object(),
 
@@ -625,85 +625,85 @@ var ec2ui_model = {
     {
         switch (name) {
         case "volumes":
-            ec2ui_session.controller.describeVolumes();
+            ew_session.controller.describeVolumes();
             break;
         case "images":
-            ec2ui_session.controller.describeImages();
+            ew_session.controller.describeImages();
             break;
         case "snapshots":
-            ec2ui_session.controller.describeSnapshots();
+            ew_session.controller.describeSnapshots();
             break;
         case "instances":
-            ec2ui_session.controller.describeInstances();
+            ew_session.controller.describeInstances();
             break;
         case "keypairs":
-            ec2ui_session.controller.describeKeypairs();
+            ew_session.controller.describeKeypairs();
             break;
         case "accesskeys":
-            ec2ui_session.controller.listAccessKeys();
+            ew_session.controller.listAccessKeys();
             break;
         case "certs":
-            ec2ui_session.controller.listsigningCertificates();
+            ew_session.controller.listsigningCertificates();
             break;
         case "azones":
-            ec2ui_session.controller.describeAvailabilityZones();
+            ew_session.controller.describeAvailabilityZones();
             break;
         case "securitygroups":
-            ec2ui_session.controller.describeSecurityGroups();
+            ew_session.controller.describeSecurityGroups();
             break;
         case "addresses":
-            ec2ui_session.controller.describeAddresses();
+            ew_session.controller.describeAddresses();
             break;
         case "bundleTasks":
-            ec2ui_session.controller.describeBundleTasks();
+            ew_session.controller.describeBundleTasks();
             break;
         case "offerings":
-            ec2ui_session.controller.describeLeaseOfferings();
+            ew_session.controller.describeLeaseOfferings();
             break;
         case "reservedInstances":
-            ec2ui_session.controller.describeReservedInstances();
+            ew_session.controller.describeReservedInstances();
             break;
         case "loadbalancer":
-            ec2ui_session.controller.describeLoadBalancers();
+            ew_session.controller.describeLoadBalancers();
             break;
         case "InstanceHealth":
-            ec2ui_session.controller.describeInstanceHealth();
+            ew_session.controller.describeInstanceHealth();
             break;
         case "subnets":
-            ec2ui_session.controller.describeSubnets();
+            ew_session.controller.describeSubnets();
             break;
         case "vpcs":
-            ec2ui_session.controller.describeVpcs();
+            ew_session.controller.describeVpcs();
             break;
         case "dhcpOptions":
-            ec2ui_session.controller.describedhcpOptions();
+            ew_session.controller.describedhcpOptions();
             break;
         case "vpnConnections":
-            ec2ui_session.controller.describeVpnConnections();
+            ew_session.controller.describeVpnConnections();
             break;
         case "vpnGateways":
-            ec2ui_session.controller.describeVpnGateways();
+            ew_session.controller.describeVpnGateways();
             break;
         case "customerGateways":
-            ec2ui_session.controller.describeCustomerGateways();
+            ew_session.controller.describeCustomerGateways();
             break;
         case "internetGateways":
-            ec2ui_session.controller.describeInternetGateways();
+            ew_session.controller.describeInternetGateways();
             break;
         case "routeTables":
-            ec2ui_session.controller.describeRouteTables();
+            ew_session.controller.describeRouteTables();
             break;
         case "networkAcls":
-            ec2ui_session.controller.describeNetworkAcls();
+            ew_session.controller.describeNetworkAcls();
             break;
         case "networkInterfaces":
-            ec2ui_session.controller.describeNetworkInterfaces();
+            ew_session.controller.describeNetworkInterfaces();
             break;
         case "s3buckets":
-            ec2ui_session.controller.listS3Buckets();
+            ew_session.controller.listS3Buckets();
             break;
         case "users":
-            ec2ui_session.controller.listUsers();
+            ew_session.controller.listUsers();
             break;
         }
         return []
@@ -734,7 +734,7 @@ var ec2ui_model = {
     getUsers : function()
     {
         if (this.users == null) {
-            ec2ui_session.controller.listUsers();
+            ew_session.controller.listUsers();
         }
         return this.users;
     },
@@ -748,7 +748,7 @@ var ec2ui_model = {
     getS3Buckets : function()
     {
         if (this.s3buckets == null) {
-            ec2ui_session.controller.listS3Buckets();
+            ew_session.controller.listS3Buckets();
         }
         return this.s3buckets;
     },
@@ -785,7 +785,7 @@ var ec2ui_model = {
     getNetworkInterfaces: function()
     {
         if (this.networkInterfaces == null) {
-            ec2ui_session.controller.describeNetworkInterfaces();
+            ew_session.controller.describeNetworkInterfaces();
         }
         return this.networkInterfaces;
     },
@@ -799,7 +799,7 @@ var ec2ui_model = {
     getVpcs : function()
     {
         if (this.vpcs == null) {
-            ec2ui_session.controller.describeVpcs();
+            ew_session.controller.describeVpcs();
         }
         return this.vpcs;
     },
@@ -823,7 +823,7 @@ var ec2ui_model = {
     getSubnets : function()
     {
         if (this.subnets == null) {
-            ec2ui_session.controller.describeSubnets();
+            ew_session.controller.describeSubnets();
         }
         return this.subnets;
     },
@@ -858,7 +858,7 @@ var ec2ui_model = {
     getDhcpOptions : function()
     {
         if (this.dhcpOptions == null) {
-            ec2ui_session.controller.describeDhcpOptions();
+            ew_session.controller.describeDhcpOptions();
         }
         return this.dhcpOptions;
     },
@@ -872,7 +872,7 @@ var ec2ui_model = {
     getVpnConnections : function()
     {
         if (this.vpnConnections == null) {
-            ec2ui_session.controller.describeVpnConnections();
+            ew_session.controller.describeVpnConnections();
         }
         return this.vpnConnections;
     },
@@ -886,7 +886,7 @@ var ec2ui_model = {
     getVpnGateways : function()
     {
         if (this.vpnGateways == null) {
-            ec2ui_session.controller.describeVpnGateways();
+            ew_session.controller.describeVpnGateways();
         }
         return this.vpnGateways;
     },
@@ -900,7 +900,7 @@ var ec2ui_model = {
     getCustomerGateways : function()
     {
         if (this.customerGateways == null) {
-            ec2ui_session.controller.describeCustomerGateways();
+            ew_session.controller.describeCustomerGateways();
         }
         return this.customerGateways;
     },
@@ -914,7 +914,7 @@ var ec2ui_model = {
     getInternetGateways : function()
     {
         if (this.internetGateways == null) {
-            ec2ui_session.controller.describeInternetGateways();
+            ew_session.controller.describeInternetGateways();
         }
         return this.internetGateways;
     },
@@ -928,7 +928,7 @@ var ec2ui_model = {
     getRouteTables : function()
     {
         if (this.routeTables == null) {
-            ec2ui_session.controller.describeRouteTables();
+            ew_session.controller.describeRouteTables();
         }
         return this.routeTables;
     },
@@ -942,7 +942,7 @@ var ec2ui_model = {
     getNetworkAcls : function()
     {
         if (this.networkAcls == null) {
-            ec2ui_session.controller.describeNetworkAcls();
+            ew_session.controller.describeNetworkAcls();
         }
         return this.networkAcls;
     },
@@ -961,7 +961,7 @@ var ec2ui_model = {
     getVolumes : function()
     {
         if (this.volumes == null) {
-            ec2ui_session.controller.describeVolumes();
+            ew_session.controller.describeVolumes();
         }
         return this.volumes;
     },
@@ -969,7 +969,7 @@ var ec2ui_model = {
     updateVolumes : function(list)
     {
         if (!this.instances) {
-            ec2ui_session.controller.describeInstances();
+            ew_session.controller.describeInstances();
         }
 
         this.volumes = list;
@@ -994,7 +994,7 @@ var ec2ui_model = {
     updateSnapshots : function(list)
     {
         if (!this.images) {
-            ec2ui_session.controller.describeImages();
+            ew_session.controller.describeImages();
         }
 
         this.snapshots = list;
@@ -1029,7 +1029,7 @@ var ec2ui_model = {
     getSnapshots : function()
     {
         if (this.snapshots == null) {
-            ec2ui_session.controller.describeSnapshots();
+            ew_session.controller.describeSnapshots();
         }
         return this.snapshots;
     },
@@ -1068,7 +1068,7 @@ var ec2ui_model = {
     getImages : function()
     {
         if (this.images == null) {
-            ec2ui_session.controller.describeImages();
+            ew_session.controller.describeImages();
         }
         return this.images;
     },
@@ -1103,7 +1103,7 @@ var ec2ui_model = {
     getInstances : function()
     {
         if (this.instances == null) {
-            ec2ui_session.controller.describeInstances();
+            ew_session.controller.describeInstances();
         }
         return this.instances;
     },
@@ -1128,7 +1128,7 @@ var ec2ui_model = {
     getKeypairs : function()
     {
         if (this.keypairs == null) {
-            ec2ui_session.controller.describeKeypairs();
+            ew_session.controller.describeKeypairs();
         }
         return this.keypairs;
     },
@@ -1142,7 +1142,7 @@ var ec2ui_model = {
     getAccessKeys : function()
     {
         if (this.accesskeys == null) {
-            ec2ui_session.controller.listAccessKeys();
+            ew_session.controller.listAccessKeys();
         }
         return this.accesskeys;
     },
@@ -1156,7 +1156,7 @@ var ec2ui_model = {
     getCerts : function()
     {
         if (this.certs == null) {
-            ec2ui_session.controller.listSigningCertificates();
+            ew_session.controller.listSigningCertificates();
         }
         return this.certs;
     },
@@ -1170,7 +1170,7 @@ var ec2ui_model = {
     getSecurityGroups : function()
     {
         if (this.securityGroups == null) {
-            ec2ui_session.controller.describeSecurityGroups();
+            ew_session.controller.describeSecurityGroups();
         }
         return this.securityGroups;
     },
@@ -1178,7 +1178,7 @@ var ec2ui_model = {
     getAddresses : function()
     {
         if (this.addresses == null) {
-            ec2ui_session.controller.describeAddresses();
+            ew_session.controller.describeAddresses();
         }
         return this.addresses;
     },
@@ -1186,7 +1186,7 @@ var ec2ui_model = {
     updateAddresses : function(list)
     {
         if (!this.instances) {
-            ec2ui_session.controller.describeInstances();
+            ew_session.controller.describeInstances();
         }
 
         this.addresses = list;
@@ -1220,7 +1220,7 @@ var ec2ui_model = {
     getAvailabilityZones : function()
     {
         if (this.azones == null) {
-            ec2ui_session.controller.describeAvailabilityZones();
+            ew_session.controller.describeAvailabilityZones();
         }
         return this.azones;
     },
@@ -1234,7 +1234,7 @@ var ec2ui_model = {
     getBundleTasks : function()
     {
         if (this.bundleTasks == null) {
-            ec2ui_session.controller.describeBundleTasks();
+            ew_session.controller.describeBundleTasks();
         }
         return this.bundleTasks;
     },
@@ -1248,7 +1248,7 @@ var ec2ui_model = {
     getLeaseOfferings : function()
     {
         if (this.offerings == null) {
-            ec2ui_session.controller.describeLeaseOfferings();
+            ew_session.controller.describeLeaseOfferings();
         }
         return this.offerings;
     },
@@ -1262,7 +1262,7 @@ var ec2ui_model = {
     getReservedInstances : function()
     {
         if (this.reservedInstances == null) {
-            ec2ui_session.controller.describeReservedInstances();
+            ew_session.controller.describeReservedInstances();
         }
         return this.reservedInstances;
     },
@@ -1276,7 +1276,7 @@ var ec2ui_model = {
     getLoadbalancer : function()
     {
         if (this.loadbalancer == null) {
-            ec2ui_session.controller.describeLoadBalancers();
+            ew_session.controller.describeLoadBalancers();
         }
         return this.loadbalancer;
     },
@@ -1284,7 +1284,7 @@ var ec2ui_model = {
     updateInstanceHealth : function(list)
     {
         if (!this.instances) {
-            ec2ui_session.controller.describeInstances();
+            ew_session.controller.describeInstances();
         }
 
         this.InstanceHealth = list;
@@ -1309,7 +1309,7 @@ var ec2ui_model = {
     getInstanceHealth : function()
     {
         if (this.InstanceHealth == null) {
-            ec2ui_session.controller.describeInstanceHealth();
+            ew_session.controller.describeInstanceHealth();
         }
         return this.InstanceHealth;
     }

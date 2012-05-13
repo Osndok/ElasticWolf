@@ -1,12 +1,12 @@
-var ec2_VpnConnectionCreator = {
-    ec2ui_session : null,
+var ew_VpnConnectionCreator = {
+    ew_session : null,
     retVal : null,
 
     createVpnConnection : function() {
-        this.retVal.vgwid = document.getElementById("ec2ui.newvpnconnection.vgwid").value.trim();
-        this.retVal.cgwid = document.getElementById("ec2ui.newvpnconnection.cgwid").value.trim();
+        this.retVal.vgwid = document.getElementById("ew.newvpnconnection.vgwid").value.trim();
+        this.retVal.cgwid = document.getElementById("ew.newvpnconnection.cgwid").value.trim();
 
-        var vgws = this.ec2ui_session.model.getVpnGateways();
+        var vgws = this.ew_session.model.getVpnGateways();
         for (var i in vgws) {
             if (vgws[i].id == this.retVal.vgwid)
                 this.retVal.type = vgws[i].type;
@@ -17,11 +17,11 @@ var ec2_VpnConnectionCreator = {
     },
 
     init : function() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         this.retVal = window.arguments[1];
 
-        var vgwMenu = document.getElementById("ec2ui.newvpnconnection.vgwid");
-        var vgws = this.ec2ui_session.model.getVpnGateways();
+        var vgwMenu = document.getElementById("ew.newvpnconnection.vgwid");
+        var vgws = this.ew_session.model.getVpnGateways();
         var selectvgw = 0;
         for (var i in vgws) {
             if (vgws[i].state != "available") continue;
@@ -31,8 +31,8 @@ var ec2_VpnConnectionCreator = {
         }
         vgwMenu.selectedIndex = selectvgw;
 
-        var cgwMenu = document.getElementById("ec2ui.newvpnconnection.cgwid");
-        var cgws = this.ec2ui_session.model.getCustomerGateways();
+        var cgwMenu = document.getElementById("ew.newvpnconnection.cgwid");
+        var cgws = this.ew_session.model.getCustomerGateways();
         var selectcgw = 0;
         for (var i in cgws) {
             if (cgws[i].state != "available") continue;

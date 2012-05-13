@@ -1,4 +1,4 @@
-var ec2ui_CertTreeView = {
+var ew_CertTreeView = {
         COLNAMES : ['certs.name'],
         treeBox : null,
         selection : null,
@@ -73,37 +73,37 @@ var ec2ui_CertTreeView = {
         },
 
         invalidate: function() {
-            this.displayList(ec2ui_session.model.certs);
+            this.displayList(ew_session.model.certs);
         },
 
         viewDetails : function(event) {
             var item = this.getSelected();
             if (item) {
-                window.openDialog("chrome://ec2ui/content/dialog_cert_details.xul", null, "chrome,centerscreen,modal,resizable", item);
+                window.openDialog("chrome://ew/content/dialog_cert_details.xul", null, "chrome,centerscreen,modal,resizable", item);
             }
         },
 
         register : function() {
             if (!this.registered) {
                 this.registered = true;
-                ec2ui_model.registerInterest(this, 'certs');
+                ew_model.registerInterest(this, 'certs');
             }
         },
 
         refresh : function() {
-            ec2ui_session.controller.listSigningCertificates();
+            ew_session.controller.listSigningCertificates();
         },
 
         createCert : function () {
             var me = this;
             var wrap = function(name, cert) {
-                if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+                if (ew_prefs.isRefreshOnChangeEnabled()) {
                     me.refresh();
                 }
             }
-            var body = ec2ui_session.generateCertificate();
+            var body = ew_session.generateCertificate();
             if (body) {
-                ec2ui_session.controller.UploadSigningCertificate(body, wrap);
+                ew_session.controller.UploadSigningCertificate(body, wrap);
             } else {
                 alert("Could not generate new X509 certificate")
             }
@@ -112,14 +112,14 @@ var ec2ui_CertTreeView = {
         uploadCert : function () {
             var me = this;
             var wrap = function(name, cert) {
-                if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+                if (ew_prefs.isRefreshOnChangeEnabled()) {
                     me.refresh();
                 }
             }
-            var file = ec2ui_session.promptForFile("Select the certificate file to upload:")
+            var file = ew_session.promptForFile("Select the certificate file to upload:")
             if (file) {
                 var body = FileIO.toString(file);
-                ec2ui_session.controller.UploadSigningCertificate(body, wrap);
+                ew_session.controller.UploadSigningCertificate(body, wrap);
             }
         },
         
@@ -131,12 +131,12 @@ var ec2ui_CertTreeView = {
 
             var me = this;
             var wrap = function() {
-                if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+                if (ew_prefs.isRefreshOnChangeEnabled()) {
                     me.refresh();
                 }
             }
-            ec2ui_session.controller.DeleteSigningCertificate(item.name, wrap);
+            ew_session.controller.DeleteSigningCertificate(item.name, wrap);
         }
 };
 
-ec2ui_CertTreeView.register();
+ew_CertTreeView.register();

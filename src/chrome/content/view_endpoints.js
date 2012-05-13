@@ -1,4 +1,4 @@
-var ec2ui_endpointsTreeView = {
+var ew_endpointsTreeView = {
     COLNAMES: ['endpoint.name','endpoint.url'],
     treeBox: null,
     selection: null,

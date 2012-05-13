@@ -1,36 +1,36 @@
-var ec2ui_SnapshotTreeView = {
+var ew_SnapshotTreeView = {
     COLNAMES: ['snap.id', 'snap.volumeId', 'snap.status', 'snap.startTime',
               'snap.progress', 'snap.volumeSize', 'snap.description', 'snap.amiId', 'snap.amiName', 'snap.owner', 'snap.ownerAlias', 'snap.tag'],
     imageIdRegex : new RegExp("^snap-"),
 
     getSearchText : function() {
-        return document.getElementById('ec2ui.snapshots.search').value;
+        return document.getElementById('ew.snapshots.search').value;
     },
 
     refresh : function() {
-        ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeSnapshots();
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(true);
+        ew_session.controller.describeSnapshots();
+        ew_session.showBusyCursor(false);
     },
 
     invalidate : function() {
-        var target = ec2ui_SnapshotTreeView;
+        var target = ew_SnapshotTreeView;
         target.filterAndDisplaySnapshots();
     },
 
     filterAndDisplaySnapshots : function() {
-        var type = document.getElementById("ec2ui_SnapshotTreeView.snapshot.type").value;
+        var type = document.getElementById("ew_SnapshotTreeView.snapshot.type").value;
         if (type == "my_snapshots") {
-            var groups = ec2ui_model.getSecurityGroups();
+            var groups = ew_model.getSecurityGroups();
 
             if (groups) {
                 var group = groups[0];
-                var currentUser = ec2ui_session.lookupAccountId(group.ownerId);
+                var currentUser = ew_session.lookupAccountId(group.ownerId);
             }
         }
 
-        var snapshots = (ec2ui_model.snapshots || []);
-        var filterAMI = document.getElementById("ec2ui.snapshots.noami").checked;
+        var snapshots = (ew_model.snapshots || []);
+        var filterAMI = document.getElementById("ew.snapshots.noami").checked;
 
         if (filterAMI) {
           var newSnapshots = [];
@@ -52,12 +52,12 @@ var ec2ui_SnapshotTreeView = {
     },
 
     snapshotTypeChanged : function() {
-        document.getElementById("ec2ui.snapshots.search").value = "";
+        document.getElementById("ew.snapshots.search").value = "";
         this.filterAndDisplaySnapshots();
     },
 
     searchChanged : function(event) {
-        document.getElementById("ec2ui_SnapshotTreeView.snapshot.type").selectedIndex = 1;
+        document.getElementById("ew_SnapshotTreeView.snapshot.type").selectedIndex = 1;
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
         }
@@ -67,14 +67,14 @@ var ec2ui_SnapshotTreeView = {
     register : function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'snapshots');
+            ew_model.registerInterest(this, 'snapshots');
         }
     },
 
     viewDetails : function(event) {
         var image = this.getSelectedImage();
         if (image == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_snapshot_details.xul", null, "chrome,centerscreen,modal,resizable", image);
+        window.openDialog("chrome://ew/content/dialog_snapshot_details.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
     selectionChanged : function(event) {
@@ -98,13 +98,13 @@ var ec2ui_SnapshotTreeView = {
         if (image.acls) {
             wrap(image.id, image.acls);
         } else {
-            ec2ui_session.controller.describeSnapshotAttribute(image.id, wrap);
+            ew_session.controller.describeSnapshotAttribute(image.id, wrap);
         }
     },
 
     getPermissionsList : function()
     {
-        return document.getElementById("ec2ui.snapshot.permissions.list");
+        return document.getElementById("ew.snapshot.permissions.list");
     },
 
     getSelectedPermission : function()
@@ -120,7 +120,7 @@ var ec2ui_SnapshotTreeView = {
         var image = this.getSelectedImage();
         if (image == null) return;
         image.acls = null;
-        ec2ui_session.controller.modifySnapshotAttribute(image.id, [ [ "Group", "all" ]], null, function() { me.refresh(true); });
+        ew_session.controller.modifySnapshotAttribute(image.id, [ [ "Group", "all" ]], null, function() { me.refresh(true); });
     },
 
     addPermission: function()
@@ -131,7 +131,7 @@ var ec2ui_SnapshotTreeView = {
         var user = prompt("Please provide an EC2 user ID");
         if (user == null) return;
         image.acls = null;
-        ec2ui_session.controller.modifySnapshotAttribute(image.id, [ [ "UserId", user ]], null, function() { me.refresh(true); });
+        ew_session.controller.modifySnapshotAttribute(image.id, [ [ "UserId", user ]], null, function() { me.refresh(true); });
     },
 
     deletePermission: function()
@@ -143,7 +143,7 @@ var ec2ui_SnapshotTreeView = {
         if (!perm) return
         if (!confirm("Remove permissions " + perm.label + " from " + image.id + "?")) return;
         image.acls = null;
-        ec2ui_session.controller.modifySnapshotAttribute(image.id, null, [ [ perm.label.split(":")[0], perm.value ]], function() { me.refresh(true); });
+        ew_session.controller.modifySnapshotAttribute(image.id, null, [ [ perm.label.split(":")[0], perm.value ]], function() { me.refresh(true); });
     },
 
     deleteSnapshot : function () {
@@ -151,34 +151,34 @@ var ec2ui_SnapshotTreeView = {
         if (image == null) return;
         var label = image.name ? (image.name + '@' + image.id) : image.id;
         if (!confirm("Delete snapshot " + label + "?"))  return;
-        ec2ui_session.controller.deleteSnapshot(image.id);
+        ew_session.controller.deleteSnapshot(image.id);
     },
 
     createVolume : function () {
         var image = this.getSelectedImage();
         if (image == null) return;
-        ec2ui_VolumeTreeView.createVolume(image);
+        ew_VolumeTreeView.createVolume(image);
     },
 
     displayImages : function (imageList) {
         BaseImagesView.displayImages.call(this, imageList);
 
-        if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+        if (ew_prefs.isRefreshOnChangeEnabled()) {
             // Determine if there are any pending operations
             if (this.pendingUpdates()) {
-                this.startRefreshTimer("ec2ui_SnapshotTreeView", ec2ui_SnapshotTreeView.refresh);
+                this.startRefreshTimer("ew_SnapshotTreeView", ew_SnapshotTreeView.refresh);
             } else {
-                this.stopRefreshTimer("ec2ui_SnapshotTreeView");
+                this.stopRefreshTimer("ew_SnapshotTreeView");
             }
         } else {
-            this.stopRefreshTimer("ec2ui_SnapshotTreeView");
+            this.stopRefreshTimer("ew_SnapshotTreeView");
         }
     },
 
     pendingUpdates : function() {
         // Walk the list of snapshots to see whether there is a volume
         // whose state needs to be refreshed
-        var snaps = ec2ui_session.model.snapshots;
+        var snaps = ew_session.model.snapshots;
         var fPending = false;
 
         if (snaps == null) {
@@ -201,17 +201,17 @@ var ec2ui_SnapshotTreeView = {
         var image = this.getSelectedImage();
         if (image == null) return;
 
-        window.openDialog("chrome://ec2ui/content/dialog_register_image_from_snapshot.xul", null, "chrome,centerscreen,modal,resizable", image.id, ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_register_image_from_snapshot.xul", null, "chrome,centerscreen,modal,resizable", image.id, ew_session, retVal);
         if (retVal.ok) {
             var wrap = function(id) {
                 alert("A new AMI is registered.\n\nThe AMI ID is: "+id);
             }
-            ec2ui_session.controller.registerImageFromSnapshot(image.id, retVal.amiName, retVal.amiDescription, retVal.architecture, retVal.kernelId, retVal.ramdiskId, retVal.deviceName, retVal.deleteOnTermination, wrap);
+            ew_session.controller.registerImageFromSnapshot(image.id, retVal.amiName, retVal.amiDescription, retVal.architecture, retVal.kernelId, retVal.ramdiskId, retVal.deviceName, retVal.deleteOnTermination, wrap);
         }
     },
 };
 
 // poor-man's inheritance
-ec2ui_SnapshotTreeView.__proto__ = BaseImagesView;
+ew_SnapshotTreeView.__proto__ = BaseImagesView;
 
-ec2ui_SnapshotTreeView.register();
+ew_SnapshotTreeView.register();

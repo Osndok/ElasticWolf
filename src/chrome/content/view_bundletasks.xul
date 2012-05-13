@@ -1,80 +1,80 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://ec2ui/skin/ec2ui.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<?xml-stylesheet href="chrome://ew/skin/ew.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   <tabpanel id="bundle_tasks_tab" flex="1">
     <groupbox flex="1" orient="vertical">
-      <caption label="&ec2ui.captions.bundleTasks.label;" />
+      <caption label="&ew.captions.bundleTasks.label;" />
       <popupset>
-        <menupopup id="ec2ui.bundleTasks.contextmenu"
-          onpopupshown="ec2ui_BundleTasksTreeView.enableOrDisableItems();">
-          <menuitem oncommand="ec2ui_BundleTasksTreeView.viewDetails();"
-            label="&ec2ui.contextmenu.details.label;" />
+        <menupopup id="ew.bundleTasks.contextmenu"
+          onpopupshown="ew_BundleTasksTreeView.enableOrDisableItems();">
+          <menuitem oncommand="ew_BundleTasksTreeView.viewDetails();"
+            label="&ew.contextmenu.details.label;" />
           <menuseparator />
           <menuitem id="bundleTasks.context.register"
-            oncommand="ec2ui_BundleTasksTreeView.registerNewImage();"
-            label="&ec2ui.images.contextmenu.register.label;" />
+            oncommand="ew_BundleTasksTreeView.registerNewImage();"
+            label="&ew.images.contextmenu.register.label;" />
           <menuitem id="bundleTasks.context.cancel"
-            oncommand="ec2ui_BundleTasksTreeView.cancelBundleTask();"
-            label="&ec2ui.bundleTasks.contextmenu.cancel.label;" />
+            oncommand="ew_BundleTasksTreeView.cancelBundleTask();"
+            label="&ew.bundleTasks.contextmenu.cancel.label;" />
           <menuseparator />
-          <menuitem oncommand="ec2ui_BundleTasksTreeView.copyToClipBoard('id');"
-            label="&ec2ui.bundleTasks.contextmenu.copybunid.label;" />
-          <menuitem oncommand="ec2ui_BundleTasksTreeView.copyToClipBoard('instanceId');"
-            label="&ec2ui.instances.contextmenu.copyid.label;" />
+          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipBoard('id');"
+            label="&ew.bundleTasks.contextmenu.copybunid.label;" />
+          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipBoard('instanceId');"
+            label="&ew.instances.contextmenu.copyid.label;" />
         </menupopup>
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
         <hbox flex="10">
-          <textbox id="ec2ui.bundleTasks.search" size="15" value=""
-            onkeypress="ec2ui_BundleTasksTreeView.searchChanged(event);" />
+          <textbox id="ew.bundleTasks.search" size="15" value=""
+            onkeypress="ew_BundleTasksTreeView.searchChanged(event);" />
           <toolbarbutton image="images/refresh.png"
             style="-moz-box-orient:horizontal;-moz-box-pack:center;"
-            oncommand="ec2ui_BundleTasksTreeView.refresh()"
-            tooltiptext="&ec2ui.refresh.tip;" />
+            oncommand="ew_BundleTasksTreeView.refresh()"
+            tooltiptext="&ew.refresh.tip;" />
           <toolbarbutton image="images/delete.png"
             style="-moz-box-orient:horizontal;-moz-box-pack:center;"
-            oncommand="ec2ui_BundleTasksTreeView.cancelBundleTask()"
-            tooltiptext="&ec2ui.cancelBundleTask.tip;" />
+            oncommand="ew_BundleTasksTreeView.cancelBundleTask()"
+            tooltiptext="&ew.cancelBundleTask.tip;" />
 
           <toolbarbutton image="images/add.png"
             style="-moz-box-orient:horizontal;-moz-box-pack:center;"
-            tooltiptext="&ec2ui.images.register.tip;"
-            oncommand="ec2ui_BundleTasksTreeView.registerNewImage();" />
+            tooltiptext="&ew.images.register.tip;"
+            oncommand="ew_BundleTasksTreeView.registerNewImage();" />
         </hbox>
       </toolbar>
-      <tree id="ec2ui.bundleTasks.view" seltype="single" enableColumnDrag="true"
-        ondblclick="ec2ui_BundleTasksTreeView.viewDetails(event)"
-        onselect="ec2ui_BundleTasksTreeView.selectionChanged(event)" flex="1">
+      <tree id="ew.bundleTasks.view" seltype="single" enableColumnDrag="true"
+        ondblclick="ew_BundleTasksTreeView.viewDetails(event)"
+        onselect="ew_BundleTasksTreeView.selectionChanged(event)" flex="1">
         <treecols>
-          <treecol id="bun.instanceId" label="&ec2ui.instances.id.label;" flex="1" sortDirection="ascending"
+          <treecol id="bun.instanceId" label="&ew.instances.id.label;" flex="1" sortDirection="ascending"
             persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.id" label="&ec2ui.bundleTasks.id.label;" flex="1"
+          <treecol id="bun.id" label="&ew.bundleTasks.id.label;" flex="1"
             persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.state" label="&ec2ui.bundleTasks.state.label;" flex="1"
+          <treecol id="bun.state" label="&ew.bundleTasks.state.label;" flex="1"
             persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.startTime" label="&ec2ui.bundleTasks.startTime.label;" flex="1"
+          <treecol id="bun.startTime" label="&ew.bundleTasks.startTime.label;" flex="1"
             persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.updateTime" label="&ec2ui.bundleTasks.updateTime.label;" flex="1"
+          <treecol id="bun.updateTime" label="&ew.bundleTasks.updateTime.label;" flex="1"
             persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.s3bucket" label="&ec2ui.bundleTasks.s3.bucket.label;" flex="1"
+          <treecol id="bun.s3bucket" label="&ew.bundleTasks.s3.bucket.label;" flex="1"
             persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.s3prefix" label="&ec2ui.bundleTasks.s3.prefix.label;" flex="1"
+          <treecol id="bun.s3prefix" label="&ew.bundleTasks.s3.prefix.label;" flex="1"
             persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.errorMsg" label="&ec2ui.bundleTasks.errorMessage.label;" flex="1"
+          <treecol id="bun.errorMsg" label="&ew.bundleTasks.errorMessage.label;" flex="1"
             persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
         </treecols>
-        <treechildren context="ec2ui.bundleTasks.contextmenu"/>
+        <treechildren context="ew.bundleTasks.contextmenu"/>
       </tree>
     </groupbox>
   </tabpanel>

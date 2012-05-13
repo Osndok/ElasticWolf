@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.attachvpngateway" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" buttons="accept,cancel"
+<dialog id="ew.dialog.attachvpngateway" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" buttons="accept,cancel"
     ondialogaccept="return attach();" ondialogcancel="return true;" onload="init();" title="Attach Internet Gateway to VPC" buttonlabelaccept="Attach">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
     <script>
     function attach() {
-        this.retVal.vpcid = document.getElementById("ec2ui.attachigw.vpcid").value.trim();
-        this.retVal.igwid = document.getElementById("ec2ui.attachigw.igwid").value.trim();
-        this.retVal.igwnew = document.getElementById("ec2ui.attachigw.new").checked;
+        this.retVal.vpcid = document.getElementById("ew.attachigw.vpcid").value.trim();
+        this.retVal.igwid = document.getElementById("ew.attachigw.igwid").value.trim();
+        this.retVal.igwnew = document.getElementById("ew.attachigw.new").checked;
         this.retVal.ok = true;
         return true;
     }
@@ -19,7 +19,7 @@
         this.session = window.arguments[0];
         this.retVal = window.arguments[1];
 
-        var vpcMenu = document.getElementById("ec2ui.attachigw.vpcid");
+        var vpcMenu = document.getElementById("ew.attachigw.vpcid");
         var vpcs = this.session.model.getVpcs();
         var selected = 0;
         for (var i in vpcs) {
@@ -29,7 +29,7 @@
         }
         vpcMenu.selectedIndex = selected;
 
-        var igwMenu = document.getElementById("ec2ui.attachigw.igwid");
+        var igwMenu = document.getElementById("ew.attachigw.igwid");
         var igws = this.session.model.getInternetGateways();
         selected = 0;
         for (var i in igws) {
@@ -41,8 +41,8 @@
     }
 
     function newigw() {
-        if (document.getElementById("ec2ui.attachigw.new").checked) {
-            document.getElementById("ec2ui.attachigw.igwid").removeAllItems()
+        if (document.getElementById("ew.attachigw.new").checked) {
+            document.getElementById("ew.attachigw.igwid").removeAllItems()
         } else {
             init()
         }
@@ -59,9 +59,9 @@
             </columns>
             <rows>
                 <row>
-                    <label control="ec2ui.attachigw.vpcid" value="VPC: " />
+                    <label control="ew.attachigw.vpcid" value="VPC: " />
                     <hbox>
-                        <menulist id="ec2ui.attachigw.vpcid" />
+                        <menulist id="ew.attachigw.vpcid" />
                     </hbox>
                 </row>
                 <groupbox orient="vertical" flex="1">
@@ -73,12 +73,12 @@
                     </columns>
                     <rows>
                     <row>
-                        <label control="ec2ui.attachigw.igwid" value="Select existing: " />
-                        <menulist id="ec2ui.attachigw.igwid" />
+                        <label control="ew.attachigw.igwid" value="Select existing: " />
+                        <menulist id="ew.attachigw.igwid" />
                     </row>
                     <row>
-                        <label control="ec2ui.attachigw.new" value="Create new: " />
-                        <checkbox id="ec2ui.attachigw.new" checked="false" oncommand="newigw();" />
+                        <label control="ew.attachigw.new" value="Create new: " />
+                        <checkbox id="ew.attachigw.new" checked="false" oncommand="newigw();" />
                     </row>
                     </rows>
                     </grid>

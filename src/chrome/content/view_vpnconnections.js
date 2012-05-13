@@ -1,4 +1,4 @@
-var ec2ui_VpnConnectionTreeView = {
+var ew_VpnConnectionTreeView = {
     COLNAMES:
     ['vpnConnection.id', 'vpnConnection.vgwId',
      'vpnConnection.cgwId', 'vpnConnection.type',
@@ -9,18 +9,18 @@ var ec2ui_VpnConnectionTreeView = {
 
 
     getSearchText : function() {
-        return document.getElementById('ec2ui.vpnconnections.search').value;
+        return document.getElementById('ew.vpnconnections.search').value;
     },
 
     refresh : function() {
-        ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeVpnConnections();
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(true);
+        ew_session.controller.describeVpnConnections();
+        ew_session.showBusyCursor(false);
     },
 
     invalidate : function() {
-        var target = ec2ui_VpnConnectionTreeView;
-        target.displayImages(target.filterImages(ec2ui_model.vpnConnections));
+        var target = ew_VpnConnectionTreeView;
+        target.displayImages(target.filterImages(ew_model.vpnConnections));
     },
 
     searchChanged : function(event) {
@@ -34,7 +34,7 @@ var ec2ui_VpnConnectionTreeView = {
     register : function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'vpnConnections');
+            ew_model.registerInterest(this, 'vpnConnections');
         }
     },
 
@@ -44,7 +44,7 @@ var ec2ui_VpnConnectionTreeView = {
 
     enableOrDisableItems : function() {
         var image = this.getSelectedImage();
-        document.getElementById("ec2ui.vpnconnections.contextmenu").disabled = (image == null);
+        document.getElementById("ew.vpnconnections.contextmenu").disabled = (image == null);
     },
 
     saveConnectionConfiguration : function (name, config) {
@@ -92,19 +92,19 @@ var ec2ui_VpnConnectionTreeView = {
            return;
         }
 
-        window.openDialog("chrome://ec2ui/content/dialog_vpn_connection_config.xul",
+        window.openDialog("chrome://ew/content/dialog_vpn_connection_config.xul",
                           null,
                           "chrome,centerscreen,modal,resizable",
-                          ec2ui_session,
+                          ew_session,
                           retVal,
-                          ec2ui_client);
+                          ew_client);
 
         configXml = new DOMParser().parseFromString(vpn.config, "text/xml");
 
         if (retVal.ok) {
-            ec2ui_session.showBusyCursor(true);
+            ew_session.showBusyCursor(true);
             var filename = retVal.cgwtype;
-            var xsl = ec2ui_client.queryVpnConnectionStylesheets(filename);
+            var xsl = ew_client.queryVpnConnectionStylesheets(filename);
             log ("Received XSL: "+xsl.xmlhttp.responseText);
             log ("Received XSL (XML): "+xsl.xmlhttp.xmlDoc);
             log ("VPN Config: "+vpn.config);
@@ -124,29 +124,29 @@ var ec2ui_VpnConnectionTreeView = {
             // Display dialog box to save
             this.saveConnectionConfiguration(vpn.id, result);
 
-            ec2ui_session.showBusyCursor(false);
+            ew_session.showBusyCursor(false);
         }
     },
 
     createVpnConnection : function(cgwid, vgwid) {
         var retVal = {ok:null, vgwid: vgwid, cgwid: cgwid, type:null}
-        window.openDialog("chrome://ec2ui/content/dialog_create_vpn_connection.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_create_vpn_connection.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ec2ui_session.showBusyCursor(true);
+            ew_session.showBusyCursor(true);
             var me = this;
             var wrap = function(id) {
                 me.refresh();
                 me.selectByImageId(id);
             }
-            ec2ui_session.controller.createVpnConnection(
+            ew_session.controller.createVpnConnection(
                 retVal.type,
                 retVal.cgwid,
                 retVal.vgwid,
                 wrap
             );
 
-            ec2ui_session.showBusyCursor(false);
+            ew_session.showBusyCursor(false);
         }
     },
 
@@ -162,11 +162,11 @@ var ec2ui_VpnConnectionTreeView = {
             me.refresh();
             me.selectByImageId(id);
         }
-        ec2ui_session.controller.deleteVpnConnection(vpn.id, wrap);
+        ew_session.controller.deleteVpnConnection(vpn.id, wrap);
     },
 };
 
 // poor-man's inheritance
-ec2ui_VpnConnectionTreeView.__proto__ = BaseImagesView;
+ew_VpnConnectionTreeView.__proto__ = BaseImagesView;
 
-ec2ui_VpnConnectionTreeView.register();
+ew_VpnConnectionTreeView.register();

@@ -1,9 +1,9 @@
-var ec2ui_EnableAzone = {
-    ec2ui_session : null,
+var ew_EnableAzone = {
+    ew_session : null,
     retVal : null,
     loadbalancer : null,
     launch : function() {
-        this.retVal.LoadBalancerName = document.getElementById("ec2ui.enableazone.Name").value.trim();
+        this.retVal.LoadBalancerName = document.getElementById("ew.enableazone.Name").value.trim();
 	var listBox = document.getElementById('Enable_Azone');
 	var idx = 0;
 	var nRowCount = listBox.getRowCount();
@@ -29,17 +29,17 @@ var ec2ui_EnableAzone = {
         return true;
     },
     init : function() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         this.retVal = window.arguments[1];
 	this.loadbalancer = window.arguments[2];
 	var loadbalancer = window.arguments[2];
 	var loadbalancername = loadbalancer.LoadBalancerName;
 	var lbZone = loadbalancer.zone;
-	document.getElementById("ec2ui.enableazone.Name").value = loadbalancer.LoadBalancerName;
+	document.getElementById("ew.enableazone.Name").value = loadbalancer.LoadBalancerName;
 	var configureazone = document.getElementById('Enable_Azone');
 
         var Idx = 0;
-	var AvailabilityZone = this.ec2ui_session.model.getAvailabilityZones();
+	var AvailabilityZone = this.ew_session.model.getAvailabilityZones();
 
 	
 	var zones = new Array();

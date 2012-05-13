@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://ec2ui/skin/ec2ui.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<?xml-stylesheet href="chrome://ew/skin/ew.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabpanel id="s3_tab" flex="1">
@@ -10,19 +10,19 @@
             <groupbox flex="3" orient="vertical">
                 <caption label="S3 Buckets" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
-                    <toolbarbutton image="images/left.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.back()" tooltiptext="Back" />
-                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.create();" tooltiptext="Create Bucket/Folder" />
-                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.remove();" tooltiptext="Delete Bucket/Folder" />
-                    <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.manageAcls();" tooltiptext="Manage ACLs" />
-                    <toolbarbutton image="images/download.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.download();" tooltiptext="Download file" />
-                    <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ec2ui_S3BucketsTreeView.upload();" tooltiptext="Upload file" />
+                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
+                    <toolbarbutton image="images/left.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.back()" tooltiptext="Back" />
+                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.create();" tooltiptext="Create Bucket/Folder" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.remove();" tooltiptext="Delete Bucket/Folder" />
+                    <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.manageAcls();" tooltiptext="Manage ACLs" />
+                    <toolbarbutton image="images/download.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.download();" tooltiptext="Download file" />
+                    <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.upload();" tooltiptext="Upload file" />
                 </toolbar>
                 <hbox>
-                <label id="ec2ui.s3.path" flex="1" />
-                <label id="ec2ui.s3.status" style="color:green;text-align:right;" flex="1" />
+                <label id="ew.s3.path" flex="1" />
+                <label id="ew.s3.status" style="color:green;text-align:right;" flex="1" />
                 </hbox>
-                <tree id="ec2ui.s3.view" seltype="single" enableColumnDrag="true" ondblclick="ec2ui_S3BucketsTreeView.onClick(event);" onselect="ec2ui_S3BucketsTreeView.onSelection(event);" flex="1" >
+                <tree id="ew.s3.view" seltype="single" enableColumnDrag="true" ondblclick="ew_S3BucketsTreeView.onClick(event);" onselect="ew_S3BucketsTreeView.onSelection(event);" flex="1" >
                     <treecols>
                         <treecol id="s3.label" label="Name" flex="2" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

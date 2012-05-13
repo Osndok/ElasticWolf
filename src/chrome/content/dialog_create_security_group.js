@@ -1,20 +1,20 @@
-var ec2_SecGroupCreator = {
-    ec2ui_session : null,
+var ew_SecGroupCreator = {
+    ew_session : null,
     retVal : null,
 
     createGroup : function() {
         if (!this.validateGroupName()) return false;
         if (!this.validateGroupDesc()) return false;
-        this.retVal.name = document.getElementById("ec2ui.newsecgroup.name").value.trim();
-        this.retVal.description = document.getElementById("ec2ui.newsecgroup.description").value.trim();
-        this.retVal.enableProtocolsFor = document.getElementById("ec2ui.newsecgroup.enableprot").selectedItem.value;
-        this.retVal.vpcId = document.getElementById("ec2ui.newsecgroup.vpcId").value;
+        this.retVal.name = document.getElementById("ew.newsecgroup.name").value.trim();
+        this.retVal.description = document.getElementById("ew.newsecgroup.description").value.trim();
+        this.retVal.enableProtocolsFor = document.getElementById("ew.newsecgroup.enableprot").selectedItem.value;
+        this.retVal.vpcId = document.getElementById("ew.newsecgroup.vpcId").value;
         this.retVal.ok = true;
         return true;
     },
 
     validateGroupName : function() {
-        var textbox = document.getElementById("ec2ui.newsecgroup.name");
+        var textbox = document.getElementById("ew.newsecgroup.name");
         if (textbox.value.trim().length == 0) {
             alert("Please provide a group name");
             textbox.select();
@@ -24,7 +24,7 @@ var ec2_SecGroupCreator = {
     },
 
     validateGroupDesc : function() {
-        var textbox = document.getElementById("ec2ui.newsecgroup.description");
+        var textbox = document.getElementById("ew.newsecgroup.description");
         if (textbox.value.trim().length == 0) {
             alert("Please provide a description");
             textbox.select();
@@ -34,13 +34,13 @@ var ec2_SecGroupCreator = {
     },
 
     init : function() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         this.retVal = window.arguments[1];
 
-        var vpcMenu = document.getElementById("ec2ui.newsecgroup.vpcId");
+        var vpcMenu = document.getElementById("ew.newsecgroup.vpcId");
         vpcMenu.removeAllItems();
         vpcMenu.appendItem("None", "");
-        var vpcs = this.ec2ui_session.model.getVpcs();
+        var vpcs = this.ew_session.model.getVpcs();
         for (var i in vpcs) {
             vpcMenu.appendItem(vpcs[i].cidr + (vpcs[i].tag == null ? '' : " [" + vpcs[i].tag + "]") + " - " + vpcs[i].id, vpcs[i].id);
         }

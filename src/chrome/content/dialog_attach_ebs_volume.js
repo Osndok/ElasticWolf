@@ -1,5 +1,5 @@
-var ec2_EBSVolumeAttacher = {
-    ec2ui_session : null,
+var ew_EBSVolumeAttacher = {
+    ew_session : null,
     retVal : null,
     instanceId : null,
     volList : null,
@@ -7,8 +7,8 @@ var ec2_EBSVolumeAttacher = {
     attach : function() {
         if (!this.validateDevice()) return false;
 
-        this.retVal.device = document.getElementById("ec2ui.attachebsvolume.device").value;
-        var idxSel = document.getElementById("ec2ui.attachebsvolume.volumeId").selectedIndex;
+        this.retVal.device = document.getElementById("ew.attachebsvolume.device").value;
+        var idxSel = document.getElementById("ew.attachebsvolume.volumeId").selectedIndex;
         this.retVal.volumeId = this.volList[idxSel].id;
         this.retVal.ok = true;
 
@@ -16,7 +16,7 @@ var ec2_EBSVolumeAttacher = {
     },
 
     validateDevice: function() {
-        var textbox = document.getElementById("ec2ui.attachebsvolume.device");
+        var textbox = document.getElementById("ew.attachebsvolume.device");
         if (textbox.value == "") {
             alert("You must enter a device name (e.g. /dev/sdh)");
             textbox.select();
@@ -26,7 +26,7 @@ var ec2_EBSVolumeAttacher = {
     },
 
     init : function() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         var instance = window.arguments[1];
         this.instanceId = instance.id;
         var zone = instance.placement.availabilityZone;
@@ -34,10 +34,10 @@ var ec2_EBSVolumeAttacher = {
         this.volList = new Array();
 
         // instance
-        document.getElementById("ec2ui.attachebsvolume.instanceId").value = this.instanceId;
+        document.getElementById("ew.attachebsvolume.instanceId").value = this.instanceId;
 
         // device
-        var textbox = document.getElementById("ec2ui.attachebsvolume.device");
+        var textbox = document.getElementById("ew.attachebsvolume.device");
         if (isWindows(window.arguments[1].platform)) {
             textbox.disabled = true;
             textbox.value = "windows_device";
@@ -47,8 +47,8 @@ var ec2_EBSVolumeAttacher = {
         }
 
         // volume ids
-        var volMenu = document.getElementById("ec2ui.attachebsvolume.volumeId");
-        var volumes = this.ec2ui_session.model.getVolumes();
+        var volMenu = document.getElementById("ew.attachebsvolume.volumeId");
+        var volumes = this.ew_session.model.getVolumes();
         var vol = null;
         var label = null;
         var name = null;
@@ -71,7 +71,7 @@ var ec2_EBSVolumeAttacher = {
         }
         volMenu.selectedIndex = 0;
 
-        var az = document.getElementById("ec2ui.attachebsvolume.instanceLabel");
+        var az = document.getElementById("ew.attachebsvolume.instanceLabel");
         az.value += " [" + zone + "]";
     }
 }

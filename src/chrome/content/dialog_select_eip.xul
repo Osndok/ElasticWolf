@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.selecteip" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" buttons="accept,cancel" ondialogaccept="return attach();" ondialogcancel="return true;" onload="init();"
+<dialog id="ew.dialog.selecteip" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" buttons="accept,cancel" ondialogaccept="return attach();" ondialogcancel="return true;" onload="init();"
     title="Associate Address with Instance" buttonlabelaccept="Associate">
 
-    <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
-    <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
+    <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
     <script>
         function attach() {
-            var eipMenu = document.getElementById("ec2ui.selectEIP.eip");
+            var eipMenu = document.getElementById("ew.selectEIP.eip");
             var selected = eipMenu.selectedIndex;
             var eipSel = this.eipList[selected];
 
@@ -33,9 +33,9 @@
             this.eipList = new Array();
 
             // volume id
-            document.getElementById("ec2ui.selectEIP.instanceId").value = this.instance.id;
+            document.getElementById("ew.selectEIP.instanceId").value = this.instance.id;
             // instances
-            var eipMenu = document.getElementById("ec2ui.selectEIP.eip");
+            var eipMenu = document.getElementById("ew.selectEIP.eip");
             for(var i in eips) {
                 var eip = eips[i];
                 if ((isVpc(this.instance) &amp;&amp; eip.domain != "vpc") || (!isVpc(this.instance) &amp;&amp; eip.domain == "vpc")) {
@@ -57,12 +57,12 @@
             </columns>
             <rows>
                 <row>
-                    <label control="ec2ui.selectEIP.instanceId" value="&ec2ui.instances.id.label;" />
-                    <textbox id="ec2ui.selectEIP.instanceId" size="40" readonly="true" />
+                    <label control="ew.selectEIP.instanceId" value="&ew.instances.id.label;" />
+                    <textbox id="ew.selectEIP.instanceId" size="40" readonly="true" />
                 </row>
                 <row>
-                    <label control="ec2ui.selectEIP.eip" value="Address" />
-                    <menulist id="ec2ui.selectEIP.eip" editable="false" size="30" />
+                    <label control="ew.selectEIP.eip" value="Address" />
+                    <menulist id="ew.selectEIP.eip" editable="false" size="30" />
                 </row>
             </rows>
         </grid>

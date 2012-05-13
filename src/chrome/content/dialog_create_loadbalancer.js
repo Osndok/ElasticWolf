@@ -1,24 +1,24 @@
-var ec2_Createlb = {
-    ec2ui_session : null,
+var ew_Createlb = {
+    ew_session : null,
     retVal : null,
     reginstanceid : new Array(),
     launch : function() {
-        this.retVal.LoadBalancerName = document.getElementById("ec2ui.createlb.Name").value.trim();
-	this.retVal.Protocol = document.getElementById("ec2ui.createlb.Protocol").value.trim();
-        this.retVal.elbport = document.getElementById("ec2ui.createlb.elbport").value.trim();
-	this.retVal.instanceport = document.getElementById("ec2ui.createlb.instanceport").value.trim();
-	this.retVal.pingprotocol = document.getElementById("ec2ui.createlb.pingprotocol").value.trim();
-	this.retVal.pingport = document.getElementById("ec2ui.createlb.pingport").value.trim();
+        this.retVal.LoadBalancerName = document.getElementById("ew.createlb.Name").value.trim();
+	this.retVal.Protocol = document.getElementById("ew.createlb.Protocol").value.trim();
+        this.retVal.elbport = document.getElementById("ew.createlb.elbport").value.trim();
+	this.retVal.instanceport = document.getElementById("ew.createlb.instanceport").value.trim();
+	this.retVal.pingprotocol = document.getElementById("ew.createlb.pingprotocol").value.trim();
+	this.retVal.pingport = document.getElementById("ew.createlb.pingport").value.trim();
 
         if (this.retVal.pingprotocol == 'HTTP') {
-	  this.retVal.pingpath = document.getElementById("ec2ui.createlb.pingpath").value.trim();
+	  this.retVal.pingpath = document.getElementById("ew.createlb.pingpath").value.trim();
         }
 
-        this.retVal.Interval = document.getElementById("ec2ui.createlb.Interval").value.trim();
-	this.retVal.Timeout = document.getElementById("ec2ui.createlb.timeout").value.trim();
-	this.retVal.HealthyThreshold = document.getElementById("ec2ui.createlb.HThreshold").value.trim();
-	this.retVal.UnhealthyThreshold = document.getElementById("ec2ui.createlb.uThreshold").value.trim();
-	this.retVal.placement = document.getElementById("ec2ui.createlb.availabilityzonelist").selectedItem.value;
+        this.retVal.Interval = document.getElementById("ew.createlb.Interval").value.trim();
+	this.retVal.Timeout = document.getElementById("ew.createlb.timeout").value.trim();
+	this.retVal.HealthyThreshold = document.getElementById("ew.createlb.HThreshold").value.trim();
+	this.retVal.UnhealthyThreshold = document.getElementById("ew.createlb.uThreshold").value.trim();
+	this.retVal.placement = document.getElementById("ew.createlb.availabilityzonelist").selectedItem.value;
 	var listBox = document.getElementById('theList');
 	var idx = 0;
 	var nRowCount = listBox.getRowCount();
@@ -44,12 +44,12 @@ var ec2_Createlb = {
     },
     
     init : function() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         this.retVal = window.arguments[1];
 	var theList = document.getElementById('theList');
         var Idx = 0;
-	var Instanceid = this.ec2ui_session.model.getInstances();
-        //var lbinstance = this.ec2ui_session.model.getLoadbalancer();
+	var Instanceid = this.ew_session.model.getInstances();
+        //var lbinstance = this.ew_session.model.getLoadbalancer();
 		
         var registerid = new Array();
 	
@@ -117,9 +117,9 @@ var ec2_Createlb = {
             }
         }
 	
-	var availZones = this.ec2ui_session.model.getAvailabilityZones();
+	var availZones = this.ew_session.model.getAvailabilityZones();
   
-        var availZoneMenu = document.getElementById("ec2ui.createlb.availabilityzonelist");
+        var availZoneMenu = document.getElementById("ew.createlb.availabilityzonelist");
         for(var i in availZones) {
             availZoneMenu.appendItem(availZones[i].name, availZones[i].name);
         }
@@ -159,10 +159,10 @@ instancedetails : function(){
 }
 
 function Create_Loadbalancer_validate1() {
-  var name = document.getElementById('ec2ui.createlb.Name').value;
-  var elbport = document.getElementById('ec2ui.createlb.elbport').value;
+  var name = document.getElementById('ew.createlb.Name').value;
+  var elbport = document.getElementById('ew.createlb.elbport').value;
   var iElbport = parseInt(elbport);
-  var instanceport = document.getElementById('ec2ui.createlb.instanceport').value;
+  var instanceport = document.getElementById('ew.createlb.instanceport').value;
   var iInstanceport = parseInt(instanceport);
 
   if (!/^[A-Za-z0-9]+$/.test(name)) {
@@ -180,7 +180,7 @@ function Create_Loadbalancer_validate1() {
     return false;
   }
 
-  var lbs = ec2_Createlb.ec2ui_session.model.getLoadbalancer();
+  var lbs = ew_Createlb.ew_session.model.getLoadbalancer();
 
   for (var i = 0; i < lbs.length; i++) {
     if (lbs[i].LoadBalancerName == name) {
@@ -193,17 +193,17 @@ function Create_Loadbalancer_validate1() {
 }
 
 function Create_Loadbalancer_validate2() {
-  var pingprotocol = document.getElementById('ec2ui.createlb.pingprotocol').selectedItem.value;
-  var pingport = document.getElementById('ec2ui.createlb.pingport').value;
+  var pingprotocol = document.getElementById('ew.createlb.pingprotocol').selectedItem.value;
+  var pingport = document.getElementById('ew.createlb.pingport').value;
   var iPingport = parseInt(pingport);
-  var pingpath = document.getElementById('ec2ui.createlb.pingpath').value;
-  var timeout = document.getElementById('ec2ui.createlb.timeout').value;
+  var pingpath = document.getElementById('ew.createlb.pingpath').value;
+  var timeout = document.getElementById('ew.createlb.timeout').value;
   var iTimeout = parseInt(timeout);
-  var interval = document.getElementById('ec2ui.createlb.Interval').value;
+  var interval = document.getElementById('ew.createlb.Interval').value;
   var iInterval = parseInt(interval);
-  var uthreshold = document.getElementById('ec2ui.createlb.uThreshold').value;
+  var uthreshold = document.getElementById('ew.createlb.uThreshold').value;
   var iUthreshold = parseInt(uthreshold);
-  var hthreshold = document.getElementById('ec2ui.createlb.HThreshold').value;
+  var hthreshold = document.getElementById('ew.createlb.HThreshold').value;
   var iHthreshold = parseInt(hthreshold);
 
   if (!/^[0-9]+$/.test(pingport) || !(1 <= iPingport && iPingport <= 65535)) {

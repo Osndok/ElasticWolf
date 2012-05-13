@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.permission.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+<dialog id="ew.dialog.permission.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	buttons="accept" ondialogaccept="return true;" onload="init();" title="Security Group Details">
 
 	<script type="application/x-javascript">
     function init() {
         var perm = window.arguments[0];
-        document.getElementById("ec2ui.permission.protocol").value = perm.protocol;
-        document.getElementById("ec2ui.permission.fromport").value = perm.fromPort;
-        document.getElementById("ec2ui.permission.toport").value = perm.toPort;
+        document.getElementById("ew.permission.protocol").value = perm.protocol;
+        document.getElementById("ew.permission.fromport").value = perm.fromPort;
+        document.getElementById("ew.permission.toport").value = perm.toPort;
         if (perm.cidr) {
-            document.getElementById("ec2ui.permission.sourcecidr").value = perm.cidr;
+            document.getElementById("ew.permission.sourcecidr").value = perm.cidr;
         }
         if (perm.srcGroup) {
-            document.getElementById("ec2ui.permission.sourceusergroup").value = '('+perm.srcGroup.name+')';
+            document.getElementById("ew.permission.sourceusergroup").value = '('+perm.srcGroup.name+')';
         }
     }
 	</script>
-	<script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+	<script type="application/x-javascript" src="chrome://ew/content/model.js" />
 
 	<vbox flex="1">
 		<grid flex="1">
@@ -30,24 +30,24 @@
 			</columns>
 			<rows>
 				<row>
-					<label control="ec2ui.permission.protocol" value="Protocol:" />
-					<textbox id="ec2ui.permission.protocol" size="40" readonly="true" />
+					<label control="ew.permission.protocol" value="Protocol:" />
+					<textbox id="ew.permission.protocol" size="40" readonly="true" />
 				</row>
 				<row>
-					<label control="ec2ui.permission.fromport" value="From Port/ICMP Type:" />
-					<textbox id="ec2ui.permission.fromport" size="40" readonly="true" />
+					<label control="ew.permission.fromport" value="From Port/ICMP Type:" />
+					<textbox id="ew.permission.fromport" size="40" readonly="true" />
 				</row>
 				<row>
-					<label control="ec2ui.permission.toport" value="To Port/ICMP Code:" />
-					<textbox id="ec2ui.permission.toport" size="40" readonly="true" />
+					<label control="ew.permission.toport" value="To Port/ICMP Code:" />
+					<textbox id="ew.permission.toport" size="40" readonly="true" />
 				</row>
 				<row>
-					<label control="ec2ui.permission.sourcecidr" value="Source CIDR:" />
-					<textbox id="ec2ui.permission.sourcecidr" size="40" readonly="true" />
+					<label control="ew.permission.sourcecidr" value="Source CIDR:" />
+					<textbox id="ew.permission.sourcecidr" size="40" readonly="true" />
 				</row>
 				<row>
-					<label control="ec2ui.permission.sourceusergroup" value="Source (User,Group):" />
-					<textbox id="ec2ui.permission.sourceusergroup" size="40" readonly="true" />
+					<label control="ew.permission.sourceusergroup" value="Source (User,Group):" />
+					<textbox id="ew.permission.sourceusergroup" size="40" readonly="true" />
 				</row>
 			</rows>
 		</grid>

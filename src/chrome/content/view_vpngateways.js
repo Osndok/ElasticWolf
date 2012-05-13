@@ -1,4 +1,4 @@
-var ec2ui_VpnGatewayTreeView = {
+var ew_VpnGatewayTreeView = {
     COLNAMES:
     ['vpnGateway.id', 'vpnGateway.availabilityZone',
      'vpnGateway.state', 'vpnGateway.type', 'vpnGateway.tag'],
@@ -6,21 +6,21 @@ var ec2ui_VpnGatewayTreeView = {
     imageIdRegex : new RegExp("^vgw-"),
 
     getSearchText : function() {
-        return document.getElementById('ec2ui.vpngateways.search').value;
+        return document.getElementById('ew.vpngateways.search').value;
     },
 
     refresh : function() {
-        ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeVpnGateways();
+        ew_session.showBusyCursor(true);
+        ew_session.controller.describeVpnGateways();
         // For the attachment call
-        ec2ui_session.controller.describeVpcs();
-        ec2ui_session.showBusyCursor(false);
+        ew_session.controller.describeVpcs();
+        ew_session.showBusyCursor(false);
     },
 
     invalidate : function() {
-        var target = ec2ui_VpnGatewayTreeView;
-        target.displayImages(target.filterImages(ec2ui_model.vpnGateways));
-        ec2ui_VpnAttachmentTreeView.invalidate();
+        var target = ew_VpnGatewayTreeView;
+        target.displayImages(target.filterImages(ew_model.vpnGateways));
+        ew_VpnAttachmentTreeView.invalidate();
     },
 
     searchChanged : function(event) {
@@ -34,7 +34,7 @@ var ec2ui_VpnGatewayTreeView = {
     register : function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'vpnGateways');
+            ew_model.registerInterest(this, 'vpnGateways');
         }
     },
 
@@ -44,7 +44,7 @@ var ec2ui_VpnGatewayTreeView = {
 
     enableOrDisableItems : function() {
         var image = this.getSelectedImage();
-        document.getElementById("ec2ui.vpngateways.contextmenu").disabled = (image == null);
+        document.getElementById("ew.vpngateways.contextmenu").disabled = (image == null);
     },
 
     selectionChanged : function(event) {
@@ -54,27 +54,27 @@ var ec2ui_VpnGatewayTreeView = {
         if (selected) {
             this.selectedImageId = selected.id;
         }
-        ec2ui_VpnAttachmentTreeView.invalidate();
+        ew_VpnAttachmentTreeView.invalidate();
     },
 
     createVpnGateway : function () {
         var retVal = {ok:null,type:null, az:null}
-        window.openDialog("chrome://ec2ui/content/dialog_create_vpn_gateway.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_create_vpn_gateway.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ec2ui_session.showBusyCursor(true);
+            ew_session.showBusyCursor(true);
             var me = this;
             var wrap = function(id) {
                 me.refresh();
                 me.selectByImageId(id);
             }
-            ec2ui_session.controller.createVpnGateway(
+            ew_session.controller.createVpnGateway(
                 retVal.type,
                 retVal.az,
                 wrap
             );
 
-            ec2ui_session.showBusyCursor(false);
+            ew_session.showBusyCursor(false);
         }
     },
 
@@ -90,25 +90,25 @@ var ec2ui_VpnGatewayTreeView = {
             me.refresh();
             me.selectByImageId(id);
         }
-        ec2ui_session.controller.deleteVpnGateway(vgw.id, wrap);
+        ew_session.controller.deleteVpnGateway(vgw.id, wrap);
     },
 
     createVpnConnection : function() {
         var vgw = this.getSelectedImage();
         if (vgw == null) return;
 
-        ec2ui_VpnConnectionTreeView.createVpnConnection(null, vgw.id);
+        ew_VpnConnectionTreeView.createVpnConnection(null, vgw.id);
     },
 
     attachToVpc : function() {
         var vgw = this.getSelectedImage();
         if (vgw == null) return;
 
-        ec2ui_VpnAttachmentTreeView.attachToVpc(null, vgw.id);
+        ew_VpnAttachmentTreeView.attachToVpc(null, vgw.id);
     },
 };
 
 // poor-man's inheritance
-ec2ui_VpnGatewayTreeView.__proto__ = BaseImagesView;
+ew_VpnGatewayTreeView.__proto__ = BaseImagesView;
 
-ec2ui_VpnGatewayTreeView.register();
+ew_VpnGatewayTreeView.register();

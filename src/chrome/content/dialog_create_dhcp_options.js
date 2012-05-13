@@ -1,5 +1,5 @@
-var ec2_DhcpoptsCreator = {
-    ec2ui_session : null,
+var ew_DhcpoptsCreator = {
+    ew_session : null,
     retVal : null,
 
     options : function() {
@@ -14,7 +14,7 @@ var ec2_DhcpoptsCreator = {
     createDhcpOptions : function() {
         var opts = new Array();
         for(var i = 0; i < this.options().length; i++) {
-            var optval = document.getElementById("ec2ui.newdhcpoptions.opt"+i).value;
+            var optval = document.getElementById("ew.newdhcpoptions.opt"+i).value;
             var finalval = new Array();
 
             if (optval != null && optval != "") {
@@ -37,12 +37,12 @@ var ec2_DhcpoptsCreator = {
     },
 
     init : function() {
-        this.ec2ui_session = window.arguments[0];
+        this.ew_session = window.arguments[0];
         this.retVal = window.arguments[1];
 
         for(var i = 0; i < this.options().length; i++) {
-            var label = document.getElementById("ec2ui.newdhcpoptions.lab"+i);
-            var desc = document.getElementById("ec2ui.newdhcpoptions.desc"+i);
+            var label = document.getElementById("ew.newdhcpoptions.lab"+i);
+            var desc = document.getElementById("ew.newdhcpoptions.desc"+i);
             label.value = this.options()[i][0];
             desc.value = this.options()[i][2];
         }

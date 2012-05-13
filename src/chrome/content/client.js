@@ -1,4 +1,4 @@
-var ec2ui_client = {
+var ew_client = {
     handler : null,
     uri     : null,
     auxObj  : null,
@@ -9,7 +9,6 @@ var ec2ui_client = {
     secretKey : null,
     errorCount: 0,
     timers : {},
-    enabled: true,
 
     VERSION: "1.26",
     NAME: 'ElasticWolf',
@@ -22,8 +21,8 @@ var ec2ui_client = {
     SIG_VERSION: '2',
     IAM_GOV_URL: 'https://iam.us-gov.amazonaws.com',
     IAM_URL : 'https://iam.amazonaws.com',
-    REALM : 'chrome://ec2ui/',
-    HOST  : 'chrome://ec2ui/',
+    REALM : 'chrome://ew/',
+    HOST  : 'chrome://ew/',
 
     getAppName : function() {
         return this.NAME;
@@ -122,12 +121,12 @@ var ec2ui_client = {
     },
 
     setEndpointURLForRegion : function(region) {
-        var reg = ec2ui_utils.determineRegionFromString(ec2ui_session.getActiveEndpoint().name);
+        var reg = ew_utils.determineRegionFromString(ew_session.getActiveEndpoint().name);
         log(reg + ": active region prefix");
         if (reg != region) {
             var newURL = null;
             // Determine the region's EC2 URL
-            var endpointlist = ec2ui_session.getEndpoints();
+            var endpointlist = ew_session.getEndpoints();
             region = region.toLowerCase();
             for (var i = 0; i < endpointlist.length; ++i) {
                 var curr = endpointlist[i];
@@ -168,11 +167,11 @@ var ec2ui_client = {
         }
 
         if (this.serviceURL == null || this.serviceURL == "") {
-            this.setEndpoint(ec2ui_session.getActiveEndpoint());
+            this.setEndpoint(ew_session.getActiveEndpoint());
         }
 
         var rsp = null;
-        while (this.enabled) {
+        while (ew_prefs.isHttpEnabled()) {
             try {
                 rsp = this.queryEC2Impl(action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion);
                 if (rsp.hasErrors) {
@@ -201,7 +200,7 @@ var ec2ui_client = {
 
     errorDialog : function(msg, code, rId, fStr) {
         var retry = {value:null};
-        window.openDialog("chrome://ec2ui/content/dialog_retry_cancel.xul", null, "chrome,modal,resizable", msg, code, rId, fStr, retry);
+        window.openDialog("chrome://ew/content/dialog_retry_cancel.xul", null, "chrome,modal,resizable", msg, code, rId, fStr, retry);
         return retry.value;
     },
 
@@ -273,7 +272,7 @@ var ec2ui_client = {
 
     queryELB : function (action, params, objActions, isSync, reqType, callback) {
         if (this.elbURL == null || this.elbURL == "") {
-            this.setEndpoint(ec2ui_session.getActiveEndpoint());
+            this.setEndpoint(ew_session.getActiveEndpoint());
         }
         return this.queryEC2(action, params, objActions, isSync, reqType, callback, this.elbURL, this.ELB_API_VERSION);
     },
@@ -284,7 +283,7 @@ var ec2ui_client = {
 
     queryS3Prepare : function(method, bucket, key, path, params, content) {
         var curTime = new Date().toUTCString();
-        var url = ec2ui_prefs.getS3Protocol(this.region, bucket) + (bucket ? bucket + "." : "") + ec2ui_prefs.getS3Region(this.region || "").url;
+        var url = ew_prefs.getS3Protocol(this.region, bucket) + (bucket ? bucket + "." : "") + ew_prefs.getS3Region(this.region || "").url;
 
         if (!params) params = {}
 
@@ -409,7 +408,7 @@ var ec2ui_client = {
     queryS3 : function (method, bucket, key, path, params, content, objActions, isSync, reqType, callback) {
         var rsp = null;
 
-        while (this.enabled) {
+        while (ew_prefs.isHttpEnabled()) {
             try {
                 rsp = this.queryS3Impl(method, bucket, key, path, params, content, objActions, isSync, reqType, callback);
                 if (rsp.hasErrors) {
@@ -519,6 +518,8 @@ var ec2ui_client = {
     },
 
     queryVpnConnectionStylesheets : function(stylesheet) {
+        if (!ew_prefs.isHttpEnabled()) return
+
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
@@ -552,6 +553,7 @@ var ec2ui_client = {
     },
 
     queryCheckIP : function(reqType, retVal) {
+        if (!ew_prefs.isHttpEnabled()) return;
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
@@ -576,6 +578,8 @@ var ec2ui_client = {
     },
 
     download: function(url, headers, filename, callback, progresscb) {
+        if (!ew_prefs.isHttpEnabled()) return;
+
         debug('download: ' + url + '| ' + JSON.stringify(headers) + '| ' + filename)
 
         try {

@@ -1,18 +1,18 @@
-var ec2_CreateImageDialog = {
+var ew_CreateImageDialog = {
     id : null,
-    ec2ui_session : null,
+    ew_session : null,
     retVal : null,
 
     getAmiName : function() {
-        return document.getElementById("ec2ui.createImage.amiName");
+        return document.getElementById("ew.createImage.amiName");
     },
 
     getAmiDescription : function() {
-        return document.getElementById("ec2ui.createImage.amiDescription");
+        return document.getElementById("ew.createImage.amiDescription");
     },
 
     getNoReboot : function() {
-        return document.getElementById("ec2ui.createImage.noReboot");
+        return document.getElementById("ew.createImage.noReboot");
     },
 
     createImage : function() {
@@ -38,10 +38,10 @@ var ec2_CreateImageDialog = {
 
     init : function() {
         this.id = window.arguments[0];
-        this.ec2ui_session = window.arguments[1];
+        this.ew_session = window.arguments[1];
         this.retVal = window.arguments[2];
 
-        document.getElementById("ec2ui.createImage.instanceid").value = this.id;
+        document.getElementById("ew.createImage.instanceid").value = this.id;
         this.getAmiName().select();
     }
 }

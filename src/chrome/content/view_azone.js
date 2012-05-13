@@ -1,4 +1,4 @@
-var ec2ui_AvailZoneTreeView = {
+var ew_AvailZoneTreeView = {
     COLNAMES : ['azone.name','azone.state'],
     treeBox : null,
     selection : null,
@@ -45,16 +45,16 @@ var ec2ui_AvailZoneTreeView = {
     register: function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'azones');
+            ew_model.registerInterest(this, 'azones');
         }
     },
 
     invalidate: function() {
-        this.displayZones(ec2ui_session.model.azones);
+        this.displayZones(ew_session.model.azones);
     },
 
     refresh: function() {
-        ec2ui_session.controller.describeAvailabilityZones();
+        ew_session.controller.describeAvailabilityZones();
     },
 
     notifyModelChanged: function(interest) {
@@ -75,4 +75,4 @@ var ec2ui_AvailZoneTreeView = {
     }
 };
 
-ec2ui_AvailZoneTreeView.register();
+ew_AvailZoneTreeView.register();

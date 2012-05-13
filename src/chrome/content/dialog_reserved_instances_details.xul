@@ -1,34 +1,34 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.reservedInstances.detail"
+<dialog id="ew.dialog.reservedInstances.detail"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept" ondialogaccept="return true;" onload="init();" title="Reserved Instances Details">
 
   <script type="application/x-javascript">
     function init() {
         var image = window.arguments[0];
-        document.getElementById("ec2ui.rsvdInst.id").value = image.id;
-        document.getElementById("ec2ui.rsvdInst.instType").value = image.instanceType;
-        document.getElementById("ec2ui.rsvdInst.tenancy").value = image.tenancy;
-        document.getElementById("ec2ui.rsvdInst.azone").value = image.azone;
-        document.getElementById("ec2ui.rsvdInst.start").value = image.start;
-        document.getElementById("ec2ui.rsvdInst.duration").value = image.duration;
-        document.getElementById("ec2ui.rsvdInst.fixedPrice").value = image.fixedPrice;
-        document.getElementById("ec2ui.rsvdInst.usagePrice").value = image.usagePrice;
-        document.getElementById("ec2ui.rsvdInst.count").value = image.count;
-        document.getElementById("ec2ui.rsvdInst.description").value = image.description;
-        document.getElementById("ec2ui.rsvdInst.state").value = image.state;
+        document.getElementById("ew.rsvdInst.id").value = image.id;
+        document.getElementById("ew.rsvdInst.instType").value = image.instanceType;
+        document.getElementById("ew.rsvdInst.tenancy").value = image.tenancy;
+        document.getElementById("ew.rsvdInst.azone").value = image.azone;
+        document.getElementById("ew.rsvdInst.start").value = image.start;
+        document.getElementById("ew.rsvdInst.duration").value = image.duration;
+        document.getElementById("ew.rsvdInst.fixedPrice").value = image.fixedPrice;
+        document.getElementById("ew.rsvdInst.usagePrice").value = image.usagePrice;
+        document.getElementById("ew.rsvdInst.count").value = image.count;
+        document.getElementById("ew.rsvdInst.description").value = image.description;
+        document.getElementById("ew.rsvdInst.state").value = image.state;
         var now = Date.parse(new Date());
         var end = Date.parse(image.startTime.toUTCString());
         end += 1000 * parseInt(image.duration) * 365 * 24 * 60 * 60;
         var diff = (end - now)/1000;
-        document.getElementById("ec2ui.rsvdInst.daysremaining").value = secondsToDays(diff);
+        document.getElementById("ew.rsvdInst.daysremaining").value = secondsToDays(diff);
     }
   </script>
-  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
-  <script type="application/x-javascript" src="chrome://ec2ui/content/utils.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
 
   <vbox flex="1">
     <grid flex="1">
@@ -39,53 +39,53 @@
       </columns>
       <rows>
         <row>
-          <label control="ec2ui.rsvdInst.id" value="&ec2ui.rsvdInst.id.label;:" />
-          <textbox id="ec2ui.rsvdInst.id" size="40" readonly="true" />
+          <label control="ew.rsvdInst.id" value="&ew.rsvdInst.id.label;:" />
+          <textbox id="ew.rsvdInst.id" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.instType" value="&ec2ui.rsvdInst.instType.label;:" />
-          <textbox id="ec2ui.rsvdInst.instType" size="40" readonly="true" />
+          <label control="ew.rsvdInst.instType" value="&ew.rsvdInst.instType.label;:" />
+          <textbox id="ew.rsvdInst.instType" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.tenancy" value="Tenancy:" />
-          <textbox id="ec2ui.rsvdInst.tenancy" size="40" readonly="true" />
+          <label control="ew.rsvdInst.tenancy" value="Tenancy:" />
+          <textbox id="ew.rsvdInst.tenancy" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.azone" value="&ec2ui.availabilityZone.label;" />
-          <textbox id="ec2ui.rsvdInst.azone" size="40" readonly="true" />
+          <label control="ew.rsvdInst.azone" value="&ew.availabilityZone.label;" />
+          <textbox id="ew.rsvdInst.azone" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.start" value="&ec2ui.snapshots.startTime.label;:" />
-          <textbox id="ec2ui.rsvdInst.start" size="40" readonly="true" />
+          <label control="ew.rsvdInst.start" value="&ew.snapshots.startTime.label;:" />
+          <textbox id="ew.rsvdInst.start" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.duration" value="&ec2ui.rsvdInst.duration.label;:" />
-          <textbox id="ec2ui.rsvdInst.duration" size="40" readonly="true" />
+          <label control="ew.rsvdInst.duration" value="&ew.rsvdInst.duration.label;:" />
+          <textbox id="ew.rsvdInst.duration" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.daysremaining" value="Days Remaining:" />
-          <textbox id="ec2ui.rsvdInst.daysremaining" size="40" readonly="true" />
+          <label control="ew.rsvdInst.daysremaining" value="Days Remaining:" />
+          <textbox id="ew.rsvdInst.daysremaining" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.fixedPrice" value="&ec2ui.rsvdInst.fixedPrice.label;:" />
-          <textbox id="ec2ui.rsvdInst.fixedPrice" size="40" readonly="true" />
+          <label control="ew.rsvdInst.fixedPrice" value="&ew.rsvdInst.fixedPrice.label;:" />
+          <textbox id="ew.rsvdInst.fixedPrice" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.usagePrice" value="&ec2ui.rsvdInst.usagePrice.label;:" />
-          <textbox id="ec2ui.rsvdInst.usagePrice" size="40" readonly="true" />
+          <label control="ew.rsvdInst.usagePrice" value="&ew.rsvdInst.usagePrice.label;:" />
+          <textbox id="ew.rsvdInst.usagePrice" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.count" value="&ec2ui.rsvdInst.count.label;:" />
-          <textbox id="ec2ui.rsvdInst.count" size="40" readonly="true" />
+          <label control="ew.rsvdInst.count" value="&ew.rsvdInst.count.label;:" />
+          <textbox id="ew.rsvdInst.count" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.description" value="&ec2ui.description.label;:" />
-          <textbox id="ec2ui.rsvdInst.description" multiline="true" cols="50" rows="3"
+          <label control="ew.rsvdInst.description" value="&ew.description.label;:" />
+          <textbox id="ew.rsvdInst.description" multiline="true" cols="50" rows="3"
             wrap="true" style="font-family: monospace;" readonly="true"/>
         </row>
         <row>
-          <label control="ec2ui.rsvdInst.state" value="&ec2ui.rsvdInst.state.label;:" />
-          <textbox id="ec2ui.rsvdInst.state" size="40" readonly="true" />
+          <label control="ew.rsvdInst.state" value="&ew.rsvdInst.state.label;:" />
+          <textbox id="ew.rsvdInst.state" size="40" readonly="true" />
         </row>
       </rows>
     </grid>

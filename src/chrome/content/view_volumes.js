@@ -17,7 +17,7 @@ function getEC2WindowsDeviceList() {
     return devlist;
 };
 
-var ec2ui_VolumeTreeView = {
+var ew_VolumeTreeView = {
     COLNAMES:
     ['vol.id','vol.size','vol.snapshotId','vol.availabilityZone','vol.status',
     'vol.createTime', 'vol.instanceId', 'vol.instanceName', 'vol.device', 'vol.attachStatus',
@@ -25,19 +25,19 @@ var ec2ui_VolumeTreeView = {
     imageIdRegex : new RegExp("^vol-"),
 
     getSearchText : function() {
-        return document.getElementById('ec2ui.volumes.search').value;
+        return document.getElementById('ew.volumes.search').value;
     },
 
     refresh : function() {
-        ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeVolumes();
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(true);
+        ew_session.controller.describeVolumes();
+        ew_session.showBusyCursor(false);
     },
 
     invalidate : function() {
-        var target = ec2ui_VolumeTreeView;
-        var list = (ec2ui_model.volumes || []);
-        var filterRootDev = document.getElementById("ec2ui.volumes.norootdev").checked;
+        var target = ew_VolumeTreeView;
+        var list = (ew_model.volumes || []);
+        var filterRootDev = document.getElementById("ew.volumes.norootdev").checked;
 
         if (filterRootDev) {
           var newList = [];
@@ -67,21 +67,21 @@ var ec2ui_VolumeTreeView = {
     register : function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'volumes');
+            ew_model.registerInterest(this, 'volumes');
         }
     },
 
     displayImages : function (imageList) {
-        if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+        if (ew_prefs.isRefreshOnChangeEnabled()) {
             // Determine if there are any pending operations
             if (this.pendingUpdates()) {
                 this.startRefreshTimer("",
                                        this.refresh);
             } else {
-                this.stopRefreshTimer("ec2ui_VolumeTreeView");
+                this.stopRefreshTimer("ew_VolumeTreeView");
             }
         } else {
-            this.stopRefreshTimer("ec2ui_VolumeTreeView");
+            this.stopRefreshTimer("ew_VolumeTreeView");
         }
 
         BaseImagesView.displayImages.call(this, imageList);
@@ -90,12 +90,12 @@ var ec2ui_VolumeTreeView = {
     viewDetails : function(event) {
         var image = this.getSelectedImage();
         if (image == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_volume_details.xul", null, "chrome,centerscreen,modal,resizable", image);
+        window.openDialog("chrome://ew/content/dialog_volume_details.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
     enableOrDisableItems : function() {
         var image = this.getSelectedImage();
-        document.getElementById("ec2ui.volumes.contextmenu").disabled = (image == null);
+        document.getElementById("ew.volumes.contextmenu").disabled = (image == null);
 
         if (image == null) return;
 
@@ -120,33 +120,33 @@ var ec2ui_VolumeTreeView = {
             // Replicate the volume tag for this snapshot
             var tag = me.getSelectedImage().tag;
             if (tag && tag.length > 0) {
-                ec2ui_session.setResourceTag(snapId, tag);
+                ew_session.setResourceTag(snapId, tag);
             }
             // We need to refresh so that the tag is applied to the snapshot
-            ec2ui_SnapshotTreeView.refresh();
-            ec2ui_SnapshotTreeView.selectByImageId(snapId);
+            ew_SnapshotTreeView.refresh();
+            ew_SnapshotTreeView.selectByImageId(snapId);
         }
-        ec2ui_session.controller.createSnapshot(image.id, wrap);
+        ew_session.controller.createSnapshot(image.id, wrap);
     },
 
     createVolume : function (snap) {
         var retVal = {ok:null};
         if (!snap) snap = null;
-        window.openDialog("chrome://ec2ui/content/dialog_new_volume.xul",
+        window.openDialog("chrome://ew/content/dialog_new_volume.xul",
                           null,
                           "chrome,centerscreen,modal,resizable",
                           snap,
-                          ec2ui_session,
+                          ew_session,
                           retVal);
         if (retVal.ok) {
             var me = this;
             var wrap = function(id) {
                 me.refresh();
-                document.getElementById('ec2ui.volumes.search').value = '';
+                document.getElementById('ew.volumes.search').value = '';
                 me.invalidate();
                 me.selectByImageId(id);
             }
-            ec2ui_session.controller.createVolume(retVal.size,
+            ew_session.controller.createVolume(retVal.size,
                                                   retVal.snapshotId,
                                                   retVal.zone,
                                                   wrap);
@@ -156,8 +156,8 @@ var ec2ui_VolumeTreeView = {
                 var vol = this.getSelectedImage();
                 if (vol) {
                     vol.tag = retVal.tag;
-                    ec2ui_session.setResourceTag(vol.id, vol.tag);
-                    __tagging2ec2__([vol.id], ec2ui_session, vol.tag);
+                    ew_session.setResourceTag(vol.id, vol.tag);
+                    __tagging2ec2__([vol.id], ew_session, vol.tag);
                     me.refresh();
                 }
             }
@@ -174,11 +174,11 @@ var ec2ui_VolumeTreeView = {
         if (!confirmed)
             return;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                ec2ui_VolumeTreeView.refresh();
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
+                ew_VolumeTreeView.refresh();
             }
         }
-        ec2ui_session.controller.deleteVolume(image.id, wrap);
+        ew_session.controller.deleteVolume(image.id, wrap);
     },
 
     attachEBSVolume : function (volumeId, instId, device) {
@@ -191,12 +191,12 @@ var ec2ui_VolumeTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
                 me.refresh();
             }
         }
 
-        ec2ui_session.controller.attachVolume(volumeId,
+        ew_session.controller.attachVolume(volumeId,
                                               instId,
                                               device,
                                               wrap);
@@ -207,22 +207,22 @@ var ec2ui_VolumeTreeView = {
         if (image == null) return;
         var retVal = {ok:null};
         while (true) {
-            window.openDialog("chrome://ec2ui/content/dialog_new_attachment.xul",
+            window.openDialog("chrome://ew/content/dialog_new_attachment.xul",
                               null,
                               "chrome,centerscreen,modal,resizable",
                               image,
-                              ec2ui_session,
+                              ew_session,
                               retVal);
             if (retVal.ok) {
                 // If this is a Windows instance,
                 // the device should be windows_device
                 // and the instance should be ready to use
-                var instances = ec2ui_session.model.getInstances();
+                var instances = ew_session.model.getInstances();
                 var instance = null;
                 for (var i in instances) {
                     instance = instances[i];
                     if (instance.id == retVal.instanceId) {
-                        if (!ec2ui_InstancesTreeView.isInstanceReadyToUse(instance)) {
+                        if (!ew_InstancesTreeView.isInstanceReadyToUse(instance)) {
                             // The selected instance is not ready to
                             // use. Repeat.
                             continue;
@@ -252,7 +252,7 @@ var ec2ui_VolumeTreeView = {
         var devList = getEC2WindowsDeviceList();
 
         // Enumerate the volumes associated with the instId
-        var volumes = ec2ui_session.model.volumes;
+        var volumes = ew_session.model.volumes;
 
         // If a volume is associated with this instance, mark
         // the associated device as taken
@@ -281,11 +281,11 @@ var ec2ui_VolumeTreeView = {
         if (!confirmed)
             return;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                ec2ui_VolumeTreeView.refresh();
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
+                ew_VolumeTreeView.refresh();
             }
         }
-        ec2ui_session.controller.detachVolume(image.id, wrap);
+        ew_session.controller.detachVolume(image.id, wrap);
     },
 
     forceDetachVolume : function () {
@@ -295,18 +295,18 @@ var ec2ui_VolumeTreeView = {
         if (!confirmed)
             return;
         var wrap = function() {
-            if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                ec2ui_VolumeTreeView.refresh();
+            if (ew_prefs.isRefreshOnChangeEnabled()) {
+                ew_VolumeTreeView.refresh();
             }
         }
-        ec2ui_session.controller.forceDetachVolume(image.id, wrap);
+        ew_session.controller.forceDetachVolume(image.id, wrap);
     },
 
     pendingUpdates : function() {
         /*
         // Walk the list of volumes to see whether there is a volume
         // whose state needs to be refreshed
-        var volumes = ec2ui_session.model.volumes;
+        var volumes = ew_session.model.volumes;
         var fPending = false;
 
         if (volumes == null) {
@@ -328,6 +328,6 @@ var ec2ui_VolumeTreeView = {
 };
 
 // poor-man's inheritance
-ec2ui_VolumeTreeView.__proto__ = BaseImagesView;
+ew_VolumeTreeView.__proto__ = BaseImagesView;
 
-ec2ui_VolumeTreeView.register();
+ew_VolumeTreeView.register();

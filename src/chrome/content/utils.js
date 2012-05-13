@@ -126,7 +126,7 @@ var TreeView = {
     register : function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, this.model);
+            ew_model.registerInterest(this, this.model);
         }
     },
     find: function(obj) {
@@ -150,10 +150,10 @@ var TreeView = {
         }
     },
     refresh : function() {
-        ec2ui_model.refreshModel(this.model);
+        ew_model.refreshModel(this.model);
     },
     invalidate : function() {
-        this.display(this.filter(ec2ui_model.getModel(this.model)));
+        this.display(this.filter(ew_model.getModel(this.model)));
     },
     filter : function(list) {
         return list;
@@ -649,7 +649,7 @@ function quotepath(path)
 function getProperty(name, defValue)
 {
     try {
-        return document.getElementById('ec2ui.properties.bundle').getString(name);
+        return document.getElementById('ew.properties.bundle').getString(name);
     }
     catch (e) {
         return defValue;
@@ -680,7 +680,7 @@ function readPublicKey(file)
 function openBrowser(url)
 {
     debug('openBrowser: ' + url)
-    window.openDialog("chrome://ec2ui/content/ec2ui_browser.xul", 'Browser', "chrome,centerscreen,resizable,width=800,height=600", url);
+    window.openDialog("chrome://ew/content/ew_browser.xul", 'Browser', "chrome,centerscreen,resizable,width=800,height=600", url);
 }
 
 function addZero(vNumber)
@@ -705,7 +705,7 @@ function formatDate(vDate, vFormat)
 
 function log(msg)
 {
-    if (ec2ui_prefs.isDebugEnabled()) {
+    if (ew_prefs.isDebugEnabled()) {
         debug(msg)
     }
 }
@@ -716,7 +716,7 @@ function debug(msg)
         if (this.consoleService == null) {
             this.consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
         }
-        this.consoleService.logStringMessage("[" + ec2ui_prefs.getAppName() + "] [" + formatDate(new Date(), "yyyy-MM-dd hh:mm:ss") + "] " + msg);
+        this.consoleService.logStringMessage("[" + ew_prefs.getAppName() + "] [" + formatDate(new Date(), "yyyy-MM-dd hh:mm:ss") + "] " + msg);
     }
     catch (e) {
         alert("debug:" + e)
@@ -880,7 +880,6 @@ Date.prototype.toISO8601String = function(format, offset)
 
 function generateS3Policy(bucket, prefix, validity)
 {
-    var EC2_CANNED_ACL = "ec2-bundle-read";
     var validHours = 24;
     var expiry = new Date();
     if (validity != null) {
@@ -890,7 +889,7 @@ function generateS3Policy(bucket, prefix, validity)
 
     var expiryStr = expiry.toISO8601String(5);
 
-    return (policyStr = '{' + '"expiration": "' + expiryStr + '",' + '"conditions": [' + '{"bucket": "' + bucket + '"},' + '{"acl": "' + EC2_CANNED_ACL + '"},' + '["starts-with", "$key", "' + prefix + '"]' + ']}');
+    return (policyStr = '{' + '"expiration": "' + expiryStr + '",' + '"conditions": [' + '{"bucket": "' + bucket + '"},' + '{"acl": "ec2-bundle-read"},' + '["starts-with", "$key", "' + prefix + '"]' + ']}');
 }
 
 function toByteArray(str)
@@ -936,7 +935,7 @@ function __tagPrompt__(tag)
         accepted : false,
         result : null
     };
-    openDialog('chrome://ec2ui/content/dialog_tag.xul', null, 'chrome,centerscreen,modal,width=400,height=250', tag, returnValue);
+    openDialog('chrome://ew/content/dialog_tag.xul', null, 'chrome,centerscreen,modal,width=400,height=250', tag, returnValue);
     return returnValue.accepted ? (returnValue.result || '').trim() : null;
 }
 
@@ -1346,12 +1345,12 @@ function parseHeaders(headers)
 
 function isWindows(platform)
 {
-    return platform.match(ec2ui_utils.winRegex);
+    return platform.match(ew_utils.winRegex);
 }
 
 function isMacOS(platform)
 {
-    return platform.match(ec2ui_utils.macRegex);
+    return platform.match(ew_utils.macRegex);
 }
 
 function isEbsRootDeviceType(rootDeviceType)
@@ -1490,8 +1489,8 @@ var regExs = {
     "all" : new RegExp("^a[kmr]i-[0-9a-f]{8}$")
 };
 
-// ec2ui_utils is akin to a static class
-var ec2ui_utils = {
+// ew_utils is akin to a static class
+var ew_utils = {
 
     winRegex : new RegExp(/^Win/i),
     macRegex : new RegExp(/^Mac/),
@@ -1548,7 +1547,7 @@ var ec2ui_utils = {
         if (!this._stringBundle) {
             const
             BUNDLE_SVC = Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService);
-            this._stringBundle = BUNDLE_SVC.createBundle("chrome://ec2ui/locale/ec2ui.properties");
+            this._stringBundle = BUNDLE_SVC.createBundle("chrome://ew/locale/ew.properties");
         }
         try {
             if (!replacements)

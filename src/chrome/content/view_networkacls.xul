@@ -1,27 +1,27 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://ec2ui/skin/ec2ui.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<?xml-stylesheet href="chrome://ew/skin/ew.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabpanel id="acls_tab" flex="1">
     <vbox flex="1">
             <groupbox flex="1" orient="vertical">
-                <caption label="&ec2ui.captions.acls.label;" />
+                <caption label="&ew.captions.acls.label;" />
                 <popupset>
-                    <menupopup id="ec2ui.acls.contextmenu">
-                        <menuitem oncommand="ec2ui_NetworkAclsTreeView.createACL();" label="&ec2ui.acls.add.tip;" />
-                        <menuitem oncommand="ec2ui_NetworkAclsTreeView.deleteACL();" label="&ec2ui.acls.remove.tip;" />
-                        <menuitem oncommand="ec2ui_NetworkAclsTreeView.associateACL();" label="Associate with VPC Subnet" />
+                    <menupopup id="ew.acls.contextmenu">
+                        <menuitem oncommand="ew_NetworkAclsTreeView.createACL();" label="&ew.acls.add.tip;" />
+                        <menuitem oncommand="ew_NetworkAclsTreeView.deleteACL();" label="&ew.acls.remove.tip;" />
+                        <menuitem oncommand="ew_NetworkAclsTreeView.associateACL();" label="Associate with VPC Subnet" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ec2ui_NetworkAclsTreeView.refresh()" tooltiptext="&ec2ui.refresh.tip;" />
-                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkAclsTreeView.createACL();" tooltiptext="&ec2ui.acls.add.tip;" />
-                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkAclsTreeView.deleteACL();" tooltiptext="&ec2ui.acls.remove.tip;" />
-                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkAclsTreeView.associateACL();" tooltiptext="Associate with VPC Subnet" />
+                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_NetworkAclsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
+                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_NetworkAclsTreeView.createACL();" tooltiptext="&ew.acls.add.tip;" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_NetworkAclsTreeView.deleteACL();" tooltiptext="&ew.acls.remove.tip;" />
+                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_NetworkAclsTreeView.associateACL();" tooltiptext="Associate with VPC Subnet" />
                 </toolbar>
-                <tree id="ec2ui.acls.view" seltype="single" enableColumnDrag="true" onselect="ec2ui_NetworkAclsTreeView.selectionChanged(event);" flex="1">
+                <tree id="ew.acls.view" seltype="single" enableColumnDrag="true" onselect="ew_NetworkAclsTreeView.selectionChanged(event);" flex="1">
                     <treecols>
                         <treecol id="acl.id" label="ID" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -31,7 +31,7 @@
                         <splitter class="tree-splitter" />
                         <treecol id="acl.cidr" label="CIDR" flex="2" persist="width ordinal hidden sortDirection" />
                     </treecols>
-                    <treechildren context="ec2ui.acls.contextmenu" />
+                    <treechildren context="ew.acls.contextmenu" />
                 </tree>
             </groupbox>
 
@@ -46,7 +46,7 @@
                     <hbox>
                     </hbox>
                 </toolbar>
-                <tree id="ec2ui.acls.associations.view" enableColumnDrag="true" flex="1">
+                <tree id="ew.acls.associations.view" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="assoc.id" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -62,11 +62,11 @@
                 <caption label="ACL Rules" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox>
-                        <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkAclRulesTreeView.createRule();" tooltiptext="Add ACL Rule" />
-                        <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ec2ui_NetworkAclRulesTreeView.deleteRule();" tooltiptext="Delete ACL Rule" />
+                        <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_NetworkAclRulesTreeView.createRule();" tooltiptext="Add ACL Rule" />
+                        <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_NetworkAclRulesTreeView.deleteRule();" tooltiptext="Delete ACL Rule" />
                     </hbox>
                 </toolbar>
-                <tree id="ec2ui.acls.rules.view" enableColumnDrag="true" flex="1">
+                <tree id="ew.acls.rules.view" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="rule.num" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

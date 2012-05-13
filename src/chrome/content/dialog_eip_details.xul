@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<!DOCTYPE window SYSTEM "chrome://ec2ui/locale/ec2ui.dtd">
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ec2ui.dialog.eip.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+<dialog id="ew.dialog.eip.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   buttons="accept" ondialogaccept="return true;"
   onload="init();" title="ElasticIP Details">
 
-  <script type="application/x-javascript" src="chrome://ec2ui/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
   <script>
    function init() {
       var eip = window.arguments[0];
-      document.getElementById("ec2ui.eip.address").value = eip.address;
-      document.getElementById("ec2ui.eip.instanceid").value = eip.instanceid;
-      document.getElementById("ec2ui.eip.tag").value = eip.tag || "";
+      document.getElementById("ew.eip.address").value = eip.address;
+      document.getElementById("ew.eip.instanceid").value = eip.instanceid;
+      document.getElementById("ew.eip.tag").value = eip.tag || "";
    }
   </script>
 
@@ -25,16 +25,16 @@
       </columns>
       <rows>
         <row>
-          <label control="ec2ui.eip.address" value="IP Address:" />
-          <textbox id="ec2ui.eip.address" size="40" readonly="true" />
+          <label control="ew.eip.address" value="IP Address:" />
+          <textbox id="ew.eip.address" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.eip.instanceid" value="Instance ID:" />
-          <textbox id="ec2ui.eip.instanceid" size="40" readonly="true" />
+          <label control="ew.eip.instanceid" value="Instance ID:" />
+          <textbox id="ew.eip.instanceid" size="40" readonly="true" />
         </row>
         <row>
-          <label control="ec2ui.eip.tag" value="Tag:" />
-          <textbox id="ec2ui.eip.tag" size="40" readonly="true" />
+          <label control="ew.eip.tag" value="Tag:" />
+          <textbox id="ew.eip.tag" size="40" readonly="true" />
         </row>
       </rows>
     </grid>

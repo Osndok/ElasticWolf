@@ -1,18 +1,18 @@
-var ec2_OfferingPurchaser = {
+var ew_OfferingPurchaser = {
     offering : null,
     retVal : null,
 
     purchase : function() {
         if (!this.validateInstanceCount()) return false;
 
-        this.retVal.count = document.getElementById("ec2ui.purchase.offering.count").value.trim();
+        this.retVal.count = document.getElementById("ew.purchase.offering.count").value.trim();
         this.retVal.ok = true;
 
         return true;
     },
 
     validateInstanceCount : function(fSilent) {
-        var textbox = document.getElementById("ec2ui.purchase.offering.count");
+        var textbox = document.getElementById("ew.purchase.offering.count");
         var val = parseInt(textbox.value);
         if (val <= 0 || isNaN(val)) {
             if (!fSilent) {
@@ -42,21 +42,21 @@ var ec2_OfferingPurchaser = {
 
         if (!this.validateInstanceCount(true)) return false;
 
-        var tenancy = document.getElementById("ec2ui.purchase.offering.tenancy").value;
+        var tenancy = document.getElementById("ew.purchase.offering.tenancy").value;
 
 
-        var textbox = document.getElementById("ec2ui.purchase.offering.count");
+        var textbox = document.getElementById("ew.purchase.offering.count");
         var count = parseInt(textbox.value);
 
         // Set the value of total cost in the 2 textfields
-        var fP = document.getElementById("ec2ui.purchase.offering.fixedPrice").value;
+        var fP = document.getElementById("ew.purchase.offering.fixedPrice").value;
         fP = parseFloat(fP);
 
         // Multiply the fP and uP with count
         fP = fP * count;
 
         // Update the UX with the total costs
-        document.getElementById("ec2ui.purchase.offering.totalPrice").value = fP;
+        document.getElementById("ew.purchase.offering.totalPrice").value = fP;
     },
 
     init : function() {
@@ -64,17 +64,17 @@ var ec2_OfferingPurchaser = {
         this.retVal = window.arguments[1];
 
         var item = this.offering;
-        document.getElementById("ec2ui.purchase.offering.id").value = item.id;
-        document.getElementById("ec2ui.purchase.offering.instType").value = item.instanceType;
-        document.getElementById("ec2ui.purchase.offering.azone").value = item.azone;
-        document.getElementById("ec2ui.purchase.offering.tenancy").value = item.tenancy;
-        document.getElementById("ec2ui.purchase.offering.duration").value = item.duration;
-        document.getElementById("ec2ui.purchase.offering.description").value = item.description;
-        document.getElementById("ec2ui.purchase.offering.fixedPrice").value = item.fixedPrice;
-        document.getElementById("ec2ui.purchase.offering.usagePrice").value = item.usagePrice;
-        document.getElementById("ec2ui.purchase.offering.count").value = this.retVal.count || "";
+        document.getElementById("ew.purchase.offering.id").value = item.id;
+        document.getElementById("ew.purchase.offering.instType").value = item.instanceType;
+        document.getElementById("ew.purchase.offering.azone").value = item.azone;
+        document.getElementById("ew.purchase.offering.tenancy").value = item.tenancy;
+        document.getElementById("ew.purchase.offering.duration").value = item.duration;
+        document.getElementById("ew.purchase.offering.description").value = item.description;
+        document.getElementById("ew.purchase.offering.fixedPrice").value = item.fixedPrice;
+        document.getElementById("ew.purchase.offering.usagePrice").value = item.usagePrice;
+        document.getElementById("ew.purchase.offering.count").value = this.retVal.count || "";
         this.updateTotals();
 
-        document.getElementById("ec2ui.purchase.offering.count").select();
+        document.getElementById("ew.purchase.offering.count").select();
     },
 }

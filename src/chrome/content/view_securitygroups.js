@@ -1,4 +1,4 @@
-var ec2ui_SecurityGroupsTreeView = {
+var ew_SecurityGroupsTreeView = {
     COLNAMES : ['securityGroup.id', 'securitygroup.ownerId','securitygroup.name','securitygroup.vpcId','securitygroup.description'],
     treeBox : null,
     selection : null,
@@ -37,7 +37,7 @@ var ec2ui_SecurityGroupsTreeView = {
     viewDetails : function(event) {
         var group = this.getSelectedGroup();
         if (group == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_securitygroup_details.xul", null, "chrome,centerscreen,modal,resizable", group);
+        window.openDialog("chrome://ew/content/dialog_securitygroup_details.xul", null, "chrome,centerscreen,modal,resizable", group);
     },
 
     sort : function() {
@@ -70,16 +70,16 @@ var ec2ui_SecurityGroupsTreeView = {
     register: function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'securitygroups');
+            ew_model.registerInterest(this, 'securitygroups');
         }
     },
 
     invalidate: function() {
-        this.displayGroups(ec2ui_session.model.securityGroups);
+        this.displayGroups(ew_session.model.securityGroups);
     },
 
     refresh: function() {
-        ec2ui_session.controller.describeSecurityGroups();
+        ew_session.controller.describeSecurityGroups();
     },
 
     notifyModelChanged: function(interest) {
@@ -97,15 +97,15 @@ var ec2ui_SecurityGroupsTreeView = {
         if (index == -1) return;
 
         var group = this.groupList[index];
-        ec2ui_PermissionsTreeView.displayPermissions(group.permissions);
+        ew_PermissionsTreeView.displayPermissions(group.permissions);
     },
 
     createNewGroup : function () {
         var retVal = {ok:null,name:null,description:null,vpcId:null};
-        window.openDialog("chrome://ec2ui/content/dialog_create_security_group.xul", null, "chrome,centerscreen,modal,resizable", ec2ui_session, retVal);
+        window.openDialog("chrome://ew/content/dialog_create_security_group.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ec2ui_session.showBusyCursor(true);
+            ew_session.showBusyCursor(true);
             var me = this;
             var wrap = function(id) {
                 retVal.id = id
@@ -113,8 +113,8 @@ var ec2ui_SecurityGroupsTreeView = {
                 me.selectGroup(retVal);
                 me.authorizeCommonProtocolsByUserRequest(retVal);
             }
-            ec2ui_session.controller.createSecurityGroup(retVal.name, retVal.description, retVal.vpcId, wrap);
-            ec2ui_session.showBusyCursor(false);
+            ew_session.controller.createSecurityGroup(retVal.name, retVal.description, retVal.vpcId, wrap);
+            ew_session.showBusyCursor(false);
         }
     },
 
@@ -124,11 +124,11 @@ var ec2ui_SecurityGroupsTreeView = {
         // Determine the CIDR for the protocol authorization request
         switch (retVal.enableProtocolsFor) {
         case "host":
-            ec2ui_session.client.queryCheckIP("", result);
+            ew_session.client.queryCheckIP("", result);
             cidr = result.ipAddress.trim() + "/32";
             break;
         case "network":
-            ec2ui_session.client.queryCheckIP("block", result);
+            ew_session.client.queryCheckIP("block", result);
             cidr = result.ipAddress.trim();
             break;
         default:
@@ -139,18 +139,18 @@ var ec2ui_SecurityGroupsTreeView = {
         // Need to authorize SSH and RDP for either this host or the network.
         if (cidr != null) {
             var wrap = function() {
-                ec2ui_SecurityGroupsTreeView.refresh();
-                ec2ui_SecurityGroupsTreeView.selectGroup(retVal);
+                ew_SecurityGroupsTreeView.refresh();
+                ew_SecurityGroupsTreeView.selectGroup(retVal);
             }
 
             // 1st enable SSH
-            ec2ui_session.controller.authorizeSourceCIDR('Ingress', retVal, "tcp", protPortMap["ssh"], protPortMap["ssh"], cidr, null);
+            ew_session.controller.authorizeSourceCIDR('Ingress', retVal, "tcp", protPortMap["ssh"], protPortMap["ssh"], cidr, null);
 
             // enable RDP and refresh the view
-            ec2ui_session.controller.authorizeSourceCIDR('Ingress', retVal, "tcp", protPortMap["rdp"], protPortMap["rdp"], cidr, wrap);
+            ew_session.controller.authorizeSourceCIDR('Ingress', retVal, "tcp", protPortMap["rdp"], protPortMap["rdp"], cidr, wrap);
         } else {
             // User wants to customize the firewall...
-            ec2ui_PermissionsTreeView.grantPermission();
+            ew_PermissionsTreeView.grantPermission();
         }
     },
 
@@ -167,14 +167,14 @@ var ec2ui_SecurityGroupsTreeView = {
             me.refresh();
             me.selectGroup(group);
         }
-        ec2ui_session.controller.deleteSecurityGroup(group, wrap);
+        ew_session.controller.deleteSecurityGroup(group, wrap);
     },
 
     displayGroups : function (groupList) {
         if (!groupList) { groupList = []; }
         var group = this.getSelectedGroup();
 
-        ec2ui_PermissionsTreeView.displayPermissions([]);
+        ew_PermissionsTreeView.displayPermissions([]);
         this.treeBox.rowCountChanged(0, -this.groupList.length);
         this.groupList = groupList;
         this.treeBox.rowCountChanged(0, this.groupList.length);
@@ -182,9 +182,9 @@ var ec2ui_SecurityGroupsTreeView = {
         this.selectGroup(group);
     }
 };
-ec2ui_SecurityGroupsTreeView.register();
+ew_SecurityGroupsTreeView.register();
 
-var ec2ui_PermissionsTreeView = {
+var ew_PermissionsTreeView = {
         COLNAMES : ['permission.type','permission.protocol','permission.fromPort','permission.toPort','permission.cidrIp','permission.group'],
         treeBox : null,
         selection : null,
@@ -225,7 +225,7 @@ var ec2ui_PermissionsTreeView = {
         viewDetails : function(event) {
             var perm = this.getSelectedPermission();
             if (perm == null) return;
-            window.openDialog("chrome://ec2ui/content/dialog_permission_details.xul", null, "chrome,centerscreen,modal,resizable", perm);
+            window.openDialog("chrome://ew/content/dialog_permission_details.xul", null, "chrome,centerscreen,modal,resizable", perm);
         },
 
         selectByPermission : function(perm) {
@@ -258,7 +258,7 @@ var ec2ui_PermissionsTreeView = {
         getLevel : function(idx) { return 0; },
 
         grantPermission : function(type) {
-            var group = ec2ui_SecurityGroupsTreeView.getSelectedGroup();
+            var group = ew_SecurityGroupsTreeView.getSelectedGroup();
             if (group == null) return;
 
             type = type ? type : "Ingress";
@@ -268,20 +268,20 @@ var ec2ui_PermissionsTreeView = {
                 return;
             }
             retVal = {ok:null, type: type};
-            window.openDialog("chrome://ec2ui/content/dialog_new_permission.xul", null, "chrome,centerscreen,modal,resizable", group, ec2ui_session, retVal);
+            window.openDialog("chrome://ew/content/dialog_new_permission.xul", null, "chrome,centerscreen,modal,resizable", group, ew_session, retVal);
 
             if (retVal.ok) {
                 var me = this;
                 var wrap = function() {
-                    ec2ui_SecurityGroupsTreeView.refresh();
-                    ec2ui_SecurityGroupsTreeView.selectGroup(group);
+                    ew_SecurityGroupsTreeView.refresh();
+                    ew_SecurityGroupsTreeView.selectGroup(group);
                 }
 
                 var newPerm = retVal.newPerm;
                 if (newPerm.cidrIp != null) {
-                    ec2ui_session.controller.authorizeSourceCIDR(type, group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.cidrIp,wrap);
+                    ew_session.controller.authorizeSourceCIDR(type, group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.cidrIp,wrap);
                 } else {
-                    ec2ui_session.controller.authorizeSourceGroup(type, group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.srcGroup, wrap);
+                    ew_session.controller.authorizeSourceGroup(type, group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.srcGroup, wrap);
                 }
             }
         },
@@ -293,7 +293,7 @@ var ec2ui_PermissionsTreeView = {
         },
 
         revokePermission : function() {
-            var group = ec2ui_SecurityGroupsTreeView.getSelectedGroup();
+            var group = ew_SecurityGroupsTreeView.getSelectedGroup();
             if (group == null) return;
             var perms = new Array();
             for(var i in this.permissionList) {
@@ -308,12 +308,12 @@ var ec2ui_PermissionsTreeView = {
             if (!confirmed)
                 return;
 
-            ec2ui_session.showBusyCursor(true);
+            ew_session.showBusyCursor(true);
             var me = this;
             var wrap = function() {
-                if (ec2ui_prefs.isRefreshOnChangeEnabled()) {
-                    ec2ui_SecurityGroupsTreeView.refresh();
-                    ec2ui_SecurityGroupsTreeView.selectGroup(group);
+                if (ew_prefs.isRefreshOnChangeEnabled()) {
+                    ew_SecurityGroupsTreeView.refresh();
+                    ew_SecurityGroupsTreeView.selectGroup(group);
                 }
             }
 
@@ -321,12 +321,12 @@ var ec2ui_PermissionsTreeView = {
             for (i in perms) {
                 permission = perms[i];
                 if (permission.cidrIp) {
-                    ec2ui_session.controller.revokeSourceCIDR(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.cidrIp,wrap);
+                    ew_session.controller.revokeSourceCIDR(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.cidrIp,wrap);
                 } else {
-                    ec2ui_session.controller.revokeSourceGroup(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.srcGroup,wrap);
+                    ew_session.controller.revokeSourceGroup(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.srcGroup,wrap);
                 }
             }
-            ec2ui_session.showBusyCursor(false);
+            ew_session.showBusyCursor(false);
         },
 
         displayPermissions : function (permissionList) {

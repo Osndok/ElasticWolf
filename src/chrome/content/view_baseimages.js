@@ -59,7 +59,7 @@ var BaseImagesView = {
     viewDetails : function(event) {
         var image = this.getSelectedImage();
         if (image == null) return;
-        window.openDialog("chrome://ec2ui/content/dialog_ami_details.xul", null, "chrome,centerscreen,modal,resizable", image);
+        window.openDialog("chrome://ew/content/dialog_ami_details.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
     sort : function() {
@@ -105,7 +105,7 @@ var BaseImagesView = {
     },
 
     invalidate : function() {
-        this.displayImages(this.filterImages(ec2ui_session.model.images));
+        this.displayImages(this.filterImages(ew_session.model.images));
     },
 
     notifyModelChanged : function(interest) {
@@ -115,14 +115,14 @@ var BaseImagesView = {
     register : function() {
         if (!this.registered) {
             this.registered = true;
-            ec2ui_model.registerInterest(this, 'images');
+            ew_model.registerInterest(this, 'images');
         }
     },
 
     refresh : function() {
-        ec2ui_session.showBusyCursor(true);
-        ec2ui_session.controller.describeImages(true);
-        ec2ui_session.showBusyCursor(false);
+        ew_session.showBusyCursor(true);
+        ew_session.controller.describeImages(true);
+        ew_session.showBusyCursor(false);
     },
 
     filterImages : function(imageList, searchText) {
@@ -185,7 +185,7 @@ var BaseImagesView = {
         var res = this.getSelectedImage();
 
         if (res) {
-            tagEC2Resource(res, ec2ui_session);
+            tagEC2Resource(res, ew_session);
             this.selectByImageId(res.id);
         }
     },
@@ -197,7 +197,7 @@ var BaseImagesView = {
         }
 
         if (tab && tab.length > 0) {
-            ec2ui_session.addTabToRefreshList(tab);
+            ew_session.addTabToRefreshList(tab);
         }
         // Set the UI up to refresh every so often
         this.refreshTimer = setTimeout(refreshFunc, 10000);
@@ -208,7 +208,7 @@ var BaseImagesView = {
         if (this.refreshTimer) {
             clearTimeout(this.refreshTimer);
             if (tab) {
-                ec2ui_session.removeTabFromRefreshList(tab);
+                ew_session.removeTabFromRefreshList(tab);
             }
         }
     },
@@ -216,7 +216,7 @@ var BaseImagesView = {
     getImageDetail : function(image, column) {
         var shortName = column.split(".").pop();
         if (shortName == "owner") {
-            return ec2ui_session.lookupAccountId(image.owner);
+            return ew_session.lookupAccountId(image.owner);
         }
         return image[shortName] || "";
     },
