@@ -68,14 +68,14 @@
   <menubar id="ew.menubar">
     <menu label="Setup">
       <menupopup>
-       <menuitem id="ew.menu.credentials" label="Credentials" oncommand="ew_session.manageCredentials();"/>
-       <menuitem id="ew.menu.endpoints" label="Endpoints" oncommand="ew_session.manageEndpoints();"/>
-       <menuitem id="ew.menu.accounts" label="Accounts" oncommand="ew_session.manageAccountIds();"/>
+       <menuitem id="ew.menu.credentials" label="Credentials" image="images/credentials.png" class="menuitem-iconic" oncommand="ew_session.manageCredentials();"/>
+       <menuitem id="ew.menu.endpoints" label="Endpoints" image="images/regions.png" class="menuitem-iconic" oncommand="ew_session.manageEndpoints();"/>
+       <menuitem id="ew.menu.accounts" label="Accounts" image="images/accountids.png" class="menuitem-iconic" oncommand="ew_session.manageAccountIds();"/>
        <menuseparator/>
-       <menuitem label="Tools" oncommand="ew_session.manageTools();"/>
-       <menuitem label="About" oncommand="ew_session.displayAbout();"/>
+       <menuitem label="Tools" image="images/tools.png" class="menuitem-iconic" oncommand="ew_session.manageTools();"/>
+       <menuitem label="About" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayAbout();"/>
        <menuseparator/>
-       <menuitem label="Exit" oncommand="ew_session.quit();"/>
+       <menuitem label="Exit" image="images/reboot.png" class="menuitem-iconic" oncommand="ew_session.quit();"/>
       </menupopup>
     </menu>
    </menubar>
