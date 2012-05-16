@@ -21,6 +21,11 @@ var ew_session = {
     cgwTags : null,
     vpnTags : null,
     refreshedTabs : new Array(),
+    cmdline: null,
+    tabs: [ "ew.tabs.instances.label", "ew.tabs.images.label","ew.tabs.auth.label","ew.tabs.secgroups.label",
+            "ew.tabs.eips.label","ew.tabs.volumes.label","ew.tabs.loadbalancer.label",
+            "ew.tabs.bundleTasks.label","ew.tabs.leases.label","ew.tabs.vpcs.label","ew.tabs.routing.label",
+            "ew.tabs.acls.label","ew.tabs.enis.label","ew.tabs.vpns.label","ew.tabs.availzones.label","ew.tabs.s3.label"],
 
     initialize : function()
     {
@@ -29,6 +34,8 @@ var ew_session = {
             this.model = ew_model;
             this.client = ew_client;
             this.preferences = ew_prefs;
+            this.cmdLine = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine);
+
             ew_prefs.init();
 
             document.title = ew_prefs.getAppName();
@@ -65,10 +72,31 @@ var ew_session = {
             document.getElementById("ew.enis.view").view = ew_NetworkInterfacesTreeView;
             document.getElementById("ew.enis.attachments.view").view = ew_NetworkInterfaceAttachmentsTreeView;
             document.getElementById("ew.s3.view").view = ew_S3BucketsTreeView;
+            var tabs = document.getElementById("ew.tabs");
 
-            // Enable about:blank to work if noscript is installed
-            if ("@maone.net/noscript-service;1" in Components.classes) {
-                (Components.classes["@maone.net/noscript-service;1"].getService().wrappedJSObject).setJSEnabled("about:blank", true);
+            for (var  i in this.tabs) {
+                tabs.appendItem(getProperty(this.tabs[i]));
+            }
+
+            var menu = document.getElementById("ew.menu.view");
+            for (var  i in this.tabs) {
+                var b = document.createElement("menuitem");
+                b.setAttribute("label", getProperty(this.tabs[i]));
+                b.setAttribute("type", "checkbox");
+                b.setAttribute("oncommand", "ew_session.selectView(this)");
+                menu.appendChild(b);
+            }
+
+            var container = document.getElementById("ew.toolbar");
+            for (var i = container.childNodes.length; i > 0; i--) {
+                container.removeChild(container.childNodes[0]);
+            }
+            for (var  i in this.tabs) {
+                var b = document.createElement("toolbarbutton");
+                b.setAttribute("label", getProperty(this.tabs[i]));
+                b.setAttribute("class", "ew_toolbutton");
+                b.setAttribute("oncommand", "ew_session.selectTab(this)");
+                container.appendChild(b);
             }
 
             this.loadAccountIdMap();
@@ -268,6 +296,19 @@ var ew_session = {
         this.savePassword('Cred:' + cred.name, cred.toStr())
     },
 
+    checkCredentials: function() {
+        if (!this.credentials.length) {
+            return this.manageCredentials();
+        }
+        return false;
+    },
+
+    manageCredentials : function()
+    {
+        window.openDialog("chrome://ew/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ew_session);
+        this.loadCredentials();
+    },
+
     loadCredentials : function()
     {
         var activeCredsMenu = document.getElementById("ew.active.credentials.list");
@@ -287,6 +328,9 @@ var ew_session = {
             this.model.invalidate();
             // Reset the credentials stored in the client
             this.client.setCredentials("", "");
+            // Fake credential to show setup dialog
+            activeCredsMenu.appendItem("Setup Credentials");
+            activeCredsMenu.selectedIndex = 0;
         }
     },
 
@@ -650,12 +694,6 @@ var ew_session = {
             this.cgwTags = ew_prefs.getCustomerGatewayTags();
             break;
         }
-    },
-
-    manageCredentials : function()
-    {
-        window.openDialog("chrome://ew/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ew_session);
-        this.loadCredentials();
     },
 
     manageTools : function()

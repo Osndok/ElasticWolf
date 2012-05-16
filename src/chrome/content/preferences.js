@@ -770,8 +770,6 @@ var ew_prefs = {
                 }
             }
         }
-
-        log("Retrieve endpoints from service");
         this.getEC2Endpoints();
 
         // Reconcile the endpointmap with the map retrieved from EC2

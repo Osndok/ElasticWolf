@@ -60,7 +60,7 @@
   <script type="application/x-javascript" src="chrome://ew/content/view_enis.js" />
   <script type="application/x-javascript" src="chrome://ew/content/view_s3.js" />
 
-  <stringbundleset id="stringbundleset">
+  <stringbundleset>
     <stringbundle id="ew.properties.bundle" src="chrome://ew/locale/ew.properties" />
   </stringbundleset>
 
@@ -68,46 +68,37 @@
   <menubar id="ew.menubar">
     <menu label="Setup">
       <menupopup>
-       <menuitem id="ew.menu.credentials" label="Credentials" image="images/credentials.png" class="menuitem-iconic" oncommand="ew_session.manageCredentials();"/>
+       <menuitem id="ew.menu.credentials" label="Credentials" image="images/credentials.png" class="menuitem-iconic" oncommand="ew_session.manageCredentials()" />
        <menuitem id="ew.menu.endpoints" label="Endpoints" image="images/regions.png" class="menuitem-iconic" oncommand="ew_session.manageEndpoints();"/>
        <menuitem id="ew.menu.accounts" label="Accounts" image="images/accountids.png" class="menuitem-iconic" oncommand="ew_session.manageAccountIds();"/>
-       <menuseparator/>
        <menuitem label="Tools" image="images/tools.png" class="menuitem-iconic" oncommand="ew_session.manageTools();"/>
-       <menuitem label="About" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayAbout();"/>
        <menuseparator/>
        <menuitem label="Exit" image="images/reboot.png" class="menuitem-iconic" oncommand="ew_session.quit();"/>
+      </menupopup>
+    </menu>
+    <menu label="View">
+      <menupopup id="ew.menu.view">
+      </menupopup>
+    </menu>
+    <menu label="Help">
+      <menupopup>
+       <menuitem label="About" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayAbout();"/>
       </menupopup>
     </menu>
    </menubar>
    </toolbox>
 
   <vbox flex="1">
-    <toolbar style="padding: 0px 1px; -moz-box-align: center">
-      <menulist id="ew.active.credentials.list" class="ew_toolbutton" label=" " oncommand="ew_session.switchCredentials();" />
+    <toolbar style="padding: 3px; -moz-box-align: center">
+      <menulist id="ew.active.credentials.list" class="ew_toolbutton" label=" " oncommand="ew_session.switchCredentials();" onclick="return ew_session.checkCredentials();"/>
       <menulist id="ew.active.endpoints.list" class="ew_toolbutton" label=" " oncommand="ew_session.switchEndpoints();" />
       <toolbarseparator />
-      <spacer flex="10" />
+      <toolbaritem id="ew.toolbar" />
     </toolbar>
     <spacer style="height: 10px" />
 
     <tabbox id="ew.primary.tabs" flex="1">
       <tabs id="ew.tabs" onselect="ew_session.tabSelectionChanged(event);" style="font-size:x-small;">
-        <tab label="&ew.tabs.instances.label;" />
-        <tab label="&ew.tabs.images.label;" />
-        <tab label="&ew.tabs.auth.label;" />
-        <tab label="&ew.tabs.secgroups.label;" />
-        <tab label="&ew.tabs.eips.label;" />
-        <tab label="&ew.tabs.volumes.label;" />
-        <tab label="&ew.tabs.loadbalancer.label;" />
-        <tab label="&ew.tabs.bundleTasks.label;" />
-        <tab label="&ew.tabs.leases.label;" />
-        <tab label="&ew.tabs.vpcs.label;" />
-        <tab label="&ew.tabs.routing.label;" />
-        <tab label="&ew.tabs.acls.label;" />
-        <tab label="&ew.tabs.enis.label;" />
-        <tab label="&ew.tabs.vpns.label;" />
-        <tab label="&ew.tabs.availzones.label;" />
-        <tab label="&ew.tabs.s3.label;" />
       </tabs>
       <tabpanels flex="1">
         <tabpanel id="instances_tab"/>

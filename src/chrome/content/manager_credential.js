@@ -1,13 +1,16 @@
 var ew_credentialManager = {
+    COLNAMES: ['credential.name','credential.accessKey', 'credential.endPoint'],
     credentials : new Array(),
     session: null,
+    tree: null,
 
     initDialog : function() {
         this.session = window.arguments[0];
 
-        document.getElementById("ew.credentials.view").view = ew_credentialsTreeView;
+        this.tree = this;
+        document.getElementById("ew.credentials.view").view = this.tree;
         this.credentials = this.session.getCredentials();
-        ew_credentialsTreeView.display(this.credentials);
+        this.tree.display(this.credentials);
 
         var endpoints = this.session.preferences.getEndpointMap().toArray(function(k, v) { return new Endpoint(k, v.url) });
         var menulist = document.getElementById("ew.credentials.endpoint");
@@ -44,7 +47,7 @@ var ew_credentialManager = {
             this.credentials.splice(index, 1);
         }
         this.session.removeCredentials(cred)
-        ew_credentialsTreeView.display(this.credentials);
+        this.tree.display(this.credentials);
         this.selectCredentials();
     },
 
@@ -63,12 +66,12 @@ var ew_credentialManager = {
             this.credentials.push(cred);
         }
         this.session.saveCredentials(cred)
-        ew_credentialsTreeView.display(this.credentials);
+        this.tree.display(this.credentials);
     },
 
     switchAccount: function()
     {
-        var sel = ew_credentialsTreeView.getSelected();
+        var sel = this.tree.getSelected();
         if (!sel) {
             alert("No credentials selected");
             return;
@@ -77,10 +80,11 @@ var ew_credentialManager = {
     },
 
     selectCredentials : function() {
-        var sel = ew_credentialsTreeView.getSelected();
+        var sel = this.tree.getSelected();
         document.getElementById("ew.credentials.account").value = sel ? sel.name : "";
         document.getElementById("ew.credentials.akid").value = sel ? sel.accessKey : "";
         document.getElementById("ew.credentials.secretkey").value = sel ? sel.secretKey : "";
         document.getElementById("ew.credentials.endpoint").value = sel && sel.endPoint ? sel.endPoint : "";
     },
-}
+};
+ew_credentialManager.__proto__ = TreeView;

@@ -8,6 +8,7 @@ var ew_client = {
     accessCode : null,
     secretKey : null,
     errorCount: 0,
+    errorMax: 3,
     timers : {},
 
     VERSION: "1.26",
@@ -88,6 +89,7 @@ var ew_client = {
     setCredentials : function (accessCode, secretKey) {
         this.accessCode = accessCode;
         this.secretKey = secretKey;
+        this.errorCount = 0;
     },
 
     setEndpoint : function (endpoint) {
@@ -171,17 +173,18 @@ var ew_client = {
         }
 
         var rsp = null;
-        while (ew_prefs.isHttpEnabled()) {
+        while (ew_prefs.isHttpEnabled() && this.errorCount < this.errorMax) {
             try {
                 rsp = this.queryEC2Impl(action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion);
                 if (rsp.hasErrors) {
+                    debug('errorCount:' + this.errorCount)
                     // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
                     this.errorCount++;
-                    if (this.errorCount < 5) {
-                        if (!this.errorDialog("EC2 responded with an error for "+action, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
+                    if (this.errorCount < this.errorMax) {
+                        if (!this.errorDialog("EC2 responded with an error for " + action, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
+                            this.errorCount = this.errorMax;
                             break;
                         }
-                        this.errorCount = 0;
                     } else {
                         break;
                     }
@@ -408,17 +411,18 @@ var ew_client = {
     queryS3 : function (method, bucket, key, path, params, content, objActions, isSync, reqType, callback) {
         var rsp = null;
 
-        while (ew_prefs.isHttpEnabled()) {
+        while (ew_prefs.isHttpEnabled() && this.errorCount < this.errorMax) {
             try {
                 rsp = this.queryS3Impl(method, bucket, key, path, params, content, objActions, isSync, reqType, callback);
                 if (rsp.hasErrors) {
+                    debug('errorCount:' + this.errorCount)
                     // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
                     this.errorCount++;
-                    if (this.errorCount < 5) {
+                    if (this.errorCount < this.errorMax) {
                         if (!this.errorDialog("S3 responded with an error for "+ method + " " + bucket + "/" + key + path, rsp.faultCode, rsp.requestId, rsp.faultString)) {
+                            this.errorCount = this.errorMax;
                             break;
                         }
-                        this.errorCount = 0;
                     } else {
                         break;
                     }

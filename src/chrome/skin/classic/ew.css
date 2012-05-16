@@ -71,11 +71,18 @@ treechildren::-moz-tree-checkbox(checked) {
 }
 
 .ew_toolbutton {
-    font-size: 12px;
+    font-size: 10px;
+    font-weight: bold;
+    background-color: #AAAAAA;
     border: 1px solid #999999;
     text-align: center;
     margin-left: 10px;
     -moz-appearance: none;
     -moz-border-radius: 3px;
-    -moz-box-shadow: inset -1px -1px 1px #CCCCCC,inset -1px -1px 1px #CCCCCC;
+    -moz-box-shadow: 1px 1px 1px #BBBBBB, 1px 1px 1px #BBBBBB;
+}
+
+.ew_toolbutton_selected {
+    color: #CCCCCC;
+    background-color: #888888;
 }

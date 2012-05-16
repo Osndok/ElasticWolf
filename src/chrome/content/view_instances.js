@@ -141,7 +141,7 @@ var ew_InstancesTreeView = {
         if (instances.length == 1) {
             tagEC2Resource(instances[0], ew_session);
         } else {
-            ew_utils.tagMultipleEC2Resources(instances, ew_session);
+            tagMultipleEC2Resources(instances, ew_session);
         }
 
         this.selectByInstanceIds(instances);

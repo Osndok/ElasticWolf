@@ -59,7 +59,7 @@ var TreeView = {
     registered : false,
     model : null,
 
-    rowCount : function() {
+    get rowCount() {
         return this.treeList.length;
     },
     setTree : function(treeBox) {
@@ -79,6 +79,9 @@ var TreeView = {
     },
     getSelected : function() {
         return this.selection.currentIndex == -1 ? null : this.treeList[this.selection.currentIndex];
+    },
+    setSelected : function(index) {
+        this.selection.select(index);
     },
     getImageSrc : function(idx, column) {
         return ""
@@ -116,12 +119,13 @@ var TreeView = {
         var item = this.getSelected();
         cycleHeader(col, document, this.COLNAMES, this.treeList);
         this.treeBox.invalidate();
-        if (item && item.name) this.select(item);
+        if (item) this.select(item);
     },
     sort : function() {
         var item = this.getSelected();
+        this.treeBox.invalidate();
         sortView(document, this.COLNAMES, this.treeList);
-        if (item && item.name) this.select(item);
+        if (item) this.select(item);
     },
     register : function() {
         if (!this.registered) {
@@ -134,6 +138,7 @@ var TreeView = {
             for (var i in this.treeList) {
                 if (obj.id && obj.id != "" && this.treeList[i].id == obj.id) return i;
                 if (obj.name && obj.name != "" && this.treeList[i].name == obj.name) return i;
+                if (obj.title && obj.title != "" && this.treeList[i].title == obj.title) return i;
             }
         }
         return -1;
@@ -147,7 +152,9 @@ var TreeView = {
             if (this.selection.currentIndex == i) {
                 this.selectionChanged();
             }
+            return true;
         }
+        return false;
     },
     refresh : function() {
         ew_model.refreshModel(this.model);
@@ -161,28 +168,20 @@ var TreeView = {
     selectionChanged: function(event) {
     },
     display : function(list) {
-        if (!list) {
-            list = [];
+        var sel = this.getSelected()
+        this.treeBox.rowCountChanged(0, -this.treeList.length);
+        this.treeList = new Array();
+        if (list) {
+            this.treeList = this.treeList.concat(list);
         }
-        try {
-            var sel = this.getSelected()
-            this.treeBox.rowCountChanged(0, -this.treeList.length);
-            this.treeList = list;
-            this.treeBox.rowCountChanged(0, this.treeList.length);
-            this.sort();
-            this.selection.clearSelection();
-            if (this.treeList.length > 0) {
-                if (sel) {
-                    this.select(sel)
-                } else {
-                    this.selection.select(0);
-                }
-            }
+        this.treeBox.rowCountChanged(0, this.treeList.length);
+        this.treeBox.invalidate();
+        this.selection.clearSelection();
+        this.sort();
+        if (!this.select(sel)) {
+            this.selection.select(0);
         }
-        catch(e) {
-            debug(this.model + ":" + e)
-        }
-    }
+    },
 };
 
 var FileIO = {
@@ -644,16 +643,6 @@ function escapepath(path)
 function quotepath(path)
 {
     return path && path.indexOf(' ') > 0 ? '"' + path + '"' : path;
-}
-
-function getProperty(name, defValue)
-{
-    try {
-        return document.getElementById('ew.properties.bundle').getString(name);
-    }
-    catch (e) {
-        return defValue;
-    }
 }
 
 function getIPFromHostname(instance)
@@ -1345,12 +1334,12 @@ function parseHeaders(headers)
 
 function isWindows(platform)
 {
-    return platform.match(ew_utils.winRegex);
+    return platform.match(regExs['win']);
 }
 
 function isMacOS(platform)
 {
-    return platform.match(ew_utils.macRegex);
+    return platform.match(regExs['mac']);
 }
 
 function isEbsRootDeviceType(rootDeviceType)
@@ -1486,79 +1475,66 @@ var regExs = {
     "ami" : new RegExp("^ami-[0-9a-f]{8}$"),
     "aki" : new RegExp("^aki-[0-9a-f]{8}$"),
     "ari" : new RegExp("^ari-[0-9a-f]{8}$"),
-    "all" : new RegExp("^a[kmr]i-[0-9a-f]{8}$")
+    "all" : new RegExp("^a[kmr]i-[0-9a-f]{8}$"),
+    "win" : new RegExp(/^Win/i),
+    "mac" : new RegExp(/^Mac/),
 };
 
-// ew_utils is akin to a static class
-var ew_utils = {
+function tagMultipleResources(list, session, attr)
+{
+    if (!list || !session) return;
 
-    winRegex : new RegExp(/^Win/i),
-    macRegex : new RegExp(/^Mac/),
-
-    tagMultipleResources : function(list, session, attr)
-    {
-        if (!list || !session) return;
-
-        if (!attr) {
-            attr = "id";
-        }
-
-        var tag = __tagPrompt__(list[0].tag);
-
-        if (tag == null) return;
-
-        var res = null;
-        tag = tag.trim();
-        for ( var i = 0; i < list.length; ++i) {
-            res = list[i];
-            res.tag = tag;
-            session.setResourceTag(res[attr], res.tag);
-        }
-    },
-
-    tagMultipleEC2Resources : function(list, session, attr)
-    {
-        if (!list || !session) return;
-
-        if (!attr) {
-            attr = "id";
-        }
-
-        var tag = __tagPrompt__(list[0].tag);
-
-        if (!tag) return;
-
-        var res = null;
-        tag = tag.trim();
-        var resIds = new Array();
-        for ( var i = 0; i < list.length; ++i) {
-            res = list[i];
-            res.tag = __concatTags__(res.tag, tag);
-            __addNameTagToModel__(res.tag, res);
-            session.setResourceTag(res[attr], res.tag);
-            resIds.push(res[attr]);
-        }
-
-        __tagging2ec2__(resIds, session, tag, true);
-    },
-
-    getMessageProperty : function(key, replacements)
-    {
-        if (!this._stringBundle) {
-            const
-            BUNDLE_SVC = Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService);
-            this._stringBundle = BUNDLE_SVC.createBundle("chrome://ew/locale/ew.properties");
-        }
-        try {
-            if (!replacements)
-                return this._stringBundle.GetStringFromName(key);
-            else return this._stringBundle.formatStringFromName(key, replacements, replacements.length);
-        }
-        catch (e) {
-            return "";
-        }
+    if (!attr) {
+        attr = "id";
     }
-};
+
+    var tag = __tagPrompt__(list[0].tag);
+
+    if (tag == null) return;
+
+    var res = null;
+    tag = tag.trim();
+    for ( var i = 0; i < list.length; ++i) {
+        res = list[i];
+        res.tag = tag;
+        session.setResourceTag(res[attr], res.tag);
+    }
+}
+
+function tagMultipleEC2Resources(list, session, attr)
+{
+    if (!list || !session) return;
+
+    if (!attr) {
+        attr = "id";
+    }
+
+    var tag = __tagPrompt__(list[0].tag);
+
+    if (!tag) return;
+
+    var res = null;
+    tag = tag.trim();
+    var resIds = new Array();
+    for ( var i = 0; i < list.length; ++i) {
+        res = list[i];
+        res.tag = __concatTags__(res.tag, tag);
+        __addNameTagToModel__(res.tag, res);
+        session.setResourceTag(res[attr], res.tag);
+        resIds.push(res[attr]);
+    }
+    __tagging2ec2__(resIds, session, tag, true);
+}
+
+function getProperty(key)
+{
+    try {
+        return document.getElementById('ew.properties.bundle').getString(key);
+    }
+    catch (e) {
+        return "";
+    }
+}
 
 /* With due thanks to http://whytheluckystiff.net */
 /* other support functions -- thanks, ecmanaut! */
