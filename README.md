@@ -1,4 +1,4 @@
-= ElasticWolf
+# ElasticWolf
 
 ElasticWolf is an application for managing Amazon Web Services resources with a simple and 
 easy to use client-side UI. 
@@ -19,7 +19,7 @@ with all regions, so please file bugs if you find problems in any region.
 The Windows version of the tool is packaged with openssl for generating keys and ssh 
 clients for accessing Linux instances.
 
-== Developing:
+## Developing:
 
  Primary development is done on Mac so there is a special dev mode to run it as 
  an OS X application with symlink to actual source code
@@ -30,7 +30,7 @@ clients for accessing Linux instances.
 
    make run
 
-== Building:
+## Building:
 
  To create binary packages for Mac and Windows, just type
 
@@ -38,10 +38,10 @@ clients for accessing Linux instances.
 
  it will produce to .zip files for each platform
 
-== Developers:
+## Developers:
   Vlad Seryakov
 
-== QA and support:
+## QA and support:
  * Mark Ryland
  * Ben Butler
  * Tim Wilson
