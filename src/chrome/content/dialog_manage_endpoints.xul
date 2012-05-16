@@ -17,7 +17,6 @@
   <script type="application/x-javascript" src="chrome://ew/content/session.js" />
   <script type="application/x-javascript" src="chrome://ew/content/client.js" />
   <script type="application/x-javascript" src="chrome://ew/content/manager_endpoint.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_endpoints.js" />
 
   <vbox flex="1">
     <vbox flex="1">

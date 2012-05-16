@@ -4,9 +4,14 @@ var ew_accountIdManager = {
     initDialog : function() {
         this.accountidmap = window.arguments[0];
 
-        document.getElementById("ew.accountids.view").view = ew_accountIdsTreeView;
-        ew_accountIdsTreeView.setMapping(this.accountidmap);
+        document.getElementById("ew.accountids.view").view = this;
+        this.refresh();
         document.getElementById("ew.accountids.accountid").select();
+    },
+
+    refresh: function() {
+        var list = this.accountidmap.toArray(function(k,v){return new AccountIdName(k, v)});
+        this.display(list);
     },
 
     removeAccount : function() {
@@ -14,7 +19,7 @@ var ew_accountIdManager = {
         if (accountId == null || accountId == "") return;
 
         this.accountidmap.removeKey(accountId);
-        ew_accountIdsTreeView.setMapping(this.accountidmap);
+        this.refresh();
     },
 
     saveAccount : function() {
@@ -24,14 +29,14 @@ var ew_accountIdManager = {
         if (displayName.length == 0) return;
 
         this.accountidmap.put(accountId, displayName);
-        ew_accountIdsTreeView.setMapping(this.accountidmap);
+        this.refresh()
     },
 
     selectMapping : function() {
-        var sel = ew_accountIdsTreeView.getSelectedAccount();
-        if (sel != null) {
-            document.getElementById("ew.accountids.accountid").value = sel.accountid;
-            document.getElementById("ew.accountids.displayname").value = sel.displayname;
-        }
+        var sel = this.getSelected();
+        document.getElementById("ew.accountids.accountid").value = sel ? sel.accountid : "";
+        document.getElementById("ew.accountids.displayname").value = sel ? sel.displayname : "";
     }
 }
+
+ew_accountIdManager.__proto__ = TreeView;

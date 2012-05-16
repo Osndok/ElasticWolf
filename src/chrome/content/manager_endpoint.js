@@ -1,4 +1,5 @@
 var ew_endpointManager = {
+    COLNAMES: ['endpoint.name','endpoint.url'],
     session: null,
     endpointmap : null,
 
@@ -6,25 +7,29 @@ var ew_endpointManager = {
         this.session = window.arguments[0];
         this.endpointmap = this.session.endpointmap;
 
-        document.getElementById("ew.endpoints.view").view = ew_endpointsTreeView;
-        ew_endpointsTreeView.setMapping(this.endpointmap);
+        document.getElementById("ew.endpoints.view").view = this;
+        this.refresh();
 
         var lastEndpointName = ew_prefs.getLastUsedEndpoint();
         if (lastEndpointName != null) {
             var index = this.indexOfEndpointName(lastEndpointName);
-            ew_endpointsTreeView.selectEndpointName(index);
+            this.setSelected(index);
         }
     },
 
     indexOfEndpointName : function(name) {
         var endpointlist = this.endpointmap.toArray(function(k,v){return v});
-
         for (var i = 0; i < endpointlist.length; i++) {
             if (endpointlist[i].name == name) {
                 return i;
             }
         }
         return -1;
+    },
+
+    refresh: function() {
+        var list = this.endpointmap.toArray(function(k,v){return new Endpoint(k, v.url)});
+        this.display(list)
     },
 
     switchEndpoint : function() {
@@ -36,14 +41,13 @@ var ew_endpointManager = {
     removeEndpoint : function() {
         var name = document.getElementById("ew.endpoints.name").value;
         if (name == null || name == "") return;
-
         this.endpointmap.removeKey(name);
-        ew_endpointsTreeView.setMapping(this.endpointmap);
+        this.refresh();
     },
 
     addEndpoint: function(name, url) {
         this.endpointmap.put(name, new Endpoint(name, url));
-        ew_endpointsTreeView.setMapping(this.endpointmap);
+        this.refresh();
     },
 
     saveEndpoint : function() {
@@ -54,10 +58,10 @@ var ew_endpointManager = {
     },
 
     selectMapping : function() {
-        var sel = ew_endpointsTreeView.getSelectedEndPoint();
-        if (sel != null) {
-            document.getElementById("ew.endpoints.name").value = sel.name;
-            document.getElementById("ew.endpoints.url").value = sel.url;
-        }
+        var sel = this.getSelected();
+        document.getElementById("ew.endpoints.name").value = sel ? sel.name : "";
+        document.getElementById("ew.endpoints.url").value = sel ? sel.url : "";
     }
 }
+
+ew_endpointManager.__proto__ = TreeView;

@@ -12,9 +12,8 @@
 
   <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
   <script type="application/x-javascript" src="chrome://ew/content/model.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/manager_accountid.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_accountids.js" />
   <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/manager_accountid.js" />
 
   <vbox flex="1">
     <tree id="ew.accountids.view"
