@@ -4,7 +4,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    <tabpanel id="vpcs_tab" flex="1">
+    <tabpanel id="ew.tabs.vpc" flex="1">
         <vbox flex="1">
             <groupbox orient="vertical" flex="1">
                 <caption label="&ew.captions.vpcs.vpcs.label;" />

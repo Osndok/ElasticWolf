@@ -22,10 +22,23 @@ var ew_session = {
     vpnTags : null,
     refreshedTabs : new Array(),
     cmdline: null,
-    tabs: [ "ew.tabs.instances.label", "ew.tabs.images.label","ew.tabs.auth.label","ew.tabs.secgroups.label",
-            "ew.tabs.eips.label","ew.tabs.volumes.label","ew.tabs.loadbalancer.label",
-            "ew.tabs.bundleTasks.label","ew.tabs.leases.label","ew.tabs.vpcs.label","ew.tabs.routing.label",
-            "ew.tabs.acls.label","ew.tabs.enis.label","ew.tabs.vpns.label","ew.tabs.availzones.label","ew.tabs.s3.label"],
+    tabs: [ "ew.tabs.instance",
+            "ew.tabs.image",
+            "ew.tabs.auth",
+            "ew.tabs.securitygroup",
+            "ew.tabs.eip",
+            "ew.tabs.volume",
+            "ew.tabs.loadbalancer",
+            "ew.tabs.bundletask",
+            "ew.tabs.lease",
+            "ew.tabs.vpc",
+            "ew.tabs.routing",
+            "ew.tabs.acl",
+            "ew.tabs.eni",
+            "ew.tabs.vpn",
+            "ew.tabs.availzone",
+            "ew.tabs.s3",
+          ],
 
     initialize : function()
     {
@@ -72,18 +85,14 @@ var ew_session = {
             document.getElementById("ew.enis.view").view = ew_NetworkInterfacesTreeView;
             document.getElementById("ew.enis.attachments.view").view = ew_NetworkInterfaceAttachmentsTreeView;
             document.getElementById("ew.s3.view").view = ew_S3BucketsTreeView;
-            var tabs = document.getElementById("ew.tabs");
-
-            for (var  i in this.tabs) {
-                tabs.appendItem(getProperty(this.tabs[i]));
-            }
 
             var menu = document.getElementById("ew.menu.view");
-            for (var  i in this.tabs) {
+            for (var i in this.tabs) {
                 var b = document.createElement("menuitem");
                 b.setAttribute("label", getProperty(this.tabs[i]));
                 b.setAttribute("type", "checkbox");
-                b.setAttribute("oncommand", "ew_session.selectView(this)");
+                b.setAttribute("checked", ew_prefs.getBoolPreference(this.tabs[i], true));
+                b.setAttribute("oncommand", "ew_session.checkTab(" + i + ")");
                 menu.appendChild(b);
             }
 
@@ -91,11 +100,11 @@ var ew_session = {
             for (var i = container.childNodes.length; i > 0; i--) {
                 container.removeChild(container.childNodes[0]);
             }
-            for (var  i in this.tabs) {
+            for (var i in this.tabs) {
                 var b = document.createElement("toolbarbutton");
                 b.setAttribute("label", getProperty(this.tabs[i]));
                 b.setAttribute("class", "ew_toolbutton");
-                b.setAttribute("oncommand", "ew_session.selectTab(this)");
+                b.setAttribute("oncommand", "ew_session.selectTab(" + i + ")");
                 container.appendChild(b);
             }
 
@@ -110,46 +119,12 @@ var ew_session = {
 
         this.loadEndpointMap();
         this.switchEndpoints();
-        this.args = this.parseURL();
-        this.processURLArguments();
     },
 
     quit: function()
     {
         var app = Components.classes['@mozilla.org/toolkit/app-startup;1'].getService(Components.interfaces.nsIAppStartup);
         app.quit(Components.interfaces.nsIAppStartup.eForceQuit);
-    },
-
-    parseURL : function()
-    {
-        return parseQuery(window.location.href)
-    },
-
-    processURLArguments : function()
-    {
-        // At this moment, we only act on the ami argument
-        var fSync = false;
-        var amiToLaunch = this.args.ami;
-        var tabBox = document.getElementById("ew.primary.tabs");
-        if (amiToLaunch && amiToLaunch.match(regExs["ami"])) {
-            fSync = true;
-            if (tabBox.selectedIndex != 1) {
-                tabBox.selectedIndex = 1;
-            }
-            this.showBusyCursor(true);
-            // this is a synchronous call, meaning
-            // an ami launch was requested
-            ew_AMIsTreeView.selectByImageId(amiToLaunch);
-            this.showBusyCursor(false);
-            ew_AMIsTreeView.launchNewInstances();
-        } else {
-            // Since this is an async call, and the UI has
-            // not switched over to the Images Tab,
-            if (tabBox.selectedIndex != 1) {
-                this.controller.describeImages(fSync);
-            }
-            this.showBusyCursor(false);
-        }
     },
 
     addTabToRefreshList : function(tab)
@@ -168,12 +143,33 @@ var ew_session = {
         }
     },
 
+    checkTab: function(index) {
+
+    },
+
+    selectTab: function(index, name) {
+        debug('select tab:' + index + ',' + name)
+        var tabs = document.getElementById("ew.tabs");
+        if (index >= 0) {
+            tabs.selectedIndex = index;
+        } else
+        if (name) {
+            for (var  i in this.tabs) {
+                if (this.tabs[i] == name || this.tabs[i] == name) {
+                    tabs.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+    },
+
     tabSelectionChanged : function(event)
     {
         if (!this.initialized) {
             return;
         }
         var tabs = document.getElementById("ew.tabs");
+        var label = this.tabs[tabs.selectedIndex];
 
         var toCall = "invalidate()";
         if (this.getActiveCredential() != null) {
@@ -181,7 +177,7 @@ var ew_session = {
         }
 
         // stop the refresh timers of all tabs
-        for ( var tab in this.refreshedTabs) {
+        for (var tab in this.refreshedTabs) {
             if (this.refreshedTabs[tab] == 1) {
                 this.refreshedTabs[tab] = 0;
                 log("Stopping Refresh of tab: " + tab);
@@ -189,73 +185,104 @@ var ew_session = {
             }
         }
 
-        switch (tabs.selectedItem.label) {
+        switch (label) {
         case 'Instances':
+        case 'instances_tab':
             eval("ew_InstancesTreeView." + toCall);
             break;
+
         case 'Images':
+        case 'images_tab':
             this.showBusyCursor(true);
             this.model.getSecurityGroups();
             this.model.getImages();
             this.showBusyCursor(false);
             break;
+
         case "Access":
+        case 'auth_tab':
             eval("ew_AccessKeyTreeView." + toCall);
             eval("ew_KeypairTreeView." + toCall);
             eval("ew_CertTreeView." + toCall);
             break;
+
         case "Security Groups":
+        case 'security_groups_tab':
             eval("ew_SecurityGroupsTreeView." + toCall);
             break;
+
         case "Elastic IPs":
+        case 'eip_tab':
             eval("ew_ElasticIPTreeView." + toCall);
             break;
+
         case "Vols and Snaps":
+        case 'volumes_tab':
             eval("ew_VolumeTreeView." + toCall);
             eval("ew_SnapshotTreeView." + toCall);
             break;
+
         case "BT":
+        case 'bundle_tasks_tab':
             eval("ew_BundleTasksTreeView." + toCall);
             break;
+
         case "AZ":
+        case 'availzones_tab':
             eval("ew_AvailZoneTreeView." + toCall);
             break;
+
         case "RI":
+        case 'leases_tab':
             eval("ew_LeaseOfferingsTreeView." + toCall);
             eval("ew_ReservedInstancesTreeView." + toCall);
             break;
+
         case "VPC":
+        case 'vpcs_tab':
             eval("ew_VpcTreeView." + toCall);
             eval("ew_SubnetTreeView." + toCall);
             eval("ew_DhcpoptsTreeView." + toCall);
             break;
+
         case "VPNC":
+        case 'vpns_tab':
             eval("ew_VpnConnectionTreeView." + toCall);
             eval("ew_VpnGatewayTreeView." + toCall);
             eval("ew_CustomerGatewayTreeView." + toCall);
             eval("ew_VpnAttachmentTreeView." + toCall);
             break;
+
         case "ELB":
+        case 'loadbalancer_tab':
             eval("ew_LoadbalancerTreeView." + toCall);
             break;
+
         case "Routing":
+        case 'routing_tab':
             eval("ew_InternetGatewayTreeView." + toCall);
             eval("ew_RouteTablesTreeView." + toCall);
             break;
+
         case "ACLs":
+        case 'acls_tab':
             eval("ew_NetworkAclsTreeView." + toCall);
             break;
+
         case "ENIs":
+        case 'enis_tab':
             eval("ew_NetworkInterfacesTreeView." + toCall);
             break;
+
         case "S3":
+        case 's3_tab':
             eval("ew_S3BucketsTreeView." + toCall);
             break;
+
         default:
-            log("This is an invalid tab: " + tabs.selectedItem.label);
+            log("This is an invalid tab: " + label);
             break;
         }
-
         ew_prefs.setCurrentTab(tabs.selectedIndex);
     },
 
@@ -383,7 +410,7 @@ var ew_session = {
             this.model.invalidate();
 
             // Set the active tab to the last tab we were viewing
-            document.getElementById("ew.tabs").selectedIndex = ew_prefs.getCurrentTab();
+            this.selectTab(ew_prefs.getCurrentTab());
 
             // The current tab's view needs to either be invalidated or refreshed
             this.tabSelectionChanged();
@@ -419,7 +446,7 @@ var ew_session = {
             this.model.invalidate();
 
             // Set the active tab to the last tab we were viewing
-            document.getElementById("ew.tabs").selectedIndex = ew_prefs.getCurrentTab();
+            this.selectTab(ew_prefs.getCurrentTab());
 
             // The current tab's view needs to either
             // be invalidated or refreshed
