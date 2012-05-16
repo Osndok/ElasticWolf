@@ -189,8 +189,7 @@ var ew_AMIsTreeView = {
         }
         ew_InstancesTreeView.refresh();
         ew_InstancesTreeView.selectByInstanceIds(list);
-        var tabPanel = document.getElementById("ew.primary.tabs");
-        tabPanel.selectedIndex = 0;
+        ew_session.selectTab(-1, 'ew.tabs.instance');
     },
 
     launchNewInstances : function()

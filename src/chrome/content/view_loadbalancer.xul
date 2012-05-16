@@ -4,7 +4,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <tabpanel id="loadbalancer_tab" flex="1">
+  <tabpanel id="ew.tabs.loadbalancer" flex="1">
     <vbox flex="1">
     <groupbox orient="vertical" flex="1" id="loadbalancer.tree.holder">
       <caption label="&ew.captions.loadbalancer.label;" />

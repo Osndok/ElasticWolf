@@ -289,8 +289,7 @@ var ew_BundleTasksTreeView = {
                 ew_AMIsTreeView.refresh();
                 ew_AMIsTreeView.selectByImageId(x);
                 // Navigate to the AMIs tab
-                var tabPanel = document.getElementById("ew.primary.tabs");
-                tabPanel.selectedIndex = 1;
+                ew_session.selectTab(-1, 'ew.tabs.image');
             }
         }
         var region = ew_session.controller.getS3BucketLocation(bucket);

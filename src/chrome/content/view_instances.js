@@ -285,10 +285,8 @@ var ew_InstancesTreeView = {
                 // Navigate to the Bundle Tasks tab
                 ew_BundleTasksTreeView.refresh();
                 ew_BundleTasksTreeView.selectByBundleId(list[0].id);
-                var tabPanel = document.getElementById("ew.primary.tabs");
-                tabPanel.selectedIndex = 8;
+                ew_session.selectTab(-1, 'ew.tabs.bundletask')
             }
-
             ew_session.controller.bundleInstance(instance.id, retVal.bucketName, retVal.prefix, ew_session.getActiveCredential(), wrap);
         }
     },
@@ -373,8 +371,7 @@ var ew_InstancesTreeView = {
             if (ew_prefs.isRefreshOnChangeEnabled()) {
                 ew_VolumeTreeView.refresh();
             }
-            var tabPanel = document.getElementById("ew.primary.tabs");
-            tabPanel.selectedIndex = 6;
+            ew_session.selectTab(-1, 'ew.tabs.volume')
             ew_VolumeTreeView.selectByImageId(retVal.volumeId);
         }
     },
@@ -396,8 +393,7 @@ var ew_InstancesTreeView = {
             // There are no addresses to associate with.
             var fAddEIP = confirm ("Would you like to create a new Elastic IP to associate with this instance?");
             if (fAddEIP) {
-                var tabPanel = document.getElementById("ew.primary.tabs");
-                tabPanel.selectedIndex = 5;
+                ew_session.selectTab(-1, 'ew.tabs.eip');
                 ew_ElasticIPTreeView.allocateAddress();
             }
             return;

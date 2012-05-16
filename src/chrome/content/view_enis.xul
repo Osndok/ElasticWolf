@@ -4,7 +4,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    <tabpanel id="enis_tab" flex="1">
+    <tabpanel id="ew.tabs.eni" flex="1">
     <vbox flex="1">
             <groupbox flex="1" orient="vertical">
                 <caption label="Elastic Network Interfaces" />

@@ -4,7 +4,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  <tabpanel id="availzones_tab" flex="1">
+  <tabpanel id="ew.tabs.availzone" flex="1">
     <groupbox orient="vertical" flex="1" id="azones.tree.holder">
       <caption label="&ew.captions.azones.label;" />
       <toolbar style="padding: 0px 3px; -moz-box-align: center">

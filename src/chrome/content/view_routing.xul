@@ -4,7 +4,7 @@
 <!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-    <tabpanel id="routing_tab" flex="1">
+    <tabpanel id="ew.tabs.routing" flex="1">
     <vbox flex="1">
         <label control="ew.routing.vpcid" value="Filter by VPC:" />
         <menulist id="ew.routing.vpcid" oncommand="ew_RouteTablesTreeView.vpcIdSelected();"/>
