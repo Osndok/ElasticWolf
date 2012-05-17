@@ -3,12 +3,15 @@ var ew_session = {
     accessCode : "",
     secretKey : "",
     initialized : false,
+    locked: false,
     controller : null,
     model : null,
     client : null,
     credentials : null,
     accountidmap : null,
     endpointmap : null,
+    endpointMenu: null,
+    credMenu: null,
     instanceTags : null,
     volumeTags : null,
     snapshotTags : null,
@@ -47,46 +50,46 @@ var ew_session = {
             this.model = ew_model;
             this.client = ew_client;
             this.preferences = ew_prefs;
-            this.cmdLine = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine);
-
+            this.endpointMenu = $('ew.active.endpoints.list');
+            this.credMenu = $('ew.active.credentials.list');
             ew_prefs.init();
 
             document.title = ew_prefs.getAppName();
-            document.getElementById("ew.images.view").view = ew_AMIsTreeView;
-            document.getElementById("ew.keypairs.view").view = ew_KeypairTreeView;
-            document.getElementById("ew.certs.view").view = ew_CertTreeView;
-            document.getElementById("ew.accesskeys.view").view = ew_AccessKeyTreeView;
-            document.getElementById("ew.instances.view").view = ew_InstancesTreeView;
-            document.getElementById("ew.securitygroups.view").view = ew_SecurityGroupsTreeView;
-            document.getElementById("ew.permissions.view").view = ew_PermissionsTreeView;
-            document.getElementById("ew.eip.view").view = ew_ElasticIPTreeView;
-            document.getElementById("ew.azones.view").view = ew_AvailZoneTreeView;
-            document.getElementById("ew.volumes.view").view = ew_VolumeTreeView;
-            document.getElementById("ew.snapshots.view").view = ew_SnapshotTreeView;
-            document.getElementById("ew.bundleTasks.view").view = ew_BundleTasksTreeView;
-            document.getElementById("ew.offerings.view").view = ew_LeaseOfferingsTreeView;
-            document.getElementById("ew.rsvdInst.view").view = ew_ReservedInstancesTreeView;
-            document.getElementById("ew.loadbalancer.view").view = ew_LoadbalancerTreeView;
-            document.getElementById("ew.instancehealth.view").view = ew_InstanceHealthTreeView;
-            document.getElementById("ew.vpcs.view").view = ew_VpcTreeView;
-            document.getElementById("ew.subnets.view").view = ew_SubnetTreeView;
-            document.getElementById("ew.dhcpoptions.view").view = ew_DhcpoptsTreeView;
-            document.getElementById("ew.vpngateways.view").view = ew_VpnGatewayTreeView;
-            document.getElementById("ew.vpnconnections.view").view = ew_VpnConnectionTreeView;
-            document.getElementById("ew.customergateways.view").view = ew_CustomerGatewayTreeView;
-            document.getElementById("ew.vpnattachments.view").view = ew_VpnAttachmentTreeView;
-            document.getElementById("ew.internetgateways.view").view = ew_InternetGatewayTreeView;
-            document.getElementById("ew.routetables.view").view = ew_RouteTablesTreeView;
-            document.getElementById("ew.routes.view").view = ew_RoutesTreeView;
-            document.getElementById("ew.route.associations.view").view = ew_RouteAssociationsTreeView;
-            document.getElementById("ew.acls.view").view = ew_NetworkAclsTreeView;
-            document.getElementById("ew.acls.associations.view").view = ew_NetworkAclAssociationsTreeView;
-            document.getElementById("ew.acls.rules.view").view = ew_NetworkAclRulesTreeView;
-            document.getElementById("ew.enis.view").view = ew_NetworkInterfacesTreeView;
-            document.getElementById("ew.enis.attachments.view").view = ew_NetworkInterfaceAttachmentsTreeView;
-            document.getElementById("ew.s3.view").view = ew_S3BucketsTreeView;
+            $("ew.images.view").view = ew_AMIsTreeView;
+            $("ew.keypairs.view").view = ew_KeypairTreeView;
+            $("ew.certs.view").view = ew_CertTreeView;
+            $("ew.accesskeys.view").view = ew_AccessKeyTreeView;
+            $("ew.instances.view").view = ew_InstancesTreeView;
+            $("ew.securitygroups.view").view = ew_SecurityGroupsTreeView;
+            $("ew.permissions.view").view = ew_PermissionsTreeView;
+            $("ew.eip.view").view = ew_ElasticIPTreeView;
+            $("ew.azones.view").view = ew_AvailZoneTreeView;
+            $("ew.volumes.view").view = ew_VolumeTreeView;
+            $("ew.snapshots.view").view = ew_SnapshotTreeView;
+            $("ew.bundleTasks.view").view = ew_BundleTasksTreeView;
+            $("ew.offerings.view").view = ew_LeaseOfferingsTreeView;
+            $("ew.rsvdInst.view").view = ew_ReservedInstancesTreeView;
+            $("ew.loadbalancer.view").view = ew_LoadbalancerTreeView;
+            $("ew.instancehealth.view").view = ew_InstanceHealthTreeView;
+            $("ew.vpcs.view").view = ew_VpcTreeView;
+            $("ew.subnets.view").view = ew_SubnetTreeView;
+            $("ew.dhcpoptions.view").view = ew_DhcpoptsTreeView;
+            $("ew.vpngateways.view").view = ew_VpnGatewayTreeView;
+            $("ew.vpnconnections.view").view = ew_VpnConnectionTreeView;
+            $("ew.customergateways.view").view = ew_CustomerGatewayTreeView;
+            $("ew.vpnattachments.view").view = ew_VpnAttachmentTreeView;
+            $("ew.internetgateways.view").view = ew_InternetGatewayTreeView;
+            $("ew.routetables.view").view = ew_RouteTablesTreeView;
+            $("ew.routes.view").view = ew_RoutesTreeView;
+            $("ew.route.associations.view").view = ew_RouteAssociationsTreeView;
+            $("ew.acls.view").view = ew_NetworkAclsTreeView;
+            $("ew.acls.associations.view").view = ew_NetworkAclAssociationsTreeView;
+            $("ew.acls.rules.view").view = ew_NetworkAclRulesTreeView;
+            $("ew.enis.view").view = ew_NetworkInterfacesTreeView;
+            $("ew.enis.attachments.view").view = ew_NetworkInterfaceAttachmentsTreeView;
+            $("ew.s3.view").view = ew_S3BucketsTreeView;
 
-            var menu = document.getElementById("ew.menu.view");
+            var menu = $("ew.menu.view");
             for (var i in this.tabs) {
                 var b = document.createElement("menuitem");
                 b.setAttribute("label", getProperty(this.tabs[i]));
@@ -103,11 +106,35 @@ var ew_session = {
             this.switchCredentials();
             this.loadAllTags();
 
-            this.initialized = true;
-        }
+            // Parse command line
+            this.cmdLine = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine);
 
-        this.loadEndpointMap();
-        this.switchEndpoints();
+            // Passing credentials
+            var name = this.cmdLine.handleFlagWithParam('name', true);
+            var key = this.cmdLine.handleFlagWithParam('key', true);
+            var secret = this.cmdLine.handleFlagWithParam('secret', true);
+            var endpoint = this.cmdLine.handleFlagWithParam('endpoint', true);
+            if (key && key != '' && secret && secret != '') {
+                var cred = new Credential(name || 'AWS', key, secret, endpoint);
+                this.credMenu.removeAllItems();
+                this.credMenu.appendItem(cred.name, cred.name);
+                this.switchCredentials(cred);
+            } else
+
+            if (endpoint && endpoint != '') {
+                var e = new Endpoint("", endpoint);
+                this.endpointMenu.removeAllItems();
+                this.endpointMenu.appendItem(e.name, e.name);
+                this.switchEndpoints(e);
+            }
+
+            // Disable credentials management
+            this.locked = this.cmdLine.handleFlag('lock', true);
+            this.initialized = true;
+        } else {
+            this.loadEndpointMap();
+            this.switchEndpoints();
+        }
     },
 
     quit: function()
@@ -117,7 +144,7 @@ var ew_session = {
     },
 
     createToolbar: function() {
-        var container = document.getElementById("ew.toolbar");
+        var container = $("ew.toolbar");
         for (var i = container.childNodes.length; i > 0; i--) {
             container.removeChild(container.childNodes[0]);
         }
@@ -156,15 +183,16 @@ var ew_session = {
     },
 
     selectTab: function(index, name) {
-        debug('select tab:' + index + ',' + name)
-        var tabs = document.getElementById("ew.tabs");
+        var tabs = $("ew.tabs");
         if (index >= 0) {
             tabs.selectedIndex = index;
+            this.tabSelectionChanged();
         } else
         if (name) {
             for (var  i in this.tabs) {
                 if (this.tabs[i] == name || this.tabs[i] == name) {
                     tabs.selectedIndex = i;
+                    this.tabSelectionChanged();
                     break;
                 }
             }
@@ -176,7 +204,7 @@ var ew_session = {
         if (!this.initialized) {
             return;
         }
-        var tabs = document.getElementById("ew.tabs");
+        var tabs = $("ew.tabs");
         var label = this.tabs[tabs.selectedIndex];
 
         var toCall = "invalidate()";
@@ -192,104 +220,87 @@ var ew_session = {
                 eval(tab + ".stopRefreshTimer()");
             }
         }
-
+        debug('tab selected: ' + label + ": " + toCall)
         switch (label) {
-        case 'Instances':
-        case 'instances_tab':
+        case 'ew.tabs.instance':
             eval("ew_InstancesTreeView." + toCall);
             break;
 
-        case 'Images':
-        case 'images_tab':
+        case 'ew.tabs.image':
             this.showBusyCursor(true);
-            this.model.getSecurityGroups();
-            this.model.getImages();
+            eval("ew_AMIsTreeView." + toCall);
             this.showBusyCursor(false);
             break;
 
-        case "Access":
-        case 'auth_tab':
+        case 'ew.tabs.auth':
             eval("ew_AccessKeyTreeView." + toCall);
             eval("ew_KeypairTreeView." + toCall);
             eval("ew_CertTreeView." + toCall);
             break;
 
-        case "Security Groups":
-        case 'security_groups_tab':
+        case 'ew.tabs.securitygroup':
             eval("ew_SecurityGroupsTreeView." + toCall);
             break;
 
-        case "Elastic IPs":
-        case 'eip_tab':
+        case 'ew.tabs.eip':
             eval("ew_ElasticIPTreeView." + toCall);
             break;
 
-        case "Vols and Snaps":
-        case 'volumes_tab':
+        case 'ew.tabs.volume':
             eval("ew_VolumeTreeView." + toCall);
             eval("ew_SnapshotTreeView." + toCall);
             break;
 
-        case "BT":
-        case 'bundle_tasks_tab':
+        case 'ew.tabs.bundletask':
             eval("ew_BundleTasksTreeView." + toCall);
             break;
 
-        case "AZ":
-        case 'availzones_tab':
+        case 'ew.tabs.availzone':
             eval("ew_AvailZoneTreeView." + toCall);
             break;
 
-        case "RI":
-        case 'leases_tab':
+        case 'ew.tabs.lease':
             eval("ew_LeaseOfferingsTreeView." + toCall);
             eval("ew_ReservedInstancesTreeView." + toCall);
             break;
 
-        case "VPC":
-        case 'vpcs_tab':
+        case 'ew.tabs.vpc':
             eval("ew_VpcTreeView." + toCall);
             eval("ew_SubnetTreeView." + toCall);
             eval("ew_DhcpoptsTreeView." + toCall);
             break;
 
-        case "VPNC":
-        case 'vpns_tab':
+        case 'ew.tabs.vpn':
             eval("ew_VpnConnectionTreeView." + toCall);
             eval("ew_VpnGatewayTreeView." + toCall);
             eval("ew_CustomerGatewayTreeView." + toCall);
             eval("ew_VpnAttachmentTreeView." + toCall);
             break;
 
-        case "ELB":
-        case 'loadbalancer_tab':
+        case 'ew.tabs.loadbalancer':
             eval("ew_LoadbalancerTreeView." + toCall);
             break;
 
-        case "Routing":
-        case 'routing_tab':
+        case 'ew.tabs.routing':
             eval("ew_InternetGatewayTreeView." + toCall);
             eval("ew_RouteTablesTreeView." + toCall);
             break;
 
-        case "ACLs":
-        case 'acls_tab':
+        case 'ew.tabs.acl':
             eval("ew_NetworkAclsTreeView." + toCall);
             break;
 
-        case "ENIs":
-        case 'enis_tab':
+        case 'ew.tabs.eni':
             eval("ew_NetworkInterfacesTreeView." + toCall);
             break;
 
-        case "S3":
-        case 's3_tab':
+        case 'ew.tabs.s3':
             eval("ew_S3BucketsTreeView." + toCall);
             break;
 
         default:
             log("This is an invalid tab: " + label);
-            break;
+            return;
         }
         ew_prefs.setCurrentTab(tabs.selectedIndex);
     },
@@ -340,21 +351,21 @@ var ew_session = {
 
     manageCredentials : function()
     {
+        if (this.locked) return;
         window.openDialog("chrome://ew/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ew_session);
         this.loadCredentials();
     },
 
     loadCredentials : function()
     {
-        var activeCredsMenu = document.getElementById("ew.active.credentials.list");
-        activeCredsMenu.removeAllItems();
+        this.credMenu.removeAllItems();
 
         var lastUsedCred = ew_prefs.getLastUsedAccount();
         this.credentials = this.getCredentials();
         for ( var i in this.credentials) {
-            activeCredsMenu.insertItemAt(i, this.credentials[i].name, this.credentials[i].name);
+            this.credMenu.insertItemAt(i, this.credentials[i].name, this.credentials[i].name);
             if (lastUsedCred == this.credentials[i].name) {
-                activeCredsMenu.selectedIndex = i;
+                this.credMenu.selectedIndex = i;
             }
         }
 
@@ -364,30 +375,29 @@ var ew_session = {
             // Reset the credentials stored in the client
             this.client.setCredentials("", "");
             // Fake credential to show setup dialog
-            activeCredsMenu.appendItem("Setup Credentials");
-            activeCredsMenu.selectedIndex = 0;
+            this.credMenu.appendItem("Setup Credentials");
+            this.credMenu.selectedIndex = 0;
         }
     },
 
     getActiveCredential : function()
     {
-        var activeCredsMenu = document.getElementById("ew.active.credentials.list");
-
         if (this.credentials != null && this.credentials.length > 0) {
-            if (activeCredsMenu.selectedIndex == -1) {
-                activeCredsMenu.selectedIndex = 0;
+            if (this.credMenu.selectedIndex == -1) {
+                this.credMenu.selectedIndex = 0;
             }
-            return this.credentials[activeCredsMenu.selectedIndex];
+            return this.credentials[this.credMenu.selectedIndex];
         }
         return null;
     },
 
     switchCredentials : function(cred)
     {
+        if (this.locked) return;
         if (!cred) {
             cred = this.getActiveCredential();
         } else {
-            document.getElementById("ew.active.credentials.list").value = cred.name;
+            this.credMenu.value = cred.name;
         }
 
         if (cred != null) {
@@ -398,15 +408,14 @@ var ew_session = {
             if (cred.endPoint && cred.endPoint != "") {
                 var endpoint = new Endpoint("", cred.endPoint)
                 this.client.setEndpoint(endpoint);
-                var activeEndpoints = document.getElementById("ew.active.endpoints.list");
-                for ( var i = 0; i < activeEndpoints.itemCount; i++) {
-                    if (activeEndpoints.getItemAtIndex(i).value == endpoint.name) {
-                        activeEndpoints.selectedIndex = i
+                for ( var i = 0; i < this.endpointMenu.itemCount; i++) {
+                    if (this.ndpointMenu.getItemAtIndex(i).value == endpoint.name) {
+                        this.endpointMenu.selectedIndex = i
                     }
                 }
-                if (activeEndpoints.value != endpoint.name) {
-                    activeEndpoints.appendItem(endpoint.name, endpoint.name);
-                    activeEndpoints.selectedIndex = activeEndpoints.itemCount - 1
+                if (this.endpointMenu.value != endpoint.name) {
+                    this.endpointMenu.appendItem(endpoint.name, endpoint.name);
+                    this.endpointMenu.selectedIndex = this.endpointMenu.itemCount - 1
                     this.endpointmap.put(endpoint.name, endpoint);
                     log("add endpoint " + endpoint.name)
                 }
@@ -419,15 +428,12 @@ var ew_session = {
 
             // Set the active tab to the last tab we were viewing
             this.selectTab(ew_prefs.getCurrentTab());
-
-            // The current tab's view needs to either be invalidated or refreshed
-            this.tabSelectionChanged();
         }
     },
 
     getActiveEndpoint : function(name)
     {
-        var activeEndpointname = name || document.getElementById("ew.active.endpoints.list").value;
+        var activeEndpointname = name || this.endpointMenu.value;
 
         if (activeEndpointname == null || activeEndpointname.length == 0) {
             activeEndpointname = ew_prefs.getLastUsedEndpoint();
@@ -441,10 +447,11 @@ var ew_session = {
 
     switchEndpoints : function(name)
     {
+        if (this.locked) return;
         var activeEndpoint = this.getActiveEndpoint(name);
 
         if (activeEndpoint != null) {
-            debug("switch to " + activeEndpoint.name)
+            debug("switch endpoint to " + activeEndpoint.name)
             ew_prefs.setLastUsedEndpoint(activeEndpoint.name);
             ew_prefs.setServiceURL(activeEndpoint.url);
             this.client.setEndpoint(activeEndpoint);
@@ -455,10 +462,6 @@ var ew_session = {
 
             // Set the active tab to the last tab we were viewing
             this.selectTab(ew_prefs.getCurrentTab());
-
-            // The current tab's view needs to either
-            // be invalidated or refreshed
-            this.tabSelectionChanged();
         } else {
             // There are no endpoints in the system, let's ask the user to enter them
             var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
@@ -477,21 +480,21 @@ var ew_session = {
     loadEndpointMap : function()
     {
         this.endpointmap = ew_prefs.getEndpointMap();
-        var activeEndpointsMenu = document.getElementById("ew.active.endpoints.list");
-        activeEndpointsMenu.removeAllItems();
+        this.endpointMenu.removeAllItems();
         var lastUsedEndpoint = ew_prefs.getLastUsedEndpoint();
         var endpointlist = this.endpointmap.toArray(function(k, v) { return new Endpoint(k, v.url) });
 
-        for ( var i in endpointlist) {
-            activeEndpointsMenu.insertItemAt(i, endpointlist[i].name, endpointlist[i].name);
+        for (var i in endpointlist) {
+            this.endpointMenu.insertItemAt(i, endpointlist[i].name, endpointlist[i].name);
             if (lastUsedEndpoint == endpointlist[i].name) {
-                activeEndpointsMenu.selectedIndex = i;
+                this.endpointMenu.selectedIndex = i;
             }
         }
     },
 
     manageEndpoints : function()
     {
+        if (this.locked) return;
         window.openDialog("chrome://ew/content/dialog_manage_endpoints.xul", null, "chrome,centerscreen,modal,resizable", this, this);
         this.loadEndpointMap();
     },
@@ -733,6 +736,7 @@ var ew_session = {
 
     manageTools : function()
     {
+        if (this.locked) return;
         window.openDialog("chrome://ew/content/dialog_manage_tools.xul", null, "chrome,centerscreen,modal, resizable");
     },
 
@@ -743,6 +747,7 @@ var ew_session = {
 
     manageAccountIds : function()
     {
+        if (this.locked) return;
         window.openDialog("chrome://ew/content/dialog_manage_accountids.xul", null, "chrome,centerscreen,modal,resizable", this.accountidmap);
         this.loadAccountIdMap();
     },
@@ -771,20 +776,9 @@ var ew_session = {
     showBusyCursor : function(fShow)
     {
         if (fShow) {
-            document.getElementById("ew-window").setAttribute("wait-cursor", true);
+            $("ew-window").setAttribute("wait-cursor", true);
         } else {
-            document.getElementById("ew-window").removeAttribute("wait-cursor");
-        }
-    },
-
-    openMainWindow : function()
-    {
-        var url = "chrome://ew/content/ew_window.xul";
-        ew_prefs.init();
-        if (ew_prefs.isOpenInNewTabEnabled()) {
-            getBrowser().selectedTab = getBrowser().addTab(url);
-        } else {
-            getBrowser().selectedBrowser.contentDocument.location = url;
+            $("ew-window").removeAttribute("wait-cursor");
         }
     },
 

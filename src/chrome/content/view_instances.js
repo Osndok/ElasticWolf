@@ -368,9 +368,7 @@ var ew_InstancesTreeView = {
                 );
 
             // Navigate to the Volumes Tab
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                ew_VolumeTreeView.refresh();
-            }
+            ew_VolumeTreeView.refresh();
             ew_session.selectTab(-1, 'ew.tabs.volume')
             ew_VolumeTreeView.selectByImageId(retVal.volumeId);
         }
@@ -525,7 +523,7 @@ var ew_InstancesTreeView = {
     promptForKeyFile : function(keyName) {
         var keyFile = ew_session.promptForFile("Select the EC2 Private Key File for key: " + keyName);
         if (keyFile) {
-            ew_prefs.setLastEC2PKeyFile(keyFile);
+            ew_prefs.setLastEC2PrivateKeyFile(keyFile);
         }
         log("getkey: " + keyName + "=" + keyFile);
         return keyFile;
@@ -571,7 +569,7 @@ var ew_InstancesTreeView = {
 
             if (!fSuccess) {
                 // Has a default key file been saved for this user account?
-                var savedKeyFile = ew_prefs.getLastEC2PKeyFile();
+                var savedKeyFile = ew_prefs.getLastEC2PrivateKeyFile();
                 if (savedKeyFile.length > 0 && prvKeyFile != savedKeyFile) {
                     prvKeyFile = savedKeyFile;
                     log("Using default private key file");
@@ -975,10 +973,8 @@ var ew_InstancesTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                ew_InstancesTreeView.refresh();
-                ew_InstancesTreeView.selectByInstanceIds();
-            }
+            ew_InstancesTreeView.refresh();
+            ew_InstancesTreeView.selectByInstanceIds();
         }
         ew_session.controller.startInstances(instanceIds, wrap);
     },
@@ -998,10 +994,8 @@ var ew_InstancesTreeView = {
 
         if (wrap == null) {
             wrap = function(id, timestamp, output) {
-                if (ew_prefs.isRefreshOnChangeEnabled()) {
-                    me.refresh();
-                    me.showConsoleOutput(id, timestamp, output);
-                }
+                me.refresh();
+                me.showConsoleOutput(id, timestamp, output);
             }
         }
 
@@ -1278,10 +1272,8 @@ var ew_InstancesTreeView = {
 
         var me = this;
         var wrap = function(list) {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-                me.selectByInstanceIds(list);
-            }
+            me.refresh();
+            me.selectByInstanceIds(list);
         }
         ew_session.controller.rebootInstances(instanceIds, wrap);
     },
@@ -1336,16 +1328,10 @@ var ew_InstancesTreeView = {
         } else {
             this.selection.clearSelection();
         }
-        if (ew_prefs.isRefreshOnChangeEnabled()) {
-            // Determine if there are any pending instances
-            if (this.pendingInstances(instanceList)) {
-                this.startRefreshTimer();
-            } else {
-                this.stopRefreshTimer();
-            }
+        // Determine if there are any pending instances
+        if (this.pendingInstances(instanceList)) {
+            this.startRefreshTimer();
         } else {
-            // Refresh Has been disabled. Stop the timer in case
-            // it has been started.
             this.stopRefreshTimer();
         }
         this.sort();

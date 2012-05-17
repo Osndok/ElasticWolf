@@ -217,10 +217,8 @@ var ew_AMIsTreeView = {
         var wrap = function(x)
         {
             alert("Image with Manifest: " + manifest + " was registered");
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-                me.selectByImageId(x);
-            }
+            me.refresh();
+            me.selectByImageId(x);
         }
         ew_session.controller.registerImageInRegion(manifest, region, wrap);
     },
@@ -257,9 +255,7 @@ var ew_AMIsTreeView = {
         var me = this;
         var wrap = function()
         {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         log("Deregistering image: " + image.id);
         ew_session.controller.deregisterImage(image.id, wrap);
@@ -364,9 +360,7 @@ var ew_AMIsTreeView = {
             var me = this;
             var snap_wrap = function()
             {
-                if (ew_prefs.isRefreshOnChangeEnabled()) {
-                    ew_SnapshotTreeView.refresh();
-                }
+                ew_SnapshotTreeView.refresh();
             }
 
             var dereg_wrap = function()
@@ -448,10 +442,8 @@ var ew_AMIsTreeView = {
         var me = this;
         var wrap = function()
         {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refreshLaunchPermissions();
-                me.selectLaunchPermissionByName(name);
-            }
+            me.refreshLaunchPermissions();
+            me.selectLaunchPermissionByName(name);
         }
         ew_session.controller.addLaunchPermission(image.id, name, wrap);
     },
@@ -469,9 +461,7 @@ var ew_AMIsTreeView = {
         var me = this;
         var wrap = function()
         {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refreshLaunchPermissions();
-            }
+            me.refreshLaunchPermissions();
         }
         ew_session.controller.revokeLaunchPermission(image.id, name, wrap);
     },
@@ -487,9 +477,7 @@ var ew_AMIsTreeView = {
         var me = this;
         var wrap = function()
         {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refreshLaunchPermissions();
-            }
+            me.refreshLaunchPermissions();
         }
         ew_session.controller.resetLaunchPermissions(image.id, wrap);
     },
@@ -522,10 +510,7 @@ var ew_AMIsTreeView = {
     selectionChanged : function(event)
     {
         BaseImagesView.selectionChanged.call(this, event);
-
-        if (ew_prefs.isAutoFetchLaunchPermissionsEnabled()) {
-            this.refreshLaunchPermissions();
-        }
+        this.refreshLaunchPermissions();
     },
 
     getSearchText : function()

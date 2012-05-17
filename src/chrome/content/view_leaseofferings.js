@@ -40,17 +40,12 @@ var ew_LeaseOfferingsTreeView = { COLNAMES :
 
     displayImages : function(imageList)
     {
-        if (ew_prefs.isRefreshOnChangeEnabled()) {
-            // Determine if there are any pending operations
-            if (this.pendingUpdates()) {
-                this.startRefreshTimer("", ew_LeaseOfferingsTreeView.refresh);
-            } else {
-                this.stopRefreshTimer("ew_LeaseOfferingsTreeView");
-            }
+        // Determine if there are any pending operations
+        if (this.pendingUpdates()) {
+            this.startRefreshTimer("", ew_LeaseOfferingsTreeView.refresh);
         } else {
             this.stopRefreshTimer("ew_LeaseOfferingsTreeView");
         }
-
         BaseImagesView.displayImages.call(this, imageList);
     },
 
@@ -97,10 +92,8 @@ var ew_LeaseOfferingsTreeView = { COLNAMES :
                     // The user wants to purchase this offering
                     var wrap = function(id)
                     {
-                        if (ew_prefs.isRefreshOnChangeEnabled()) {
-                            ew_ReservedInstancesTreeView.refresh();
-                            ew_ReservedInstancesTreeView.selectByImageId(id);
-                        }
+                        ew_ReservedInstancesTreeView.refresh();
+                        ew_ReservedInstancesTreeView.selectByImageId(id);
                     }
 
                     // purchase this lease offering

@@ -72,18 +72,12 @@ var ew_VolumeTreeView = {
     },
 
     displayImages : function (imageList) {
-        if (ew_prefs.isRefreshOnChangeEnabled()) {
-            // Determine if there are any pending operations
-            if (this.pendingUpdates()) {
-                this.startRefreshTimer("",
-                                       this.refresh);
-            } else {
-                this.stopRefreshTimer("ew_VolumeTreeView");
-            }
+        // Determine if there are any pending operations
+        if (this.pendingUpdates()) {
+            this.startRefreshTimer("",  this.refresh);
         } else {
             this.stopRefreshTimer("ew_VolumeTreeView");
         }
-
         BaseImagesView.displayImages.call(this, imageList);
     },
 
@@ -174,9 +168,7 @@ var ew_VolumeTreeView = {
         if (!confirmed)
             return;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                ew_VolumeTreeView.refresh();
-            }
+            ew_VolumeTreeView.refresh();
         }
         ew_session.controller.deleteVolume(image.id, wrap);
     },
@@ -191,15 +183,9 @@ var ew_VolumeTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
-
-        ew_session.controller.attachVolume(volumeId,
-                                              instId,
-                                              device,
-                                              wrap);
+        ew_session.controller.attachVolume(volumeId, instId, device, wrap);
     },
 
     attachVolume : function () {
@@ -281,9 +267,7 @@ var ew_VolumeTreeView = {
         if (!confirmed)
             return;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                ew_VolumeTreeView.refresh();
-            }
+            ew_VolumeTreeView.refresh();
         }
         ew_session.controller.detachVolume(image.id, wrap);
     },
@@ -295,9 +279,7 @@ var ew_VolumeTreeView = {
         if (!confirmed)
             return;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                ew_VolumeTreeView.refresh();
-            }
+            ew_VolumeTreeView.refresh();
         }
         ew_session.controller.forceDetachVolume(image.id, wrap);
     },

@@ -90,7 +90,7 @@
    </toolbox>
 
   <vbox flex="1" style="margin:0px;padding:0px;">
-    <toolbar>
+    <toolbar class="bg">
       <menulist id="ew.active.credentials.list" class="ew_button" label=" " oncommand="ew_session.switchCredentials();" onclick="return ew_session.checkCredentials();"/>
       <menulist id="ew.active.endpoints.list" class="ew_button" label=" " oncommand="ew_session.switchEndpoints();" />
       <toolbarseparator />

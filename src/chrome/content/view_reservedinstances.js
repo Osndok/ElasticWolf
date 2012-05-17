@@ -49,18 +49,13 @@ var ew_ReservedInstancesTreeView = {
     },
 
     displayImages : function (imageList) {
-        if (ew_prefs.isRefreshOnChangeEnabled()) {
         // Determine if there are any pending operations
         if (this.pendingUpdates()) {
             this.startRefreshTimer("ew_ReservedInstancesTreeView", ew_ReservedInstancesTreeView.refresh);
         } else {
             this.stopRefreshTimer("ew_ReservedInstancesTreeView");
         }
-    } else {
-        this.stopRefreshTimer("ew_ReservedInstancesTreeView");
-    }
-
-    BaseImagesView.displayImages.call(this, imageList);
+        BaseImagesView.displayImages.call(this, imageList);
     },
 
     pendingUpdates : function() {

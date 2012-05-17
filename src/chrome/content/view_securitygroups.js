@@ -311,10 +311,8 @@ var ew_PermissionsTreeView = {
             ew_session.showBusyCursor(true);
             var me = this;
             var wrap = function() {
-                if (ew_prefs.isRefreshOnChangeEnabled()) {
-                    ew_SecurityGroupsTreeView.refresh();
-                    ew_SecurityGroupsTreeView.selectGroup(group);
-                }
+                ew_SecurityGroupsTreeView.refresh();
+                ew_SecurityGroupsTreeView.selectGroup(group);
             }
 
             var permission = null;

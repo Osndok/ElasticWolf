@@ -7,9 +7,9 @@
     <tabpanel id="ew.tabs.s3" flex="1">
     <vbox flex="1">
        <hbox flex="1">
-            <groupbox flex="3" orient="vertical">
+            <groupbox flex="1" orient="vertical">
                 <caption label="S3 Buckets" />
-                <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                <toolbar>
                     <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                     <toolbarbutton image="images/left.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.back()" tooltiptext="Back" />
                     <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.create();" tooltiptext="Create Bucket/Folder" />
@@ -18,7 +18,7 @@
                     <toolbarbutton image="images/download.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.download();" tooltiptext="Download file" />
                     <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.upload();" tooltiptext="Upload file" />
                 </toolbar>
-                <hbox>
+                <hbox style="background-color:#AAAAAA;-moz-border-radius:5px;">
                 <label id="ew.s3.path" flex="1" />
                 <label id="ew.s3.status" style="color:green;text-align:right;" flex="1" />
                 </hbox>

@@ -44,7 +44,7 @@ var ew_CertTreeView = {
                 this.selection.select(0);
             }
         },
-        
+
         notifyModelChanged : function(interest) {
             this.invalidate();
         },
@@ -97,9 +97,7 @@ var ew_CertTreeView = {
         createCert : function () {
             var me = this;
             var wrap = function(name, cert) {
-                if (ew_prefs.isRefreshOnChangeEnabled()) {
-                    me.refresh();
-                }
+                me.refresh();
             }
             var body = ew_session.generateCertificate();
             if (body) {
@@ -108,13 +106,11 @@ var ew_CertTreeView = {
                 alert("Could not generate new X509 certificate")
             }
         },
-        
+
         uploadCert : function () {
             var me = this;
             var wrap = function(name, cert) {
-                if (ew_prefs.isRefreshOnChangeEnabled()) {
-                    me.refresh();
-                }
+                me.refresh();
             }
             var file = ew_session.promptForFile("Select the certificate file to upload:")
             if (file) {
@@ -122,7 +118,7 @@ var ew_CertTreeView = {
                 ew_session.controller.UploadSigningCertificate(body, wrap);
             }
         },
-        
+
         deleteSelected  : function () {
             var item = this.getSelected();
             if (item == null) return;
@@ -131,9 +127,7 @@ var ew_CertTreeView = {
 
             var me = this;
             var wrap = function() {
-                if (ew_prefs.isRefreshOnChangeEnabled()) {
-                    me.refresh();
-                }
+                me.refresh();
             }
             ew_session.controller.DeleteSigningCertificate(item.name, wrap);
         }

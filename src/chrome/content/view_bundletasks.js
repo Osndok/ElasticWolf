@@ -206,16 +206,10 @@ var ew_BundleTasksTreeView = {
             this.selection.clearSelection();
         }
 
-        if (ew_prefs.isRefreshBundleViewEnabled()) {
-            // Determine if there are any pending bundle tasks
-            if (this.pendingBundleTasks()) {
-                this.startRefreshTimer();
-            } else {
-                this.stopRefreshTimer();
-            }
+        // Determine if there are any pending bundle tasks
+        if (this.pendingBundleTasks()) {
+            this.startRefreshTimer();
         } else {
-            // Refresh Has been disabled. Stop the timer in case
-            // it has been started.
             this.stopRefreshTimer();
         }
     },
@@ -232,10 +226,8 @@ var ew_BundleTasksTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-                me.selectByBundleId();
-            }
+            me.refresh();
+            me.selectByBundleId();
         }
 
         ew_session.controller.cancelBundleTask(selected.id, wrap);
@@ -285,12 +277,10 @@ var ew_BundleTasksTreeView = {
     registerBundledImage : function (bucket, prefix) {
         var manifestPath = bucket + "/" + prefix + ".manifest.xml";
         var wrap = function(x) {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                ew_AMIsTreeView.refresh();
-                ew_AMIsTreeView.selectByImageId(x);
-                // Navigate to the AMIs tab
-                ew_session.selectTab(-1, 'ew.tabs.image');
-            }
+            ew_AMIsTreeView.refresh();
+            ew_AMIsTreeView.selectByImageId(x);
+            // Navigate to the AMIs tab
+            ew_session.selectTab(-1, 'ew.tabs.image');
         }
         var region = ew_session.controller.getS3BucketLocation(bucket);
         ew_session.controller.registerImageInRegion(manifestPath,

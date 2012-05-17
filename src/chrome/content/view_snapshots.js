@@ -163,13 +163,9 @@ var ew_SnapshotTreeView = {
     displayImages : function (imageList) {
         BaseImagesView.displayImages.call(this, imageList);
 
-        if (ew_prefs.isRefreshOnChangeEnabled()) {
-            // Determine if there are any pending operations
-            if (this.pendingUpdates()) {
-                this.startRefreshTimer("ew_SnapshotTreeView", ew_SnapshotTreeView.refresh);
-            } else {
-                this.stopRefreshTimer("ew_SnapshotTreeView");
-            }
+        // Determine if there are any pending operations
+        if (this.pendingUpdates()) {
+            this.startRefreshTimer("ew_SnapshotTreeView", ew_SnapshotTreeView.refresh);
         } else {
             this.stopRefreshTimer("ew_SnapshotTreeView");
         }

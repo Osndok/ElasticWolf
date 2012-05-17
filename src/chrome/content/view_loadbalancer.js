@@ -109,9 +109,7 @@ var ew_LoadbalancerTreeView = {
             return;
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         ew_session.controller.deleteLoadBalancer(loadbalancer.LoadBalancerName, wrap);
     },
@@ -138,9 +136,7 @@ var ew_LoadbalancerTreeView = {
            );
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         if (retVal.ok) {
                 var Zone = retVal.placement;
@@ -173,9 +169,7 @@ var ew_LoadbalancerTreeView = {
            );
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         if (retVal.ok) {
             ew_session.controller.EditHealthCheck(loadbalancer.LoadBalancerName,retVal.Target,retVal.Interval,retVal.Timeout,retVal.HealthyThreshold,retVal.UnhealthyThreshold,wrap);
@@ -196,9 +190,7 @@ var ew_LoadbalancerTreeView = {
             );
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         if (retVal.ok) {
             var Instancechk = retVal.Instances;
@@ -228,9 +220,7 @@ var ew_LoadbalancerTreeView = {
             );
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         if (retVal.ok) {
             var Instancechk = retVal.Instances;
@@ -260,9 +250,7 @@ var ew_LoadbalancerTreeView = {
         );
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         if (retVal.ok) {
             var Zonechk = retVal.Zone;
@@ -292,9 +280,7 @@ var ew_LoadbalancerTreeView = {
         );
          var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         if (retVal.ok) {
             var Zonechk = retVal.Zone;
@@ -328,9 +314,7 @@ var ew_LoadbalancerTreeView = {
             return;
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         if(loadbalancer.APolicyName == ""){
             var policy =  loadbalancer.CPolicyName;
@@ -363,9 +347,7 @@ var ew_LoadbalancerTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         ew_session.controller.CreateAppCookieSP(loadbalancername,CookieName,wrap);
     },
@@ -391,9 +373,7 @@ var ew_LoadbalancerTreeView = {
 
         var me = this;
         var wrap = function() {
-            if (ew_prefs.isRefreshOnChangeEnabled()) {
-                me.refresh();
-            }
+            me.refresh();
         }
         ew_session.controller.CreateLBCookieSP(loadbalancername,CookieExpirationPeriod, wrap);
     },

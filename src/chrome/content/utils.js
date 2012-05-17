@@ -6,7 +6,7 @@ function $(element)
         }
         return elements;
     }
-    return document.getElementById(element + '');
+    return document.getElementById(String(element));
 }
 
 function empty()
