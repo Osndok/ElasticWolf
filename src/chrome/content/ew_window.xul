@@ -83,21 +83,21 @@
     <menu label="Help">
       <menupopup>
        <menuitem label="About" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayAbout();"/>
+       <menuitem label="Templates" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayHelp();"/>
       </menupopup>
     </menu>
    </menubar>
    </toolbox>
 
-  <vbox flex="1">
-    <toolbar style="padding: 3px; -moz-box-align: center">
-      <menulist id="ew.active.credentials.list" class="ew_toolbutton" label=" " oncommand="ew_session.switchCredentials();" onclick="return ew_session.checkCredentials();"/>
-      <menulist id="ew.active.endpoints.list" class="ew_toolbutton" label=" " oncommand="ew_session.switchEndpoints();" />
+  <vbox flex="1" style="margin:0px;padding:0px;">
+    <toolbar>
+      <menulist id="ew.active.credentials.list" class="ew_button" label=" " oncommand="ew_session.switchCredentials();" onclick="return ew_session.checkCredentials();"/>
+      <menulist id="ew.active.endpoints.list" class="ew_button" label=" " oncommand="ew_session.switchEndpoints();" />
       <toolbarseparator />
       <toolbaritem id="ew.toolbar" />
     </toolbar>
-    <spacer style="height: 10px" />
 
-    <tabpanels id="ew.tabs" flex="1" style="margin:0px;padding:0px;">
+    <tabpanels id="ew.tabs" flex="1" style="margin:0px;padding:0px;border:0px;">
       <tabpanel id="ew.tabs.instance"/>
       <tabpanel id="ew.tabs.image"/>
       <tabpanel id="ew.tabs.auth"/>

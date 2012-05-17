@@ -96,18 +96,7 @@ var ew_session = {
                 menu.appendChild(b);
             }
 
-            var container = document.getElementById("ew.toolbar");
-            for (var i = container.childNodes.length; i > 0; i--) {
-                container.removeChild(container.childNodes[0]);
-            }
-            for (var i in this.tabs) {
-                var b = document.createElement("toolbarbutton");
-                b.setAttribute("label", getProperty(this.tabs[i]));
-                b.setAttribute("class", "ew_toolbutton");
-                b.setAttribute("oncommand", "ew_session.selectTab(" + i + ")");
-                container.appendChild(b);
-            }
-
+            this.createToolbar();
             this.loadAccountIdMap();
             this.loadCredentials();
             this.loadEndpointMap();
@@ -127,6 +116,22 @@ var ew_session = {
         app.quit(Components.interfaces.nsIAppStartup.eForceQuit);
     },
 
+    createToolbar: function() {
+        var container = document.getElementById("ew.toolbar");
+        for (var i = container.childNodes.length; i > 0; i--) {
+            container.removeChild(container.childNodes[0]);
+        }
+        for (var i in this.tabs) {
+            if (ew_prefs.getBoolPreference(this.tabs[i], true)) {
+                var b = document.createElement("toolbarbutton");
+                b.setAttribute("label", getProperty(this.tabs[i]));
+                b.setAttribute("class", "ew_button");
+                b.setAttribute("oncommand", "ew_session.selectTab(" + i + ")");
+                container.appendChild(b);
+            }
+        }
+    },
+
     addTabToRefreshList : function(tab)
     {
         log("Called by: " + tab + " to start refreshing");
@@ -144,7 +149,10 @@ var ew_session = {
     },
 
     checkTab: function(index) {
-
+        if (index >= 0 && index < this.tabs.length) {
+            ew_prefs.setBoolPreference(this.tabs[index], !ew_prefs.getBoolPreference(this.tabs[index], true));
+            this.createToolbar();
+        }
     },
 
     selectTab: function(index, name) {
@@ -753,6 +761,11 @@ var ew_session = {
     displayAbout : function()
     {
         window.openDialog("chrome://ew/content/dialog_about.xul", null, "chrome,centerscreen,modal,resizable", this.client);
+    },
+
+    displayHelp : function()
+    {
+        window.openDialog("chrome://ew/content/dialog_help.xul", null, "chrome,centerscreen,modal,resizable", this.client);
     },
 
     showBusyCursor : function(fShow)

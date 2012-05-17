@@ -66,23 +66,64 @@ treechildren::-moz-tree-checkbox(checked) {
     list-style-image: url("chrome://ew/skin/checked.png");
 }
 
+toolbar {
+    padding: 3px;
+    -moz-box-align: center;
+    background-color: #BBBBBB;
+}
+
+tabpanel {
+    padding:0px;
+    margin:0px;
+    border: 0px;
+    background-color: #BBBBBB;
+}
+
+tree {
+    background-color: #EEEEEE;
+}
+
+treechildren {
+    background-color: #EEEEEE;
+}
+
+listbox {
+    background-color: #EEEEEE;
+}
+
+listcols {
+    background-color: #EEEEEE;
+}
+
 #ew_menu {
     list-style-image: url('menuicon.png');
 }
 
-.ew_toolbutton {
-    font-size: 10px;
-    font-weight: bold;
-    background-color: #AAAAAA;
-    border: 1px solid #999999;
-    text-align: center;
-    margin-left: 10px;
-    -moz-appearance: none;
-    -moz-border-radius: 3px;
-    -moz-box-shadow: 1px 1px 1px #BBBBBB, 1px 1px 1px #BBBBBB;
+.ew_button {
+   -moz-appearance: none;
+   border-top: 1px solid #5e6b73;
+   background: #3f4345;
+   background: -moz-linear-gradient(top, #86868a, #3f4345);
+   padding: 2px 2px;
+   -moz-border-radius: 8px;
+   -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
+   text-shadow: rgba(0,0,0,.4) 0 1px 0;
+   color: white;
+   font-size: 11px;
+   font-weight: bold;
+   font-family: Helvetica, Arial, Sans-Serif;
+   text-decoration: none;
+   text-align: center;
+   vertical-align: middle;
 }
 
-.ew_toolbutton_selected {
-    color: #CCCCCC;
-    background-color: #888888;
+.ew_button:hover {
+   border-top-color: #2c4454;
+   background: #2c4454;
+   color: #ccc;
+}
+
+.ew_button:active {
+   border-top-color: #576066;
+   background: #576066;
 }

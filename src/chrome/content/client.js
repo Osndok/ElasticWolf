@@ -11,7 +11,7 @@ var ew_client = {
     errorMax: 3,
     timers : {},
 
-    VERSION: "1.26",
+    VERSION: "1.27",
     NAME: 'ElasticWolf',
     API_VERSION : '2011-12-15',
     ELB_API_VERSION : '2011-04-05',
