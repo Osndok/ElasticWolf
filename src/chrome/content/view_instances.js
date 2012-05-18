@@ -690,13 +690,9 @@ var ew_InstancesTreeView = {
     },
 
     selectionChanged : function(event) {
-        // When an instance is selected, select the associated AMI, ARI and AKI but only if a single instance has been selected
         var instance = this.getSelectedInstance();
         if (instance == null) return;
         this.selectedInstanceId = instance.id;
-
-        // Ensure the instance's image is selected
-        ew_AMIsTreeView.selectByImageId(instance.imageId);
     },
 
     register: function() {

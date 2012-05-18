@@ -277,15 +277,12 @@ var ew_BundleTasksTreeView = {
     registerBundledImage : function (bucket, prefix) {
         var manifestPath = bucket + "/" + prefix + ".manifest.xml";
         var wrap = function(x) {
-            ew_AMIsTreeView.refresh();
-            ew_AMIsTreeView.selectByImageId(x);
+            ew_model.refreshModels('images');
             // Navigate to the AMIs tab
             ew_session.selectTab('ew.tabs.image');
         }
         var region = ew_session.controller.getS3BucketLocation(bucket);
-        ew_session.controller.registerImageInRegion(manifestPath,
-                                                       region,
-                                                       wrap);
+        ew_session.controller.registerImageInRegion(manifestPath, region, wrap);
     },
 
     registerNewImage : function () {

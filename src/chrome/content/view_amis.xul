@@ -19,6 +19,7 @@
                             <menuitem id="amis.context.migrate" oncommand="ew_AMIsTreeView.migrateImage();" label="Migrate AMI and Register" />
                             <menuitem id="amis.context.delete" oncommand="ew_AMIsTreeView.deleteImage();" label="Delete AMI Parts and Deregister" />
                             <menuitem id="amis.context.deleteSnapshotAndDeregister" oncommand="ew_AMIsTreeView.deleteSnapshotAndDeregister();" label="Delete Snapshot and Deregister AMI" />
+                            <menuitem id="amis.context.perms" oncommand="ew_AMIsTreeView.viewPermissions();" label="Manage Launch Permissions" />
                             <menuseparator />
                             <menuitem id="amis.context.launch" oncommand="ew_AMIsTreeView.launchNewInstances();" label="Launch instance(s) of this AMI" />
                             <menuseparator />
@@ -31,8 +32,7 @@
                     <toolbar style="padding: 0px 3px;">
                         <hbox flex="10">
                             <textbox id="ew.images.search" size="15" value="" onkeypress="ew_AMIsTreeView.searchChanged(event);" />
-                            <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_AMIsTreeView.refresh()"
-                                tooltiptext="&ew.refresh.tip;" />
+                            <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_AMIsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                             <toolbarbutton image="images/powerup.png" style="-moz-box-pack:center;" oncommand="ew_AMIsTreeView.launchNewInstances();" tooltiptext="&ew.images.powerup.tip;" />
                             <toolbarbutton image="images/add.png" tooltiptext="&ew.images.register.tip;" oncommand="ew_AMIsTreeView.registerNewImage();" />
                             <toolbarbutton image="images/delete.png" tooltiptext="&ew.images.deregister.tip;" oncommand="ew_AMIsTreeView.deregisterImage();" />
@@ -83,22 +83,6 @@
                         </treecols>
                         <treechildren context="ew.images.contextmenu" />
                     </tree>
-                </groupbox>
-                <splitter style="max-width: 4px; height: 4px;" persist="state" collapse="after" resizebefore="closest">
-                    <grippy />
-                </splitter>
-                <groupbox flex="1" orient="vertical">
-                    <caption label="&ew.captions.images.attribs.label;" />
-                    <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_AMIsTreeView.refreshLaunchPermissions()"
-                            tooltiptext="&ew.refresh.tip;" />
-                        <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_AMIsTreeView.addLaunchPermission();" tooltiptext="&ew.launchperms.add.tip;" />
-                        <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_AMIsTreeView.removeLaunchPermission();" tooltiptext="&ew.launchperms.remove.tip;" />
-                        <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_AMIsTreeView.addGlobalLaunchPermission();"
-                            tooltiptext="&ew.launchperms.public.tip;" />
-                        <toolbarbutton image="images/reset.png" style="-moz-box-pack:center;" tooltiptext="&ew.launchperms.reset.tip;" oncommand="ew_AMIsTreeView.resetLaunchPermissions();" />
-                    </toolbar>
-                    <listbox id="ew.launchpermissions.list" seltype="single" rows="4" ondblclick="ew_AMIsTreeView.copyAccountIdToClipBoard(event)" flex="1" />
                 </groupbox>
             </hbox>
         </vbox>

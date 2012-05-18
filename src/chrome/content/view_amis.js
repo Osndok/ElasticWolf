@@ -1,6 +1,5 @@
 var ew_AMIsTreeView = {
     COLNAMES : [ 'ami.id', 'ami.location', 'ami.state', 'ami.owner', 'ami.ownerAlias', 'ami.isPublic', 'ami.arch', 'ami.platform', 'ami.rootDeviceType', 'ami.name', 'ami.description', 'ami.tag' ],
-    launchPermissionList : new Array(),
     imageIdRegex : regExs["all"],
     rootDeviceType : "",
     ownerDisplayFilter : "",
@@ -373,156 +372,18 @@ var ew_AMIsTreeView = {
         }
     },
 
-    getLaunchPermissionsList : function()
-    {
-        return document.getElementById("ew.launchpermissions.list");
-    },
-
-    getSelectedLaunchPermission : function()
-    {
-        var item = this.getLaunchPermissionsList().getSelectedItem(0);
-        if (item == null) return null;
-        return item.value;
-    },
-
-    selectLaunchPermissionByName : function(name)
-    {
-        var list = this.getLaunchPermissionsList();
-        for ( var i in this.launchPermissionList) {
-            if (this.launchPermissionList[i] == name) {
-                list.selectedIndex = i;
-                return;
-            }
-        }
-
-        // In case we don't find a match (which is probably a bug).
-        list.selectedIndex = 0;
-    },
-
-    copyAccountIdToClipBoard : function(event)
-    {
-        var name = this.getSelectedLaunchPermission();
-        if (name == null) return;
-
-        copyToClipboard(name);
-    },
-
-    launchPermissionsCallback : function(list)
-    {
-        ew_AMIsTreeView.displayLaunchPermissions(list);
-    },
-
-    refreshLaunchPermissions : function()
+    viewPermissions: function()
     {
         var image = this.getSelectedImage();
-        if (image == null) return;
-        if (image.state == "deregistered") return;
-
-        ew_session.controller.describeLaunchPermissions(image.id, this.launchPermissionsCallback);
-    },
-
-    addGlobalLaunchPermission : function()
-    {
-        var image = this.getSelectedImage();
-        if (image == null) return;
-        this.addNamedPermission(image, "all");
-    },
-
-    addLaunchPermission : function()
-    {
-        var image = this.getSelectedImage();
-        if (image == null) return;
-        var name = prompt("Please provide an EC2 user ID");
-        if (name == null) return;
-        this.addNamedPermission(image, name);
-    },
-
-    addNamedPermission : function(image, name)
-    {
-        var me = this;
-        var wrap = function()
-        {
-            me.refreshLaunchPermissions();
-            me.selectLaunchPermissionByName(name);
+        if (image == null) {
+            return;
         }
-        ew_session.controller.addLaunchPermission(image.id, name, wrap);
-    },
-
-    removeLaunchPermission : function()
-    {
-        var image = this.getSelectedImage();
-        if (image == null) return;
-        var name = this.getSelectedLaunchPermission();
-        if (name == null) return;
-
-        var confirmed = confirm("Revoke launch permissions for " + name + " on AMI " + image.id + "?");
-        if (!confirmed) return;
-
-        var me = this;
-        var wrap = function()
-        {
-            me.refreshLaunchPermissions();
-        }
-        ew_session.controller.revokeLaunchPermission(image.id, name, wrap);
-    },
-
-    resetLaunchPermissions : function()
-    {
-        var image = this.getSelectedImage();
-        if (image == null) return;
-
-        var confirmed = confirm("Reset launch permissions for AMI " + image.id + "?");
-        if (!confirmed) return;
-
-        var me = this;
-        var wrap = function()
-        {
-            me.refreshLaunchPermissions();
-        }
-        ew_session.controller.resetLaunchPermissions(image.id, wrap);
-    },
-
-    displayLaunchPermissions : function(permList)
-    {
-        this.launchPermissionList = permList;
-
-        var list = this.getLaunchPermissionsList();
-        var count = list.getRowCount();
-        for ( var i = count - 1; i >= 0; i--) {
-            list.removeItemAt(i);
-        }
-
-        // Sort 'all' to the top
-        permList.sort(function(x, y)
-        {
-            if (x == 'all') return -1;
-            if (y == 'all') return 1;
-            return x < y ? -1 : (x == y ? 0 : 1);
-        });
-
-        var perm = null;
-        for ( var i in permList) {
-            perm = permList[i];
-            list.appendItem(ew_session.lookupAccountId(perm), perm);
-        }
-    },
-
-    selectionChanged : function(event)
-    {
-        BaseImagesView.selectionChanged.call(this, event);
-        this.refreshLaunchPermissions();
+        window.openDialog("chrome://ew/content/dialog_ami_permissions.xul", null, "chrome,centerscreen,modal,resizable", ew_session, image);
     },
 
     getSearchText : function()
     {
         return document.getElementById('ew.images.search').value;
-    },
-
-    invalidate : function()
-    {
-        var target = ew_AMIsTreeView;
-        target.displayLaunchPermissions([]);
-        target.displayImagesOfType();
     },
 };
 

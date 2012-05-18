@@ -11,7 +11,7 @@ var ew_client = {
     errorMax: 3,
     timers : {},
 
-    VERSION: "1.27",
+    VERSION: "1.28",
     NAME: 'ElasticWolf',
     API_VERSION : '2011-12-15',
     ELB_API_VERSION : '2011-04-05',
@@ -170,7 +170,7 @@ var ew_client = {
         }
 
         var rsp = null;
-        while (ew_prefs.isHttpEnabled() && this.errorCount < this.errorMax) {
+        while (ew_prefs.isHttpEnabled()) {
             try {
                 rsp = this.queryEC2Impl(action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion);
                 if (rsp.hasErrors) {
@@ -412,7 +412,7 @@ var ew_client = {
 
         var rsp = null;
 
-        while (ew_prefs.isHttpEnabled() && this.errorCount < this.errorMax) {
+        while (ew_prefs.isHttpEnabled()) {
             try {
                 rsp = this.queryS3Impl(method, bucket, key, path, params, content, objActions, isSync, reqType, callback);
                 if (rsp.hasErrors) {
@@ -446,7 +446,9 @@ var ew_client = {
         if (isSync) {
             xmlhttp.onreadystatechange = empty;
         } else {
-            xmlhttp.onreadystatechange = function () { me.handleAsyncResponse(xmlhttp, callback, reqType, objActions, data); }
+            xmlhttp.onreadystatechange = function () {
+                me.handleAsyncResponse(xmlhttp, callback, reqType, objActions, data);
+            }
         }
         this.startTimer(timerKey, 30000, xmlhttp.abort);
 
