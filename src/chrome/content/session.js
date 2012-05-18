@@ -47,7 +47,7 @@ var ew_session = {
             var b = document.createElement("menuitem");
             b.setAttribute("label", getProperty(this.tabs[i].tab));
             b.setAttribute("type", "checkbox");
-            b.setAttribute("checked", ew_prefs.getBoolPreference(this.tabs[i], true));
+            b.setAttribute("checked", ew_prefs.getBoolPreference(this.tabs[i].tab, true));
             b.setAttribute("oncommand", "ew_session.checkTab(" + i + ")");
             menu.appendChild(b);
             // Connect views to trees
@@ -132,7 +132,7 @@ var ew_session = {
 
     checkTab: function(index) {
         if (index >= 0 && index < this.tabs.length) {
-            ew_prefs.setBoolPreference(this.tabs[index], !ew_prefs.getBoolPreference(this.tabs[index], true));
+            ew_prefs.setBoolPreference(this.tabs[index].tab, !ew_prefs.getBoolPreference(this.tabs[index].tab, true));
             this.createToolbar();
         }
     },

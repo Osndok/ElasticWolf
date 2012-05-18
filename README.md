@@ -38,6 +38,16 @@ clients for accessing Linux instances.
 
  it will produce to .zip files for each platform
 
+## Passing credentials via command line
+
+ The parameters are:
+
+ * -key AWS Access key id
+ * -secret - AWS Access Secret
+ * -endpoint - URL for the endpoint
+ * -name Name for passed credentials
+ * -lock - lock the credentials and not allow to change it
+ 
 ## Developers:
   Vlad Seryakov
 
