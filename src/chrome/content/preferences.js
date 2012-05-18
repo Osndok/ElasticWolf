@@ -160,6 +160,12 @@ var ew_prefs = {
     SSH_USER : "ew.tools.ssh.user",
     HTTP_ENABLED : "ew.http.enabled",
     DEBUG_ENABLED : "ew.debugging.enabled",
+    OFFLINE : "ew.offline.enabled",
+    QUERY_ON_START : "ew.queryonstart.enabled",
+    REFRESH_ON_CHANGE : "ew.refreshonchange.enabled",
+    REFRESH_BUNDLE_VIEW : "ew.refreshBundleView.enabled",
+    AUTOFETCH_LP : "ew.autofetchlaunchpermissions.enabled",
+    OPEN_IN_NEW_TAB : "ew.usenewtab.enabled",
     EW_URL : "ew.url",
     EW_KEYHOME: "ew.keyhome",
     CURRENT_TAB : "ew.current.tab",
@@ -199,6 +205,9 @@ var ew_prefs = {
     {
         if (this.prefs == null) {
             this.prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+            this.setQueryOnStartEnabled(this.isQueryOnStartEnabled());
+            this.setRefreshOnChangeEnabled(this.isRefreshOnChangeEnabled());
+            this.setRefreshBundleViewEnabled(this.isRefreshBundleViewEnabled());
             this.setLastUsedAccount(this.getLastUsedAccount());
             this.setLastUsedEndpoint(this.getLastUsedEndpoint());
             this.setRDPCommand(this.getRDPCommand());
@@ -208,6 +217,9 @@ var ew_prefs = {
             this.setCurrentTab(this.getCurrentTab());
             this.setDebugEnabled(this.isDebugEnabled());
             this.setHttpEnabled(this.isHttpEnabled());
+            this.setOfflineEnabled(this.isOfflineEnabled());
+            this.setOpenInNewTabEnabled(this.isOpenInNewTabEnabled());
+            this.setAutoFetchLaunchPermissionsEnabled(this.isAutoFetchLaunchPermissionsEnabled());
             this.setAccountIdMap(this.getAccountIdMap());
             this.setLastEC2PKeyFile(this.getLastEC2PKeyFile());
             this.setInstanceTags(this.getInstanceTags());
@@ -282,6 +294,30 @@ var ew_prefs = {
     setHttpEnabled : function(enabled)
     {
         this.setBoolPreference(this.HTTP_ENABLED, enabled);
+    },
+    setOfflineEnabled : function(enabled)
+    {
+        this.setBoolPreference(this.OFFLINE, enabled);
+    },
+    setOpenInNewTabEnabled : function(enabled)
+    {
+        this.setBoolPreference(this.OPEN_IN_NEW_TAB, enabled);
+    },
+    setQueryOnStartEnabled : function(enabled)
+    {
+        this.setBoolPreference(this.QUERY_ON_START, enabled);
+    },
+    setRefreshOnChangeEnabled : function(enabled)
+    {
+        this.setBoolPreference(this.REFRESH_ON_CHANGE, enabled);
+    },
+    setRefreshBundleViewEnabled : function(enabled)
+    {
+        this.setBoolPreference(this.REFRESH_BUNDLE_VIEW, enabled);
+    },
+    setAutoFetchLaunchPermissionsEnabled : function(enabled)
+    {
+        this.setBoolPreference(this.AUTOFETCH_LP, enabled);
     },
     setLastEC2PKeyFile : function(value)
     {
@@ -378,6 +414,30 @@ var ew_prefs = {
     isHttpEnabled : function()
     {
         return this.getBoolPreference(this.HTTP_ENABLED, true);
+    },
+    isOfflineEnabled : function()
+    {
+        return this.getBoolPreference(this.OFFLINE, false);
+    },
+    isOpenInNewTabEnabled : function()
+    {
+        return this.getBoolPreference(this.OPEN_IN_NEW_TAB, true);
+    },
+    isQueryOnStartEnabled : function()
+    {
+        return this.getBoolPreference(this.QUERY_ON_START, true);
+    },
+    isRefreshOnChangeEnabled : function()
+    {
+        return this.getBoolPreference(this.REFRESH_ON_CHANGE, true);
+    },
+    isRefreshBundleViewEnabled : function()
+    {
+        return this.getBoolPreference(this.REFRESH_BUNDLE_VIEW, true);
+    },
+    isAutoFetchLaunchPermissionsEnabled : function()
+    {
+        return this.getBoolPreference(this.AUTOFETCH_LP, true);
     },
     getConcurrentS3Conns : function()
     {

@@ -66,6 +66,38 @@ treechildren::-moz-tree-checkbox(checked) {
     list-style-image: url("chrome://ew/skin/checked.png");
 }
 
+treechildren::-moz-tree-row {
+    border-top: 1px solid transparent;
+    height: 18px;
+    background-color: #EFEFEF;
+}
+
+tree:not([hidecolumnpicker="true"]) treechildren::-moz-tree-row(odd) {
+    background-color: #EFEFEF;
+}
+
+treechildren::-moz-tree-row(hover) {
+    background-color: #ADCAEB;
+}
+
+treechildren::-moz-tree-row(selected), treechildren::-moz-tree-row(odd, selected), tree:not([hidecolumnpicker="true"]) treechildren::-moz-tree-row(odd, selected) {
+    background-color: #EFEFEF;
+}
+
+treechildren::-moz-tree-row(selected, focus), treechildren::-moz-tree-row(odd, selected, focus), tree:not([hidecolumnpicker="true"]) treechildren::-moz-tree-row(odd, selected, focus) {
+    background-color: Highlight;
+    color: HighlightText;
+}
+
+tree {
+    background-color: #EFEFEF;
+}
+
+treechildren {
+    background-color: #EFEFEF;
+}
+
+
 .bg {
     background-color: #BBBBBB;
 }
@@ -85,20 +117,12 @@ tabpanel {
     background-color: #BBBBBB;
 }
 
-tree {
-    background-color: #EEEEEE;
-}
-
-treechildren {
-    background-color: #EEEEEE;
-}
-
 listbox {
-    background-color: #EEEEEE;
+    background-color: #EFEFEF;
 }
 
 listcols {
-    background-color: #EEEEEE;
+    background-color: #EFEFEF;
 }
 
 #ew_menu {
@@ -111,7 +135,7 @@ listcols {
    background: #3f4345;
    background: -moz-linear-gradient(top, #86868a, #3f4345);
    padding: 2px 2px;
-   -moz-border-radius: 8px;
+   -moz-border-radius: 5px;
    -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
    text-shadow: rgba(0,0,0,.4) 0 1px 0;
    color: white;
@@ -123,10 +147,13 @@ listcols {
    vertical-align: middle;
 }
 
+.ew_button_selected {
+    color: #FFFF99;
+}
+
 .ew_button:hover {
    border-top-color: #2c4454;
    background: #2c4454;
-   color: #ccc;
 }
 
 .ew_button:active {

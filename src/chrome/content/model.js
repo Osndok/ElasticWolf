@@ -712,8 +712,12 @@ var ew_model = {
     notifyComponents : function(interest)
     {
         var comps = this.componentInterests[interest] || [];
-        for ( var i in comps) {
-            comps[i].notifyModelChanged(interest);
+        for (var i in comps) {
+            if (ew_session.isViewVisible(comps[i])) {
+                comps[i].notifyModelChanged(interest);
+            } else {
+                comps[i].display([]);
+            }
         }
     },
 

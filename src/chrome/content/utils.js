@@ -51,6 +51,22 @@ function generateCSVForObject(obj)
     return pairs.join(',');
 }
 
+// Deep copy of an object
+function cloneObject(obj)
+{
+    if (typeof obj != "object") return obj;
+    var newObj = (obj instanceof Array) ? [] : {};
+    for (i in obj) {
+        if (obj[i] && typeof obj[i] == "object") {
+            newObj[i] = cloneObject(obj[i]);
+        } else {
+            newObj[i] = obj[i]
+        }
+    }
+    return newObj;
+}
+
+// Generic tree container
 var TreeView = {
     COLNAMES : [ 'name' ],
     treeBox : null,
@@ -168,7 +184,7 @@ var TreeView = {
     selectionChanged: function(event) {
     },
     display : function(list) {
-        var sel = this.getSelected()
+        var sel = cloneObject(this.getSelected())
         this.treeBox.rowCountChanged(0, -this.treeList.length);
         this.treeList = new Array();
         if (list) {

@@ -163,10 +163,7 @@ var ew_client = {
     },
 
     queryEC2 : function (action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion) {
-        if (this.accessCode == null || this.accessCode == "") {
-            log ("No Access Code for user");
-            return;
-        }
+        if (this.accessCode == null || this.accessCode == "") return null;
 
         if (this.serviceURL == null || this.serviceURL == "") {
             this.setEndpoint(ew_session.getActiveEndpoint());
@@ -363,6 +360,8 @@ var ew_client = {
     },
 
     uploadS3: function(bucket, key, path, params, filename, callback, progresscb) {
+        if (this.accessCode == null || this.accessCode == "") return null;
+
         var file = FileIO.streamOpen(filename);
         if (!file) {
             alert('Cannot open ' + filename)
@@ -409,6 +408,8 @@ var ew_client = {
     },
 
     queryS3 : function (method, bucket, key, path, params, content, objActions, isSync, reqType, callback) {
+        if (this.accessCode == null || this.accessCode == "") return null;
+
         var rsp = null;
 
         while (ew_prefs.isHttpEnabled() && this.errorCount < this.errorMax) {

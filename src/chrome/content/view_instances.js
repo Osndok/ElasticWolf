@@ -32,10 +32,9 @@ var ew_InstancesTreeView = {
     registered : false,
     instPassword : null,
     instanceIdRegex : new RegExp("^i-"),
-    selectedInstanceId : null, // To preserve instance selections across
-                                // refreshes, etc
+    selectedInstanceId : null, // To preserve instance selections across refreshes, etc
 
-    rowCount: function() { return this.instanceList.length; },
+    get rowCount() { return this.instanceList.length; },
     setTree     : function(treeBox)     { this.treeBox = treeBox; },
     getCellText : function(idx, column) {
         if (idx >= this.rowCount) return "";

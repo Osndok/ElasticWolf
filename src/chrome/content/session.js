@@ -12,6 +12,7 @@ var ew_session = {
     endpointmap : null,
     endpointMenu: null,
     credMenu: null,
+    tabMenu: null,
     instanceTags : null,
     volumeTags : null,
     snapshotTags : null,
@@ -25,116 +26,68 @@ var ew_session = {
     vpnTags : null,
     refreshedTabs : new Array(),
     cmdline: null,
-    tabs: [ "ew.tabs.instance",
-            "ew.tabs.image",
-            "ew.tabs.auth",
-            "ew.tabs.securitygroup",
-            "ew.tabs.eip",
-            "ew.tabs.volume",
-            "ew.tabs.loadbalancer",
-            "ew.tabs.bundletask",
-            "ew.tabs.lease",
-            "ew.tabs.vpc",
-            "ew.tabs.routing",
-            "ew.tabs.acl",
-            "ew.tabs.eni",
-            "ew.tabs.vpn",
-            "ew.tabs.availzone",
-            "ew.tabs.s3",
-          ],
+    tabs: {},
 
-    initialize : function()
+    initialize : function(tabs)
     {
-        if (!this.initialized) {
-            this.controller = ew_controller;
-            this.model = ew_model;
-            this.client = ew_client;
-            this.preferences = ew_prefs;
-            this.endpointMenu = $('ew.active.endpoints.list');
-            this.credMenu = $('ew.active.credentials.list');
-            ew_prefs.init();
+        this.tabs = tabs;
+        this.controller = ew_controller;
+        this.model = ew_model;
+        this.client = ew_client;
+        this.preferences = ew_prefs;
+        this.endpointMenu = $('ew.active.endpoints.list');
+        this.credMenu = $('ew.active.credentials.list');
+        this.tabMenu = $("ew.tabs");
 
-            document.title = ew_prefs.getAppName();
-            $("ew.images.view").view = ew_AMIsTreeView;
-            $("ew.keypairs.view").view = ew_KeypairTreeView;
-            $("ew.certs.view").view = ew_CertTreeView;
-            $("ew.accesskeys.view").view = ew_AccessKeyTreeView;
-            $("ew.instances.view").view = ew_InstancesTreeView;
-            $("ew.securitygroups.view").view = ew_SecurityGroupsTreeView;
-            $("ew.permissions.view").view = ew_PermissionsTreeView;
-            $("ew.eip.view").view = ew_ElasticIPTreeView;
-            $("ew.azones.view").view = ew_AvailZoneTreeView;
-            $("ew.volumes.view").view = ew_VolumeTreeView;
-            $("ew.snapshots.view").view = ew_SnapshotTreeView;
-            $("ew.bundleTasks.view").view = ew_BundleTasksTreeView;
-            $("ew.offerings.view").view = ew_LeaseOfferingsTreeView;
-            $("ew.rsvdInst.view").view = ew_ReservedInstancesTreeView;
-            $("ew.loadbalancer.view").view = ew_LoadbalancerTreeView;
-            $("ew.instancehealth.view").view = ew_InstanceHealthTreeView;
-            $("ew.vpcs.view").view = ew_VpcTreeView;
-            $("ew.subnets.view").view = ew_SubnetTreeView;
-            $("ew.dhcpoptions.view").view = ew_DhcpoptsTreeView;
-            $("ew.vpngateways.view").view = ew_VpnGatewayTreeView;
-            $("ew.vpnconnections.view").view = ew_VpnConnectionTreeView;
-            $("ew.customergateways.view").view = ew_CustomerGatewayTreeView;
-            $("ew.vpnattachments.view").view = ew_VpnAttachmentTreeView;
-            $("ew.internetgateways.view").view = ew_InternetGatewayTreeView;
-            $("ew.routetables.view").view = ew_RouteTablesTreeView;
-            $("ew.routes.view").view = ew_RoutesTreeView;
-            $("ew.route.associations.view").view = ew_RouteAssociationsTreeView;
-            $("ew.acls.view").view = ew_NetworkAclsTreeView;
-            $("ew.acls.associations.view").view = ew_NetworkAclAssociationsTreeView;
-            $("ew.acls.rules.view").view = ew_NetworkAclRulesTreeView;
-            $("ew.enis.view").view = ew_NetworkInterfacesTreeView;
-            $("ew.enis.attachments.view").view = ew_NetworkInterfaceAttachmentsTreeView;
-            $("ew.s3.view").view = ew_S3BucketsTreeView;
+        ew_prefs.init();
+        document.title = ew_prefs.getAppName();
 
-            var menu = $("ew.menu.view");
-            for (var i in this.tabs) {
-                var b = document.createElement("menuitem");
-                b.setAttribute("label", getProperty(this.tabs[i]));
-                b.setAttribute("type", "checkbox");
-                b.setAttribute("checked", ew_prefs.getBoolPreference(this.tabs[i], true));
-                b.setAttribute("oncommand", "ew_session.checkTab(" + i + ")");
-                menu.appendChild(b);
+        var menu = $("ew.menu.view");
+        for (var i in this.tabs) {
+            var b = document.createElement("menuitem");
+            b.setAttribute("label", getProperty(this.tabs[i].tab));
+            b.setAttribute("type", "checkbox");
+            b.setAttribute("checked", ew_prefs.getBoolPreference(this.tabs[i], true));
+            b.setAttribute("oncommand", "ew_session.checkTab(" + i + ")");
+            menu.appendChild(b);
+            // Connect views to trees
+            for (var v in this.tabs[i].views) {
+                $(this.tabs[i].views[v].id).view = this.tabs[i].views[v].view;
             }
-
-            this.createToolbar();
-            this.loadAccountIdMap();
-            this.loadCredentials();
-            this.loadEndpointMap();
-            this.switchCredentials();
-            this.loadAllTags();
-
-            // Parse command line
-            this.cmdLine = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine);
-
-            // Passing credentials
-            var name = this.cmdLine.handleFlagWithParam('name', true);
-            var key = this.cmdLine.handleFlagWithParam('key', true);
-            var secret = this.cmdLine.handleFlagWithParam('secret', true);
-            var endpoint = this.cmdLine.handleFlagWithParam('endpoint', true);
-            if (key && key != '' && secret && secret != '') {
-                var cred = new Credential(name || 'AWS', key, secret, endpoint);
-                this.credMenu.removeAllItems();
-                this.credMenu.appendItem(cred.name, cred.name);
-                this.switchCredentials(cred);
-            } else
-
-            if (endpoint && endpoint != '') {
-                var e = new Endpoint("", endpoint);
-                this.endpointMenu.removeAllItems();
-                this.endpointMenu.appendItem(e.name, e.name);
-                this.switchEndpoints(e);
-            }
-
-            // Disable credentials management
-            this.locked = this.cmdLine.handleFlag('lock', true);
-            this.initialized = true;
-        } else {
-            this.loadEndpointMap();
-            this.switchEndpoints();
         }
+
+        this.createToolbar();
+        this.loadAccountIdMap();
+        this.loadCredentials();
+        this.loadEndpointMap();
+        this.switchCredentials();
+        this.loadAllTags();
+
+        // Parse command line
+        this.cmdLine = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine);
+
+        // Passing credentials
+        var name = this.cmdLine.handleFlagWithParam('name', true);
+        var key = this.cmdLine.handleFlagWithParam('key', true);
+        var secret = this.cmdLine.handleFlagWithParam('secret', true);
+        var endpoint = this.cmdLine.handleFlagWithParam('endpoint', true);
+        if (key && key != '' && secret && secret != '') {
+            var cred = new Credential(name || 'AWS', key, secret, endpoint);
+            this.credMenu.removeAllItems();
+            this.credMenu.appendItem(cred.name, cred.name);
+            this.switchCredentials(cred);
+        } else
+
+        if (endpoint && endpoint != '') {
+            var e = new Endpoint("", endpoint);
+            this.endpointMenu.removeAllItems();
+            this.endpointMenu.appendItem(e.name, e.name);
+            this.switchEndpoints(e);
+        }
+
+        // Disable credentials management
+        this.locked = this.cmdLine.handleFlag('lock', true);
+        this.initialized = true;
     },
 
     quit: function()
@@ -149,14 +102,15 @@ var ew_session = {
             container.removeChild(container.childNodes[0]);
         }
         for (var i in this.tabs) {
-            if (ew_prefs.getBoolPreference(this.tabs[i], true)) {
+            if (ew_prefs.getBoolPreference(this.tabs[i].tab, true)) {
                 var b = document.createElement("toolbarbutton");
-                b.setAttribute("label", getProperty(this.tabs[i]));
+                b.setAttribute("label", getProperty(this.tabs[i].tab));
                 b.setAttribute("class", "ew_button");
                 b.setAttribute("oncommand", "ew_session.selectTab(" + i + ")");
                 container.appendChild(b);
             }
         }
+        this.selectTab(ew_prefs.getCurrentTab());
     },
 
     addTabToRefreshList : function(tab)
@@ -183,15 +137,14 @@ var ew_session = {
     },
 
     selectTab: function(index, name) {
-        var tabs = $("ew.tabs");
         if (index >= 0) {
-            tabs.selectedIndex = index;
+            this.tabMenu.selectedIndex = index;
             this.tabSelectionChanged();
         } else
         if (name) {
-            for (var  i in this.tabs) {
-                if (this.tabs[i] == name || this.tabs[i] == name) {
-                    tabs.selectedIndex = i;
+            for (var i in this.tabs) {
+                if (this.tabs[i].tab == name) {
+                    this.tabMenu.selectedIndex = i;
                     this.tabSelectionChanged();
                     break;
                 }
@@ -201,18 +154,13 @@ var ew_session = {
 
     tabSelectionChanged : function(event)
     {
-        if (!this.initialized) {
-            return;
-        }
-        var tabs = $("ew.tabs");
-        var label = this.tabs[tabs.selectedIndex];
-
-        var toCall = "invalidate()";
-        if (this.getActiveCredential() != null) {
-            toCall = "refresh()";
+        // update selected button
+        var container = $("ew.toolbar");
+        for (var i = 0; i < container.childNodes.length; i++) {
+            container.childNodes[i].setAttribute("class", "ew_button" + (i == this.tabMenu.selectedIndex ? " ew_button_selected" : ""));
         }
 
-        // stop the refresh timers of all tabs
+        // Stop the refresh timers of all tabs
         for (var tab in this.refreshedTabs) {
             if (this.refreshedTabs[tab] == 1) {
                 this.refreshedTabs[tab] = 0;
@@ -220,89 +168,25 @@ var ew_session = {
                 eval(tab + ".stopRefreshTimer()");
             }
         }
-        debug('tab selected: ' + label + ": " + toCall)
-        switch (label) {
-        case 'ew.tabs.instance':
-            eval("ew_InstancesTreeView." + toCall);
-            break;
 
-        case 'ew.tabs.image':
-            this.showBusyCursor(true);
-            eval("ew_AMIsTreeView." + toCall);
-            this.showBusyCursor(false);
-            break;
-
-        case 'ew.tabs.auth':
-            eval("ew_AccessKeyTreeView." + toCall);
-            eval("ew_KeypairTreeView." + toCall);
-            eval("ew_CertTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.securitygroup':
-            eval("ew_SecurityGroupsTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.eip':
-            eval("ew_ElasticIPTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.volume':
-            eval("ew_VolumeTreeView." + toCall);
-            eval("ew_SnapshotTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.bundletask':
-            eval("ew_BundleTasksTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.availzone':
-            eval("ew_AvailZoneTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.lease':
-            eval("ew_LeaseOfferingsTreeView." + toCall);
-            eval("ew_ReservedInstancesTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.vpc':
-            eval("ew_VpcTreeView." + toCall);
-            eval("ew_SubnetTreeView." + toCall);
-            eval("ew_DhcpoptsTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.vpn':
-            eval("ew_VpnConnectionTreeView." + toCall);
-            eval("ew_VpnGatewayTreeView." + toCall);
-            eval("ew_CustomerGatewayTreeView." + toCall);
-            eval("ew_VpnAttachmentTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.loadbalancer':
-            eval("ew_LoadbalancerTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.routing':
-            eval("ew_InternetGatewayTreeView." + toCall);
-            eval("ew_RouteTablesTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.acl':
-            eval("ew_NetworkAclsTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.eni':
-            eval("ew_NetworkInterfacesTreeView." + toCall);
-            break;
-
-        case 'ew.tabs.s3':
-            eval("ew_S3BucketsTreeView." + toCall);
-            break;
-
-        default:
-            log("This is an invalid tab: " + label);
-            return;
+        // Refresh if no records yet
+        var tab = this.tabs[this.tabMenu.selectedIndex];
+        for (var i in tab.views) {
+            if (tab.views[i].view.rowCount == 0) {
+                tab.views[i].view.refresh();
+            }
         }
-        ew_prefs.setCurrentTab(tabs.selectedIndex);
+        ew_prefs.setCurrentTab(this.tabMenu.selectedIndex);
+    },
+
+    isViewVisible: function(view)
+    {
+        for (var i in this.tabs) {
+            for (var j in this.tabs[i].views) {
+                if (this.tabs[i].views[j].view == view) return true
+            }
+        }
+        return false;
     },
 
     getCredentials : function () {
