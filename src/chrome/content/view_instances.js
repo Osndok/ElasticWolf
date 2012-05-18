@@ -284,7 +284,7 @@ var ew_InstancesTreeView = {
                 // Navigate to the Bundle Tasks tab
                 ew_BundleTasksTreeView.refresh();
                 ew_BundleTasksTreeView.selectByBundleId(list[0].id);
-                ew_session.selectTab(-1, 'ew.tabs.bundletask')
+                ew_session.selectTab('ew.tabs.bundletask')
             }
             ew_session.controller.bundleInstance(instance.id, retVal.bucketName, retVal.prefix, ew_session.getActiveCredential(), wrap);
         }
@@ -368,7 +368,7 @@ var ew_InstancesTreeView = {
 
             // Navigate to the Volumes Tab
             ew_VolumeTreeView.refresh();
-            ew_session.selectTab(-1, 'ew.tabs.volume')
+            ew_session.selectTab('ew.tabs.volume')
             ew_VolumeTreeView.selectByImageId(retVal.volumeId);
         }
     },
@@ -390,7 +390,7 @@ var ew_InstancesTreeView = {
             // There are no addresses to associate with.
             var fAddEIP = confirm ("Would you like to create a new Elastic IP to associate with this instance?");
             if (fAddEIP) {
-                ew_session.selectTab(-1, 'ew.tabs.eip');
+                ew_session.selectTab('ew.tabs.eip');
                 ew_ElasticIPTreeView.allocateAddress();
             }
             return;

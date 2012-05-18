@@ -15,7 +15,7 @@
   <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
   <script type="application/x-javascript" src="chrome://ew/content/model.js" />
   <script type="application/x-javascript" src="chrome://ew/content/client.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/manager_endpoint.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/dialog_manage_endpoints.js" />
 
   <vbox flex="1">
     <vbox flex="1">

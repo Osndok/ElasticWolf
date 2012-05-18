@@ -28,9 +28,9 @@ var ew_session = {
     cmdline: null,
     tabs: {},
 
-    initialize : function(tabs)
+    initialize : function()
     {
-        this.tabs = tabs;
+        this.tabs = ew_window.tabs;
         this.controller = ew_controller;
         this.model = ew_model;
         this.client = ew_client;
@@ -106,7 +106,8 @@ var ew_session = {
                 var b = document.createElement("toolbarbutton");
                 b.setAttribute("label", getProperty(this.tabs[i].tab));
                 b.setAttribute("class", "ew_button");
-                b.setAttribute("oncommand", "ew_session.selectTab(" + i + ")");
+                b.setAttribute("id", this.tabs[i].tab.replace('.tabs.', '.buttons.'));
+                b.setAttribute("oncommand", "ew_session.selectTab('" + this.tabs[i].tab + "')");
                 container.appendChild(b);
             }
         }
@@ -136,47 +137,38 @@ var ew_session = {
         }
     },
 
-    selectTab: function(index, name) {
-        if (index >= 0) {
-            this.tabMenu.selectedIndex = index;
-            this.tabSelectionChanged();
-        } else
-        if (name) {
-            for (var i in this.tabs) {
-                if (this.tabs[i].tab == name) {
-                    this.tabMenu.selectedIndex = i;
-                    this.tabSelectionChanged();
-                    break;
+    selectTab: function(name) {
+        for (var i in this.tabs) {
+            if (this.tabs[i].tab == name) {
+                this.tabMenu.selectedIndex = i;
+                ew_prefs.setCurrentTab(name);
+
+                // update selected button
+                var container = $("ew.toolbar");
+                var bid = name.replace('.tabs.', '.buttons.');
+                for (var i = 0; i < container.childNodes.length; i++) {
+                    container.childNodes[i].setAttribute("class", "ew_button" + (container.childNodes[i].id == bid ? " ew_button_selected" : ""));
                 }
+
+                // Stop the refresh timers of all tabs
+                for (var tab in this.refreshedTabs) {
+                    if (this.refreshedTabs[tab] == 1) {
+                        this.refreshedTabs[tab] = 0;
+                        log("Stopping Refresh of tab: " + tab);
+                        eval(tab + ".stopRefreshTimer()");
+                    }
+                }
+
+                // Refresh if no records yet
+                var tab = this.tabs[this.tabMenu.selectedIndex];
+                for (var i in tab.views) {
+                    if (tab.views[i].view.rowCount == 0) {
+                        tab.views[i].view.refresh();
+                    }
+                }
+                break;
             }
         }
-    },
-
-    tabSelectionChanged : function(event)
-    {
-        // update selected button
-        var container = $("ew.toolbar");
-        for (var i = 0; i < container.childNodes.length; i++) {
-            container.childNodes[i].setAttribute("class", "ew_button" + (i == this.tabMenu.selectedIndex ? " ew_button_selected" : ""));
-        }
-
-        // Stop the refresh timers of all tabs
-        for (var tab in this.refreshedTabs) {
-            if (this.refreshedTabs[tab] == 1) {
-                this.refreshedTabs[tab] = 0;
-                log("Stopping Refresh of tab: " + tab);
-                eval(tab + ".stopRefreshTimer()");
-            }
-        }
-
-        // Refresh if no records yet
-        var tab = this.tabs[this.tabMenu.selectedIndex];
-        for (var i in tab.views) {
-            if (tab.views[i].view.rowCount == 0) {
-                tab.views[i].view.refresh();
-            }
-        }
-        ew_prefs.setCurrentTab(this.tabMenu.selectedIndex);
     },
 
     isViewVisible: function(view)

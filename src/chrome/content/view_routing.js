@@ -1,6 +1,6 @@
 var ew_RouteTablesTreeView = {
-    COLNAMES : [ 'routeTable.id', 'routeTable.vpcId' ],
-    model : "routeTables",
+    COLNAMES : [ 'routeTable.id', 'routeTable.vpcId', 'routeTable.info' ],
+    model : [ "routeTables", "vpcs" ],
     vpcId : "",
 
     viewDetails : function(event)
@@ -20,7 +20,7 @@ var ew_RouteTablesTreeView = {
             for ( var i = 0; i < table.associations.length; i++) {
                 for ( var j = 0; j < subnets.length; j++) {
                     if (table.associations[i].subnetId == subnets[j].id) {
-                        table.associations[i].info = subnets[j].cidr + " (" + subnets[j].availableIp + ") " + subnets[j].availabilityZone;
+                        table.associations[i].info = subnets[j].toStr();
                         break;
                     }
                 }
@@ -66,6 +66,12 @@ var ew_RouteTablesTreeView = {
 
     display : function(list)
     {
+        for (var i in list) {
+            var vpc = ew_model.getVpcById(list[i].vpcId);
+            if (vpc) {
+                list[i].info = vpc.toStr();
+            }
+        }
         TreeView.display.call(this, list);
         this.updateVpcs();
     },
@@ -93,8 +99,8 @@ var ew_RouteTablesTreeView = {
         var selected = 0;
         vpcMenu.removeAllItems();
         vpcMenu.appendItem("No Filter", "")
-        for ( var i in vpcs) {
-            vpcMenu.appendItem(vpcs[i].id + " (" + vpcs[i].cidr + ")" + (vpcs[i].tag == null ? '' : " [" + vpcs[i].tag + "]"), vpcs[i].id)
+        for (var i in vpcs) {
+            vpcMenu.appendItem(vpcs[i].id + " " + vpcs[i].toStr(), vpcs[i].id)
             if (vpcs[i].id == this.vpcId) selected = i;
         }
         vpcMenu.selectedIndex = selected;
@@ -216,15 +222,30 @@ var ew_RouteAssociationsTreeView = {
 ew_RouteAssociationsTreeView.__proto__ = TreeView;
 
 var ew_InternetGatewayTreeView = {
-    COLNAMES : [ 'igw.id', "igw.vpcs", "igw.tags" ],
-    model : "internetGateways",
+    COLNAMES : [ 'igw.id', "igw.vpcs", "igw.info", "igw.tags" ],
+    model : ["internetGateways", "vpcs"],
+
+    display : function(list)
+    {
+        for (var i in list) {
+            var info = [];
+            for (var j in list[i].vpcs) {
+                var vpc = ew_model.getVpcById(list[i].vpcs[j]);
+                if (vpc) {
+                    info.push(vpc.cidr);
+                }
+            }
+            list[i].info = info.join(',');
+        }
+        TreeView.display.call(this, list);
+    },
 
     filter : function(list)
     {
         var vpcId = ew_RouteTablesTreeView.vpcId
         if (vpcId != "") {
             var rc = []
-            for ( var i in list) {
+            for (var i in list) {
                 if (list[i].vpcs.indexOf(vpcId) > -1) {
                     rc.push(list[i])
                 }

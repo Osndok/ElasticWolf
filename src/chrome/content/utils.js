@@ -75,6 +75,11 @@ var TreeView = {
     registered : false,
     model : null,
 
+    getModel: function()
+    {
+        if (this.model instanceof Array) return this.model[0];
+        return this.model;
+    },
     get rowCount() {
         return this.treeList.length;
     },
@@ -173,10 +178,10 @@ var TreeView = {
         return false;
     },
     refresh : function() {
-        ew_model.refreshModel(this.model);
+        ew_model.refreshModel(this.getModel(this.model));
     },
     invalidate : function() {
-        this.display(this.filter(ew_model.getModel(this.model)));
+        this.display(this.filter(ew_model.getModel(this.getModel(this.model))));
     },
     filter : function(list) {
         return list;

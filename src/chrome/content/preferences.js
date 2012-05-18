@@ -168,7 +168,7 @@ var ew_prefs = {
     OPEN_IN_NEW_TAB : "ew.usenewtab.enabled",
     EW_URL : "ew.url",
     EW_KEYHOME: "ew.keyhome",
-    CURRENT_TAB : "ew.current.tab",
+    CURRENT_TAB : "ew.tab.current",
     REQUEST_TIMEOUT : "ew.timeout.request",
     KNOWN_ACCOUNT_IDS : "ew.known.account.ids",
     LAST_EW_PKEY_FILE : "ew.last.ec2privatekey.file",
@@ -285,7 +285,7 @@ var ew_prefs = {
     },
     setCurrentTab : function(value)
     {
-        this.setIntPreference(this.CURRENT_TAB, value);
+        this.setStringPreference(this.CURRENT_TAB, value);
     },
     setDebugEnabled : function(enabled)
     {
@@ -401,7 +401,7 @@ var ew_prefs = {
     },
     getCurrentTab : function()
     {
-        return this.getIntPreference(this.CURRENT_TAB, 0);
+        return this.getStringPreference(this.CURRENT_TAB, '');
     },
     getLastEC2PKeyFile : function()
     {

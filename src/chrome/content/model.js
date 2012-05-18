@@ -125,7 +125,6 @@ function Endpoint(name, url)
             if (this.hasOwnProperty(k)) {
                 v = this[k];
                 if (v != null && typeof v != "function") {
-                    log("adding key toJSONString: " + k);
                     pairs.push("'" + k + "':'" + v + "'");
                 }
             }
@@ -356,6 +355,10 @@ function Vpc(id, cidr, state, dhcpOptionsId, tag)
     this.state = state;
     this.dhcpOptionsId = dhcpOptionsId;
     if (tag) this.tag = tag;
+
+    this.toStr = function() {
+        return this.cidr + (this.tag == null ? '' : " [" + this.tag + "]");
+    }
 }
 
 function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tag)
@@ -367,6 +370,10 @@ function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tag)
     this.availableIp = availableIp;
     this.availabilityZone = availabilityZone;
     if (tag) this.tag = tag;
+
+    this.toStr = function() {
+        return this.cidr + " (" + this.availableIp + ") " + this.availabilityZone;
+    }
 }
 
 function DhcpOptions(id, options, tag)
@@ -723,10 +730,13 @@ var ew_model = {
 
     registerInterest : function(component, interest)
     {
-        if (!this.componentInterests[interest]) {
-            this.componentInterests[interest] = [];
+        var list = (interest instanceof Array) ? interest : [interest];
+        for (var i in list) {
+            if (!this.componentInterests[list[i]]) {
+                this.componentInterests[list[i]] = [];
+            }
+            this.componentInterests[list[i]].push(component);
         }
-        this.componentInterests[interest].push(component);
     },
 
     updateUsers : function(list)

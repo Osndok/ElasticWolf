@@ -280,7 +280,7 @@ var ew_BundleTasksTreeView = {
             ew_AMIsTreeView.refresh();
             ew_AMIsTreeView.selectByImageId(x);
             // Navigate to the AMIs tab
-            ew_session.selectTab(-1, 'ew.tabs.image');
+            ew_session.selectTab('ew.tabs.image');
         }
         var region = ew_session.controller.getS3BucketLocation(bucket);
         ew_session.controller.registerImageInRegion(manifestPath,

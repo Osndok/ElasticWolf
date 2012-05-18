@@ -32,6 +32,8 @@
                         <splitter class="tree-splitter" />
                         <treecol id="igw.vpcs" label="VPCs" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
+                        <treecol id="igw.info" label="Info" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
                         <treecol id="igw.tags" label="Tags" flex="1" persist="width ordinal hidden sortDirection" />
                     </treecols>
                     <treechildren context="ew.internetgateways.contextmenu" />
@@ -57,6 +59,8 @@
                         <treecol id="routeTable.id" label="ID" flex="2" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="routeTable.vpcId" label="VPC" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="routeTable.info" label="Info" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                     </treecols>
                     <treechildren context="ew.routetables.contextmenu" />
