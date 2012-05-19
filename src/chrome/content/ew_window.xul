@@ -67,12 +67,12 @@
 
   <toolbox>
   <menubar id="ew.menubar">
-    <menu label="Setup">
+    <menu label="File">
       <menupopup>
-       <menuitem id="ew.menu.credentials" label="Credentials" image="images/credentials.png" class="menuitem-iconic" oncommand="ew_session.manageCredentials()" />
-       <menuitem id="ew.menu.endpoints" label="Endpoints" image="images/regions.png" class="menuitem-iconic" oncommand="ew_session.manageEndpoints();"/>
-       <menuitem id="ew.menu.accounts" label="Accounts" image="images/accountids.png" class="menuitem-iconic" oncommand="ew_session.manageAccountIds();"/>
-       <menuitem label="Tools" image="images/tools.png" class="menuitem-iconic" oncommand="ew_session.manageTools();"/>
+       <menuitem label="Manage Credentials" image="images/credentials.png" class="menuitem-iconic" oncommand="ew_session.manageCredentials()" />
+       <menuitem label="Manage Endpoints" image="images/regions.png" class="menuitem-iconic" oncommand="ew_session.manageEndpoints();"/>
+       <menuitem label="Manage Accounts" image="images/accountids.png" class="menuitem-iconic" oncommand="ew_session.manageAccountIds();"/>
+       <menuitem label="Preferences" id="menu_preferences" image="images/tools.png" class="menuitem-iconic" oncommand="ew_session.manageTools();"/>
        <menuseparator/>
        <menuitem label="Exit" image="images/reboot.png" class="menuitem-iconic" oncommand="ew_session.quit();"/>
       </menupopup>
@@ -83,8 +83,8 @@
     </menu>
     <menu label="Help">
       <menupopup>
-       <menuitem label="About" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayAbout();"/>
-       <menuitem label="Templates" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayHelp();"/>
+       <menuitem label="About" id="aboutName" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayAbout();"/>
+       <menuitem label="Templates Format" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayHelp();"/>
       </menupopup>
     </menu>
    </menubar>

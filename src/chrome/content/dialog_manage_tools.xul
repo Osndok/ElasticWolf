@@ -3,35 +3,44 @@
 <!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
 <dialog id="ew.dialog.managetools" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    buttons="accept,extra1,extra2,cancel" ondialogaccept="return saveDialog()" ondialogcancel="return true;"
-    ondialogextra1="resetDialog();" buttonlabelextra1="Reset" buttonlabelextra2="Check For Updates"
-    onload="return initDialog();" title="Manage EC2 Tools" buttonlabelcancel="Close" ondialogextra2="ew_client.checkForUpdates()">
+    buttons="accept,extra1,cancel"
+    ondialogaccept="return saveDialog()"
+    ondialogcancel="return true;"
+    ondialogextra1="resetDialog();"
+    buttonlabelextra1="Reset"
+    onload="return initDialog();"
+    title="Manage EC2 Tools"
+    buttonlabelcancel="Close">
 
     <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
-    <script type="application/x-javascript" src="chrome://ew/content/client.js" />
-    <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
-    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
     <script type="application/x-javascript">
+    var session, prefs;
+
    function initDialog() {
-      ew_prefs.init();
-      document.getElementById("ew.tools.home").value = ew_prefs.getHome();
-      document.getElementById("ew.tools.profile").value = ew_prefs.getProfileHome();
-      document.getElementById("ew.tools.keyhome").value = ew_prefs.getKeyHome();
-      document.getElementById("ew.tools.ssh.command").value = ew_prefs.getSSHCommand();
-      document.getElementById("ew.tools.ssh.args").value = ew_prefs.getSSHArgs();
-      document.getElementById("ew.tools.ssh.user").value = ew_prefs.getSSHUser();
-      document.getElementById("ew.tools.rdp.command").value = ew_prefs.getRDPCommand();
-      document.getElementById("ew.tools.rdp.args").value = ew_prefs.getRDPArgs();
-      document.getElementById("ew.tools.openssl.command").value = ew_prefs.getOpenSSLCommand();
-      document.getElementById("ew.tools.shell.command").value = ew_prefs.getShellCommand();
-      document.getElementById("ew.tools.path.ec2").value = ew_prefs.getStringPreference(ew_prefs.EC2_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.iam").value = ew_prefs.getStringPreference(ew_prefs.IAM_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.ami").value = ew_prefs.getStringPreference(ew_prefs.AMI_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.autoscale").value = ew_prefs.getStringPreference(ew_prefs.AWS_AUTOSCALING_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.cloudwatch").value = ew_prefs.getStringPreference(ew_prefs.CLOUDWATCH_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.java").value = ew_prefs.getStringPreference(ew_prefs.JAVA_TOOLS_PATH, ew_prefs.getDefaultJavaHome());
-      document.getElementById("ew.tools.debug").checked = ew_prefs.isDebugEnabled();
-      document.getElementById("ew.tools.http").checked = ew_prefs.isHttpEnabled();
+      session = window.arguments[0];
+      prefs = session.prefs;
+      document.getElementById("ew.tools.version").value = session.client.VERSION;
+      document.getElementById("ew.tools.home").value = prefs.getHome();
+      document.getElementById("ew.tools.profile").value = prefs.getProfileHome();
+      document.getElementById("ew.tools.keyhome").value = prefs.getKeyHome();
+      document.getElementById("ew.tools.ssh.command").value = prefs.getSSHCommand();
+      document.getElementById("ew.tools.ssh.args").value = prefs.getSSHArgs();
+      document.getElementById("ew.tools.ssh.user").value = prefs.getSSHUser();
+      document.getElementById("ew.tools.rdp.command").value = prefs.getRDPCommand();
+      document.getElementById("ew.tools.rdp.args").value = prefs.getRDPArgs();
+      document.getElementById("ew.tools.openssl.command").value = prefs.getOpenSSLCommand();
+      document.getElementById("ew.tools.shell.command").value = prefs.getShellCommand();
+      document.getElementById("ew.tools.path.ec2").value = prefs.getStringPreference(prefs.EC2_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.iam").value = prefs.getStringPreference(prefs.IAM_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.ami").value = prefs.getStringPreference(prefs.AMI_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.autoscale").value = prefs.getStringPreference(prefs.AWS_AUTOSCALING_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.cloudwatch").value = prefs.getStringPreference(prefs.CLOUDWATCH_TOOLS_PATH, "");
+      document.getElementById("ew.tools.path.java").value = prefs.getStringPreference(prefs.JAVA_TOOLS_PATH, prefs.getDefaultJavaHome());
+      document.getElementById("ew.tools.debug").checked = prefs.isDebugEnabled();
+      document.getElementById("ew.tools.http").checked = prefs.isHttpEnabled();
+      document.getElementById("ew.tools.idle.timeout").value = prefs.getIdleTimeout();
+      document.getElementById("ew.tools.idle.action").value = prefs.getIdleAction();
+      document.getElementById("ew.tools.pin").value = session.getPassword('ew.pin');
       return true;
    }
    function resetDialog() {
@@ -42,30 +51,34 @@
    }
 
    function saveDialog() {
-      ew_prefs.setKeyHome(document.getElementById("ew.tools.keyhome").value.toString());
-      ew_prefs.setSSHCommand(document.getElementById("ew.tools.ssh.command").value.toString());
-      ew_prefs.setSSHArgs(document.getElementById("ew.tools.ssh.args").value.toString());
-      ew_prefs.setSSHUser(document.getElementById("ew.tools.ssh.user").value.toString());
-      ew_prefs.setRDPCommand(document.getElementById("ew.tools.rdp.command").value.toString());
-      ew_prefs.setRDPArgs(document.getElementById("ew.tools.rdp.args").value.toString());
-      ew_prefs.setOpenSSLCommand(document.getElementById("ew.tools.openssl.command").value.toString());
-      ew_prefs.setShellCommand(document.getElementById("ew.tools.shell.command").value.toString());
-      ew_prefs.setStringPreference(ew_prefs.EC2_TOOLS_PATH, document.getElementById("ew.tools.path.ec2").value.toString());
-      ew_prefs.setStringPreference(ew_prefs.IAM_TOOLS_PATH, document.getElementById("ew.tools.path.iam").value.toString());
-      ew_prefs.setStringPreference(ew_prefs.AMI_TOOLS_PATH, document.getElementById("ew.tools.path.ami").value.toString());
-      ew_prefs.setStringPreference(ew_prefs.AWS_AUTOSCALING_TOOLS_PATH, document.getElementById("ew.tools.path.autoscale").value.toString());
-      ew_prefs.setStringPreference(ew_prefs.CLOUDWATCH_TOOLS_PATH, document.getElementById("ew.tools.path.cloudwatch").value.toString());
-      ew_prefs.setStringPreference(ew_prefs.JAVA_TOOLS_PATH, document.getElementById("ew.tools.path.java").value.toString());
-      ew_prefs.setDebugEnabled(document.getElementById("ew.tools.debug").checked);
-      ew_prefs.setHttpEnabled(document.getElementById("ew.tools.http").checked);
+      prefs.setKeyHome(document.getElementById("ew.tools.keyhome").value.toString());
+      prefs.setSSHCommand(document.getElementById("ew.tools.ssh.command").value.toString());
+      prefs.setSSHArgs(document.getElementById("ew.tools.ssh.args").value.toString());
+      prefs.setSSHUser(document.getElementById("ew.tools.ssh.user").value.toString());
+      prefs.setRDPCommand(document.getElementById("ew.tools.rdp.command").value.toString());
+      prefs.setRDPArgs(document.getElementById("ew.tools.rdp.args").value.toString());
+      prefs.setOpenSSLCommand(document.getElementById("ew.tools.openssl.command").value.toString());
+      prefs.setShellCommand(document.getElementById("ew.tools.shell.command").value.toString());
+      prefs.setStringPreference(prefs.EC2_TOOLS_PATH, document.getElementById("ew.tools.path.ec2").value.toString());
+      prefs.setStringPreference(prefs.IAM_TOOLS_PATH, document.getElementById("ew.tools.path.iam").value.toString());
+      prefs.setStringPreference(prefs.AMI_TOOLS_PATH, document.getElementById("ew.tools.path.ami").value.toString());
+      prefs.setStringPreference(prefs.AWS_AUTOSCALING_TOOLS_PATH, document.getElementById("ew.tools.path.autoscale").value.toString());
+      prefs.setStringPreference(prefs.CLOUDWATCH_TOOLS_PATH, document.getElementById("ew.tools.path.cloudwatch").value.toString());
+      prefs.setStringPreference(prefs.JAVA_TOOLS_PATH, document.getElementById("ew.tools.path.java").value.toString());
+      prefs.setDebugEnabled(document.getElementById("ew.tools.debug").checked);
+      prefs.setHttpEnabled(document.getElementById("ew.tools.http").checked);
+      prefs.setIdleTimeout(parseInt(document.getElementById("ew.tools.idle.timeout").value));
+      prefs.setIdleAction(document.getElementById("ew.tools.idle.action").value.toString());
+      session.setIdleTimer();
+      session.savePassword('ew.pin', document.getElementById("ew.tools.pin").value);
       return true;
    }
 
    function browse(id, forFile) {
       if (forFile) {
-         var path = ew_session.promptForFile("Choose command:");
+         var path = session.promptForFile("Choose command:");
       } else {
-         var path = ew_session.promptForDir("Choose directory where tools are located:");
+         var path = session.promptForDir("Choose directory where tools are located:");
       }
       if (path) {
           document.getElementById(id).value = path;
@@ -74,6 +87,15 @@
     </script>
 
     <vbox flex="1">
+    <tabbox flex="1">
+       <tabs id="ew.tools.tabs">
+         <tab label="Paths" selected="true" />
+         <tab label="Security" selected="true" />
+         <tab label="System" selected="true" />
+       </tabs>
+
+       <tabpanels flex="1">
+        <tabpanel orient="vertical" flex="1">
         <grid>
             <columns>
                 <column />
@@ -107,7 +129,7 @@
                 <row>
                     <label control="ew.tools.ssh.args" value="SSH Arguments:" />
                     <hbox>
-                        <textbox id="ew.tools.ssh.args" size="120" />
+                        <textbox id="ew.tools.ssh.args" size="60" />
                     </hbox>
                 </row>
                 <row>
@@ -131,13 +153,13 @@
                 <row>
                     <label control="ew.tools.rdp.command" value="RDP Command:" />
                     <hbox>
-                        <textbox id="ew.tools.rdp.command" size="80" /> <button label="Browse" oncommand="browse('ew.tools.rdp.command', true)" />
+                        <textbox id="ew.tools.rdp.command" size="60" /> <button label="Browse" oncommand="browse('ew.tools.rdp.command', true)" />
                     </hbox>
                 </row>
                 <row>
                     <label control="ew.tools.rdp.args" value="RDP Arguments:" />
                     <hbox>
-                        <textbox id="ew.tools.rdp.args" size="80" />
+                        <textbox id="ew.tools.rdp.args" size="60" />
                     </hbox>
                 </row>
                 <row>
@@ -176,6 +198,59 @@
                         <textbox id="ew.tools.path.autoscale" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.autoscale')" />
                     </hbox>
                 </row>
+            </rows>
+        </grid>
+        </tabpanel>
+
+        <tabpanel orient="vertical" flex="1">
+        <grid>
+            <columns>
+                <column />
+                <column />
+            </columns>
+            <rows>
+                <row>
+                    <label control="ew.tools.pin" value="Access PIN:" />
+                    <hbox>
+                        <textbox id="ew.tools.pin" type="password" size="20" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ew.tools.idle.timeout" value="Idle timeout (min):" />
+                    <hbox>
+                        <textbox id="ew.tools.idle.timeout" size="3" maxlength="3" type="number" />
+                    </hbox>
+                </row>
+                <row>
+                    <label control="ew.tools.idle.action" value="Action on idle timeout:" />
+                    <hbox>
+                        <menulist id="ew.tools.idle.action">
+                         <menupopup>
+                            <menuitem label="None" value=""/>
+                            <menuitem label="Ask for PIN" value="pin"/>
+                            <menuitem label="Exit" value="exit"/>
+                         </menupopup>
+                        </menulist>
+                    </hbox>
+                </row>
+            </rows>
+        </grid>
+        </tabpanel>
+
+        <tabpanel id="ew.tab.tools" orient="vertical" flex="1">
+        <grid>
+            <columns>
+                <column />
+                <column />
+            </columns>
+            <rows>
+                <row>
+                   <label control="ew.tools.version" value="Version:" />
+                    <hbox>
+                        <textbox id="ew.tools.version" readonly="true" style="-moz-appearance:none;"/>
+                        <button id="ew.tools.updates" label="Check for Updates" oncommand="session.client.checkForUpdates()" />
+                    </hbox>
+                </row>
                 <row>
                     <label control="ew.tools.debug" value="Enable debug output:" />
                     <hbox>
@@ -190,6 +265,10 @@
                 </row>
             </rows>
         </grid>
+        </tabpanel>
+
+       </tabpanels>
+    </tabbox>
     </vbox>
 </dialog>
 

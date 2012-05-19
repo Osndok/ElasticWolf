@@ -39,7 +39,7 @@ treechildren::-moz-tree-cell(image_available) {
 }
 
 treechildren::-moz-tree-cell(image_deregistered) {
-    background-color: #CCCCCC;
+    background-color: #EEEEEE;
 }
 
 treechildren::-moz-tree-cell(image_public) {
@@ -69,37 +69,18 @@ treechildren::-moz-tree-checkbox(checked) {
 treechildren::-moz-tree-row {
     border-top: 1px solid transparent;
     height: 18px;
-    background-color: #EFEFEF;
+    background-color: #EEEEEE;
 }
 
-tree:not([hidecolumnpicker="true"]) treechildren::-moz-tree-row(odd) {
-    background-color: #EFEFEF;
-}
-
-treechildren::-moz-tree-row(hover) {
+treechildren::-moz-tree-row(selected) {
     background-color: #ADCAEB;
-}
-
-treechildren::-moz-tree-row(selected), treechildren::-moz-tree-row(odd, selected), tree:not([hidecolumnpicker="true"]) treechildren::-moz-tree-row(odd, selected) {
-    background-color: #EFEFEF;
-}
-
-treechildren::-moz-tree-row(selected, focus), treechildren::-moz-tree-row(odd, selected, focus), tree:not([hidecolumnpicker="true"]) treechildren::-moz-tree-row(odd, selected, focus) {
-    background-color: Highlight;
     color: HighlightText;
 }
 
-tree {
-    background-color: #EFEFEF;
-}
-
-treechildren {
-    background-color: #EFEFEF;
-}
-
-
-.bg {
-    background-color: #BBBBBB;
+tree, treechildren {
+    background-color: #EEEEEE;
+    margin: 0px;
+    padding: 0px;
 }
 
 toolbar {
@@ -110,19 +91,44 @@ toolbar {
     border-style: none;
 }
 
-tabpanel {
+groupbox caption {
+   -moz-appearance: none;
+   background-color: transparent;
+}
+
+groupbox {
+  -moz-appearance: none;
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+  background-color: transparent;
+}
+
+body, page, window, tabbox, tabpanel, tabpanels, toolbar, toolbox {
     padding:0px;
     margin:0px;
     border: 0px;
-    background-color: #BBBBBB;
+    background-color: #EEEEEE;
 }
 
-listbox {
-    background-color: #EFEFEF;
+vbox, hbox, splitter, separator {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    background-color: transparent;
+}
+
+menuitem {
+   -moz-appearance: none;
+   border: 0px;
+}
+
+listbox, menulist {
+    background-color: #EEEEEE;
 }
 
 listcols {
-    background-color: #EFEFEF;
+    background-color: #EEEEEE;
 }
 
 #ew_menu {
@@ -134,7 +140,7 @@ listcols {
    border-top: 1px solid #5e6b73;
    background: #3f4345;
    background: -moz-linear-gradient(top, #86868a, #3f4345);
-   padding: 2px 2px;
+   padding: 2px;
    -moz-border-radius: 5px;
    -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
    text-shadow: rgba(0,0,0,.4) 0 1px 0;
@@ -145,6 +151,8 @@ listcols {
    text-decoration: none;
    text-align: center;
    vertical-align: middle;
+   margin-right: 3px;
+   margin-left: 3px;
 }
 
 .ew_button_selected {
@@ -154,6 +162,7 @@ listcols {
 .ew_button:hover {
    border-top-color: #2c4454;
    background: #2c4454;
+   color: #FFFF99;
 }
 
 .ew_button:active {

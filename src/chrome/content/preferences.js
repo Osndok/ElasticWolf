@@ -161,11 +161,8 @@ var ew_prefs = {
     HTTP_ENABLED : "ew.http.enabled",
     DEBUG_ENABLED : "ew.debugging.enabled",
     OFFLINE : "ew.offline.enabled",
-    QUERY_ON_START : "ew.queryonstart.enabled",
-    REFRESH_ON_CHANGE : "ew.refreshonchange.enabled",
-    REFRESH_BUNDLE_VIEW : "ew.refreshBundleView.enabled",
-    AUTOFETCH_LP : "ew.autofetchlaunchpermissions.enabled",
-    OPEN_IN_NEW_TAB : "ew.usenewtab.enabled",
+    IDLE_TIMEOUT: "ew.idle.timeout",
+    IDLE_ACTION: "ew.idle.action",
     EW_URL : "ew.url",
     EW_KEYHOME: "ew.keyhome",
     CURRENT_TAB : "ew.tab.current",
@@ -184,7 +181,6 @@ var ew_prefs = {
     VPN_TAGS : "ew.vpnTags",
     CGW_TAGS : "ew.cgwTags",
     DHCP_OPTIONS_TAGS : "ew.dhcpOptionsTags",
-    CONCURRENT_S3_CONN : "ew.concurrent.S3.conns",
     PROMPT_OPEN_PORT : "ew.prompt.open.port",
     OPEN_CONNECTION_PORT : "ew.open.connection.port",
     OPENSSL_COMMAND : "ew.tools.openssl.command",
@@ -205,9 +201,6 @@ var ew_prefs = {
     {
         if (this.prefs == null) {
             this.prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-            this.setQueryOnStartEnabled(this.isQueryOnStartEnabled());
-            this.setRefreshOnChangeEnabled(this.isRefreshOnChangeEnabled());
-            this.setRefreshBundleViewEnabled(this.isRefreshBundleViewEnabled());
             this.setLastUsedAccount(this.getLastUsedAccount());
             this.setLastUsedEndpoint(this.getLastUsedEndpoint());
             this.setRDPCommand(this.getRDPCommand());
@@ -218,8 +211,6 @@ var ew_prefs = {
             this.setDebugEnabled(this.isDebugEnabled());
             this.setHttpEnabled(this.isHttpEnabled());
             this.setOfflineEnabled(this.isOfflineEnabled());
-            this.setOpenInNewTabEnabled(this.isOpenInNewTabEnabled());
-            this.setAutoFetchLaunchPermissionsEnabled(this.isAutoFetchLaunchPermissionsEnabled());
             this.setAccountIdMap(this.getAccountIdMap());
             this.setLastEC2PKeyFile(this.getLastEC2PKeyFile());
             this.setInstanceTags(this.getInstanceTags());
@@ -231,7 +222,6 @@ var ew_prefs = {
             this.setVpnGatewayTags(this.getVpnGatewayTags());
             this.setCustomerGatewayTags(this.getCustomerGatewayTags());
             this.setVpnConnectionTags(this.getVpnConnectionTags());
-            this.setConcurrentS3Conns(this.getConcurrentS3Conns());
             this.setPromptForPortOpening(this.getPromptForPortOpening());
             this.setOpenConnectionPort(this.getOpenConnectionPort());
             this.setKeyHome(this.getKeyHome());
@@ -299,33 +289,17 @@ var ew_prefs = {
     {
         this.setBoolPreference(this.OFFLINE, enabled);
     },
-    setOpenInNewTabEnabled : function(enabled)
+    setIdleTimeout : function(value)
     {
-        this.setBoolPreference(this.OPEN_IN_NEW_TAB, enabled);
+        this.setIntPreference(this.IDLE_TIMEOUT, value);
     },
-    setQueryOnStartEnabled : function(enabled)
+    setIdleAction : function(value)
     {
-        this.setBoolPreference(this.QUERY_ON_START, enabled);
-    },
-    setRefreshOnChangeEnabled : function(enabled)
-    {
-        this.setBoolPreference(this.REFRESH_ON_CHANGE, enabled);
-    },
-    setRefreshBundleViewEnabled : function(enabled)
-    {
-        this.setBoolPreference(this.REFRESH_BUNDLE_VIEW, enabled);
-    },
-    setAutoFetchLaunchPermissionsEnabled : function(enabled)
-    {
-        this.setBoolPreference(this.AUTOFETCH_LP, enabled);
+        this.setStringPreference(this.IDLE_ACTION, value);
     },
     setLastEC2PKeyFile : function(value)
     {
         this.setEC2PKeyForUser(value, this.getLastUsedAccount());
-    },
-    setConcurrentS3Conns : function(value)
-    {
-        this.setIntPreference(this.CONCURRENT_S3_CONN, value);
     },
     setOpenConnectionPort : function(value)
     {
@@ -419,30 +393,6 @@ var ew_prefs = {
     {
         return this.getBoolPreference(this.OFFLINE, false);
     },
-    isOpenInNewTabEnabled : function()
-    {
-        return this.getBoolPreference(this.OPEN_IN_NEW_TAB, true);
-    },
-    isQueryOnStartEnabled : function()
-    {
-        return this.getBoolPreference(this.QUERY_ON_START, true);
-    },
-    isRefreshOnChangeEnabled : function()
-    {
-        return this.getBoolPreference(this.REFRESH_ON_CHANGE, true);
-    },
-    isRefreshBundleViewEnabled : function()
-    {
-        return this.getBoolPreference(this.REFRESH_BUNDLE_VIEW, true);
-    },
-    isAutoFetchLaunchPermissionsEnabled : function()
-    {
-        return this.getBoolPreference(this.AUTOFETCH_LP, true);
-    },
-    getConcurrentS3Conns : function()
-    {
-        return this.getIntPreference(this.CONCURRENT_S3_CONN, 32);
-    },
     getOpenConnectionPort : function()
     {
         return this.getBoolPreference(this.OPEN_CONNECTION_PORT, true);
@@ -450,6 +400,14 @@ var ew_prefs = {
     getPromptForPortOpening : function()
     {
         return this.getBoolPreference(this.PROMPT_OPEN_PORT, true);
+    },
+    getIdleAction: function()
+    {
+        return this.getStringPreference(this.IDLE_ACTION, "");
+    },
+    getIdleTimeout: function()
+    {
+        return this.getIntPreference(this.IDLE_TIMEOUT, 0);
     },
     getOpenSSLCommand : function()
     {

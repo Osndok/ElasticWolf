@@ -12,7 +12,7 @@ var ew_credentialManager = {
         this.credentials = this.session.getCredentials();
         this.tree.display(this.credentials);
 
-        var endpoints = this.session.preferences.getEndpointMap().toArray(function(k, v) { return new Endpoint(k, v.url) });
+        var endpoints = this.session.prefs.getEndpointMap().toArray(function(k, v) { return new Endpoint(k, v.url) });
         var menulist = document.getElementById("ew.credentials.endpoint");
         menulist.removeAllItems();
         menulist.insertItemAt(i, "", "");

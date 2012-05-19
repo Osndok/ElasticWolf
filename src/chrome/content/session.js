@@ -34,7 +34,7 @@ var ew_session = {
         this.controller = ew_controller;
         this.model = ew_model;
         this.client = ew_client;
-        this.preferences = ew_prefs;
+        this.prefs = ew_prefs;
         this.endpointMenu = $('ew.active.endpoints.list');
         this.credMenu = $('ew.active.credentials.list');
         this.tabMenu = $("ew.tabs");
@@ -87,7 +87,43 @@ var ew_session = {
 
         // Disable credentials management
         this.locked = this.cmdLine.handleFlag('lock', true);
+
+        // Check for pin
+        this.promptForPin();
+        this.setIdleTimer();
+
         this.initialized = true;
+    },
+
+    setIdleTimer: function()
+    {
+        var me = this;
+        var idleService = Components.classes["@mozilla.org/widget/idleservice;1"].getService(Components.interfaces.nsIIdleService);
+        if (this.idleObserver) {
+            idleService.removeIdleObserver(this.idleObserver, this.idleObserver.timeout);
+            this.idleObserver = null;
+        }
+        var timeout = this.prefs.getIdleTimeout();
+        if (timeout <= 0) return;
+
+        this.idleObserver = {
+             timeout: timeout * 60,
+             observe: function(subject, topic, data) {
+                 var action = me.prefs.getIdleAction();
+                 debug(subject + ", " + topic + ", " + data + ", " + action)
+                 switch (topic + ':' + action) {
+                 case "idle:exit":
+                     me.quit();
+                     break;
+
+                 case 'idle:pin':
+                     me.promptForPin();
+                     break;
+                 }
+             }
+        };
+        idleService.addIdleObserver(this.idleObserver, this.idleObserver.timeout);
+        debug('idle timer: ' + this.idleObserver.timeout + ', ' + me.prefs.getIdleAction());
     },
 
     quit: function()
@@ -102,7 +138,7 @@ var ew_session = {
             container.removeChild(container.childNodes[0]);
         }
         for (var i in this.tabs) {
-            if (ew_prefs.getBoolPreference(this.tabs[i].tab, true)) {
+            if (this.prefs.getBoolPreference(this.tabs[i].tab, true)) {
                 var b = document.createElement("toolbarbutton");
                 b.setAttribute("label", getProperty(this.tabs[i].tab));
                 b.setAttribute("class", "ew_button");
@@ -111,7 +147,7 @@ var ew_session = {
                 container.appendChild(b);
             }
         }
-        this.selectTab(ew_prefs.getCurrentTab());
+        this.selectTab(this.prefs.getCurrentTab());
     },
 
     addTabToRefreshList : function(tab)
@@ -132,16 +168,18 @@ var ew_session = {
 
     checkTab: function(index) {
         if (index >= 0 && index < this.tabs.length) {
-            ew_prefs.setBoolPreference(this.tabs[index].tab, !ew_prefs.getBoolPreference(this.tabs[index].tab, true));
+            this.prefs.setBoolPreference(this.tabs[index].tab, !this.prefs.getBoolPreference(this.tabs[index].tab, true));
             this.createToolbar();
         }
     },
 
     selectTab: function(name) {
+        if (this.client.disabled) return;
+
         for (var i in this.tabs) {
             if (this.tabs[i].tab == name) {
                 this.tabMenu.selectedIndex = i;
-                ew_prefs.setCurrentTab(name);
+                this.prefs.setCurrentTab(name);
 
                 // update selected button
                 var container = $("ew.toolbar");
@@ -227,7 +265,7 @@ var ew_session = {
 
     manageCredentials : function()
     {
-        if (this.locked) return;
+        if (this.locked || this.client.disabled) return;
         window.openDialog("chrome://ew/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ew_session);
         this.loadCredentials();
     },
@@ -236,7 +274,7 @@ var ew_session = {
     {
         this.credMenu.removeAllItems();
 
-        var lastUsedCred = ew_prefs.getLastUsedAccount();
+        var lastUsedCred = this.prefs.getLastUsedAccount();
         this.credentials = this.getCredentials();
         for ( var i in this.credentials) {
             this.credMenu.insertItemAt(i, this.credentials[i].name, this.credentials[i].name);
@@ -269,7 +307,8 @@ var ew_session = {
 
     switchCredentials : function(cred)
     {
-        if (this.locked) return;
+        if (this.locked || this.client.disabled) return;
+
         if (!cred) {
             cred = this.getActiveCredential();
         } else {
@@ -278,7 +317,7 @@ var ew_session = {
 
         if (cred != null) {
             debug("switch credentials to " + cred.name)
-            ew_prefs.setLastUsedAccount(cred.name);
+            this.prefs.setLastUsedAccount(cred.name);
             this.client.setCredentials(cred.accessKey, cred.secretKey);
 
             if (cred.endPoint && cred.endPoint != "") {
@@ -295,7 +334,7 @@ var ew_session = {
                     this.endpointmap.put(endpoint.name, endpoint);
                     log("add endpoint " + endpoint.name)
                 }
-                ew_prefs.setLastUsedEndpoint(endpoint.name);
+                this.prefs.setLastUsedEndpoint(endpoint.name);
             }
             this.loadAllTags();
 
@@ -303,7 +342,7 @@ var ew_session = {
             this.model.invalidate();
 
             // Set the active tab to the last tab we were viewing
-            this.selectTab(ew_prefs.getCurrentTab());
+            this.selectTab(this.prefs.getCurrentTab());
         }
     },
 
@@ -312,10 +351,10 @@ var ew_session = {
         var activeEndpointname = name || this.endpointMenu.value;
 
         if (activeEndpointname == null || activeEndpointname.length == 0) {
-            activeEndpointname = ew_prefs.getLastUsedEndpoint();
+            activeEndpointname = this.prefs.getLastUsedEndpoint();
         }
         if (this.endpointmap == null) {
-            return new Endpoint(activeEndpointname, ew_prefs.getServiceURL());
+            return new Endpoint(activeEndpointname, this.prefs.getServiceURL());
         } else {
             return this.endpointmap.get(activeEndpointname);
         }
@@ -323,13 +362,14 @@ var ew_session = {
 
     switchEndpoints : function(name)
     {
-        if (this.locked) return;
+        if (this.locked || this.client.disabled) return;
+
         var activeEndpoint = this.getActiveEndpoint(name);
 
         if (activeEndpoint != null) {
             debug("switch endpoint to " + activeEndpoint.name)
-            ew_prefs.setLastUsedEndpoint(activeEndpoint.name);
-            ew_prefs.setServiceURL(activeEndpoint.url);
+            this.prefs.setLastUsedEndpoint(activeEndpoint.name);
+            this.prefs.setServiceURL(activeEndpoint.url);
             this.client.setEndpoint(activeEndpoint);
             this.loadAllTags();
 
@@ -337,7 +377,7 @@ var ew_session = {
             this.model.invalidate();
 
             // Set the active tab to the last tab we were viewing
-            this.selectTab(ew_prefs.getCurrentTab());
+            this.selectTab(this.prefs.getCurrentTab());
         } else {
             // There are no endpoints in the system, let's ask the user to enter them
             var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
@@ -346,7 +386,7 @@ var ew_session = {
             if (promptService.confirmEx(window, "EC2 Endpoint Needed", text, promptService.STD_YES_NO_BUTTONS | promptService.BUTTON_POS_0_DEFAULT, "", "", "", null, {})) {
                 // Reset the endpoint stored in the client and prefs
                 this.client.setEndpoint(new Endpoint());
-                ew_prefs.setServiceURL("");
+                this.prefs.setServiceURL("");
             } else {
                 this.manageEndpoints();
             }
@@ -355,9 +395,9 @@ var ew_session = {
 
     loadEndpointMap : function()
     {
-        this.endpointmap = ew_prefs.getEndpointMap();
+        this.endpointmap = this.prefs.getEndpointMap();
         this.endpointMenu.removeAllItems();
-        var lastUsedEndpoint = ew_prefs.getLastUsedEndpoint();
+        var lastUsedEndpoint = this.prefs.getLastUsedEndpoint();
         var endpointlist = this.endpointmap.toArray(function(k, v) { return new Endpoint(k, v.url) });
 
         for (var i in endpointlist) {
@@ -370,7 +410,7 @@ var ew_session = {
 
     manageEndpoints : function()
     {
-        if (this.locked) return;
+        if (this.locked || this.client.disabled) return;
         window.openDialog("chrome://ew/content/dialog_manage_endpoints.xul", null, "chrome,centerscreen,modal,resizable", this, this);
         this.loadEndpointMap();
     },
@@ -382,17 +422,17 @@ var ew_session = {
 
     loadAllTags : function()
     {
-        this.imageTags = ew_prefs.getImageTags();
-        this.instanceTags = ew_prefs.getInstanceTags();
-        this.volumeTags = ew_prefs.getVolumeTags();
-        this.snapshotTags = ew_prefs.getSnapshotTags();
-        this.eipTags = ew_prefs.getEIPTags();
-        this.vpcTags = ew_prefs.getVpcTags();
-        this.subnetTags = ew_prefs.getSubnetTags();
-        this.dhcpOptionsTags = ew_prefs.getDhcpOptionsTags();
-        this.vpnTags = ew_prefs.getVpnConnectionTags();
-        this.cgwTags = ew_prefs.getCustomerGatewayTags();
-        this.vgwTags = ew_prefs.getVpnGatewayTags();
+        this.imageTags = this.prefs.getImageTags();
+        this.instanceTags = this.prefs.getInstanceTags();
+        this.volumeTags = this.prefs.getVolumeTags();
+        this.snapshotTags = this.prefs.getSnapshotTags();
+        this.eipTags = this.prefs.getEIPTags();
+        this.vpcTags = this.prefs.getVpcTags();
+        this.subnetTags = this.prefs.getSubnetTags();
+        this.dhcpOptionsTags = this.prefs.getDhcpOptionsTags();
+        this.vpnTags = this.prefs.getVpnConnectionTags();
+        this.cgwTags = this.prefs.getCustomerGatewayTags();
+        this.vgwTags = this.prefs.getVpnGatewayTags();
     },
 
     setResourceTag : function(id, tag)
@@ -511,119 +551,119 @@ var ew_session = {
         switch (resourceType) {
         case this.model.resourceMap.instances:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setInstanceTags(tags);
+            this.prefs.setInstanceTags(tags);
 
             this.instanceTags = null;
             // Retrieve the appropriate data structure from the store
-            this.instanceTags = ew_prefs.getInstanceTags();
+            this.instanceTags = this.prefs.getInstanceTags();
             break;
 
         case this.model.resourceMap.volumes:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setVolumeTags(tags);
+            this.prefs.setVolumeTags(tags);
 
             this.volumeTags = null;
             // Retrieve the appropriate data structure from the store
-            this.volumeTags = ew_prefs.getVolumeTags();
+            this.volumeTags = this.prefs.getVolumeTags();
             break;
 
         case this.model.resourceMap.snapshots:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setSnapshotTags(tags);
+            this.prefs.setSnapshotTags(tags);
 
             this.snapshotTags = null;
             // Retrieve the appropriate data structure from the store
-            this.snapshotTags = ew_prefs.getSnapshotTags();
+            this.snapshotTags = this.prefs.getSnapshotTags();
             break;
 
         case this.model.resourceMap.images:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setImageTags(tags);
+            this.prefs.setImageTags(tags);
 
             this.imageTags = null;
             // Retrieve the appropriate data structure from the store
-            this.imageTags = ew_prefs.getImageTags();
+            this.imageTags = this.prefs.getImageTags();
             break;
 
         case this.model.resourceMap.eips:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setEIPTags(tags);
+            this.prefs.setEIPTags(tags);
 
             this.eipTags = null;
             // Retrieve the appropriate data structure from the store
-            this.eipTags = ew_prefs.getEIPTags();
+            this.eipTags = this.prefs.getEIPTags();
             break;
 
         case this.model.resourceMap.vpcs:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setVpcTags(tags);
+            this.prefs.setVpcTags(tags);
 
             this.vpcTags = null;
             // Retrieve the appropriate data structure from the store
-            this.vpcTags = ew_prefs.getVpcTags();
+            this.vpcTags = this.prefs.getVpcTags();
             break;
 
         case this.model.resourceMap.subnets:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setSubnetTags(tags);
+            this.prefs.setSubnetTags(tags);
 
             this.subnetTags = null;
             // Retrieve the appropriate data structure from the store
-            this.subnetTags = ew_prefs.getSubnetTags();
+            this.subnetTags = this.prefs.getSubnetTags();
             break;
 
         case this.model.resourceMap.dhcpOptions:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setDhcpOptionsTags(tags);
+            this.prefs.setDhcpOptionsTags(tags);
 
             this.dhcpOptionsTags = null;
             // Retrieve the appropriate data structure from the store
-            this.dhcpOptionsTags = ew_prefs.getDhcpOptionsTags();
+            this.dhcpOptionsTags = this.prefs.getDhcpOptionsTags();
             break;
 
         case this.model.resourceMap.vpnConnections:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setVpnConnectionTags(tags);
+            this.prefs.setVpnConnectionTags(tags);
 
             this.vpnTags = null;
             // Retrieve the appropriate data structure from the store
-            this.vpnTags = ew_prefs.getVpnConnectionTags();
+            this.vpnTags = this.prefs.getVpnConnectionTags();
             break;
 
         case this.model.resourceMap.vpnGateways:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setVpnGatewayTags(tags);
+            this.prefs.setVpnGatewayTags(tags);
 
             this.vgwTags = null;
             // Retrieve the appropriate data structure from the store
-            this.vgwTags = ew_prefs.getVpnGatewayTags();
+            this.vgwTags = this.prefs.getVpnGatewayTags();
             break;
 
         case this.model.resourceMap.customerGateways:
             // The Tags must first be persisted to the prefs store
-            ew_prefs.setCustomerGatewayTags(tags);
+            this.prefs.setCustomerGatewayTags(tags);
 
             this.cgwTags = null;
             // Retrieve the appropriate data structure from the store
-            this.cgwTags = ew_prefs.getCustomerGatewayTags();
+            this.cgwTags = this.prefs.getCustomerGatewayTags();
             break;
         }
     },
 
     manageTools : function()
     {
-        if (this.locked) return;
-        window.openDialog("chrome://ew/content/dialog_manage_tools.xul", null, "chrome,centerscreen,modal, resizable");
+        if (this.locked || this.client.disabled) return;
+        window.openDialog("chrome://ew/content/dialog_manage_tools.xul", null, "chrome,centerscreen,modal, resizable", this);
     },
 
     loadAccountIdMap : function()
     {
-        this.accountidmap = ew_prefs.getAccountIdMap();
+        this.accountidmap = this.prefs.getAccountIdMap();
     },
 
     manageAccountIds : function()
     {
-        if (this.locked) return;
+        if (this.locked || this.client.disabled) return;
         window.openDialog("chrome://ew/content/dialog_manage_accountids.xul", null, "chrome,centerscreen,modal,resizable", this.accountidmap);
         this.loadAccountIdMap();
     },
@@ -661,15 +701,15 @@ var ew_session = {
     generateCertificate : function(name)
     {
         // Make sure we have directory
-        if (!ew_prefs.makeKeyHome()) {
+        if (!this.prefs.makeKeyHome()) {
             return 0
         }
 
-        var certfile = ew_prefs.getCertificateFile(name);
-        var keyfile = ew_prefs.getPrivateKeyFile(name);
-        var pubfile = ew_prefs.getPublicKeyFile(name);
-        var openssl = ew_prefs.getOpenSSLCommand();
-        var conffile = ew_prefs.getKeyHome() + DirIO.sep + "openssl.cnf"
+        var certfile = this.prefs.getCertificateFile(name);
+        var keyfile = this.prefs.getPrivateKeyFile(name);
+        var pubfile = this.prefs.getPublicKeyFile(name);
+        var openssl = this.prefs.getOpenSSLCommand();
+        var conffile = this.prefs.getKeyHome() + DirIO.sep + "openssl.cnf"
 
         FileIO.remove(certfile);
         FileIO.remove(keyfile);
@@ -681,7 +721,7 @@ var ew_session = {
         FileIO.write(FileIO.open(conffile), confdata)
 
         // Create private and cert files
-        ew_prefs.setEnv("OPENSSL_CONF", conffile);
+        this.prefs.setEnv("OPENSSL_CONF", conffile);
         this.launchProcess(openssl, [ "genrsa", "-out", keyfile, "1024" ], true);
         if (!waitForFile(keyfile, 5000)) {
             debug("ERROR: no private key generated")
@@ -713,37 +753,37 @@ var ew_session = {
     launchShell : function(name)
     {
         // Make sure we have directory
-        if (!ew_prefs.makeKeyHome()) {
+        if (!this.prefs.makeKeyHome()) {
             return 0
         }
 
         // Save current acces key into file
-        FileIO.write(FileIO.open(ew_prefs.getCredentialFile(name)), "AWSAccessKeyId=" + ew_client.accessCode + "\nAWSSecretKey=" + ew_client.secretKey + "\n")
+        FileIO.write(FileIO.open(this.prefs.getCredentialFile(name)), "AWSAccessKeyId=" + ew_client.accessCode + "\nAWSSecretKey=" + ew_client.secretKey + "\n")
 
         // Setup environment
-        ew_prefs.setEnv("EC2_URL", ew_client.serviceURL);
-        ew_prefs.setEnv("EC2_PRIVATE_KEY", ew_prefs.getPrivateKeyFile(name));
-        ew_prefs.setEnv("EC2_CERT", ew_prefs.getCertificateFile(name));
-        ew_prefs.setEnv("AWS_CREDENTIAL_FILE", ew_prefs.getCredentialFile(name));
-        ew_prefs.setEnv("AWS_IAM_URL", ew_client.getIAMURL());
+        this.prefs.setEnv("EC2_URL", ew_client.serviceURL);
+        this.prefs.setEnv("EC2_PRIVATE_KEY", this.prefs.getPrivateKeyFile(name));
+        this.prefs.setEnv("EC2_CERT", this.prefs.getCertificateFile(name));
+        this.prefs.setEnv("AWS_CREDENTIAL_FILE", this.prefs.getCredentialFile(name));
+        this.prefs.setEnv("AWS_IAM_URL", ew_client.getIAMURL());
 
         // Current PATH
-        var path = ew_prefs.getEnv("PATH");
+        var path = this.prefs.getEnv("PATH");
         var sep = isWindows(navigator.platform) ? ";" : ":";
 
         // Update path to the command line tools
-        var paths = [ew_prefs.JAVA_TOOLS_PATH, ew_prefs.EC2_TOOLS_PATH, ew_prefs.IAM_TOOLS_PATH, ew_prefs.AMI_TOOLS_PATH, ew_prefs.CLOUDWATCH_TOOLS_PATH, ew_prefs.AWS_AUTOSCALING_TOOLS_PATH];
+        var paths = [this.prefs.JAVA_TOOLS_PATH, this.prefs.EC2_TOOLS_PATH, this.prefs.IAM_TOOLS_PATH, this.prefs.AMI_TOOLS_PATH, this.prefs.CLOUDWATCH_TOOLS_PATH, this.prefs.AWS_AUTOSCALING_TOOLS_PATH];
         for(var i in paths) {
-            var p = ew_prefs.getStringPreference(paths[i], "");
+            var p = this.prefs.getStringPreference(paths[i], "");
             if (p == "") {
                 continue;
             }
-            ew_prefs.setEnv(paths[i].split(".").pop().toUpperCase(), p);
+            this.prefs.setEnv(paths[i].split(".").pop().toUpperCase(), p);
             path += sep + p + DirIO.sep + "bin";
         }
         debug(path)
-        ew_prefs.setEnv("PATH", path);
-        this.launchProcess(ew_prefs.getShellCommand(), []);
+        this.prefs.setEnv("PATH", path);
+        this.launchProcess(this.prefs.getShellCommand(), []);
     },
 
     launchProcess : function(cmd, args, block)
@@ -803,7 +843,7 @@ var ew_session = {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, save ? nsIFilePicker.modeSave : nsIFilePicker.modeOpen);
-        fp.displayDirectory = FileIO.open(ew_prefs.getKeyHome());
+        fp.displayDirectory = FileIO.open(this.prefs.getKeyHome());
         fp.defaultString = filename || ""
         if (fp.show() != nsIFilePicker.returnCancel) {
             return fp.file.path;
@@ -816,7 +856,7 @@ var ew_session = {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, nsIFilePicker.modeGetFolder);
-        fp.displayDirectory = FileIO.open(ew_prefs.getKeyHome());
+        fp.displayDirectory = FileIO.open(this.prefs.getKeyHome());
         if (fp.show() != nsIFilePicker.returnCancel) {
             return fp.file.path;
         }
@@ -828,6 +868,28 @@ var ew_session = {
         var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
         return promptService.confirmEx(window, title, text, promptService.STD_YES_NO_BUTTONS| promptService.BUTTON_POS_0_DEFAULT, "", "", "", null, {}) == 0
     },
+
+    promptForPin: function() {
+        var me = this;
+        var pin = this.getPassword('ew.pin');
+        // If already disabled or no pin just ignore, once pin appeared the only way to hide it by entering correct pin
+        if (this.client.disabled || pin == '') return;
+        this.client.disabled = true;
+
+        setTimeout(function() {
+            var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+            var pw = {value: ""};
+            if (!prompts.promptPassword(null, "PIN", "Enter access PIN:", pw, null, {})) {
+                me.quit();
+            } else
+            if (pw.value == pin) {
+                me.client.disabled = false;
+            } else {
+                me.promptForPin();
+            }
+        }, 500);
+    },
+
 
     savePassword : function(key, secret)
     {

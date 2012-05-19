@@ -1,15 +1,15 @@
 var ew_client = {
     handler : null,
     uri     : null,
-    auxObj  : null,
-    serviceURL : null,
-    region : null,
-    elbURL  : null,
+    serviceURL : "",
+    region : "",
+    elbURL  : "",
     accessCode : null,
     secretKey : null,
     errorCount: 0,
     errorMax: 3,
     timers : {},
+    disabled: false,
 
     VERSION: "1.28",
     NAME: 'ElasticWolf',
@@ -47,7 +47,7 @@ var ew_client = {
 
     isGovCloud : function()
     {
-        return this.serviceURL.indexOf("ec2.us-gov") > -1;
+        return String(this.serviceURL).indexOf("ec2.us-gov") > -1;
     },
 
     checkForUpdates: function() {
@@ -59,28 +59,31 @@ var ew_client = {
             return;
         }
         debug(url)
-        xmlhttp.open("GET", url, false);
-        xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
-        try { xmlhttp.send(null); }
-        catch(e) { debug(JSON.stringify(e)) }
-        var data = xmlhttp.responseText;
-        var d = data.match(new RegExp("\/downloads\/[^\/]+\/" + this.NAME + "\/" + this.NAME + (isWindows(navigator.platform) ? "-win-" : "-osx-") + "([0-9]\.[0-9][0-9])\.zip"))
-        if (d != null) {
-            debug(d);
-            if (parseFloat(d[1]) > parseFloat(this.VERSION)) {
-                alert("New version " + d[1] + "is available at " + this.APP_SITE + d[0])
-                return;
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4) {
+                var data = xmlhttp.responseText;
+                var d = data.match(new RegExp("\/downloads\/[^\/]+\/" + this.NAME + "\/" + this.NAME + (isWindows(navigator.platform) ? "-win-" : "-osx-") + "([0-9]\.[0-9][0-9])\.zip"))
+                if (d != null) {
+                    debug(d);
+                    if (parseFloat(d[1]) > parseFloat(this.VERSION)) {
+                        alert("New version " + d[1] + "is available at " + this.APP_SITE + d[0])
+                        return;
+                    }
+                }
+                alert("No new version available")
             }
-        }
-        alert("No new version available")
+        };
+        xmlhttp.open("GET", url, true);
+        xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
+        xmlhttp.send(null);
     },
 
     getNsResolver : function() {
         var client = this;
         return function(prefix) {
             var ns = {
-            's':  "http://schemas.xmlsoap.org/soap/envelope/",  // SOAP namespace
-            'ec2': "http://ec2.amazonaws.com/doc/"+client.API_VERSION+"/"   // EC2 namespace, must match request version
+                      's':  "http://schemas.xmlsoap.org/soap/envelope/",  // SOAP namespace
+                      'ec2': "http://ec2.amazonaws.com/doc/"+client.API_VERSION+"/"   // EC2 namespace, must match request version
             };
             return ns[prefix] || null;
         }
@@ -163,7 +166,7 @@ var ew_client = {
     },
 
     queryEC2 : function (action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion) {
-        if (this.accessCode == null || this.accessCode == "") return null;
+        if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
 
         if (this.serviceURL == null || this.serviceURL == "") {
             this.setEndpoint(ew_session.getActiveEndpoint());
@@ -355,12 +358,13 @@ var ew_client = {
     },
 
     downloadS3 : function (method, bucket, key, path, params, file, callback, progresscb) {
+        if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
         var req = this.queryS3Prepare(method, bucket, key, path, params, null);
-        this.download(req.url, req.headers, file, callback, progresscb);
+        return this.download(req.url, req.headers, file, callback, progresscb);
     },
 
     uploadS3: function(bucket, key, path, params, filename, callback, progresscb) {
-        if (this.accessCode == null || this.accessCode == "") return null;
+        if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
 
         var file = FileIO.streamOpen(filename);
         if (!file) {
@@ -408,7 +412,7 @@ var ew_client = {
     },
 
     queryS3 : function (method, bucket, key, path, params, content, objActions, isSync, reqType, callback) {
-        if (this.accessCode == null || this.accessCode == "") return null;
+        if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
 
         var rsp = null;
 
@@ -525,7 +529,7 @@ var ew_client = {
     },
 
     queryVpnConnectionStylesheets : function(stylesheet) {
-        if (!ew_prefs.isHttpEnabled()) return
+        if (this.disabled || !ew_prefs.isHttpEnabled()) return
 
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
@@ -560,7 +564,7 @@ var ew_client = {
     },
 
     queryCheckIP : function(reqType, retVal) {
-        if (!ew_prefs.isHttpEnabled()) return;
+        if (this.disabled || !ew_prefs.isHttpEnabled()) return;
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
@@ -585,7 +589,7 @@ var ew_client = {
     },
 
     download: function(url, headers, filename, callback, progresscb) {
-        if (!ew_prefs.isHttpEnabled()) return;
+        if (this.disabled || !ew_prefs.isHttpEnabled()) return;
 
         debug('download: ' + url + '| ' + JSON.stringify(headers) + '| ' + filename)
 
