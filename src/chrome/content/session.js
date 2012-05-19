@@ -835,13 +835,17 @@ var ew_session = {
         var me = this;
         var pin = this.getPassword('ew.pin');
         // If already disabled or no pin just ignore, once pin appeared the only way to hide it by entering correct pin
-        if (this.client.disabled || pin == '') return;
+        if (this.pinPrompt || pin == '') return;
         this.client.disabled = true;
 
+        // Use timer so we do not block all the time and give a chance to proces events
         setTimeout(function() {
             var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-            var pw = {value: ""};
-            if (!prompts.promptPassword(null, "PIN", "Enter access PIN:", pw, null, {})) {
+            var pw = { value: "" };
+            me.pinPrompt = true;
+            var rc = prompts.promptPassword(null, "PIN", "Enter access PIN:", pw, null, {});
+            me.pinPrompt = false;
+            if (!rc) {
                 me.quit();
             } else
             if (pw.value == pin) {
@@ -849,7 +853,7 @@ var ew_session = {
             } else {
                 me.promptForPin();
             }
-        }, 500);
+        }, 10);
     },
 
 

@@ -210,7 +210,7 @@
             </columns>
             <rows>
                 <row>
-                    <label control="ew.tools.pin" value="Access PIN:" />
+                    <label control="ew.tools.pin" value="Access PIN:" tooltiptext="Restrict access to the console with PIN" />
                     <hbox>
                         <textbox id="ew.tools.pin" type="password" size="20" />
                     </hbox>
