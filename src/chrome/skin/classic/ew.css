@@ -70,11 +70,12 @@ treechildren::-moz-tree-row {
     border-top: 1px solid transparent;
     height: 18px;
     background-color: #EEEEEE;
+    color: #000000;
 }
 
-treechildren::-moz-tree-row(selected) {
+treechildren::-moz-tree-row(selected), treechildren::-moz-tree-row(selected,active) {
     background-color: #ADCAEB;
-    color: HighlightText;
+    color: #000000;
 }
 
 tree, treechildren {
@@ -87,7 +88,7 @@ toolbar {
     padding: 3px;
     -moz-box-align: center;
     -moz-appearance: none;
-    background: none;
+    background-color: #EEEEEE;
     border-style: none;
 }
 
@@ -104,11 +105,15 @@ groupbox {
   background-color: transparent;
 }
 
-body, page, window, tabbox, tabpanel, tabpanels, toolbar, toolbox {
+body, page, window, tabbox, tabpanel, tabpanels, toolbox {
     padding:0px;
     margin:0px;
     border: 0px;
     background-color: #EEEEEE;
+}
+
+tabpanels, tabpanel, vbox, hbox, page, groupbox, tree {
+    outline: none;
 }
 
 vbox, hbox, splitter, separator {

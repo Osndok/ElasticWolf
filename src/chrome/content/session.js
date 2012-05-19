@@ -10,8 +10,6 @@ var ew_session = {
     credentials : null,
     accountidmap : null,
     endpointmap : null,
-    endpointMenu: null,
-    credMenu: null,
     tabMenu: null,
     instanceTags : null,
     volumeTags : null,
@@ -35,11 +33,15 @@ var ew_session = {
         this.model = ew_model;
         this.client = ew_client;
         this.prefs = ew_prefs;
-        this.endpointMenu = $('ew.active.endpoints.list');
-        this.credMenu = $('ew.active.credentials.list');
         this.tabMenu = $("ew.tabs");
 
         ew_prefs.init();
+        
+        this.loadAccountIdMap();
+        this.loadCredentials();
+        this.loadEndpointMap();
+        this.loadAllTags();
+
         document.title = ew_prefs.getAppName();
 
         var menu = $("ew.menu.view");
@@ -55,13 +57,12 @@ var ew_session = {
                 $(this.tabs[i].views[v].id).view = this.tabs[i].views[v].view;
             }
         }
+        
+        // Use last used credentials
+        this.selectCredential(this.getActiveCredential());
+        this.selectEndpoint(this.getActiveEndpoint());
 
         this.createToolbar();
-        this.loadAccountIdMap();
-        this.loadCredentials();
-        this.loadEndpointMap();
-        this.switchCredentials();
-        this.loadAllTags();
 
         // Parse command line
         this.cmdLine = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine);
@@ -73,15 +74,11 @@ var ew_session = {
         var endpoint = this.cmdLine.handleFlagWithParam('endpoint', true);
         if (key && key != '' && secret && secret != '') {
             var cred = new Credential(name || 'AWS', key, secret, endpoint);
-            this.credMenu.removeAllItems();
-            this.credMenu.appendItem(cred.name, cred.name);
             this.switchCredentials(cred);
         } else
 
         if (endpoint && endpoint != '') {
             var e = new Endpoint("", endpoint);
-            this.endpointMenu.removeAllItems();
-            this.endpointMenu.appendItem(e.name, e.name);
             this.switchEndpoints(e);
         }
 
@@ -256,13 +253,6 @@ var ew_session = {
         this.savePassword('Cred:' + cred.name, cred.toStr())
     },
 
-    checkCredentials: function() {
-        if (!this.credentials.length) {
-            return this.manageCredentials();
-        }
-        return false;
-    },
-
     manageCredentials : function()
     {
         if (this.locked || this.client.disabled) return;
@@ -272,70 +262,48 @@ var ew_session = {
 
     loadCredentials : function()
     {
-        this.credMenu.removeAllItems();
-
-        var lastUsedCred = this.prefs.getLastUsedAccount();
         this.credentials = this.getCredentials();
-        for ( var i in this.credentials) {
-            this.credMenu.insertItemAt(i, this.credentials[i].name, this.credentials[i].name);
-            if (lastUsedCred == this.credentials[i].name) {
-                this.credMenu.selectedIndex = i;
-            }
-        }
-
         if (this.credentials.length == 0) {
             // invalidate all the views
             this.model.invalidate();
             // Reset the credentials stored in the client
             this.client.setCredentials("", "");
-            // Fake credential to show setup dialog
-            this.credMenu.appendItem("Setup Credentials");
-            this.credMenu.selectedIndex = 0;
         }
     },
 
     getActiveCredential : function()
     {
-        if (this.credentials != null && this.credentials.length > 0) {
-            if (this.credMenu.selectedIndex == -1) {
-                this.credMenu.selectedIndex = 0;
+        var cur = this.prefs.getLastUsedAccount();
+        for (var i in this.credentials) {
+            if (cur == this.credentials[i].name) {
+                return this.credentials[i];
             }
-            return this.credentials[this.credMenu.selectedIndex];
         }
         return null;
+    },
+
+    selectCredential: function(cred)
+    {
+        if (cred) {
+            debug("switch credentials to " + cred.name)
+            $('ew.active.credential').label = cred.name;
+            this.prefs.setLastUsedAccount(cred.name);
+            this.client.setCredentials(cred.accessKey, cred.secretKey);
+
+            if (cred.endPoint && cred.endPoint != "") {
+                var endpoint = new Endpoint("", cred.endPoint)
+                this.selectEndpoint(endpoint);
+            }
+            return true;
+        }
+        return false;
     },
 
     switchCredentials : function(cred)
     {
         if (this.locked || this.client.disabled) return;
 
-        if (!cred) {
-            cred = this.getActiveCredential();
-        } else {
-            this.credMenu.value = cred.name;
-        }
-
-        if (cred != null) {
-            debug("switch credentials to " + cred.name)
-            this.prefs.setLastUsedAccount(cred.name);
-            this.client.setCredentials(cred.accessKey, cred.secretKey);
-
-            if (cred.endPoint && cred.endPoint != "") {
-                var endpoint = new Endpoint("", cred.endPoint)
-                this.client.setEndpoint(endpoint);
-                for ( var i = 0; i < this.endpointMenu.itemCount; i++) {
-                    if (this.ndpointMenu.getItemAtIndex(i).value == endpoint.name) {
-                        this.endpointMenu.selectedIndex = i
-                    }
-                }
-                if (this.endpointMenu.value != endpoint.name) {
-                    this.endpointMenu.appendItem(endpoint.name, endpoint.name);
-                    this.endpointMenu.selectedIndex = this.endpointMenu.itemCount - 1
-                    this.endpointmap.put(endpoint.name, endpoint);
-                    log("add endpoint " + endpoint.name)
-                }
-                this.prefs.setLastUsedEndpoint(endpoint.name);
-            }
+        if (this.selectCredential(cred)) {
             this.loadAllTags();
 
             // Since we are switching creds, ensure that all the views are redrawn
@@ -346,31 +314,32 @@ var ew_session = {
         }
     },
 
-    getActiveEndpoint : function(name)
+    getActiveEndpoint : function()
     {
-        var activeEndpointname = name || this.endpointMenu.value;
+        var name = this.prefs.getLastUsedEndpoint();
+        var endpoint = this.endpointmap.get(name);
+        return endpoint ? endpoint : new Endpoint(name, this.prefs.getServiceURL());
+    },
 
-        if (activeEndpointname == null || activeEndpointname.length == 0) {
-            activeEndpointname = this.prefs.getLastUsedEndpoint();
+    selectEndpoint: function(endpoint)
+    {
+        if (endpoint != null) {
+            debug("switch endpoint to " + endpoint.name)
+            $('ew.active.endpoint').label = endpoint.name;
+            this.prefs.setLastUsedEndpoint(endpoint.name);
+            this.prefs.setServiceURL(endpoint.url);
+            this.client.setEndpoint(endpoint);
+            return true;
         }
-        if (this.endpointmap == null) {
-            return new Endpoint(activeEndpointname, this.prefs.getServiceURL());
-        } else {
-            return this.endpointmap.get(activeEndpointname);
-        }
+        return false;
     },
 
     switchEndpoints : function(name)
     {
         if (this.locked || this.client.disabled) return;
 
-        var activeEndpoint = this.getActiveEndpoint(name);
-
-        if (activeEndpoint != null) {
-            debug("switch endpoint to " + activeEndpoint.name)
-            this.prefs.setLastUsedEndpoint(activeEndpoint.name);
-            this.prefs.setServiceURL(activeEndpoint.url);
-            this.client.setEndpoint(activeEndpoint);
+        var endpoint = this.endpointmap.get(name);
+        if (this.selectEndpoint(endpoint)) {
             this.loadAllTags();
 
             // Since we are switching creds, ensure that all the views are redrawn
@@ -396,16 +365,6 @@ var ew_session = {
     loadEndpointMap : function()
     {
         this.endpointmap = this.prefs.getEndpointMap();
-        this.endpointMenu.removeAllItems();
-        var lastUsedEndpoint = this.prefs.getLastUsedEndpoint();
-        var endpointlist = this.endpointmap.toArray(function(k, v) { return new Endpoint(k, v.url) });
-
-        for (var i in endpointlist) {
-            this.endpointMenu.insertItemAt(i, endpointlist[i].name, endpointlist[i].name);
-            if (lastUsedEndpoint == endpointlist[i].name) {
-                this.endpointMenu.selectedIndex = i;
-            }
-        }
     },
 
     manageEndpoints : function()

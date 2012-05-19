@@ -177,7 +177,7 @@ var ew_client = {
             try {
                 rsp = this.queryEC2Impl(action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion);
                 if (rsp.hasErrors) {
-                    debug('errorCount:' + this.errorCount)
+                    debug('action:' + action + ', errorCount:' + this.errorCount)
                     // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
                     this.errorCount++;
                     if (this.errorCount < this.errorMax) {
