@@ -36,7 +36,7 @@ var ew_session = {
         this.tabMenu = $("ew.tabs");
 
         ew_prefs.init();
-        
+
         this.loadAccountIdMap();
         this.loadCredentials();
         this.loadEndpointMap();
@@ -57,7 +57,7 @@ var ew_session = {
                 $(this.tabs[i].views[v].id).view = this.tabs[i].views[v].view;
             }
         }
-        
+
         // Use last used credentials
         this.selectCredential(this.getActiveCredential());
         this.selectEndpoint(this.getActiveEndpoint());
@@ -197,6 +197,9 @@ var ew_session = {
                 // Refresh if no records yet
                 var tab = this.tabs[this.tabMenu.selectedIndex];
                 for (var i in tab.views) {
+                    if (tab.views[i].view.activate) {
+                        tab.views[i].view.activate();
+                    }
                     if (tab.views[i].view.rowCount == 0) {
                         tab.views[i].view.refresh();
                     }

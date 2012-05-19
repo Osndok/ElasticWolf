@@ -2,9 +2,11 @@ var ew_S3BucketsTreeView = {
     COLNAMES : [ 's3.label', 's3.mtime', "s3.type", "s3.size", "s3.etag" ],
     model : "s3buckets",
     path: [],
+    folder: '',
 
     display : function(list)
     {
+        var idx = 0;
         var path = this.path.join("/");
         var nlist = [];
         for (var i in list) {
@@ -14,11 +16,17 @@ var ew_S3BucketsTreeView = {
             if (!this.path.length || n.indexOf(path) == 0 && p.length == this.path.length + 1) {
                 list[i].label = p[p.length - 1] + (list[i].name[list[i].name.length - 1] == "/" ? "/" : "")
                 nlist.push(list[i])
+                // Select given item
+                if (list[i].name == this.folder) {
+                    idx = nlist.length - 1;
+                }
             }
         }
         TreeView.display.call(this, nlist);
-        document.getElementById("ew.s3.path").value = path;
+        this.setSelected(idx);
+        $("ew.s3.path").value = path;
         ew_session.showBusyCursor(false);
+        this.folder = '';
     },
 
     show: function()
@@ -65,7 +73,7 @@ var ew_S3BucketsTreeView = {
 
     back: function(event)
     {
-        this.path.pop();
+        this.folder = this.path.pop();
         this.show();
     },
 

@@ -73,8 +73,11 @@ treechildren::-moz-tree-row {
     color: #000000;
 }
 
-treechildren::-moz-tree-row(selected), treechildren::-moz-tree-row(selected,active) {
+treechildren::-moz-tree-row(selected) {
     background-color: #ADCAEB;
+}
+
+treechildren::-moz-tree-cell-text(selected) {
     color: #000000;
 }
 
@@ -103,6 +106,7 @@ groupbox {
   padding: 0px;
   margin: 0px;
   background-color: transparent;
+  outline: none;
 }
 
 body, page, window, tabbox, tabpanel, tabpanels, toolbox {
@@ -110,9 +114,6 @@ body, page, window, tabbox, tabpanel, tabpanels, toolbox {
     margin:0px;
     border: 0px;
     background-color: #EEEEEE;
-}
-
-tabpanels, tabpanel, vbox, hbox, page, groupbox, tree {
     outline: none;
 }
 

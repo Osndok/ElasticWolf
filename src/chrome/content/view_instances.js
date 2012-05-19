@@ -26,6 +26,12 @@ var ew_InstancesTreeView = {
        'instance.rootDeviceType'
     ],
 
+
+    activate: function() {
+        $("ew.instances.noterminated").checked = ew_prefs.getBoolPreference(ew_prefs.HIDE_TERMINATED, false);
+        $("ew.instances.nostopped").checked = ew_prefs.getBoolPreference(ew_prefs.HIDE_STOPPED, false);
+    },
+
     treeBox: null,
     selection: null,
     instanceList : new Array(),
@@ -177,13 +183,20 @@ var ew_InstancesTreeView = {
         this.searchTimer = setTimeout(this.invalidate, 500);
     },
 
+    filterChanged: function()
+    {
+        ew_prefs.setBoolPreference(ew_prefs.HIDE_TERMINATED, $("ew.instances.noterminated").checked);
+        ew_prefs.setBoolPreference(ew_prefs.HIDE_STOPPED, $("ew.instances.nostopped").checked);
+
+        this.invalidate();
+    },
+
     filterInstances : function(instances) {
         // No longer need to lowercase this because the patt is created with "i"
         var searchText = this.getSearchText();
-        var filterTerm = document.getElementById("ew.instances.noterminated").checked;
-        var filterStop = document.getElementById("ew.instances.nostopped").checked;
-        if (searchText.length == 0 &&
-            !(filterTerm || filterStop)) {
+        var filterTerm = $("ew.instances.noterminated").checked;
+        var filterStop = $("ew.instances.nostopped").checked;
+        if (searchText.length == 0 && !(filterTerm || filterStop)) {
             return instances;
         }
 
@@ -1330,7 +1343,7 @@ var ew_InstancesTreeView = {
             this.stopRefreshTimer();
         }
         this.sort();
-    }
+    },
 };
 
 ew_InstancesTreeView.register();

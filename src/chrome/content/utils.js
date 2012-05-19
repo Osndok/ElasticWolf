@@ -73,7 +73,9 @@ var TreeView = {
     treeList : new Array(),
     selection : null,
     registered : false,
-    model : null,
+    model : '',
+    atomService: null,
+    properties: [],
 
     getModel: function()
     {
@@ -130,6 +132,13 @@ var TreeView = {
     getRowProperties : function(idx, column, prop) {
     },
     getCellProperties : function(idx, column, prop) {
+        var name = column.id.split(".").pop();
+        if (this.properties.indexOf(name) == -1) return;
+        var value = this.treeList[row][name].replace(/[ -.:]+/g,'_').toLowerCase();
+        if (!this.atomService) {
+            this.atomService = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
+        }
+        prop.AppendElement(this.atomService.getAtom(this.model + "_" + value));
     },
     getColumnProperties : function(column, element, prop) {
     },
@@ -202,6 +211,8 @@ var TreeView = {
         if (!this.select(sel)) {
             this.selection.select(0);
         }
+    },
+    activate: function() {
     },
 };
 

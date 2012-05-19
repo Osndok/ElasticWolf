@@ -169,6 +169,8 @@ var ew_prefs = {
     REQUEST_TIMEOUT : "ew.timeout.request",
     KNOWN_ACCOUNT_IDS : "ew.known.account.ids",
     LAST_EW_PKEY_FILE : "ew.last.ec2privatekey.file",
+    HIDE_TERMINATED: "ew.instances.hide.terminated",
+    HIDE_STOPPED: "ew.instances.hide.stopped",
     ENDPOINTS : "ew.endpoints",
     IMAGE_TAGS : "ew.imagetags",
     EIP_TAGS : "ew.eiptags",
