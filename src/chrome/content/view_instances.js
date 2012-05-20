@@ -30,6 +30,8 @@ var ew_InstancesTreeView = {
     activate: function() {
         $("ew.instances.noterminated").checked = ew_prefs.getBoolPreference(ew_prefs.HIDE_TERMINATED, false);
         $("ew.instances.nostopped").checked = ew_prefs.getBoolPreference(ew_prefs.HIDE_STOPPED, false);
+        $('ew.instances.search').value = ew_prefs.getStringPreference(ew_prefs.INSTANCES_FILTER, "");
+        this.invalidate();
     },
 
     treeBox: null,
@@ -40,7 +42,9 @@ var ew_InstancesTreeView = {
     instanceIdRegex : new RegExp("^i-"),
     selectedInstanceId : null, // To preserve instance selections across refreshes, etc
 
-    get rowCount() { return this.instanceList.length; },
+    get rowCount() {
+        return this.instanceList.length;
+    },
     setTree     : function(treeBox)     { this.treeBox = treeBox; },
     getCellText : function(idx, column) {
         if (idx >= this.rowCount) return "";
@@ -167,20 +171,20 @@ var ew_InstancesTreeView = {
     },
 
     getSearchText: function() {
-        return document.getElementById('ew.instances.search').value;
+        return $('ew.instances.search').value;
     },
 
     invalidate : function() {
-        var target = ew_InstancesTreeView;
-        target.displayInstances(target.filterInstances(ew_model.instances));
+        this.displayInstances(this.filterInstances(ew_model.instances));
     },
 
     searchChanged : function(event) {
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
         }
-
-        this.searchTimer = setTimeout(this.invalidate, 500);
+        var me = this;
+        this.searchTimer = setTimeout(function() { me.invalidate(); }, 500);
+        ew_prefs.setStringPreference(ew_prefs.INSTANCES_FILTER, $("ew.instances.search").value);
     },
 
     filterChanged: function()
@@ -1002,7 +1006,6 @@ var ew_InstancesTreeView = {
 
         if (wrap == null) {
             wrap = function(id, timestamp, output) {
-                me.refresh();
                 me.showConsoleOutput(id, timestamp, output);
             }
         }

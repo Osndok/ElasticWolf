@@ -4,13 +4,19 @@ var ew_AMIsTreeView = {
     rootDeviceType : "",
     ownerDisplayFilter : "",
 
+    activate: function() {
+        $('ew.images.search').value = ew_prefs.getStringPreference(ew_prefs.IMAGES_FILTER, "");
+        $('ew.images.type').value = ew_prefs.getStringPreference(ew_prefs.IMAGES_TYPE, "");
+        this.invalidate();
+    },
+
     enableOrDisableItems : function(event)
     {
         var image = this.getSelectedImage();
         var fDisabled = (image == null);
 
         if (fDisabled) {
-            document.getElementById("ew.images.contextmenu").hidePopup();
+            $("ew.images.contextmenu").hidePopup();
             return;
         }
 
@@ -18,33 +24,35 @@ var ew_AMIsTreeView = {
 
         // If this is not a Windows Instance, Disable the following
         // context menu items.
-        document.getElementById("amis.context.migrate").disabled = fDisabled;
+        $("amis.context.migrate").disabled = fDisabled;
 
         // These items apply only to AMIs
         fDisabled = !(image.id.match(regExs["ami"]));
-        document.getElementById("amis.context.register").disabled = fDisabled;
-        document.getElementById("amis.context.deregister").disabled = fDisabled;
-        document.getElementById("amis.context.launch").disabled = fDisabled;
-        document.getElementById("amis.context.delete").disabled = fDisabled;
+        $("amis.context.register").disabled = fDisabled;
+        $("amis.context.deregister").disabled = fDisabled;
+        $("amis.context.launch").disabled = fDisabled;
+        $("amis.context.delete").disabled = fDisabled;
 
         // These context menu items don't apply to Windows instancesso enable them.
 
         // These items don't apply to AMIs with root device type 'ebs'
         if (isEbsRootDeviceType(image.rootDeviceType)) {
-            document.getElementById("amis.context.delete").disabled = true;
-            document.getElementById("amis.context.deleteSnapshotAndDeregister").disabled = false;
+            $("amis.context.delete").disabled = true;
+            $("amis.context.deleteSnapshotAndDeregister").disabled = false;
         } else {
-            document.getElementById("amis.context.deleteSnapshotAndDeregister").disabled = true;
+            $("amis.context.deleteSnapshotAndDeregister").disabled = true;
         }
 
-        var type = document.getElementById("ew_AMIsTreeView.image.type").value;
-        document.getElementById("amis.context.fadd").disabled = type == "fav";
-        document.getElementById("amis.context.fdelete").disabled = type != "fav";
+        var type = $("ew.images.type").value;
+        $("amis.context.fadd").disabled = type == "fav";
+        $("amis.context.fdelete").disabled = type != "fav";
     },
 
     imageTypeChanged : function()
     {
-        document.getElementById("ew.images.search").value = "";
+        $("ew.images.search").value = "";
+        ew_prefs.setStringPreference(ew_prefs.IMAGES_FILTER, $("ew.images.search").value);
+        ew_prefs.setStringPreference(ew_prefs.IMAGES_TYPE, $('ew.images.type').value);
         this.displayImagesOfType();
     },
 
@@ -69,9 +77,13 @@ var ew_AMIsTreeView = {
         }
     },
 
+    invalidate: function() {
+        this.displayImagesOfType();
+    },
+
     displayImagesOfType : function()
     {
-        var type = document.getElementById("ew_AMIsTreeView.image.type");
+        var type = $("ew.images.type");
         if (type.value == "fav") {
             var favs = ew_prefs.getStringPreference(ew_prefs.AMI_FAVORITES, "").split("^");
             var images = []
@@ -164,12 +176,12 @@ var ew_AMIsTreeView = {
 
     searchChanged : function(event)
     {
-        //document.getElementById("ew_AMIsTreeView.image.type").selectedIndex = 1;
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
         }
-
-        this.searchTimer = setTimeout(this.invalidate, 500);
+        var me = this;
+        this.searchTimer = setTimeout(function() { me.invalidate(); }, 500);
+        ew_prefs.setStringPreference(ew_prefs.IMAGES_FILTER, $("ew.images.search").value);
     },
 
     newInstanceCallback : function(list)
@@ -383,7 +395,7 @@ var ew_AMIsTreeView = {
 
     getSearchText : function()
     {
-        return document.getElementById('ew.images.search').value;
+        return $('ew.images.search').value;
     },
 };
 

@@ -30,8 +30,7 @@
         </row>
         <row>
           <label control="ew.console.output" value="Console Output:" />
-          <textbox id="ew.console.output" multiline="true" cols="70" rows="20"
-            wrap="false" style="font-family: monospace;" readonly="true"/>
+          <textbox id="ew.console.output" multiline="true" cols="100" rows="35" wrap="false" style="font-family: monospace;" readonly="true"/>
         </row>
       </rows>
     </grid>

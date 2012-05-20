@@ -16,33 +16,28 @@
                 <column />
                 <column />
                 <column />
+                <column />
+                <column />
             </columns>
             <rows flex="1">
                 <row>
                     <label control="ew.newinstances.ami" value="AMI ID:" />
                     <label id="ew.newinstances.ami" readonly="true" />
+                    <spacer style="width:30px;" />
+                    <label control="ew.newinstances.tag" value="Instance Name:" />
+                    <textbox id="ew.newinstances.name" size="40" value="" />
                 </row>
                 <row>
                     <label control="ew.newinstances.ami.tag" value="AMI Tag:" />
                     <label id="ew.newinstances.ami.tag" readonly="true" />
-                </row>
-                <row>
-                    <label control="ew.newinstances.ami.location" value="AMI Manifest:" />
-                    <label id="ew.newinstances.ami.location" readonly="true" />
-                </row>
-                <row>
-                    <label control="ew.newinstances.aki" value="AKI ID:" />
-                    <menulist id="ew.newinstances.aki" size="40" value="" editable="true" />
-                </row>
-                <row>
-                    <label control="ew.newinstances.ari" value="ARI ID:" />
-                    <menulist id="ew.newinstances.ari" size="40" value="" editable="true" />
-                </row>
-                <row>
+                    <spacer style="width:30px;" />
                     <label control="ew.newinstances.instancetypelist" value="Instance Type:" />
                     <menulist id="ew.newinstances.instancetypelist" />
                 </row>
                 <row>
+                    <label control="ew.newinstances.ami.location" value="AMI Manifest:" />
+                    <label id="ew.newinstances.ami.location" readonly="true" />
+                    <spacer style="width:30px;" />
                     <label control="ew.newinstances.tenancy" value="Instance Tenancy:" />
                     <menulist id="ew.newinstances.tenancy" size="30" >
                          <menupopup id="ew.newinstances.tenancy">
@@ -52,32 +47,34 @@
                     </menulist>
                 </row>
                 <row>
-                    <label control="ew.newinstances.min" value="Number of instances - Min: " />
+                    <label control="ew.newinstances.aki" value="AKI ID:" />
+                    <menulist id="ew.newinstances.aki" size="40" value="" editable="true" />
+                    <spacer style="width:30px;" />
+                    <label control="ew.newinstances.tag" value="Instance Tag(s):" />
+                    <textbox id="ew.newinstances.tag" size="40" value="" />
+                </row>
+                <row>
+                    <label control="ew.newinstances.ari" value="ARI ID:" />
+                    <menulist id="ew.newinstances.ari" size="40" value="" editable="true" />
+                    <spacer style="width:30px;" />
+                    <label control="ew.newinstances.properties" value="Additional Info:" />
+                    <textbox id="ew.newinstances.properties" size="40" />
+                </row>
+                <row>
+                    <label control="ew.newinstances.azId" value="Availability Zone:" />
+                    <menulist id="ew.newinstances.azId" oncommand="ew_InstanceLauncher.vpcIdSelected();" />
+                    <spacer style="width:30px;" />
+                    <label control="ew.newinstances.min" value="Start Instances:" />
                     <hbox>
+                        <label control="ew.newinstances.min" value="Min:" />
                         <textbox id="ew.newinstances.min" size="10" value="1" />
                         <label control="ew.newinstances.max" value="Max:" />
                         <textbox id="ew.newinstances.max" size="10" value="1" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.newinstances.tag" value="Instance Name:" />
-                    <textbox id="ew.newinstances.name" size="40" value="" />
-                </row>
-                <row>
-                    <label control="ew.newinstances.tag" value="Instance Tag (not Name:):" />
-                    <textbox id="ew.newinstances.tag" size="40" value="" />
-                </row>
-                <row>
                     <label control="ew.newinstances.keypairlist" value="KeyPair:" />
                     <menulist id="ew.newinstances.keypairlist" />
-                </row>
-                <row>
-                    <label control="ew.newinstances.azId" value="Availability Zone:" />
-                    <menulist id="ew.newinstances.azId" oncommand="ew_InstanceLauncher.vpcIdSelected();" />
-                </row>
-                <row>
-                    <label control="ew.newinstances.properties" value="Additional Info:" />
-                    <textbox id="ew.newinstances.properties" size="40" />
                 </row>
             </rows>
         </grid>

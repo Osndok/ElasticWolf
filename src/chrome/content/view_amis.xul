@@ -37,7 +37,7 @@
                             <toolbarbutton image="images/add.png" tooltiptext="&ew.images.register.tip;" oncommand="ew_AMIsTreeView.registerNewImage();" />
                             <toolbarbutton image="images/delete.png" tooltiptext="&ew.images.deregister.tip;" oncommand="ew_AMIsTreeView.deregisterImage();" />
                             <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_AMIsTreeView.tag();" tooltiptext="Edit EC2 Tag" />
-                            <menulist id="ew_AMIsTreeView.image.type" selectedIndex="0" oncommand="ew_AMIsTreeView.imageTypeChanged();">
+                            <menulist id="ew.images.type" selectedIndex="0" oncommand="ew_AMIsTreeView.imageTypeChanged();">
                                 <menupopup>
                                     <menuitem label="No Filter " value="all" />
                                     <menuitem label="My AMIs" value="my_ami" />
