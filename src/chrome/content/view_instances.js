@@ -174,10 +174,6 @@ var ew_InstancesTreeView = {
         return $('ew.instances.search').value;
     },
 
-    invalidate : function() {
-        this.displayInstances(this.filterInstances(ew_model.instances));
-    },
-
     searchChanged : function(event) {
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
@@ -303,7 +299,7 @@ var ew_InstancesTreeView = {
                 ew_BundleTasksTreeView.selectByBundleId(list[0].id);
                 ew_session.selectTab('ew.tabs.bundletask')
             }
-            ew_session.controller.bundleInstance(instance.id, retVal.bucketName, retVal.prefix, ew_session.getActiveCredential(), wrap);
+            ew_session.controller.bundleInstance(instance.id, retVal.bucketName, retVal.prefix, ew_session.getActiveCredentials(), wrap);
         }
     },
 
@@ -1327,6 +1323,10 @@ var ew_InstancesTreeView = {
             clearTimeout(this.refreshTimer);
             ew_session.removeTabFromRefreshList("ew_InstancesTreeView");
         }
+    },
+
+    invalidate : function() {
+        this.displayInstances(this.filterInstances(ew_model.instances));
     },
 
     displayInstances : function(instanceList) {

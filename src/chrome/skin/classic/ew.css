@@ -110,8 +110,8 @@ groupbox {
 }
 
 body, page, window, tabbox, tabpanel, tabpanels, toolbox {
-    padding:0px;
-    margin:0px;
+    padding:2px;
+    margin:2px;
     border: 0px;
     background-color: #EEEEEE;
     outline: none;
@@ -143,11 +143,9 @@ listcols {
 
 .ew_button {
    -moz-appearance: none;
-   border-top: 1px solid #5e6b73;
-   background: #3f4345;
-   background: -moz-linear-gradient(top, #86868a, #3f4345);
-   padding: 2px;
-   -moz-border-radius: 5px;
+   background: #777777;
+   padding: 1px;
+   -moz-border-radius: 3px;
    -moz-box-shadow: rgba(0,0,0,1) 0 1px 0;
    text-shadow: rgba(0,0,0,.4) 0 1px 0;
    color: white;
@@ -157,8 +155,7 @@ listcols {
    text-decoration: none;
    text-align: center;
    vertical-align: middle;
-   margin-right: 3px;
-   margin-left: 3px;
+   margin: 2px;
 }
 
 .ew_button_selected {

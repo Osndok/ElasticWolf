@@ -28,23 +28,17 @@ var ew_session = {
 
     initialize : function()
     {
+        ew_prefs.init();
+
         this.tabs = ew_window.tabs;
         this.controller = ew_controller;
         this.model = ew_model;
         this.client = ew_client;
         this.prefs = ew_prefs;
         this.tabMenu = $("ew.tabs");
-
-        ew_prefs.init();
-
-        this.loadAccountIdMap();
-        this.loadCredentials();
-        this.loadEndpointMap();
-        this.loadAllTags();
-
-        document.title = ew_prefs.getAppName();
-
         var menu = $("ew.menu.view");
+
+        // Connect views early so invalidate can be used
         for (var i in this.tabs) {
             var b = document.createElement("menuitem");
             b.setAttribute("label", getProperty(this.tabs[i].tab));
@@ -57,12 +51,19 @@ var ew_session = {
                 $(this.tabs[i].views[v].id).view = this.tabs[i].views[v].view;
             }
         }
-
-        // Use last used credentials
-        this.selectCredential(this.getActiveCredential());
-        this.selectEndpoint(this.getActiveEndpoint());
+        this.loadAccountIdMap();
+        this.loadCredentials();
+        this.loadEndpointMap();
+        this.loadAllTags();
 
         this.createToolbar();
+
+        document.title = ew_prefs.getAppName();
+
+        // Use last used credentials
+        this.selectCredentials(this.getActiveCredentials());
+        this.selectEndpoint(this.getActiveEndpoint());
+        this.selectTab(this.prefs.getCurrentTab());
 
         // Parse command line
         this.cmdLine = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine);
@@ -90,6 +91,7 @@ var ew_session = {
         this.setIdleTimer();
 
         this.initialized = true;
+        debug('session started')
     },
 
     setIdleTimer: function()
@@ -134,9 +136,29 @@ var ew_session = {
         for (var i = container.childNodes.length; i > 0; i--) {
             container.removeChild(container.childNodes[0]);
         }
+
+        var cred = this.getActiveCredentials();
+        var endpoint = this.getActiveEndpoint();
+
+        var b = document.createElement("button");
+        b.setAttribute("label", cred ? cred.name : "No Account");
+        b.setAttribute("class", "ew_button");
+        b.setAttribute("id", "ew.active.credential");
+        b.setAttribute("tooltiptext", "Current Credentials");
+        b.setAttribute("oncommand", "ew_session.manageCredentials()");
+        container.appendChild(b);
+
+        b = document.createElement("button");
+        b.setAttribute("label", endpoint ? endpoint.name : "No endpoint");
+        b.setAttribute("class", "ew_button");
+        b.setAttribute("id", "ew.active.endpoint");
+        b.setAttribute("tooltiptext", "Current Endpoint");
+        b.setAttribute("oncommand", "ew_session.manageEndpoints()");
+        container.appendChild(b);
+
         for (var i in this.tabs) {
             if (this.prefs.getBoolPreference(this.tabs[i].tab, true)) {
-                var b = document.createElement("toolbarbutton");
+                b = document.createElement("button");
                 b.setAttribute("label", getProperty(this.tabs[i].tab));
                 b.setAttribute("class", "ew_button");
                 b.setAttribute("id", this.tabs[i].tab.replace('.tabs.', '.buttons.'));
@@ -261,6 +283,10 @@ var ew_session = {
         if (this.locked || this.client.disabled) return;
         window.openDialog("chrome://ew/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ew_session);
         this.loadCredentials();
+        // Switch to the first account on first use
+        if (!this.getActiveCredentials() && this.credentials.length) {
+            this.switchCredentials(this.credentials[0]);
+        }
     },
 
     loadCredentials : function()
@@ -274,7 +300,7 @@ var ew_session = {
         }
     },
 
-    getActiveCredential : function()
+    getActiveCredentials : function()
     {
         var cur = this.prefs.getLastUsedAccount();
         for (var i in this.credentials) {
@@ -285,7 +311,7 @@ var ew_session = {
         return null;
     },
 
-    selectCredential: function(cred)
+    selectCredentials: function(cred)
     {
         if (cred) {
             debug("switch credentials to " + cred.name)
@@ -306,7 +332,7 @@ var ew_session = {
     {
         if (this.locked || this.client.disabled) return;
 
-        if (this.selectCredential(cred)) {
+        if (this.selectCredentials(cred)) {
             this.loadAllTags();
 
             // Since we are switching creds, ensure that all the views are redrawn

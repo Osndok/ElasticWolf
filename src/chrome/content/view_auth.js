@@ -165,7 +165,7 @@ var ew_AccessKeyTreeView = {
 
             if (!ew_session.promptYesNo("Confirm", "Use access key "+key.name+" for authentication for user " + ew_prefs.getLastUsedAccount() + "?, current access key/secret will be discarded.")) return;
             ew_session.client.setCredentials(key.name, key.secret);
-            ew_session.updateCredentials(ew_session.getActiveCredential(), key.name, key.secret);
+            ew_session.updateCredentials(ew_session.getActiveCredentials(), key.name, key.secret);
             this.refresh();
         }
 };

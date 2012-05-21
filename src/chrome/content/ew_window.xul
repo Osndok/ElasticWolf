@@ -90,13 +90,8 @@
    </menubar>
    </toolbox>
 
-  <vbox flex="1" style="margin:0px;padding:0px;">
-    <toolbar class="bg">
-      <toolbarbutton id="ew.active.credential" class="ew_button" label="None" tooltiptext="Current Credentials" oncommand="ew_session.manageCredentials();"/>
-      <toolbarbutton id="ew.active.endpoint" class="ew_button" label="None" tooltiptext="Current Endpoint" oncommand="ew_session.manageEndpoints();" />
-      <toolbarseparator />
-      <toolbaritem id="ew.toolbar" />
-    </toolbar>
+  <hbox flex="1">
+    <arrowscrollbox orient="vertical" id="ew.toolbar" style="min-width:100px;max-width:100px;"/>
 
     <tabpanels id="ew.tabs" flex="1" style="margin:0px;padding:0px;border:0px;">
       <tabpanel id="ew.tabs.instance"/>
@@ -116,5 +111,5 @@
       <tabpanel id="ew.tabs.availzone"/>
       <tabpanel id="ew.tabs.s3"/>
     </tabpanels>
-  </vbox>
+  </hbox>
 </window>

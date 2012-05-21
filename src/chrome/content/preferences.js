@@ -199,7 +199,6 @@ var ew_prefs = {
     JAVA_TOOLS_PATH: "ew.tools.path.java_home",
     S3_PROTO: "ew.s3.proto",
     endpoints : null,
-
     prefs : null,
 
     init : function()

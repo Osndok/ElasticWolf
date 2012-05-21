@@ -6,7 +6,7 @@ var ew_AMIsTreeView = {
 
     activate: function() {
         $('ew.images.search').value = ew_prefs.getStringPreference(ew_prefs.IMAGES_FILTER, "");
-        $('ew.images.type').value = ew_prefs.getStringPreference(ew_prefs.IMAGES_TYPE, "");
+        $('ew.images.type').value = ew_prefs.getStringPreference(ew_prefs.IMAGES_TYPE, "all");
         this.invalidate();
     },
 
@@ -86,7 +86,7 @@ var ew_AMIsTreeView = {
         var type = $("ew.images.type");
         if (type.value == "fav") {
             var favs = ew_prefs.getStringPreference(ew_prefs.AMI_FAVORITES, "").split("^");
-            var images = []
+            var images = [];
             for (var i in ew_model.images) {
                 if (favs.indexOf(ew_model.images[i].id) >= 0) {
                     images.push(ew_model.images[i])
@@ -105,20 +105,12 @@ var ew_AMIsTreeView = {
                 var group = groups[0];
                 var currentUser = ew_session.lookupAccountId(group.ownerId);
                 this.imageIdRegex = regExs["ami"];
-
-                if (type.value == "my_ami")
-                    this.rootDeviceType = "";
-                else
-                    this.rootDeviceType = "ebs";
+                this.rootDeviceType = type.value == "my_ami" ? "" : "ebs";
             }
         } else
         if (type.value == "amzn" || type.value == "amzn_rdt_ebs") {
             this.ownerDisplayFilter = "amazon";
-
-            if (type.value == "amzn")
-                this.rootDeviceType = "";
-            else
-                this.rootDeviceType = "ebs";
+            this.rootDeviceType = type.value == "amzn" ? "" : "ebs";
         } else
         if (type.value == "rdt_ebs") {
             this.rootDeviceType = "ebs";
@@ -128,7 +120,7 @@ var ew_AMIsTreeView = {
             this.rootDeviceType = "instance-store";
             this.imageIdRegex = regExs["all"];
         } else {
-            this.imageIdRegex = regExs[type.value];
+            this.imageIdRegex = regExs[type.value || "all"];
             this.rootDeviceType = "";
         }
 

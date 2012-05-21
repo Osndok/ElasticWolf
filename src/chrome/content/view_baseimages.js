@@ -167,7 +167,6 @@ var BaseImagesView = {
         if (imageList == null) {
             imageList = [];
         }
-
         this.treeBox.rowCountChanged(0, -this.imageList.length);
         this.imageList = imageList;
         this.treeBox.rowCountChanged(0, this.imageList.length);
