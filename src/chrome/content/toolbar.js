@@ -15,12 +15,12 @@ var ew_toolbar = {
             { tab: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
                                                      { id: "ew.rsvdInst.view", view: ew_ReservedInstancesTreeView } ], },
             { tab: "ew.tabs.vpc",           views: [ { id: "ew.vpcs.view", view: ew_VpcTreeView },
-                                                     { id: "ew.subnets.view", view: ew_SubnetTreeView },
                                                      { id: "ew.dhcpoptions.view", view: ew_DhcpoptsTreeView } ], },
+            { tab: "ew.tabs.subnet",        views: [ { id: "ew.subnets.view", view: ew_SubnetTreeView }, ], },
             { tab: "ew.tabs.routing",       views: [ { id: "ew.routetables.view", view: ew_RouteTablesTreeView },
                                                      { id: "ew.routes.view", view: ew_RoutesTreeView },
-                                                     { id: "ew.route.associations.view", view: ew_RouteAssociationsTreeView },
-                                                     { id: "ew.internetgateways.view", view : ew_InternetGatewayTreeView } ], },
+                                                     { id: "ew.route.associations.view", view: ew_RouteAssociationsTreeView }, ], },
+            { tab: "ew.tabs.igw",           views: [ { id: "ew.internetgateways.view", view : ew_InternetGatewayTreeView } ], },
             { tab: "ew.tabs.acl",           views: [ { id: "ew.acls.view", view: ew_NetworkAclsTreeView } ,
                                                      { id: "ew.acls.associations.view", view: ew_NetworkAclAssociationsTreeView },
                                                      { id: "ew.acls.rules.view", view: ew_NetworkAclRulesTreeView }], },
@@ -59,6 +59,10 @@ var ew_toolbar = {
 
         case "endpoints":
             ew_session.manageEndpoints();
+            break;
+
+        case "":
+            tree.view.toggleOpenState(tree.currentIndex);
             break;
 
         default:

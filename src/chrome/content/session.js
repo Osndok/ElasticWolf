@@ -141,13 +141,11 @@ var ew_session = {
     selectTab: function(name) {
         if (this.client.disabled) return;
 
-        debug('selectTab: ' + name)
-
         for (var i in this.tabs) {
             if (this.tabs[i].tab == name) {
+                ew_toolbar.select(name);
                 this.tabMenu.selectedIndex = i;
                 this.prefs.setCurrentTab(name);
-                ew_toolbar.select(name);
 
                 // Stop the refresh timers of all tabs
                 for (var tab in this.refreshedTabs) {

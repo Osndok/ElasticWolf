@@ -239,21 +239,6 @@ var ew_InternetGatewayTreeView = {
         TreeView.display.call(this, list);
     },
 
-    filter : function(list)
-    {
-        var vpcId = ew_RouteTablesTreeView.vpcId
-        if (vpcId != "") {
-            var rc = []
-            for (var i in list) {
-                if (list[i].vpcs.indexOf(vpcId) > -1) {
-                    rc.push(list[i])
-                }
-            }
-            return rc;
-        }
-        return list
-    },
-
     createInternetGateway : function()
     {
         var me = this;

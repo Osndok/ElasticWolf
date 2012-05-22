@@ -81,6 +81,21 @@ treechildren::-moz-tree-cell-text(selected) {
     color: #000000;
 }
 
+treechildren::-moz-tree-cell-text(container) {
+     font-weight: bold;
+     padding-left: 2px;
+}
+
+treechildren::-moz-tree-indentation {
+    width: 24px;
+}
+
+treechildren::-moz-tree-twisty {
+    -moz-appearance: none;
+    -moz-padding-end: 0px;
+    width: 0px;
+}
+
 #ew_menu {
     list-style-image: url('menuicon.png');
 }

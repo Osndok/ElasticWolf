@@ -76,11 +76,25 @@ var TreeView = {
     model : '',
     atomService: null,
     properties: [],
+    search: "",
+    searchTimer: null,
 
-    getModel: function()
+    getModelName: function()
     {
         if (this.model instanceof Array) return this.model[0];
         return this.model;
+    },
+    getModel: function()
+    {
+        return ew_model.getModel(this.getModelName(this.model));
+    },
+    getData: function()
+    {
+        return this.treeList;
+    },
+    getList: function()
+    {
+        return this.model ? this.getModel() : this.getData();
     },
     get rowCount() {
         return this.treeList.length;
@@ -187,15 +201,36 @@ var TreeView = {
         return false;
     },
     refresh : function() {
-        ew_model.refreshModel(this.getModel(this.model));
+        ew_model.refreshModel(this.getModelName(this.model));
     },
     invalidate : function() {
-        this.display(this.filter(ew_model.getModel(this.getModel(this.model))));
+        this.display(this.filter(this.getList()));
     },
     filter : function(list) {
+        if (this.search) {
+            var nlist = new Array();
+            var rx = new RegExp(this.search, "i");
+            for (var i in list) {
+                for (var j in list[i]) {
+                    if (String(list[i][j]).match(rx)) {
+                        nlist.push(list[i]);
+                        break;
+                    }
+                }
+            }
+            list = nlist;
+        }
         return list;
     },
     selectionChanged: function(event) {
+    },
+    searchChanged : function(event)
+    {
+        if (this.searchTimer) {
+            clearTimeout(this.searchTimer);
+        }
+        var me = this;
+        this.searchTimer = setTimeout(function() { me.invalidate(); }, 500);
     },
     display : function(list) {
         var sel = cloneObject(this.getSelected())

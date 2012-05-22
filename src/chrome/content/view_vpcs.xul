@@ -23,7 +23,7 @@
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox flex="10">
-                        <textbox id="ew.vpcs.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" onkeypress="ew_VpcTreeView.searchChanged(event);" />
+                        <textbox id="ew.vpcs.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" oninput="ew_VpcTreeView.searchChanged(event);" />
                         <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VpcTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                         <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VpcTreeView.createVpc()" tooltiptext="&ew.createvpc.tip;" />
                         <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VpcTreeView.deleteVpc()" tooltiptext="&ew.deletevpc.tip;" />
@@ -50,48 +50,6 @@
                 <grippy />
             </splitter>
             <groupbox orient="vertical" flex="1">
-                <caption label="&ew.captions.subnets.subnets.label;" />
-                <popupset>
-                    <menupopup id="ew.subnets.contextmenu">
-                        <menuitem oncommand="ew_SubnetTreeView.tag(event);" label="Add Tag" />
-                        <menuseparator />
-                        <menuitem oncommand="ew_SubnetTreeView.deleteSubnet();" label="&ew.subnet.contextmenu.delete.label;" />
-                        <menuseparator />
-                        <menuitem oncommand="ew_SubnetTreeView.copyToClipBoard('id');" label="&ew.subnet.contextmenu.copysubnetid.label;" />
-                    </menupopup>
-                </popupset>
-                <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                    <hbox flex="10">
-                        <textbox id="ew.subnets.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" onkeypress="ew_SubnetTreeView.searchChanged(event);" />
-                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SubnetTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
-                        <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SubnetTreeView.createSubnet()" tooltiptext="&ew.createsubnet.tip;" />
-                        <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SubnetTreeView.deleteSubnet()" tooltiptext="&ew.deletesubnet.tip;" />
-                        <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_SubnetTreeView.tag();" tooltiptext="Add Tag" />
-                    </hbox>
-                </toolbar>
-                <tree id="ew.subnets.view" seltype="single" enableColumnDrag="true" onselect="ew_SubnetTreeView.selectionChanged(event)" flex="1">
-                    <treecols>
-                        <treecol id="subnet.id" label="&ew.subnets.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="subnet.vpcId" label="&ew.vpcs.id.label;" flex="1" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="subnet.cidr" label="&ew.subnets.cidrblock.label;" flex="1" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="subnet.state" label="&ew.subnets.state.label;" flex="1" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="subnet.availableIp" label="&ew.subnets.availableip.label;" flex="1" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="subnet.availabilityZone" label="&ew.subnets.availabilityzone.label;" flex="1" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="subnet.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
-                    </treecols>
-                    <treechildren context="ew.subnets.contextmenu" />
-                </tree>
-            </groupbox>
-            <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
-                <grippy />
-            </splitter>
-            <groupbox orient="vertical" flex="1">
                 <caption label="&ew.captions.dhcpopts.dhcpopts.label;" />
                 <popupset>
                     <menupopup id="ew.dhcpopts.contextmenu">
@@ -104,7 +62,7 @@
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox flex="10">
-                        <textbox id="ew.dhcpopts.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" onkeypress="ew_DhcpoptsTreeView.searchChanged(event);" />
+                        <textbox id="ew.dhcpopts.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" oninput="ew_DhcpoptsTreeView.searchChanged(event);" />
                         <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_DhcpoptsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                         <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_DhcpoptsTreeView.createDhcpOptions()" tooltiptext="&ew.createdhcpoptions.tip;" />
                         <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_DhcpoptsTreeView.deleteDhcpOptions()" tooltiptext="&ew.deletedhcpoptions.tip;" />
