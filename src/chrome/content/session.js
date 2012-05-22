@@ -30,33 +30,24 @@ var ew_session = {
     {
         ew_prefs.init();
 
-        this.tabs = ew_window.tabs;
+        this.tabs = ew_toolbar.tabs;
         this.controller = ew_controller;
         this.model = ew_model;
         this.client = ew_client;
         this.prefs = ew_prefs;
         this.tabMenu = $("ew.tabs");
-        var menu = $("ew.menu.view");
 
         // Connect views early so invalidate can be used
         for (var i in this.tabs) {
-            var b = document.createElement("menuitem");
-            b.setAttribute("label", getProperty(this.tabs[i].tab));
-            b.setAttribute("type", "checkbox");
-            b.setAttribute("checked", ew_prefs.getBoolPreference(this.tabs[i].tab, true));
-            b.setAttribute("oncommand", "ew_session.checkTab(" + i + ")");
-            menu.appendChild(b);
-            // Connect views to trees
             for (var v in this.tabs[i].views) {
                 $(this.tabs[i].views[v].id).view = this.tabs[i].views[v].view;
             }
         }
+
         this.loadAccountIdMap();
         this.loadCredentials();
         this.loadEndpointMap();
         this.loadAllTags();
-
-        this.createToolbar();
 
         document.title = ew_prefs.getAppName();
 
@@ -131,44 +122,6 @@ var ew_session = {
         app.quit(Components.interfaces.nsIAppStartup.eForceQuit);
     },
 
-    createToolbar: function() {
-        var container = $("ew.toolbar");
-        for (var i = container.childNodes.length; i > 0; i--) {
-            container.removeChild(container.childNodes[0]);
-        }
-
-        var cred = this.getActiveCredentials();
-        var endpoint = this.getActiveEndpoint();
-
-        var b = document.createElement("button");
-        b.setAttribute("label", cred ? cred.name : "No Account");
-        b.setAttribute("class", "ew_button");
-        b.setAttribute("id", "ew.active.credential");
-        b.setAttribute("tooltiptext", "Current Credentials");
-        b.setAttribute("oncommand", "ew_session.manageCredentials()");
-        container.appendChild(b);
-
-        b = document.createElement("button");
-        b.setAttribute("label", endpoint ? endpoint.name : "No endpoint");
-        b.setAttribute("class", "ew_button");
-        b.setAttribute("id", "ew.active.endpoint");
-        b.setAttribute("tooltiptext", "Current Endpoint");
-        b.setAttribute("oncommand", "ew_session.manageEndpoints()");
-        container.appendChild(b);
-
-        for (var i in this.tabs) {
-            if (this.prefs.getBoolPreference(this.tabs[i].tab, true)) {
-                b = document.createElement("button");
-                b.setAttribute("label", getProperty(this.tabs[i].tab));
-                b.setAttribute("class", "ew_button");
-                b.setAttribute("id", this.tabs[i].tab.replace('.tabs.', '.buttons.'));
-                b.setAttribute("oncommand", "ew_session.selectTab('" + this.tabs[i].tab + "')");
-                container.appendChild(b);
-            }
-        }
-        this.selectTab(this.prefs.getCurrentTab());
-    },
-
     addTabToRefreshList : function(tab)
     {
         log("Called by: " + tab + " to start refreshing");
@@ -182,13 +135,6 @@ var ew_session = {
         log("Called by: " + tab + " to stop refreshing");
         if (tab != null) {
             this.refreshedTabs[tab] = 0;
-        }
-    },
-
-    checkTab: function(index) {
-        if (index >= 0 && index < this.tabs.length) {
-            this.prefs.setBoolPreference(this.tabs[index].tab, !this.prefs.getBoolPreference(this.tabs[index].tab, true));
-            this.createToolbar();
         }
     },
 
@@ -226,6 +172,7 @@ var ew_session = {
                         tab.views[i].view.refresh();
                     }
                 }
+                ew_toolbar.select(name);
                 break;
             }
         }
@@ -315,13 +262,13 @@ var ew_session = {
     {
         if (cred) {
             debug("switch credentials to " + cred.name)
-            $('ew.active.credential').label = cred.name;
             this.prefs.setLastUsedAccount(cred.name);
             this.client.setCredentials(cred.accessKey, cred.secretKey);
 
             if (cred.endPoint && cred.endPoint != "") {
                 var endpoint = new Endpoint("", cred.endPoint)
                 this.selectEndpoint(endpoint);
+                ew_toolbar.update();
             }
             return true;
         }
@@ -354,10 +301,10 @@ var ew_session = {
     {
         if (endpoint != null) {
             debug("switch endpoint to " + endpoint.name)
-            $('ew.active.endpoint').label = endpoint.name;
             this.prefs.setLastUsedEndpoint(endpoint.name);
             this.prefs.setServiceURL(endpoint.url);
             this.client.setEndpoint(endpoint);
+            ew_toolbar.update();
             return true;
         }
         return false;

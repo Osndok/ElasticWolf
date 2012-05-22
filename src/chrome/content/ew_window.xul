@@ -56,10 +56,7 @@
   <script type="application/x-javascript" src="chrome://ew/content/view_networkacls.js" />
   <script type="application/x-javascript" src="chrome://ew/content/view_enis.js" />
   <script type="application/x-javascript" src="chrome://ew/content/view_s3.js" />
-
-  <script type="application/x-javascript" src="chrome://ew/content/window.js" />
-  <script type="application/x-javascript">
-  </script>
+  <script type="application/x-javascript" src="chrome://ew/content/toolbar.js" />
 
   <stringbundleset>
     <stringbundle id="ew.properties.bundle" src="chrome://ew/locale/ew.properties" />
@@ -77,10 +74,6 @@
        <menuitem label="Exit" image="images/reboot.png" class="menuitem-iconic" oncommand="ew_session.quit();"/>
       </menupopup>
     </menu>
-    <menu label="View">
-      <menupopup id="ew.menu.view">
-      </menupopup>
-    </menu>
     <menu label="Help">
       <menupopup>
        <menuitem label="About" id="aboutName" image="images/about.png" class="menuitem-iconic" oncommand="ew_session.displayAbout();"/>
@@ -91,12 +84,142 @@
    </toolbox>
 
   <hbox flex="1">
-    <arrowscrollbox orient="vertical" id="ew.toolbar" style="min-width:100px;max-width:100px;"/>
+    <tree id="ew.toolbar" seltype="single" onselect="ew_toolbar.selectionChanged()" hidecolumnpicker="true" currentIndex="3" flex="1">
+    <treecols>
+      <treecol id="name" label="Navigation" primary="true" flex="1" persist="width ordinal hidden" />
+    </treecols>
 
-    <tabpanels id="ew.tabs" flex="1" style="margin:0px;padding:0px;border:0px;">
+    <treechildren>
+      <treeitem container="true" open="true">
+       <treerow>
+         <treecell label="Access" />
+       </treerow>
+       <treechildren>
+         <treeitem>
+           <treerow>
+             <treecell label="Credentials" value="credentials" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="Endpoints" value="endpoints" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.access.label;" value="ew.tabs.access" />
+           </treerow>
+         </treeitem>
+       </treechildren>
+      </treeitem>
+
+      <treeitem container="true" open="true">
+       <treerow>
+         <treecell label="Instances" />
+       </treerow>
+       <treechildren>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.instance.label;" value="ew.tabs.instance" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.image.label;" value="ew.tabs.image" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.bundletask.label;" value="ew.tabs.bundletask" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.lease.label;" value="ew.tabs.lease" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.volume.label;" value="ew.tabs.volume" />
+           </treerow>
+         </treeitem>
+       </treechildren>
+      </treeitem>
+
+      <treeitem container="true" open="true">
+       <treerow>
+         <treecell label="Network" />
+       </treerow>
+       <treechildren>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.eip.label;" value="ew.tabs.eip" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.routing.label;" value="ew.tabs.routing" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.eni.label;" value="ew.tabs.eni" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.availzone.label;" value="ew.tabs.availzone" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.loadbalancer.label;" value="ew.tabs.loadbalancer" />
+           </treerow>
+         </treeitem>
+       </treechildren>
+      </treeitem>
+
+      <treeitem container="true" open="true">
+       <treerow>
+         <treecell label="Security" />
+       </treerow>
+       <treechildren>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.securitygroup.label;" value="ew.tabs.securitygroup" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.acl.label;" value="ew.tabs.acl" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.vpc.label;" value="ew.tabs.vpc" />
+           </treerow>
+         </treeitem>
+         <treeitem>
+           <treerow>
+             <treecell label="&ew.tabs.vpn.label;" value="ew.tabs.vpn" />
+           </treerow>
+         </treeitem>
+       </treechildren>
+      </treeitem>
+
+      <treeitem>
+        <treerow>
+          <treecell label="&ew.tabs.s3.label;" value="ew.tabs.s3" />
+        </treerow>
+      </treeitem>
+
+    </treechildren>
+    </tree>
+
+    <tabpanels id="ew.tabs" flex="2" style="margin-top: 5px; padding-top:0px;">
       <tabpanel id="ew.tabs.instance"/>
       <tabpanel id="ew.tabs.image"/>
-      <tabpanel id="ew.tabs.auth"/>
+      <tabpanel id="ew.tabs.access"/>
       <tabpanel id="ew.tabs.securitygroup"/>
       <tabpanel id="ew.tabs.eip"/>
       <tabpanel id="ew.tabs.volume"/>

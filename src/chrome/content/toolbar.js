@@ -1,10 +1,10 @@
-var ew_window = {
+var ew_toolbar = {
     tabs: [ { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView }], },
             { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
-            { tab: "ew.tabs.auth",          views: [ { id: "ew.keypairs.view", view: ew_KeypairTreeView },
+            { tab: "ew.tabs.access",        views: [ { id: "ew.keypairs.view", view: ew_KeypairTreeView },
                                                      { id: "ew.accesskeys.view", view: ew_AccessKeyTreeView },
                                                      { id: "ew.certs.view", view: ew_CertTreeView } ], },
-                                                     { tab: "ew.tabs.securitygroup", views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView },
+            { tab: "ew.tabs.securitygroup", views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView },
                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }], },
             { tab: "ew.tabs.eip",           views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView }], },
             { tab: "ew.tabs.volume",        views: [ { id: "ew.volumes.view", view: ew_VolumeTreeView },
@@ -33,5 +33,38 @@ var ew_window = {
             { tab: "ew.tabs.availzone",     views: [ { id: "ew.azones.view", view: ew_AvailZoneTreeView }], },
             { tab: "ew.tabs.s3",            views: [ { id: "ew.s3.view", view: ew_S3BucketsTreeView }], },
     ],
+
+    select: function(id)
+    {
+
+    },
+
+    selectionChanged: function()
+    {
+        var tree = $('ew.toolbar')
+        var id = tree.view.getCellValue(tree.currentIndex, tree.columns.getFirstColumn());
+
+        switch (id) {
+        case "credentials":
+            ew_session.manageCredentials();
+            break;
+
+        case "endpoints":
+            ew_session.manageEndpoints();
+            break;
+
+        default:
+            ew_session.selectTab(id);
+        }
+    },
+
+    update: function() {
+        var tree = $('ew.toolbar')
+        var cred = ew_session.getActiveCredentials();
+        tree.view.setCellText(1, tree.columns.getFirstColumn(), cred ? 'Account: ' + cred.name : "Manage Credentials");
+
+        var endpoint = ew_session.getActiveEndpoint();
+        tree.view.setCellText(2, tree.columns.getFirstColumn(), endpoint ? 'Endpoint: ' + endpoint.name : "Manage Endpoints");
+    },
 
 };

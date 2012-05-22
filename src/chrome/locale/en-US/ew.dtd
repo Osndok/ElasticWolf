@@ -9,22 +9,21 @@
 <!ENTITY ew.deleteTag.label "Delete Public Tag">
 <!ENTITY ew.publictag.label "Public Tag">
 
-<!ENTITY ew.tabs.instances.label "Instances">
-<!ENTITY ew.tabs.images.label "Images">
-<!ENTITY ew.tabs.auth.label "Access">
-<!ENTITY ew.tabs.certs.label "Certificates">
-<!ENTITY ew.tabs.secgroups.label "Security Groups">
-<!ENTITY ew.tabs.availzones.label "AZ">
-<!ENTITY ew.tabs.eips.label "Elastic IPs">
-<!ENTITY ew.tabs.volumes.label "Vols and Snaps">
-<!ENTITY ew.tabs.bundleTasks.label "BT">
-<!ENTITY ew.tabs.leases.label "RI">
-<!ENTITY ew.tabs.loadbalancer.label "ELB">
-<!ENTITY ew.tabs.vpcs.label "VPC">
+<!ENTITY ew.tabs.instance.label "Instances">
+<!ENTITY ew.tabs.image.label "Images">
+<!ENTITY ew.tabs.access.label "Access Keys/Keypairs">
+<!ENTITY ew.tabs.securitygroup.label "Security Groups">
+<!ENTITY ew.tabs.availzone.label "Availability Zones">
+<!ENTITY ew.tabs.eip.label "Elastic IPs">
+<!ENTITY ew.tabs.volume.label "Volumes and Snapshots">
+<!ENTITY ew.tabs.bundletask.label "Bundle Tasks">
+<!ENTITY ew.tabs.lease.label "Reserved Instances">
+<!ENTITY ew.tabs.loadbalancer.label "Load Balancer">
+<!ENTITY ew.tabs.vpc.label "VPC">
 <!ENTITY ew.tabs.routing.label "Routing">
-<!ENTITY ew.tabs.vpns.label "VPNC">
-<!ENTITY ew.tabs.acls.label "ACLs">
-<!ENTITY ew.tabs.enis.label "ENIs">
+<!ENTITY ew.tabs.vpn.label "VPN Connections">
+<!ENTITY ew.tabs.acl.label "Network ACLs">
+<!ENTITY ew.tabs.eni.label "Elastic Network Interfaces">
 <!ENTITY ew.tabs.s3.label "S3">
 
 <!ENTITY ew.captions.images.images.label "Machine Images (AMIs)">
