@@ -101,7 +101,7 @@ var ew_RouteTablesTreeView = {
         vpcMenu.appendItem("No Filter", "")
         for (var i in vpcs) {
             vpcMenu.appendItem(vpcs[i].id + " " + vpcs[i].toStr(), vpcs[i].id)
-            if (vpcs[i].id == this.vpcId) selected = i;
+            if (vpcs[i].id == this.vpcId) selected = vpcMenu.itemCount - 1;
         }
         vpcMenu.selectedIndex = selected;
     },
@@ -110,7 +110,6 @@ var ew_RouteTablesTreeView = {
     {
         var vpcMenu = document.getElementById("ew.routing.vpcid");
         this.vpcId = vpcMenu.value;
-        if (this.vpcId == "") return;
         this.invalidate();
         ew_InternetGatewayTreeView.invalidate();
     }

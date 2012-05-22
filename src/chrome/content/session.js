@@ -141,17 +141,13 @@ var ew_session = {
     selectTab: function(name) {
         if (this.client.disabled) return;
 
+        debug('selectTab: ' + name)
+
         for (var i in this.tabs) {
             if (this.tabs[i].tab == name) {
                 this.tabMenu.selectedIndex = i;
                 this.prefs.setCurrentTab(name);
-
-                // update selected button
-                var container = $("ew.toolbar");
-                var bid = name.replace('.tabs.', '.buttons.');
-                for (var i = 0; i < container.childNodes.length; i++) {
-                    container.childNodes[i].setAttribute("class", "ew_button" + (container.childNodes[i].id == bid ? " ew_button_selected" : ""));
-                }
+                ew_toolbar.select(name);
 
                 // Stop the refresh timers of all tabs
                 for (var tab in this.refreshedTabs) {
@@ -172,7 +168,6 @@ var ew_session = {
                         tab.views[i].view.refresh();
                     }
                 }
-                ew_toolbar.select(name);
                 break;
             }
         }

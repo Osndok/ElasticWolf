@@ -1,14 +1,14 @@
 var ew_toolbar = {
     tabs: [ { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView }], },
             { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
-            { tab: "ew.tabs.access",        views: [ { id: "ew.keypairs.view", view: ew_KeypairTreeView },
-                                                     { id: "ew.accesskeys.view", view: ew_AccessKeyTreeView },
+            { tab: "ew.tabs.access",        views: [ { id: "ew.accesskeys.view", view: ew_AccessKeyTreeView },
                                                      { id: "ew.certs.view", view: ew_CertTreeView } ], },
+            { tab: "ew.tabs.keypair",       views: [ { id: "ew.keypairs.view", view: ew_KeypairTreeView } ] },
             { tab: "ew.tabs.securitygroup", views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView },
                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }], },
             { tab: "ew.tabs.eip",           views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView }], },
-            { tab: "ew.tabs.volume",        views: [ { id: "ew.volumes.view", view: ew_VolumeTreeView },
-                                                     { id: "ew.snapshots.view", view: ew_SnapshotTreeView }] },
+            { tab: "ew.tabs.volume",        views: [ { id: "ew.volumes.view", view: ew_VolumeTreeView }], },
+            { tab: "ew.tabs.snapshot",      views: [ { id: "ew.snapshots.view", view: ew_SnapshotTreeView }], },
             { tab: "ew.tabs.loadbalancer",  views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView },
                                                      { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }], },
             { tab: "ew.tabs.bundletask",    views: [ { id: "ew.bundleTasks.view", view: ew_BundleTasksTreeView } ], },
@@ -36,12 +36,20 @@ var ew_toolbar = {
 
     select: function(id)
     {
-
+        var tree = $('ew.toolbar');
+        for (var i = 0; i < tree.view.rowCount; i++) {
+            var val = tree.view.getCellValue(i, tree.columns.getFirstColumn());
+            if (val == id) {
+                tree.currentIndex = i;
+                tree.view.selection.select(i);
+                break;
+            }
+        }
     },
 
     selectionChanged: function()
     {
-        var tree = $('ew.toolbar')
+        var tree = $('ew.toolbar');
         var id = tree.view.getCellValue(tree.currentIndex, tree.columns.getFirstColumn());
 
         switch (id) {

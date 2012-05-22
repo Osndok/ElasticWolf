@@ -4,11 +4,13 @@
 
 <?xul-overlay href="chrome://ew/content/view_instances.xul"?>
 <?xul-overlay href="chrome://ew/content/view_amis.xul"?>
-<?xul-overlay href="chrome://ew/content/view_auth.xul"?>
+<?xul-overlay href="chrome://ew/content/view_access.xul"?>
+<?xul-overlay href="chrome://ew/content/view_keypairs.xul"?>
 <?xul-overlay href="chrome://ew/content/view_securitygroups.xul"?>
 <?xul-overlay href="chrome://ew/content/view_azone.xul"?>
 <?xul-overlay href="chrome://ew/content/view_eip.xul"?>
 <?xul-overlay href="chrome://ew/content/view_volumes.xul"?>
+<?xul-overlay href="chrome://ew/content/view_snapshots.xul"?>
 <?xul-overlay href="chrome://ew/content/view_bundletasks.xul"?>
 <?xul-overlay href="chrome://ew/content/view_leaseofferings.xul"?>
 <?xul-overlay href="chrome://ew/content/view_vpcs.xul"?>
@@ -31,7 +33,7 @@
   <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
   <script type="application/x-javascript" src="chrome://ew/content/session.js" />
 
-  <script type="application/x-javascript" src="chrome://ew/content/view_auth.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/view_access.js" />
   <script type="application/x-javascript" src="chrome://ew/content/view_certs.js" />
   <script type="application/x-javascript" src="chrome://ew/content/view_instances.js" />
   <script type="application/x-javascript" src="chrome://ew/content/view_securitygroups.js" />
@@ -84,7 +86,7 @@
    </toolbox>
 
   <hbox flex="1">
-    <tree id="ew.toolbar" seltype="single" onselect="ew_toolbar.selectionChanged()" hidecolumnpicker="true" currentIndex="3" flex="1">
+    <tree id="ew.toolbar" seltype="single" style="min-width:150px;" onselect="ew_toolbar.selectionChanged()" hidecolumnpicker="true" currentIndex="3" flex="1">
     <treecols>
       <treecol id="name" label="Navigation" primary="true" flex="1" persist="width ordinal hidden" />
     </treecols>
@@ -95,21 +97,10 @@
          <treecell label="Access" />
        </treerow>
        <treechildren>
-         <treeitem>
-           <treerow>
-             <treecell label="Credentials" value="credentials" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="Endpoints" value="endpoints" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.access.label;" value="ew.tabs.access" />
-           </treerow>
-         </treeitem>
+         <treeitem><treerow><treecell label="Credentials" value="credentials" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Endpoints" value="endpoints" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.access.label;" value="ew.tabs.access" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.keypair.label;" value="ew.tabs.keypair" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
@@ -118,31 +109,12 @@
          <treecell label="Instances" />
        </treerow>
        <treechildren>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.instance.label;" value="ew.tabs.instance" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.image.label;" value="ew.tabs.image" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.bundletask.label;" value="ew.tabs.bundletask" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.lease.label;" value="ew.tabs.lease" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.volume.label;" value="ew.tabs.volume" />
-           </treerow>
-         </treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.instance.label;" value="ew.tabs.instance" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.image.label;" value="ew.tabs.image" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.bundletask.label;" value="ew.tabs.bundletask" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.lease.label;" value="ew.tabs.lease" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.volume.label;" value="ew.tabs.volume" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.snapshot.label;" value="ew.tabs.snapshot" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
@@ -151,31 +123,11 @@
          <treecell label="Network" />
        </treerow>
        <treechildren>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.eip.label;" value="ew.tabs.eip" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.routing.label;" value="ew.tabs.routing" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.eni.label;" value="ew.tabs.eni" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.availzone.label;" value="ew.tabs.availzone" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.loadbalancer.label;" value="ew.tabs.loadbalancer" />
-           </treerow>
-         </treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.eip.label;" value="ew.tabs.eip" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.routing.label;" value="ew.tabs.routing" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.eni.label;" value="ew.tabs.eni" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.availzone.label;" value="ew.tabs.availzone" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.loadbalancer.label;" value="ew.tabs.loadbalancer" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
@@ -184,45 +136,28 @@
          <treecell label="Security" />
        </treerow>
        <treechildren>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.securitygroup.label;" value="ew.tabs.securitygroup" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.acl.label;" value="ew.tabs.acl" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.vpc.label;" value="ew.tabs.vpc" />
-           </treerow>
-         </treeitem>
-         <treeitem>
-           <treerow>
-             <treecell label="&ew.tabs.vpn.label;" value="ew.tabs.vpn" />
-           </treerow>
-         </treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.securitygroup.label;" value="ew.tabs.securitygroup" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.acl.label;" value="ew.tabs.acl" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.vpc.label;" value="ew.tabs.vpc" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.vpn.label;" value="ew.tabs.vpn" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
-      <treeitem>
-        <treerow>
-          <treecell label="&ew.tabs.s3.label;" value="ew.tabs.s3" />
-        </treerow>
-      </treeitem>
+      <treeitem><treerow><treecell label="&ew.tabs.s3.label;" value="ew.tabs.s3" /></treerow></treeitem>
 
     </treechildren>
     </tree>
 
-    <tabpanels id="ew.tabs" flex="2" style="margin-top: 5px; padding-top:0px;">
+    <tabbox flex="1">
+    <tabpanels id="ew.tabs" flex="1" style="margin-top: 5px; padding-top:0px;">
       <tabpanel id="ew.tabs.instance"/>
       <tabpanel id="ew.tabs.image"/>
       <tabpanel id="ew.tabs.access"/>
+      <tabpanel id="ew.tabs.keypair"/>
       <tabpanel id="ew.tabs.securitygroup"/>
       <tabpanel id="ew.tabs.eip"/>
       <tabpanel id="ew.tabs.volume"/>
+      <tabpanel id="ew.tabs.snapshot"/>
       <tabpanel id="ew.tabs.loadbalancer"/>
       <tabpanel id="ew.tabs.bundletask"/>
       <tabpanel id="ew.tabs.lease"/>
@@ -234,5 +169,6 @@
       <tabpanel id="ew.tabs.availzone"/>
       <tabpanel id="ew.tabs.s3"/>
     </tabpanels>
+    </tabbox>
   </hbox>
 </window>
