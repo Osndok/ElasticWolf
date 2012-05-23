@@ -1,3 +1,6 @@
 .DS_Store
 .settings
+ElasticWolf/application.ini
+ElasticWolf/chrome/*
+ElasticWolf/defaults/*
 
