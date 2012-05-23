@@ -34,18 +34,23 @@ clients for accessing Linux instances.
 
    * Download Git for Windows from http://code.google.com/p/msysgit/downloads/list
 
-   * Once installed make sure command line tools are installed
-
-   * Launch cmd.exe console and cd to the directory where you want to put the source code
+   * Now launch cmd.exe and cd to the directory where you want to keep the source code
 
    * Retrieve source code from the repository
 
-       git clone git://github.com/aws-ew-dev/ElasticWolf.git
+       "C:\Program Files\Git\cmd\git" clone git://github.com/aws-ew-dev/ElasticWolf.git
 
-   * Run from the source directory the command, it will make a copy of the modified
-     source files into the ElasticWolf windows directory 
+     or
+
+     Use git GUI instead
+
+   * Now execute run.bat which will enable javascript console for debugging purposes 
 
        run.bat
+
+   * To access git command line utilities without full path, go to 
+     My computer | Properties | Advanced System Properties | Environment Variables and 
+     add path to the git C:\Program Files\Git\cmd to Path system variable. 
 
 ## Building releases
 
