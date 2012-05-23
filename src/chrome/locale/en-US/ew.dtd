@@ -281,9 +281,7 @@
 <!ENTITY ew.instances.contextmenu.copypublic.label "Copy Public DNS Name to clipboard">
 <!ENTITY ew.instances.contextmenu.copyprivate.label "Copy Private DNS Name to clipboard">
 <!ENTITY ew.instances.contextmenu.connect.label "Connect to Public DNS Name">
-
 <!ENTITY ew.instances.contextmenu.copyname.label "Name">
-
 <!ENTITY ew.instances.contextmenu.copyid.label "Instance ID">
 
 <!ENTITY ew.addresses.contextmenu.associate.label "Associate Elastic IP with Instance">
@@ -394,7 +392,7 @@
 <!ENTITY ew.routes.create.tip "Create Route">
 <!ENTITY ew.routes.delete.tip "Delete Route">
 
-<!ENTITY ew.captions.route.associations.label "Route Associations">
+<!ENTITY ew.captions.route.associations.label "Subnet Associations">
 <!ENTITY ew.route.associations.create.tip "Associate Route">
 <!ENTITY ew.route.associations.delete.tip "Deassociate Route">
 

@@ -630,6 +630,7 @@ var ew_model = {
 
     refreshModel : function(name)
     {
+        debug('refreshModel: ' + name)
         switch (name) {
         case "volumes":
             ew_session.controller.describeVolumes();

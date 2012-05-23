@@ -90,6 +90,10 @@ treechildren::-moz-tree-indentation {
     width: 24px;
 }
 
+groupbox {
+    outline: 0px;
+}
+
 treechildren::-moz-tree-twisty {
     -moz-appearance: none;
     -moz-padding-end: 0px;

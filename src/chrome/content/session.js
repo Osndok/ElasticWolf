@@ -29,6 +29,7 @@ var ew_session = {
     initialize : function()
     {
         ew_prefs.init();
+        ew_toolbar.init();
 
         this.tabs = ew_toolbar.tabs;
         this.controller = ew_controller;
@@ -36,13 +37,6 @@ var ew_session = {
         this.client = ew_client;
         this.prefs = ew_prefs;
         this.tabMenu = $("ew.tabs");
-
-        // Connect views early so invalidate can be used
-        for (var i in this.tabs) {
-            for (var v in this.tabs[i].views) {
-                $(this.tabs[i].views[v].id).view = this.tabs[i].views[v].view;
-            }
-        }
 
         this.loadAccountIdMap();
         this.loadCredentials();

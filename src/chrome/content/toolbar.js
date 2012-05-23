@@ -16,7 +16,9 @@ var ew_toolbar = {
                                                      { id: "ew.rsvdInst.view", view: ew_ReservedInstancesTreeView } ], },
             { tab: "ew.tabs.vpc",           views: [ { id: "ew.vpcs.view", view: ew_VpcTreeView },
                                                      { id: "ew.dhcpoptions.view", view: ew_DhcpoptsTreeView } ], },
-            { tab: "ew.tabs.subnet",        views: [ { id: "ew.subnets.view", view: ew_SubnetTreeView }, ], },
+            { tab: "ew.tabs.subnet",        views: [ { id: "ew.subnets.view", view: ew_SubnetTreeView },
+                                                     { id: "ew.subnetroutes.view", view: ew_SubnetRoutesTreeView },
+                                                     { id: "ew.subnetacls.view", view: ew_SubnetAclRulesTreeView } ], },
             { tab: "ew.tabs.routing",       views: [ { id: "ew.routetables.view", view: ew_RouteTablesTreeView },
                                                      { id: "ew.routes.view", view: ew_RoutesTreeView },
                                                      { id: "ew.route.associations.view", view: ew_RouteAssociationsTreeView }, ], },
@@ -33,6 +35,14 @@ var ew_toolbar = {
             { tab: "ew.tabs.availzone",     views: [ { id: "ew.azones.view", view: ew_AvailZoneTreeView }], },
             { tab: "ew.tabs.s3",            views: [ { id: "ew.s3.view", view: ew_S3BucketsTreeView }], },
     ],
+
+    init: function() {
+        for (var i in this.tabs) {
+            for (var v in this.tabs[i].views) {
+                $(this.tabs[i].views[v].id).view = this.tabs[i].views[v].view;
+            }
+        }
+    },
 
     select: function(id)
     {

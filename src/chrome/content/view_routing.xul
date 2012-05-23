@@ -6,34 +6,33 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabpanel id="ew.tabs.routing" flex="1">
     <vbox flex="1">
-        <label control="ew.routing.vpcid" value="Filter by VPC:" />
-        <menulist id="ew.routing.vpcid" oncommand="ew_RouteTablesTreeView.vpcIdSelected();"/>
+       <groupbox orient="vertical" flex="1">
+           <caption label="&ew.captions.routetables.label;" />
+           <toolbar style="padding: 0px 3px; -moz-box-align: center">
+               <hbox flex="1">
+                   <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_RouteTablesTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
+                   <toolbarbutton image="images/add.png" tooltiptext="&ew.routetable.create.tip;" oncommand="ew_RouteTablesTreeView.createTable();" />
+                   <toolbarbutton image="images/delete.png" tooltiptext="&ew.routetable.delete.tip;" oncommand="ew_RouteTablesTreeView.deleteSelected();" />
+               </hbox>
+           </toolbar>
+           <tree id="ew.routetables.view" seltype="single" enableColumnDrag="true" onselect="ew_RouteTablesTreeView.selectionChanged(event);" flex="1">
+               <treecols>
+                   <treecol id="routeTable.id" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
+                   <splitter class="tree-splitter" />
+                   <treecol id="routeTable.vpcId" label="VPC Id" flex="1" persist="width ordinal hidden sortDirection" />
+                   <splitter class="tree-splitter" />
+                   <treecol id="routeTable.info" label="VPC Details" flex="1" persist="width ordinal hidden sortDirection" />
+                   <splitter class="tree-splitter" />
+               </treecols>
+               <treechildren context="ew.routetables.contextmenu" />
+          </tree>
+       </groupbox>
 
-            <hbox flex="2">
-            <groupbox orient="vertical" flex="1">
-                <caption label="&ew.captions.routetables.label;" />
-                <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                    <hbox flex="10">
-                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_RouteTablesTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
-                        <toolbarbutton image="images/add.png" tooltiptext="&ew.routetable.create.tip;" oncommand="ew_RouteTablesTreeView.createTable();" />
-                        <toolbarbutton image="images/delete.png" tooltiptext="&ew.routetable.delete.tip;" oncommand="ew_RouteTablesTreeView.deleteSelected();" />
-                    </hbox>
-                </toolbar>
-                <tree id="ew.routetables.view" seltype="single" enableColumnDrag="true" onselect="ew_RouteTablesTreeView.selectionChanged(event);" flex="1">
-                    <treecols>
-                        <treecol id="routeTable.id" label="ID" flex="2" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="routeTable.vpcId" label="VPC" flex="1" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="routeTable.info" label="Info" flex="1" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                    </treecols>
-                    <treechildren context="ew.routetables.contextmenu" />
-                </tree>
-            </groupbox>
+       <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
+           <grippy />
+       </splitter>
 
-            <vbox flex="1">
-            <groupbox orient="vertical" flex="1">
+       <groupbox orient="vertical" flex="1">
                 <caption label="&ew.captions.routes.label;" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox>
@@ -51,9 +50,13 @@
                     </treecols>
                     <treechildren />
                 </tree>
-            </groupbox>
+       </groupbox>
 
-            <groupbox orient="vertical" flex="1">
+       <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
+           <grippy />
+       </splitter>
+
+       <groupbox orient="vertical" flex="1">
                 <caption label="&ew.captions.route.associations.label;" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox>
@@ -65,15 +68,13 @@
                     <treecols>
                         <treecol id="assoc.id" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="assoc.subnetId" label="Subnet" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="assoc.subnetId" label="Subnet Id" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="assoc.info" label="Info" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="assoc.info" label="Subnet Details" flex="1" persist="width ordinal hidden sortDirection" />
                     </treecols>
                     <treechildren />
                 </tree>
-            </groupbox>
-            </vbox>
-            </hbox>
+       </groupbox>
     </vbox>
     </tabpanel>
 </overlay>

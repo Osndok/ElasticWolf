@@ -1,6 +1,6 @@
 var ew_NetworkAclsTreeView = {
     COLNAMES : [ 'acl.id', 'acl.vpcId', 'acl.cidr' ],
-    model : "networkAcls",
+    model : [ "networkAcls", "subnets", "vpcs" ],
 
     display : function(list)
     {
@@ -21,7 +21,7 @@ var ew_NetworkAclsTreeView = {
         for (var i in acl.associations) {
             var subnet = ew_model.getSubnetById(acl.associations[i].subnetId)
             if (subnet) {
-                acl.associations[i].cidr = subnet.cidr
+                acl.associations[i].cidr = subnet.toStr()
             }
         }
 

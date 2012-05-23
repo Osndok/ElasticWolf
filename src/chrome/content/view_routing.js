@@ -1,7 +1,6 @@
 var ew_RouteTablesTreeView = {
     COLNAMES : [ 'routeTable.id', 'routeTable.vpcId', 'routeTable.info' ],
-    model : [ "routeTables", "vpcs" ],
-    vpcId : "",
+    model : [ "routeTables", "vpcs", "subnets" ],
 
     viewDetails : function(event)
     {
@@ -73,46 +72,7 @@ var ew_RouteTablesTreeView = {
             }
         }
         TreeView.display.call(this, list);
-        this.updateVpcs();
     },
-
-    filter : function(list)
-    {
-        var vpcId = ew_RouteTablesTreeView.vpcId
-        if (vpcId != "") {
-            var rc = []
-            for ( var i in list) {
-                if (list[i].vpcId == vpcId) {
-                    rc.push(list[i])
-                }
-            }
-            return rc;
-        }
-        return list
-    },
-
-    updateVpcs : function()
-    {
-        var vpcMenu = document.getElementById("ew.routing.vpcid");
-        this.vpcId = vpcMenu.value;
-        var vpcs = ew_session.model.getVpcs();
-        var selected = 0;
-        vpcMenu.removeAllItems();
-        vpcMenu.appendItem("No Filter", "")
-        for (var i in vpcs) {
-            vpcMenu.appendItem(vpcs[i].id + " " + vpcs[i].toStr(), vpcs[i].id)
-            if (vpcs[i].id == this.vpcId) selected = vpcMenu.itemCount - 1;
-        }
-        vpcMenu.selectedIndex = selected;
-    },
-
-    vpcIdSelected : function()
-    {
-        var vpcMenu = document.getElementById("ew.routing.vpcid");
-        this.vpcId = vpcMenu.value;
-        this.invalidate();
-        ew_InternetGatewayTreeView.invalidate();
-    }
 };
 ew_RouteTablesTreeView.__proto__ = TreeView;
 ew_RouteTablesTreeView.register();

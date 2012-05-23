@@ -27,9 +27,9 @@
                         <splitter class="tree-splitter" />
                         <treecol id="acl.dflt" label="Default" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="acl.vpcId" label="VPC" flex="2" persist="width ordinal hidden sortDirection" />
+                        <treecol id="acl.vpcId" label="VPC Id" flex="2" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="acl.cidr" label="CIDR" flex="2" persist="width ordinal hidden sortDirection" />
+                        <treecol id="acl.cidr" label="VPC Details" flex="2" persist="width ordinal hidden sortDirection" />
                     </treecols>
                     <treechildren context="ew.acls.contextmenu" />
                 </tree>
@@ -39,26 +39,7 @@
                 <grippy />
             </splitter>
 
-            <hbox flex="1">
             <groupbox orient="vertical" flex="1">
-                <caption label="ACL Associations" />
-                <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                    <hbox>
-                    </hbox>
-                </toolbar>
-                <tree id="ew.acls.associations.view" enableColumnDrag="true" flex="1">
-                    <treecols>
-                        <treecol id="assoc.id" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="assoc.subnetId" label="Subnet" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="assoc.cidr" label="CIDR" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
-                    </treecols>
-                    <treechildren />
-                </tree>
-            </groupbox>
-
-            <groupbox orient="vertical" flex="2">
                 <caption label="ACL Rules" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox>
@@ -85,7 +66,28 @@
                     <treechildren />
                 </tree>
             </groupbox>
-            </hbox>
+
+            <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
+                <grippy />
+            </splitter>
+
+            <groupbox orient="vertical" flex="1">
+                <caption label="ACL Associations" />
+                <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                    <hbox>
+                    </hbox>
+                </toolbar>
+                <tree id="ew.acls.associations.view" enableColumnDrag="true" flex="1">
+                    <treecols>
+                        <treecol id="assoc.id" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="assoc.subnetId" label="Subnet Id" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="assoc.cidr" label="Subnet Details" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    </treecols>
+                    <treechildren />
+                </tree>
+            </groupbox>
     </vbox>
     </tabpanel>
 </overlay>

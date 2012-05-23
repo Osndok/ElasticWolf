@@ -115,7 +115,7 @@ var TreeView = {
         return false;
     },
     getSelected : function() {
-        return this.selection.currentIndex == -1 ? null : this.treeList[this.selection.currentIndex];
+        return !this.selection || this.selection.currentIndex == -1 ? null : this.treeList[this.selection.currentIndex];
     },
     setSelected : function(index) {
         this.selection.select(index);
@@ -202,6 +202,13 @@ var TreeView = {
     },
     refresh : function() {
         ew_model.refreshModel(this.getModelName(this.model));
+        if (this.model instanceof Array) {
+            for (var i = 1; i < this.model.length; i++) {
+                if (ew_model.getModel(this.model[i]) == null) {
+                    ew_model.refreshModel(this.model[i]);
+                }
+            }
+        }
     },
     invalidate : function() {
         this.display(this.filter(this.getList()));

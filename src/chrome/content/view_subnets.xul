@@ -41,8 +41,68 @@
                         <treecol id="subnet.availabilityZone" label="&ew.subnets.availabilityzone.label;" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="subnet.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="subnet.route" label="Route" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="subnet.acl" label="ACL" flex="1" persist="width ordinal hidden sortDirection" />
                     </treecols>
                     <treechildren context="ew.subnets.contextmenu" />
+                </tree>
+            </groupbox>
+
+            <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
+                <grippy />
+            </splitter>
+
+            <groupbox orient="vertical" flex="1">
+                <caption label="&ew.captions.routes.label;" />
+                <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                    <hbox>
+                        <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_RoutesTreeView.createRoute();" tooltiptext="&ew.routes.create.tip;" />
+                        <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_RoutesTreeView.deleteRoute();" tooltiptext="&ew.routes.delete.tip;" />
+                    </hbox>
+                </toolbar>
+                <tree id="ew.subnetroutes.view" enableColumnDrag="true" flex="1">
+                    <treecols>
+                        <treecol id="route.cidr" label="CIDR" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="route.gatewayId" label="Gateway" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="route.state" label="State" flex="1" persist="width ordinal hidden sortDirection" />
+                    </treecols>
+                    <treechildren />
+                </tree>
+            </groupbox>
+
+            <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
+                <grippy />
+            </splitter>
+
+            <groupbox orient="vertical" flex="1">
+                <caption label="ACL Rules" />
+                <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                    <hbox>
+                        <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_NetworkAclRulesTreeView.createRule();" tooltiptext="Add ACL Rule" />
+                        <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_NetworkAclRulesTreeView.deleteRule();" tooltiptext="Delete ACL Rule" />
+                    </hbox>
+                </toolbar>
+                <tree id="ew.subnetacls.view" enableColumnDrag="true" flex="1">
+                    <treecols>
+                        <treecol id="rule.num" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="rule.proto" label="Protocol" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="rule.action" label="Action" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="rule.egress" label="Egress" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="rule.cidr" label="CIDR" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="rule.ports" label="Ports" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="rule.icmp" label="ICMP" flex="1" persist="width ordinal hidden sortDirection" />
+                    </treecols>
+                    <treechildren />
                 </tree>
             </groupbox>
         </vbox>
