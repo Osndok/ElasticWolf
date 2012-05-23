@@ -1,5 +1,5 @@
-var ew_SubnetTreeView = {
-    COLNAMES : [ 'subnet.id', 'subnet.vpcId', 'subnet.cidr', 'subnet.state', 'subnet.availableIp', 'subnet.availabilityZone', 'subnet.tag', 'subnet.route', 'subnet.acl' ],
+var ew_SubnetsTreeView = {
+    COLNAMES : [ 'subnet.id', 'subnet.vpcId', 'subnet.cidr', 'subnet.state', 'subnet.availableIp', 'subnet.availabilityZone', 'subnet.tag', 'subnet.routeId', 'subnet.aclId' ],
     model: [ "subnets", "vpcs", "routeTables", "networkAcls" ],
 
     searchChanged : function(event)
@@ -58,7 +58,8 @@ var ew_SubnetTreeView = {
                     for (var j in tables[i].associations) {
                         if (tables[i].associations[j].subnetId == list[k].id) {
                             list[k].routes = tables[i].routes;
-                            list[k].route = tables[i].id;
+                            list[k].routeId = tables[i].id;
+                            list[k].routeAssocId = tables[i].associations[j].id;
                             break;
                         }
                     }
@@ -70,7 +71,8 @@ var ew_SubnetTreeView = {
                     for (var j in acls[i].associations) {
                         if (acls[i].associations[j].subnetId == list[k].id) {
                             list[k].rules = acls[i].rules;
-                            list[k].acl = acls[i].id;
+                            list[k].aclId = acls[i].id;
+                            list[k].aclAssocId = acls[i].associations[j];
                             break;
                         }
                     }
@@ -79,9 +81,53 @@ var ew_SubnetTreeView = {
         }
         TreeView.display.call(this, list);
     },
+
+    associateACL : function()
+    {
+        var subnet = this.getSelected();
+        if (!subnet) return;
+
+        var acls = ew_model.getNetworkAclsByVpcId(subnet.vpcId);
+        if (!acls.length) {
+            alert("No ACLs available, try later")
+            return;
+        }
+        var rc = ew_session.promptList("Associate with Network ACL", "Select ACL", acls, [ "id", "vpcId", "cidr" ]);
+        if (rc < 0) {
+            return;
+        }
+        ew_session.controller.ReplaceNetworkAclAssociation(subnet.aclAssocId, acl.id, function() { ew_SubnetsTreeView.refresh() });
+    },
+
+    associateRoute : function()
+    {
+        var subnet = this.getSelected();
+        if (!subnet) return;
+
+        var routes = ew_session.model.getRouteTables();
+        if (!routes) {
+            alert("No route tables available, try later")
+            return;
+        }
+        var rc = ew_session.promptList("Associate Route Table", "Select route table", routes, [ "id", "vpcId", "info" ]);
+        if (rc < 0) {
+            return;
+        }
+        ew_session.controller.AssociateRouteTable(routes[rc].id, subnet.id, function () { ew_SubnetsTreeView.refresh(); });
+    },
+
+    disassociateRoute: function()
+    {
+        var subnet = this.getSelected();
+        if (!subnet) return;
+
+        if (!confirm("Delete route association " + subnet.routeId + "?")) return;
+        ew_session.controller.DisassociateRouteTable(subnet.routeAssocId, function () { ew_SubnetsTreeView.refresh(); });
+
+    },
 };
-ew_SubnetTreeView.__proto__ = TreeView;
-ew_SubnetTreeView.register();
+ew_SubnetsTreeView.__proto__ = TreeView;
+ew_SubnetsTreeView.register();
 
 var ew_SubnetRoutesTreeView = {
    COLNAMES : [ "route.cidr", "route.gatewayId", "route.state" ],

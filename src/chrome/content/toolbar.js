@@ -16,7 +16,7 @@ var ew_toolbar = {
                                                      { id: "ew.rsvdInst.view", view: ew_ReservedInstancesTreeView } ], },
             { tab: "ew.tabs.vpc",           views: [ { id: "ew.vpcs.view", view: ew_VpcTreeView },
                                                      { id: "ew.dhcpoptions.view", view: ew_DhcpoptsTreeView } ], },
-            { tab: "ew.tabs.subnet",        views: [ { id: "ew.subnets.view", view: ew_SubnetTreeView },
+            { tab: "ew.tabs.subnet",        views: [ { id: "ew.subnets.view", view: ew_SubnetsTreeView },
                                                      { id: "ew.subnetroutes.view", view: ew_SubnetRoutesTreeView },
                                                      { id: "ew.subnetacls.view", view: ew_SubnetAclRulesTreeView } ], },
             { tab: "ew.tabs.routing",       views: [ { id: "ew.routetables.view", view: ew_RouteTablesTreeView },

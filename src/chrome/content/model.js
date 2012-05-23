@@ -936,6 +936,12 @@ var ew_model = {
 
     updateRouteTables : function(list)
     {
+        for (var i in list) {
+            var vpc = this.getVpcById(list[i].vpcId);
+            if (vpc) {
+                list[i].info = vpc.toStr();
+            }
+        }
         this.routeTables = list;
         this.notifyComponents("routeTables");
     },
@@ -971,6 +977,18 @@ var ew_model = {
             }
         }
         return rc
+    },
+
+    getNetworkAclAssociation: function(subnetId)
+    {
+        for (var i in this.networkAcls) {
+            for (var j in acls[i].associations) {
+                if (acls[i].associations[j].subnetId == subnetId) {
+                    return acls[i].associations[j].id
+                }
+            }
+        }
+        return null;
     },
 
     getVolumes : function()

@@ -380,7 +380,7 @@ var ew_session = {
         if (id.match(ew_VpcTreeView.imageIdRegex)) {
             this.vpcTags.put(id, tag, "setVpcTags");
         } else
-        if (id.match(ew_SubnetTreeView.imageIdRegex)) {
+        if (id.match(ew_SubnetsTreeView.imageIdRegex)) {
             this.subnetTags.put(id, tag, "setSubnetTags");
         } else
         if (id.match(ew_DhcpoptsTreeView.imageIdRegex)) {
@@ -418,7 +418,7 @@ var ew_session = {
         if (id.match(ew_VpcTreeView.imageIdRegex)) {
             tag = this.vpcTags.get(id);
         } else
-        if (id.match(ew_SubnetTreeView.imageIdRegex)) {
+        if (id.match(ew_SubnetsTreeView.imageIdRegex)) {
             tag = this.subnetTags.get(id);
         } else
         if (id.match(ew_DhcpoptsTreeView.imageIdRegex)) {

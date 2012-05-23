@@ -8,23 +8,28 @@
                 <caption label="&ew.captions.subnets.subnets.label;" />
                 <popupset>
                     <menupopup id="ew.subnets.contextmenu">
-                        <menuitem oncommand="ew_SubnetTreeView.tag(event);" label="Add Tag" />
+                        <menuitem oncommand="ew_SubnetsTreeView.tag(event);" label="Add Tag" />
                         <menuseparator />
-                        <menuitem oncommand="ew_SubnetTreeView.deleteSubnet();" label="&ew.subnet.contextmenu.delete.label;" />
+                        <menuitem oncommand="ew_SubnetsTreeView.deleteSubnet();" label="&ew.subnet.contextmenu.delete.label;" />
                         <menuseparator />
-                        <menuitem oncommand="ew_SubnetTreeView.copyToClipBoard('id');" label="&ew.subnet.contextmenu.copysubnetid.label;" />
+                        <menuitem oncommand="ew_SubnetsTreeView.copyToClipBoard('id');" label="&ew.subnet.contextmenu.copysubnetid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox flex="10">
-                        <textbox id="ew.subnets.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" oninput="ew_SubnetTreeView.searchChanged(event);" />
-                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SubnetTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
-                        <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SubnetTreeView.createSubnet()" tooltiptext="&ew.createsubnet.tip;" />
-                        <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SubnetTreeView.deleteSubnet()" tooltiptext="&ew.deletesubnet.tip;" />
-                        <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_SubnetTreeView.tag();" tooltiptext="Add Tag" />
+                        <textbox id="ew.subnets.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" oninput="ew_SubnetsTreeView.searchChanged(event);" />
+                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SubnetsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
+                        <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SubnetsTreeView.createSubnet()" tooltiptext="&ew.createsubnet.tip;" />
+                        <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SubnetsTreeView.deleteSubnet()" tooltiptext="&ew.deletesubnet.tip;" />
+                        <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_SubnetsTreeView.tag();" tooltiptext="Add Tag" />
+                        <toolbarsepararator />
+                        <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_SubnetsTreeView.associateRoute();" tooltiptext="&ew.route.associations.create.tip;" />
+                        <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_SubnetsTreeView.disassociateRoute();" tooltiptext="&ew.route.associations.delete.tip;" />
+                        <toolbarsepararator />
+                        <toolbarbutton image="images/import.png" style="-moz-box-pack:center;" oncommand="ew_SubnetsTreeView.associateACL();" tooltiptext="Replace Network ACL" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.subnets.view" seltype="single" enableColumnDrag="true" onselect="ew_SubnetTreeView.selectionChanged(event)" flex="1">
+                <tree id="ew.subnets.view" seltype="single" enableColumnDrag="true" onselect="ew_SubnetsTreeView.selectionChanged(event)" flex="1">
                     <treecols>
                         <treecol id="subnet.id" label="&ew.subnets.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -40,9 +45,9 @@
                         <splitter class="tree-splitter" />
                         <treecol id="subnet.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="subnet.route" label="Route" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="subnet.routeId" label="Route" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="subnet.acl" label="ACL" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="subnet.aclId" label="ACL" flex="1" persist="width ordinal hidden sortDirection" />
                     </treecols>
                     <treechildren context="ew.subnets.contextmenu" />
                 </tree>

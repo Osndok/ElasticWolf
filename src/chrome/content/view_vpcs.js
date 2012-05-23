@@ -18,7 +18,7 @@ var ew_VpcTreeView = {
         var vpc = this.getSelectedImage();
         if (vpc == null) return;
 
-        ew_SubnetTreeView.createSubnet(vpc.id);
+        ew_SubnetsTreeView.createSubnet(vpc.id);
     },
 
     createVpc : function()

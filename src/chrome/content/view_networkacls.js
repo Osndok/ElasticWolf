@@ -78,15 +78,8 @@ var ew_NetworkAclsTreeView = {
         if (rc < 0) {
             return;
         }
-        var acls = ew_model.getNetworkAclsByVpcId(acl.vpcId);
-        for (var i in acls) {
-            for (var j in acls[i].associations) {
-                if (acls[i].associations[j].subnetId == subnets[rc].id) {
-                    assocId = acls[i].associations[j].id
-                }
-            }
-        }
-        if (typeof assocId == "undefined") {
+        var assocId = ew_model.getNetworkAclAssociation(subnets[rc].id);
+        if (!assocId) {
             alert("Could not find existing Subnet association");
             return
         }

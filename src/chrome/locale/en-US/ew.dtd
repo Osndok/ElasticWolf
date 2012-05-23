@@ -393,8 +393,8 @@
 <!ENTITY ew.routes.delete.tip "Delete Route">
 
 <!ENTITY ew.captions.route.associations.label "Subnet Associations">
-<!ENTITY ew.route.associations.create.tip "Associate Route">
-<!ENTITY ew.route.associations.delete.tip "Deassociate Route">
+<!ENTITY ew.route.associations.create.tip "Associate Route Table">
+<!ENTITY ew.route.associations.delete.tip "Deassociate Route Table">
 
 <!ENTITY ew.createvolfromsnap.tip "Create new volume from this snapshot">
 <!ENTITY ew.deletesnap.tip "Delete this snapshot">

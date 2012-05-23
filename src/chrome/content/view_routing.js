@@ -63,16 +63,6 @@ var ew_RouteTablesTreeView = {
         ew_session.controller.deleteRouteTable(table.id, wrap);
     },
 
-    display : function(list)
-    {
-        for (var i in list) {
-            var vpc = ew_model.getVpcById(list[i].vpcId);
-            if (vpc) {
-                list[i].info = vpc.toStr();
-            }
-        }
-        TreeView.display.call(this, list);
-    },
 };
 ew_RouteTablesTreeView.__proto__ = TreeView;
 ew_RouteTablesTreeView.register();
