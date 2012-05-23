@@ -43,7 +43,7 @@ var ew_NetworkAclsTreeView = {
             alert("No VPCs available, try later")
             return;
         }
-        var rc = ew_session.promptList("Create Network ACL", "Select VPC", vpcs);
+        var rc = ew_session.promptList("Create Network ACL", "Select VPC", vpcs, ['id', 'cidr' ]);
         if (rc < 0) {
             return;
         }

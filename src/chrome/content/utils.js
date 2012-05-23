@@ -177,18 +177,20 @@ var TreeView = {
             ew_model.registerInterest(this, this.model);
         }
     },
-    find: function(obj) {
+    find: function(obj, columns) {
         if (obj) {
+            if (!columns) columns = ['id', 'name', 'title'];
             for (var i in this.treeList) {
-                if (obj.id && obj.id != "" && this.treeList[i].id == obj.id) return i;
-                if (obj.name && obj.name != "" && this.treeList[i].name == obj.name) return i;
-                if (obj.title && obj.title != "" && this.treeList[i].title == obj.title) return i;
+                for (var c in columns) {
+                    var n = columns[c];
+                    if (obj[n] && obj[n] != "" && this.treeList[i][n] == obj[n]) return i;
+                }
             }
         }
         return -1;
     },
-    select : function(obj) {
-        var i = this.find(obj)
+    select : function(obj, columns) {
+        var i = this.find(obj, columns)
         if (i >= 0) {
             this.selection.select(i);
             this.treeBox.ensureRowIsVisible(i);

@@ -742,6 +742,7 @@ var ew_session = {
             if (typeof items[i] == "object") {
                 var item = ""
                 for (p in items[i]) {
+                    if (typeof items[i][p] == "function") continue;
                     if (!columns || columns.indexOf(p) > -1) {
                         item += (item != "" ? ": " : "") + items[i][p]
                     }
@@ -752,7 +753,9 @@ var ew_session = {
             }
         }
 
-        var selected = {};
+        var selected = { value: -1 };
+        //window.openDialog("chrome://ew/content/dialog_select.xul", null, "chrome,centerscreen,modal,resizable", title, msg, list, selected);
+
         var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
         if (!prompts.select(null, title, msg, list.length, list, selected)) {
             return -1;

@@ -35,7 +35,7 @@ var ew_NetworkInterfacesTreeView = {
             alert("No subnets available, try later")
             return;
         }
-        var rc = ew_session.promptList("Create Network Interface", "Select Subnet", subnets);
+        var rc = ew_session.promptList("Create Network Interface", "Select Subnet", subnets, ['id', 'vpcId', 'cidr' ]);
         if (rc < 0) {
             return;
         }

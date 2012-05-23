@@ -36,7 +36,7 @@ var ew_RouteTablesTreeView = {
             alert("No VPCs available, try later")
             return;
         }
-        var rc = ew_session.promptList("Create Route Table", "Select VPC", vpcs);
+        var rc = ew_session.promptList("Create Route Table", "Select VPC", vpcs, [ 'id', 'cidr' ]);
         if (rc < 0) {
             return;
         }
