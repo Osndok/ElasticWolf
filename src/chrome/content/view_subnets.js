@@ -92,7 +92,7 @@ var ew_SubnetsTreeView = {
             alert("No ACLs available, try later")
             return;
         }
-        var rc = ew_session.promptList("Associate with Network ACL", "Select ACL", acls, [ "id", "vpcId", "cidr" ]);
+        var rc = ew_session.promptList("Replace Network ACL", "Select ACL", acls, [ "id", "vpcId", "cidr" ]);
         if (rc < 0) {
             return;
         }

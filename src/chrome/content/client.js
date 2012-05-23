@@ -402,6 +402,7 @@ var ew_client = {
             FileIO.streamClose(file);
             clearInterval(timer);
             if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
+                if (progresscb) progresscb(filename, 100);
                 if (callback) callback(filename);
             } else {
                 var rsp = this.unpackXMLErrorRsp(xmlhttp);
