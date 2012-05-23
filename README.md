@@ -30,6 +30,10 @@ clients for accessing Linux instances.
 
        make run
 
+   * To get updates just execute inside the source directory
+
+      git pull
+
 ## Testing on On Windows
 
    * Download Git for Windows from http://code.google.com/p/msysgit/downloads/list
@@ -47,6 +51,10 @@ clients for accessing Linux instances.
    * Now execute run.bat which will enable javascript console for debugging purposes 
 
        run.bat
+
+   * To get updates just execute inside the source directory
+
+      "C:\Program Files\Git\cmd\git" pull
 
    * To access git command line utilities without full path, go to 
      My computer | Properties | Advanced System Properties | Environment Variables and 
