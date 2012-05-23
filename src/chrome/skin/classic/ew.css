@@ -90,8 +90,11 @@ treechildren::-moz-tree-indentation {
     width: 24px;
 }
 
-groupbox {
+tabpanels, tabpanel {
+    -moz-appearance: none;
+    border: 0px;
     outline: 0px;
+    padding: 0px;
 }
 
 treechildren::-moz-tree-twisty {
