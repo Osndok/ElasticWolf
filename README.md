@@ -21,7 +21,7 @@ clients for accessing Linux instances.
 
 ## Developing and testing
 
- ### On Mac OS X
+ ## On Mac OS X
 
    *  Retrieve source code from the repository
 
@@ -32,7 +32,7 @@ clients for accessing Linux instances.
 
        make run
 
- ### On Windows
+ ## On Windows
 
    * Download Git for Windows from http://code.google.com/p/msysgit/downloads/list
 
