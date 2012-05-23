@@ -90,13 +90,6 @@ treechildren::-moz-tree-indentation {
     width: 24px;
 }
 
-tabpanels, tabpanel {
-    -moz-appearance: none;
-    border: 0px;
-    outline: 0px;
-    padding: 0px;
-}
-
 treechildren::-moz-tree-twisty {
     -moz-appearance: none;
     -moz-padding-end: 0px;
@@ -105,4 +98,25 @@ treechildren::-moz-tree-twisty {
 
 #ew_menu {
     list-style-image: url('menuicon.png');
+}
+
+tabpanels, tabpanel {
+    -moz-appearance: none;
+    border: 0px;
+    outline: 0px;
+    padding: 0px;
+}
+
+tree {
+    margin: 0px;
+}
+
+groupbox {
+    -moz-appearance: none;
+    border: 0px;
+}
+
+.groupbox-body {
+    -moz-appearance: none;
+    border: 0px;
 }

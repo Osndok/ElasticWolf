@@ -1,0 +1,94 @@
+var ew_SubnetTreeView = {
+    COLNAMES : [ 'subnet.id', 'subnet.vpcId', 'subnet.cidr', 'subnet.state', 'subnet.availableIp', 'subnet.availabilityZone', 'subnet.tag', 'subnet.route', 'subnet.acl' ],
+    model: [ "subnets", "vpcs", "routeTables", "networkAcls" ],
+
+    searchChanged : function(event)
+    {
+        this.search = $('ew.subnets.search').value;
+        TreeView.searchChanged.call(this, event);
+    },
+
+    enableOrDisableItems : function()
+    {
+        $("ew.subnets.contextmenu").disabled = (this.getSelected() == null);
+    },
+
+    deleteSubnet : function()
+    {
+        var subnet = this.getSelected();
+        if (subnet == null) return;
+
+        var confirmed = confirm("Delete " + subnet.id + " (" + subnet.cidr + ")" + (subnet.tag == null ? '' : " [" + subnet.tag + "]") + "?");
+        if (!confirmed) return;
+
+        var me = this;
+        ew_session.controller.deleteSubnet(subnet.id, function() { me.refresh(); });
+    },
+
+    createSubnet : function(vpc)
+    {
+        var retVal = { ok : null, cidr : null, vpcid : vpc, az : null };
+        window.openDialog("chrome://ew/content/dialog_create_subnet.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
+
+        if (retVal.ok) {
+            var me = this;
+            ew_session.controller.createSubnet(retVal.vpcid, retVal.cidr, retVal.az, function() { me.refresh(); });
+        }
+    },
+
+    selectionChanged: function(event)
+    {
+        var subnet = this.getSelected();
+        if (subnet == null) return;
+        ew_SubnetRoutesTreeView.display(subnet.routes);
+        ew_SubnetAclRulesTreeView.display(subnet.rules);
+        ew_RouteTablesTreeView.select({ id: subnet.route });
+        ew_NetworkAclsTreeView.select({ id: subnet.acl });
+        ew_NetworkAclAssociationsTreeView.select({ subnetId: subnet.id }, ['subnetId'])
+        ew_RouteAssociationsTreeView.select({ subnetId: subnet.id }, ['subnetId'])
+    },
+
+    display: function(list)
+    {
+        var tables = ew_model.getRouteTables();
+        var acls = ew_model.getNetworkAcls();
+        for (var k in list) {
+            if (tables) {
+                for (var i in tables) {
+                    for (var j in tables[i].associations) {
+                        if (tables[i].associations[j].subnetId == list[k].id) {
+                            list[k].routes = tables[i].routes;
+                            list[k].route = tables[i].id;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (acls) {
+                for (var i in acls) {
+                    for (var j in acls[i].associations) {
+                        if (acls[i].associations[j].subnetId == list[k].id) {
+                            list[k].rules = acls[i].rules;
+                            list[k].acl = acls[i].id;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        TreeView.display.call(this, list);
+    },
+};
+ew_SubnetTreeView.__proto__ = TreeView;
+ew_SubnetTreeView.register();
+
+var ew_SubnetRoutesTreeView = {
+   COLNAMES : [ "route.cidr", "route.gatewayId", "route.state" ],
+};
+ew_SubnetRoutesTreeView.__proto__ = TreeView;
+
+var ew_SubnetAclRulesTreeView = {
+   COLNAMES : [ "rule.num", "rule.proto", "rule.action", "rule.egress", "rule.cidr", "rule.ports", "rule.icmp" ],
+};
+ew_SubnetAclRulesTreeView.__proto__ = TreeView;
