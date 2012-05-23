@@ -19,20 +19,18 @@ with all regions, so please file bugs if you find problems in any region.
 The Windows version of the tool is packaged with openssl for generating keys and ssh
 clients for accessing Linux instances.
 
-## Developing and testing
-
- ## On Mac OS X
+## Testing On Mac OS X
 
    *  Retrieve source code from the repository
 
        git clone git://github.com/aws-ew-dev/ElasticWolf.git
 
    * Primary development is done on Mac so there is a special dev mode to run it as
-     an OS X application with symlink to actual source code
+     an OS X application with symlinks to the actual source code
 
        make run
 
- ## On Windows
+## Testing on On Windows
 
    * Download Git for Windows from http://code.google.com/p/msysgit/downloads/list
 
@@ -44,7 +42,8 @@ clients for accessing Linux instances.
 
        git clone git://github.com/aws-ew-dev/ElasticWolf.git
 
-   * Run from the source directory the command
+   * Run from the source directory the command, it will make a copy of the modified
+     source files into the ElasticWolf windows directory 
 
        run.bat
 
