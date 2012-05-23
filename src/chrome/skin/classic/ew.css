@@ -116,6 +116,12 @@ groupbox {
     border: 0px;
 }
 
+groupbox caption {
+    -moz-appearance: none;
+    background-color: transparent;
+    font-weight: bold;
+}
+
 .groupbox-body {
     -moz-appearance: none;
     border: 0px;
