@@ -3,4 +3,6 @@
 ElasticWolf/application.ini
 ElasticWolf/chrome/*
 ElasticWolf/defaults/*
-
+ElasticWolf.app/Contents/Resources/application.ini
+ElasticWolf.app/Contents/Resources/chrome
+ElasticWolf.app/Contents/Resources/defaults
