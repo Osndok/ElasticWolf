@@ -48,10 +48,10 @@ var ew_NetworkAclsTreeView = {
             return;
         }
 
-        ew_session.showBusyCursor(true);
+        
         var me = this;
         ew_session.controller.createNetworkAcl(vpcs[rc].id, function() { me.refresh(); });
-        ew_session.showBusyCursor(false);
+        
     },
 
     deleteACL : function()

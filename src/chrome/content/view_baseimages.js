@@ -120,9 +120,9 @@ var BaseImagesView = {
     },
 
     refresh : function() {
-        ew_session.showBusyCursor(true);
-        ew_session.controller.describeImages(true);
-        ew_session.showBusyCursor(false);
+        
+        ew_session.controller.describeImages();
+        
     },
 
     filterImages : function(imageList, searchText) {

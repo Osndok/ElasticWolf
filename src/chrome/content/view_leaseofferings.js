@@ -10,9 +10,9 @@ var ew_LeaseOfferingsTreeView = { COLNAMES :
 
     refresh : function()
     {
-        ew_session.showBusyCursor(true);
+        
         ew_session.controller.describeLeaseOfferings();
-        ew_session.showBusyCursor(false);
+        
     },
 
     invalidate : function()

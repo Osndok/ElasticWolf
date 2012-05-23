@@ -17,9 +17,9 @@ var ew_ReservedInstancesTreeView = {
     },
 
     refresh : function() {
-        ew_session.showBusyCursor(true);
+        
         ew_session.controller.describeReservedInstances();
-        ew_session.showBusyCursor(false);
+        
     },
 
     invalidate : function() {

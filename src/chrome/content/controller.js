@@ -7,11 +7,11 @@ var ew_controller = {
 
     onResponseComplete : function(responseObject)
     {
-        // For async requests, we should always call back
-        if (!responseObject.isAsync && responseObject.hasErrors) {
+        // In sync mode handle errors in the caller
+        if (responseObject.isSync && responseObject.hasErrors) {
             return;
         }
-
+        // In async mode callback must be called
         eval("this." + responseObject.requestType + "(responseObject)");
     },
 
@@ -276,10 +276,9 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    describeVpcs : function(isSync, callback)
+    describeVpcs : function(callback)
     {
-        if (!isSync) isSync = false;
-        ew_client.queryEC2("DescribeVpcs", [], this, isSync, "onCompleteDescribeVpcs", callback);
+        ew_client.queryEC2("DescribeVpcs", [], this, true, "onCompleteDescribeVpcs", callback);
     },
 
     onCompleteDescribeVpcs : function(objResponse)
@@ -322,10 +321,9 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    describeSubnets : function(isSync, callback)
+    describeSubnets : function(callback)
     {
-        if (!isSync) isSync = false;
-        ew_client.queryEC2("DescribeSubnets", [], this, isSync, "onCompleteDescribeSubnets", callback);
+        ew_client.queryEC2("DescribeSubnets", [], this, true, "onCompleteDescribeSubnets", callback);
     },
 
     onCompleteDescribeSubnets : function(objResponse)
@@ -368,10 +366,9 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    describeDhcpOptions : function(isSync, callback)
+    describeDhcpOptions : function(callback)
     {
-        if (!isSync) isSync = false;
-        ew_client.queryEC2("DescribeDhcpOptions", [], this, isSync, "onCompleteDescribeDhcpOptions", callback);
+        ew_client.queryEC2("DescribeDhcpOptions", [], this, true, "onCompleteDescribeDhcpOptions", callback);
     },
 
     onCompleteDescribeDhcpOptions : function(objResponse)
@@ -567,10 +564,9 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(list);
     },
 
-    describeVpnGateways : function(isSync, callback)
+    describeVpnGateways : function(callback)
     {
-        if (!isSync) isSync = false;
-        ew_client.queryEC2("DescribeVpnGateways", [], this, isSync, "onCompleteDescribeVpnGateways", callback);
+        ew_client.queryEC2("DescribeVpnGateways", [], this, true, "onCompleteDescribeVpnGateways", callback);
     },
 
     onCompleteDescribeVpnGateways : function(objResponse)
@@ -620,10 +616,9 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    describeCustomerGateways : function(isSync, callback)
+    describeCustomerGateways : function(callback)
     {
-        if (!isSync) isSync = false;
-        ew_client.queryEC2("DescribeCustomerGateways", [], this, isSync, "onCompleteDescribeCustomerGateways", callback);
+        ew_client.queryEC2("DescribeCustomerGateways", [], this, true, "onCompleteDescribeCustomerGateways", callback);
     },
 
     onCompleteDescribeCustomerGateways : function(objResponse)
@@ -665,10 +660,9 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    describeInternetGateways : function(isSync, callback)
+    describeInternetGateways : function(callback)
     {
-        if (!isSync) isSync = false;
-        ew_client.queryEC2("DescribeInternetGateways", [], this, isSync, "onCompleteDescribeInternetGateways", callback);
+        ew_client.queryEC2("DescribeInternetGateways", [], this, true, "onCompleteDescribeInternetGateways", callback);
     },
 
     onCompleteDescribeInternetGateways : function(objResponse)
@@ -741,10 +735,9 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    describeVpnConnections : function(isSync, callback)
+    describeVpnConnections : function(callback)
     {
-        if (!isSync) isSync = false;
-        ew_client.queryEC2("DescribeVpnConnections", [], this, isSync, "onCompleteDescribeVpnConnections", callback);
+        ew_client.queryEC2("DescribeVpnConnections", [], this, true, "onCompleteDescribeVpnConnections", callback);
     },
 
     onCompleteDescribeVpnConnections : function(objResponse)
@@ -876,10 +869,9 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(id);
     },
 
-    describeImages : function(isSync, callback)
+    describeImages : function( callback)
     {
-        if (!isSync) isSync = false;
-        ew_client.queryEC2("DescribeImages", [], this, isSync, "onCompleteDescribeImages", callback);
+        ew_client.queryEC2("DescribeImages", [], this, true, "onCompleteDescribeImages", callback);
     },
 
     onCompleteDescribeImages : function(objResponse)
@@ -1646,6 +1638,26 @@ var ew_controller = {
     getS3BucketKey : function(bucket, key, params, file, callback, progresscb)
     {
         ew_client.downloadS3("GET", bucket, key, "", params, file, callback, progresscb);
+    },
+
+    readS3BucketKey : function(bucket, key, params, callback)
+    {
+        ew_client.queryS3("GET", bucket, key, "", {}, null, this, true, "onCompleteReadS3BucketKey", callback);
+    },
+
+    onCompleteReadS3BucketKey : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback(objResponse.xmlhttp.responseText);
+    },
+
+    writeS3BucketKey : function(bucket, key, params, text, callback)
+    {
+        ew_client.queryS3("PUT", bucket, key, "", params, text, this, true, "onCompleteWriteS3BucketKey", callback);
+    },
+
+    onCompleteWriteS3BucketKey : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
     },
 
     putS3BucketKey : function(bucket, key, params, file, callback, progresscb)

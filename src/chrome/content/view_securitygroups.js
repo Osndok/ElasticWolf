@@ -19,7 +19,7 @@ var ew_SecurityGroupsTreeView = {
         window.openDialog("chrome://ew/content/dialog_create_security_group.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id) {
                 retVal.id = id
@@ -27,7 +27,7 @@ var ew_SecurityGroupsTreeView = {
                 me.authorizeCommonProtocolsByUserRequest(retVal);
             }
             ew_session.controller.createSecurityGroup(retVal.name, retVal.description, retVal.vpcId, wrap);
-            ew_session.showBusyCursor(false);
+            
         }
     },
 
@@ -139,7 +139,7 @@ var ew_PermissionsTreeView = {
             if (!confirmed)
                 return;
 
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function() {
                 ew_SecurityGroupsTreeView.refresh();
@@ -154,7 +154,7 @@ var ew_PermissionsTreeView = {
                     ew_session.controller.revokeSourceGroup(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.srcGroup,wrap);
                 }
             }
-            ew_session.showBusyCursor(false);
+            
         },
 
 };

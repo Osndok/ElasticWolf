@@ -8,9 +8,9 @@ var ew_SnapshotTreeView = {
     },
 
     refresh : function() {
-        ew_session.showBusyCursor(true);
+        
         ew_session.controller.describeSnapshots();
-        ew_session.showBusyCursor(false);
+        
     },
 
     invalidate : function() {

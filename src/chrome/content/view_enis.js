@@ -40,10 +40,10 @@ var ew_NetworkInterfacesTreeView = {
             return;
         }
 
-        ew_session.showBusyCursor(true);
+        
         var me = this;
         ew_session.controller.createNetworkInterface(subnets[rc].id, function() { me.refresh(); });
-        ew_session.showBusyCursor(false);
+        
     },
 
     deleteInterface : function()

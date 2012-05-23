@@ -8,9 +8,9 @@ var ew_DhcpoptsTreeView = {
     },
 
     refresh : function() {
-        ew_session.showBusyCursor(true);
+        
         ew_session.controller.describeDhcpOptions();
-        ew_session.showBusyCursor(false);
+        
     },
 
     invalidate : function() {
@@ -62,7 +62,7 @@ var ew_DhcpoptsTreeView = {
         window.openDialog("chrome://ew/content/dialog_create_dhcp_options.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id) {
                 me.refresh();
@@ -73,7 +73,7 @@ var ew_DhcpoptsTreeView = {
                 wrap
             );
 
-            ew_session.showBusyCursor(false);
+            
         }
     },
 };

@@ -22,8 +22,7 @@
                         <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VpnConnectionTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                         <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VpnConnectionTreeView.createVpnConnection(null, null)" tooltiptext="&ew.createvpnconnection.tip;" />
                         <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VpnConnectionTreeView.deleteVpnConnection()" tooltiptext="&ew.deletevpnconnection.tip;" />
-                        <toolbarbutton image="images/get_customer_config.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VpnConnectionTreeView.getCustomerConfig()"
-                            tooltiptext="&ew.getcustomerconfig.tip;" />
+                        <toolbarbutton image="images/download.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VpnConnectionTreeView.getCustomerConfig()" tooltiptext="&ew.getcustomerconfig.tip;" />
                         <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_VpnConnectionTreeView.tag();" tooltiptext="Add Tag" />
                     </hbox>
                 </toolbar>

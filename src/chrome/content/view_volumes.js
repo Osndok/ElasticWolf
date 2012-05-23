@@ -29,9 +29,9 @@ var ew_VolumeTreeView = {
     },
 
     refresh : function() {
-        ew_session.showBusyCursor(true);
+        
         ew_session.controller.describeVolumes();
-        ew_session.showBusyCursor(false);
+        
     },
 
     invalidate : function() {

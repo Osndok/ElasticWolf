@@ -13,9 +13,9 @@ var ew_VpnConnectionTreeView = {
     },
 
     refresh : function() {
-        ew_session.showBusyCursor(true);
+        
         ew_session.controller.describeVpnConnections();
-        ew_session.showBusyCursor(false);
+        
     },
 
     invalidate : function() {
@@ -102,7 +102,7 @@ var ew_VpnConnectionTreeView = {
         configXml = new DOMParser().parseFromString(vpn.config, "text/xml");
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var filename = retVal.cgwtype;
             var xsl = ew_client.queryVpnConnectionStylesheets(filename);
             log ("Received XSL: "+xsl.xmlhttp.responseText);
@@ -124,7 +124,7 @@ var ew_VpnConnectionTreeView = {
             // Display dialog box to save
             this.saveConnectionConfiguration(vpn.id, result);
 
-            ew_session.showBusyCursor(false);
+            
         }
     },
 
@@ -133,7 +133,7 @@ var ew_VpnConnectionTreeView = {
         window.openDialog("chrome://ew/content/dialog_create_vpn_connection.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id) {
                 me.refresh();
@@ -146,7 +146,7 @@ var ew_VpnConnectionTreeView = {
                 wrap
             );
 
-            ew_session.showBusyCursor(false);
+            
         }
     },
 

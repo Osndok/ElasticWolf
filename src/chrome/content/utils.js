@@ -9,10 +9,6 @@ function $(element)
     return document.getElementById(String(element));
 }
 
-function empty()
-{
-}
-
 function sleep(ms)
 {
     var thread = Components.classes["@mozilla.org/thread-manager;1"].getService(Components.interfaces.nsIThreadManager).currentThread;

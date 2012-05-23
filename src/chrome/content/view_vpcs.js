@@ -31,7 +31,7 @@ var ew_VpcTreeView = {
         window.openDialog("chrome://ew/content/dialog_create_vpc.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id)
             {
@@ -40,7 +40,7 @@ var ew_VpcTreeView = {
                 ew_InternetGatewayTreeView.attachInternetGateway(id, null);
             }
             ew_session.controller.createVpc(retVal.cidr, wrap);
-            ew_session.showBusyCursor(false);
+            
         }
     },
 
@@ -82,7 +82,7 @@ var ew_VpcTreeView = {
         window.openDialog("chrome://ew/content/dialog_associate_dhcp_options.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id)
             {
@@ -90,7 +90,7 @@ var ew_VpcTreeView = {
                 me.selectByImageId(id);
             }
             ew_session.controller.associateDhcpOptions(retVal.dhcpOptionsId, retVal.vpcId, wrap);
-            ew_session.showBusyCursor(false);
+            
         }
     },
 

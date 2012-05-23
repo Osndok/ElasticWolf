@@ -251,7 +251,7 @@ var ew_InstancesTreeView = {
             var bucketReg = null;
             window.openDialog("chrome://ew/content/dialog_bundle_instance.xul", null, "chrome,centerscreen,modal,resizable", instance.id, ew_session, retVal);
 
-            ew_session.showBusyCursor(true);
+            
             if (retVal.ok) {
                 // Create the bucket if it doesn't exist
                 retVal.ok = ew_session.controller.createS3Bucket(retVal.bucketName);
@@ -283,7 +283,7 @@ var ew_InstancesTreeView = {
             }
         } while (!retVal.ok);
 
-        ew_session.showBusyCursor(false);
+        
 
         if (retVal.ok) {
             var wrap = function(list) {
@@ -649,7 +649,7 @@ var ew_InstancesTreeView = {
             return;
         }
 
-        ew_session.showBusyCursor(true);
+        
         this.instPassword = "";
         this.fSilent = fSilent;
         var me = this;
@@ -657,7 +657,7 @@ var ew_InstancesTreeView = {
             me.getInstancePasswordImpl(output, me.fSilent);
         }
         this.fetchConsoleOutput(wrap, instance);
-        ew_session.showBusyCursor(false);
+        
         return this.instPassword;
     },
 
@@ -717,10 +717,10 @@ var ew_InstancesTreeView = {
 
     refresh : function() {
         this.selectionChanged();
-        ew_session.showBusyCursor(true);
+        
         ew_session.controller.describeInstances();
         this.sort();
-        ew_session.showBusyCursor(false);
+        
     },
 
     notifyModelChanged: function(interest) {
@@ -1164,7 +1164,7 @@ var ew_InstancesTreeView = {
 
     // ipType: 0 - private, 1 - public, 2 - elastic, 3 - public or elastic, 4 - dns name
     connectTo : function(instance, ipType) {
-        ew_session.showBusyCursor(true);
+        
         var args = ew_prefs.getSSHArgs();
         var cmd = ew_prefs.getSSHCommand();
 
@@ -1237,7 +1237,7 @@ var ew_InstancesTreeView = {
         args = tokenise(args);
 
         ew_session.launchProcess(cmd, args);
-        ew_session.showBusyCursor(false);
+        
     },
 
     rdpToMac : function(hostname, cmd) {

@@ -10,11 +10,11 @@ var ew_VpnGatewayTreeView = {
     },
 
     refresh : function() {
-        ew_session.showBusyCursor(true);
+        
         ew_session.controller.describeVpnGateways();
         // For the attachment call
         ew_session.controller.describeVpcs();
-        ew_session.showBusyCursor(false);
+        
     },
 
     invalidate : function() {
@@ -62,7 +62,7 @@ var ew_VpnGatewayTreeView = {
         window.openDialog("chrome://ew/content/dialog_create_vpn_gateway.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id) {
                 me.refresh();
@@ -74,7 +74,7 @@ var ew_VpnGatewayTreeView = {
                 wrap
             );
 
-            ew_session.showBusyCursor(false);
+            
         }
     },
 

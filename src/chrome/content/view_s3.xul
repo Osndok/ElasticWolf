@@ -15,6 +15,7 @@
                     <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.manageAcls();" tooltiptext="Manage ACLs" />
                     <toolbarbutton image="images/download.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.download();" tooltiptext="Download file" />
                     <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.upload();" tooltiptext="Upload file" />
+                    <toolbarbutton image="images/edit.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.edit();" tooltiptext="Edit text file" />
                 </toolbar>
                 <hbox style="background-color:#AAAAAA;-moz-border-radius:5px;">
                 <label id="ew.s3.path" flex="1" />

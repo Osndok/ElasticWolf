@@ -73,7 +73,7 @@ var ew_VpnAttachmentTreeView = {
         window.openDialog("chrome://ew/content/dialog_attach_vpn_gateway.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id)
             {
@@ -82,7 +82,7 @@ var ew_VpnAttachmentTreeView = {
             }
             ew_session.controller.attachVpnGatewayToVpc(retVal.vgwid, retVal.vpcid, wrap);
 
-            ew_session.showBusyCursor(false);
+            
         }
     },
 };

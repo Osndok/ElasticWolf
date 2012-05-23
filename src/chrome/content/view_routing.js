@@ -41,14 +41,14 @@ var ew_RouteTablesTreeView = {
             return;
         }
 
-        ew_session.showBusyCursor(true);
+        
         var me = this;
         var wrap = function()
         {
             me.refresh();
         }
         ew_session.controller.createRouteTable(vpcs[rc].id, wrap);
-        ew_session.showBusyCursor(false);
+        
     },
 
     deleteSelected : function()
@@ -100,7 +100,7 @@ var ew_RoutesTreeView = {
         }
         window.openDialog("chrome://ew/content/dialog_create_route.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id)
             {
@@ -108,7 +108,7 @@ var ew_RoutesTreeView = {
                 ew_RouteTablesTreeView.select({ id: table.id })
             }
             ew_session.controller.createRoute(table.id, retVal.cidr, retVal.gatewayId, wrap);
-            ew_session.showBusyCursor(false);
+            
         }
     },
 
@@ -225,7 +225,7 @@ var ew_InternetGatewayTreeView = {
         }
         window.openDialog("chrome://ew/content/dialog_attach_internet_gateway.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id)
             {
@@ -240,7 +240,7 @@ var ew_InternetGatewayTreeView = {
             } else {
                 ew_session.controller.attachInternetGateway(retVal.igwid, retVal.vpcid, wrap);
             }
-            ew_session.showBusyCursor(false);
+            
         }
     },
 
@@ -257,7 +257,7 @@ var ew_InternetGatewayTreeView = {
         for ( var i = 0; i < igw.vpcs.length; i++) {
             ew_session.controller.detachInternetGateway(igw.id, igw.vpcs[i], wrap);
         }
-        ew_session.showBusyCursor(false);
+        
     }
 
 };

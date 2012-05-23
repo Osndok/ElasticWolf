@@ -104,25 +104,15 @@ var ew_client = {
     },
 
     newInstance : function() {
-        var xmlhttp;
+        var xmlhttp = null;
         if (typeof XMLHttpRequest != 'undefined') {
             try {
                 xmlhttp = new XMLHttpRequest();
             } catch (e) {
-                xmlhttp = null;
+                debug(e)
             }
         }
         return xmlhttp;
-    },
-
-    sigParamCmp : function(x, y) {
-        if (x[0].toLowerCase() < y[0].toLowerCase ()) {
-            return -1;
-        }
-        if (x[0].toLowerCase() > y[0].toLowerCase()) {
-           return 1;
-        }
-        return 0;
     },
 
     setEndpointURLForRegion : function(region) {
@@ -203,7 +193,7 @@ var ew_client = {
 
     errorDialog : function(msg, code, rId, fStr) {
         var retry = {value:null};
-        window.openDialog("chrome://ew/content/dialog_retry_cancel.xul", null, "chrome,modal,resizable", msg, code, rId, fStr, retry);
+        window.openDialog("chrome://ew/content/dialog_retry_cancel.xul", null, "chrome,centerscreen,modal,resizable", msg, code, rId, fStr, retry);
         return retry.value;
     },
 
@@ -269,8 +259,7 @@ var ew_client = {
         xmlhttp.setRequestHeader("Content-Length", queryParams.length);
         xmlhttp.setRequestHeader("Connection", "close");
 
-        var timerKey = strSig+":"+formattedTime;
-        return this.sendRequest(xmlhttp, queryParams, isSync, timerKey, reqType, objActions, callback);
+        return this.sendRequest(xmlhttp, queryParams, isSync, reqType, objActions, callback);
     },
 
     queryELB : function (action, params, objActions, isSync, reqType, callback) {
@@ -353,8 +342,7 @@ var ew_client = {
             xmlhttp.setRequestHeader(p, req.headers[p]);
         }
 
-        var timerKey = req.sig + ":" + req.time;
-        return this.sendRequest(xmlhttp, content, isSync, timerKey, reqType, objActions, callback, [bucket, key, path]);
+        return this.sendRequest(xmlhttp, content, isSync, reqType, objActions, callback, [bucket, key, path]);
     },
 
     downloadS3 : function (method, bucket, key, path, params, file, callback, progresscb) {
@@ -445,70 +433,64 @@ var ew_client = {
         return rsp;
     },
 
-    sendRequest: function(xmlhttp, content, isSync, timerKey, reqType, objActions, callback, data) {
+    sendRequest: function(xmlhttp, content, isSync, reqType, objActions, callback, data) {
         var me = this;
 
+        // Generate random timer
+        var timerKey = this.getTimerKey();
+        this.startTimer(timerKey, xmlhttp.abort);
+
         if (isSync) {
-            xmlhttp.onreadystatechange = empty;
+            xmlhttp.onreadystatechange = function() {}
         } else {
+            var xhr = xmlhttp;
             xmlhttp.onreadystatechange = function () {
-                me.handleAsyncResponse(xmlhttp, callback, reqType, objActions, data);
+                if (xhr.readyState == 4) {
+                    me.stopTimer(timerKey);
+                    me.handleResponse(xhr, reqType, isSync, objActions, callback, data)
+                }
             }
         }
-        this.startTimer(timerKey, 30000, xmlhttp.abort);
 
         try {
             xmlhttp.send(content);
-            this.stopTimer(timerKey);
         } catch(e) {
-            // A timer didn't exist, this is unexpected
-            if (isSync && !this.stopTimer(timerKey)) throw e;
-
-            var faultStr = "Please check your EC2/S3 URL for correctness and retry.";
-            return this.newResponseObject(null, callback, reqType, true, "Request Error", faultStr, "", data);
+            debug(e)
+            this.stopTimer(timerKey);
+            return this.newResponseObject(null, reqType, callback, true, "Send Request Error", e, "", data);
         }
-        // Process the response
-        return this.processXMLHTTPResponse(xmlhttp, reqType, isSync, timerKey, objActions, callback, data);
-    },
-
-    handleAsyncResponse : function(xmlhttp, callback, reqType, objActions, data) {
-        if (xmlhttp.readyState == 4) {
-            var responseObject = null;
-            log("Async Response = " + xmlhttp.status + ", response: " + xmlhttp.responseText);
-            if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
-                responseObject = this.newResponseObject(xmlhttp, callback, reqType, false, "", "", "", data);
-            } else {
-                responseObject = this.unpackXMLErrorRsp(xmlhttp, reqType, callback, data);
-            }
-            responseObject.isAsync = true;
-            objActions.onResponseComplete(responseObject);
-            return responseObject;
-        }
-    },
-
-    newResponseObject : function(xmlhttp, callback, reqType, hasErrors, faultCode, faultString, requestId, data) {
-        var xmlDoc = (xmlhttp) ? xmlhttp.responseXML : null;
-        var strHeaders = (xmlhttp) ? xmlhttp.getAllResponseHeaders() : null;
-
-        return { xmlhttp : xmlhttp, xmlDoc: xmlDoc, strHeaders: strHeaders, callback: callback, requestType : reqType, faultCode : faultCode, requestId : requestId, faultString : faultString, hasErrors : hasErrors, data: data };
-    },
-
-    processXMLHTTPResponse : function(xmlhttp, reqType, isSync, timerKey, objActions, callback, data) {
         if (isSync) {
-            log("Sync Response = " + xmlhttp.status + "("+xmlhttp.readyState+"): " + xmlhttp.responseText);
-
-            if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
-                var resp = this.newResponseObject(xmlhttp, callback, reqType, false, "", "", "", data);
-                if (objActions) {
-                    objActions.onResponseComplete(resp);
-                }
-                return resp;
-            } else {
-                return this.unpackXMLErrorRsp(xmlhttp, reqType, callback, data);
-            }
-        } else {
-            return {hasErrors:false};
+            this.stopTimer(timerKey);
         }
+        return this.handleResponse(xmlhttp, reqType, isSync, objActions, callback, data);
+    },
+
+    handleResponse : function(xmlhttp, reqType, isSync, objActions, callback, data) {
+        log((isSync ? "Sync" : "Async") + " Response, status: " + xmlhttp.status + ", req:" + reqType + ", response: " + xmlhttp.responseText);
+
+        var rc = xmlhttp.status >= 200 && xmlhttp.status < 300 ?
+                 this.newResponseObject(xmlhttp, reqType, callback, false, "", "", "", data) :
+                 this.unpackXMLErrorRsp(xmlhttp, reqType, callback, data);
+
+        rc.isSync = isSync;
+        // If context object is not specified call the callback directly
+        if (objActions) {
+            objActions.onResponseComplete(rc);
+        } else
+        if (callback) {
+            callback(rc);
+        }
+        return rc;
+    },
+
+    newResponseObject : function(xmlhttp, reqType, callback, hasErrors, faultCode, faultString, requestId, data) {
+        var xmlDoc = xmlhttp ? xmlhttp.responseXML : null;
+        var strHeaders = xmlhttp ? xmlhttp.getAllResponseHeaders() : null;
+
+        return { xmlhttp: xmlhttp, xmlDoc: xmlDoc, strHeaders: strHeaders,
+                requestType: reqType, requestId: requestId,
+                faultCode: faultCode, faultString: faultString,
+                hasErrors: hasErrors, data: data, callback: callback, };
     },
 
     unpackXMLErrorRsp : function(xmlhttp, reqType, callback, data) {
@@ -526,7 +508,7 @@ var ew_client = {
             faultString = getNodeValueByName(xmlDoc, "Message");
             requestId = getNodeValueByName(xmlDoc, "RequestID");
         }
-        return this.newResponseObject(xmlhttp, callback, reqType, true, faultCode, faultString, requestId, data);
+        return this.newResponseObject(xmlhttp, reqType, callback, true, faultCode, faultString, requestId, data);
     },
 
     queryVpnConnectionStylesheets : function(stylesheet) {
@@ -537,31 +519,13 @@ var ew_client = {
             log("Could not create xmlhttp object");
             return;
         }
-
         if (stylesheet == null) {
             stylesheet = "customer-gateway-config-formats.xml";
         }
-
-        var url = this.VPN_CONFIG_PATH + '2009-07-15' + "/" + stylesheet
-        log ("Retrieving: "+url);
-
-        xmlhttp.open("GET", url, false);
-        xmlhttp.onreadystatechange = empty;
+        xmlhttp.open("GET", this.VPN_CONFIG_PATH + '2009-07-15' + "/" + stylesheet, false);
         xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
         xmlhttp.overrideMimeType('text/xml');
-
-        var timerKey = new Date().getTime();
-        this.startTimer(timerKey, 10 * 1000, xmlhttp.abort);
-        try {
-            xmlhttp.send(null);
-            this.stopTimer(timerKey);
-        } catch(e) {
-            if (!this.stopTimer(timerKey)) {
-                // A timer didn't exist, this is unexpected
-                throw e;
-            }
-        }
-        return this.processXMLHTTPResponse(xmlhttp, stylesheet, true, timerKey, null, null);
+        return this.sendRequest(xmlhttp, null, true, stylesheet);
     },
 
     queryCheckIP : function(reqType, retVal) {
@@ -575,17 +539,14 @@ var ew_client = {
         xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
         xmlhttp.overrideMimeType('text/plain');
 
-        var timerKey = new Date().getTime();
-        this.startTimer(timerKey, 10000, xmlhttp.abort);
+        var timerKey = this.getTimerKey();
+        this.startTimer(timerKey, xmlhttp.abort);
         try {
             xmlhttp.send(null);
-            this.stopTimer(timerKey);
         } catch(e) {
-            if (!this.stopTimer(timerKey)) {
-                // A timer didn't exist, this is unexpected
-                throw e;
-            }
+            debug(e)
         }
+        this.stopTimer(timerKey);
         retVal.ipAddress = xmlhttp.responseText;
     },
 
@@ -631,8 +592,13 @@ var ew_client = {
         return false;
     },
 
-    startTimer : function(key, timeout, expr) {
-        var timer = window.setTimeout(expr, timeout);
+    getTimerKey: function()
+    {
+        return String(Math.random()) + ":" + String(new Date().getTime());
+    },
+
+    startTimer : function(key, expr) {
+        var timer = window.setTimeout(expr, ew_prefs.getRequestTimeout());
         this.timers[key] = timer;
     },
 

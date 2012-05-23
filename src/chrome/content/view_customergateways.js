@@ -11,9 +11,9 @@ var ew_CustomerGatewayTreeView = {
     },
 
     refresh : function() {
-        ew_session.showBusyCursor(true);
+        
         ew_session.controller.describeCustomerGateways();
-        ew_session.showBusyCursor(false);
+        
     },
 
     invalidate : function() {
@@ -50,7 +50,7 @@ var ew_CustomerGatewayTreeView = {
         window.openDialog("chrome://ew/content/dialog_create_customer_gateway.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+            
             var me = this;
             var wrap = function(id) {
                 me.refresh();
@@ -63,7 +63,7 @@ var ew_CustomerGatewayTreeView = {
                 wrap
             );
 
-            ew_session.showBusyCursor(false);
+            
         }
     },
 

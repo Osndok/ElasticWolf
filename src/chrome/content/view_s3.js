@@ -25,7 +25,7 @@ var ew_S3BucketsTreeView = {
         TreeView.display.call(this, nlist);
         this.setSelected(idx);
         $("ew.s3.path").value = path;
-        ew_session.showBusyCursor(false);
+
         this.folder = '';
     },
 
@@ -38,7 +38,7 @@ var ew_S3BucketsTreeView = {
             if (item.keys.length) {
                 ew_S3BucketsTreeView.display(item.keys);
             } else {
-                ew_session.showBusyCursor(true);
+
                 ew_session.controller.listS3BucketKeys(item.name, null, function(bucket, keys) {
                     if (item.name == bucket) ew_S3BucketsTreeView.display(keys);
                 })
@@ -79,7 +79,7 @@ var ew_S3BucketsTreeView = {
 
     setStatus: function(file, p)
     {
-        file = DirIO.fileName(file)
+        var file = DirIO.fileName(file)
         document.getElementById("ew.s3.status").value = file + ": " + (p >= 0 && p <= 100 ? Math.round(p) : 100) + "%";
     },
 
@@ -88,7 +88,7 @@ var ew_S3BucketsTreeView = {
         var retVal = { ok : null, name: null, region : null, params: {}, type: this.path.length ? "Folder" : "Bucket" }
         window.openDialog("chrome://ew/content/dialog_create_s3bucket.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+
             if (!this.path.length) {
                 ew_session.controller.createS3Bucket(retVal.name, retVal.region, retVal.params, function() { me.refresh(true); });
             } else {
@@ -135,9 +135,27 @@ var ew_S3BucketsTreeView = {
             var f = FileIO.open(file)
             var name = f.leafName.replace(/[ \/\\'":]+/g, '')
             ew_session.controller.putS3BucketKey(item.name, this.path.slice(1).join('/') + name, {}, file,
-                    function(f) { me.show(); },
-                    function(f, p) { me.setStatus(f, p); });
+                    function(fn) { me.show(); },
+                    function(fn, p) { me.setStatus(fn, p); });
         }
+    },
+
+    edit: function() {
+        var me = this;
+        var item = this.getSelected()
+        if (item == null) return
+        if (item.size > 1024*1024) {
+            alert(item.name + " is too big");
+            return;
+        }
+
+        ew_session.controller.readS3BucketKey(item.bucket, item.name, {}, function(t) {
+            var rc = { text: t, save: false };
+            window.openDialog("chrome://ew/content/dialog_edit_s3.xul", null, "chrome,centerscreen,modal,resizable", rc);
+            if (rc.save) {
+                ew_session.controller.writeS3BucketKey(item.bucket, item.name, {}, function() {});
+            }
+        });
     },
 
     manageAcls: function() {
@@ -156,7 +174,7 @@ var ew_S3BucketsTreeView = {
         window.openDialog("chrome://ew/content/dialog_manage_s3acl.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal, item);
 
         if (retVal.ok) {
-            ew_session.showBusyCursor(true);
+
             if (item.bucket) {
                 ew_session.controller.setS3BucketKeyAcl(item.bucket, item.name, retVal.content, function() { me.onSelection(); })
             } else {
