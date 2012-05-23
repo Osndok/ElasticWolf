@@ -7,12 +7,19 @@
        <hbox flex="1">
             <groupbox flex="1" orient="vertical">
                 <caption label="S3 Buckets" />
+                <popupset>
+                    <menupopup id="ew.s3.contextmenu">
+                        <menuitem oncommand="ew_S3BucketsTreeView.create();" label="Create and edit new text file" />
+                    </menupopup>
+                </popupset>
+
                 <toolbar>
                     <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                     <toolbarbutton image="images/left.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.back()" tooltiptext="Back" />
                     <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.create();" tooltiptext="Create Bucket/Folder" />
                     <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.remove();" tooltiptext="Delete Bucket/Folder" />
                     <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.manageAcls();" tooltiptext="Manage ACLs" />
+                    <toolbarbutton image="images/web.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.manageWebsite();" tooltiptext="Manage Website config" />
                     <toolbarbutton image="images/download.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.download();" tooltiptext="Download file" />
                     <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.upload();" tooltiptext="Upload file" />
                     <toolbarbutton image="images/edit.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.edit();" tooltiptext="Edit text file" />
@@ -33,7 +40,7 @@
                         <splitter class="tree-splitter" />
                         <treecol id="s3.etag" label="ETag" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                     </treecols>
-                    <treechildren />
+                    <treechildren context="ew.s3.contextmenu" />
                 </tree>
             </groupbox>
        </hbox>

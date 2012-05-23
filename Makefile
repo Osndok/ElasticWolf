@@ -4,7 +4,7 @@ OSX=$(NAME).app/Contents
 
 all:
 
-run:
+run: dev
 	$(OSX)/MacOS/xulrunner -jsconsole
 
 dev:	clean
@@ -25,7 +25,6 @@ build_osx: clean_osx version
 
 build_win: clean_win version
 	rsync -a src/application.ini src/chrome src/defaults $(NAME)
-	rsync -u $(NAME)/xulrunner/xulrunner-stub.exe $(NAME)/$(NAME).exe
 	zip -rq ../$(NAME)-win-$(VER).zip $(NAME)
 
 xpi:

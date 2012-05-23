@@ -4,6 +4,11 @@ var ew_S3BucketsTreeView = {
     path: [],
     folder: '',
 
+    keyName: function(name)
+    {
+        return name.replace(/[ \/\\'":]+/g, '');
+    },
+
     display : function(list)
     {
         var idx = 0;
@@ -79,7 +84,7 @@ var ew_S3BucketsTreeView = {
 
     setStatus: function(file, p)
     {
-        var file = DirIO.fileName(file)
+        file = DirIO.fileName(file);
         document.getElementById("ew.s3.status").value = file + ": " + (p >= 0 && p <= 100 ? Math.round(p) : 100) + "%";
     },
 
@@ -133,7 +138,7 @@ var ew_S3BucketsTreeView = {
         var file = ew_session.promptForFile("Upload file")
         if (file) {
             var f = FileIO.open(file)
-            var name = f.leafName.replace(/[ \/\\'":]+/g, '')
+            var name = this.keyName(f.leafName)
             ew_session.controller.putS3BucketKey(item.name, this.path.slice(1).join('/') + name, {}, file,
                     function(fn) { me.show(); },
                     function(fn, p) { me.setStatus(fn, p); });
@@ -150,12 +155,31 @@ var ew_S3BucketsTreeView = {
         }
 
         ew_session.controller.readS3BucketKey(item.bucket, item.name, {}, function(t) {
-            var rc = { text: t, save: false };
+            var rc = { file: item.name, text: t, save: false };
             window.openDialog("chrome://ew/content/dialog_edit_s3.xul", null, "chrome,centerscreen,modal,resizable", rc);
             if (rc.save) {
-                ew_session.controller.writeS3BucketKey(item.bucket, item.name, {}, function() {});
+                ew_session.controller.writeS3BucketKey(item.bucket, me.path.slice(1).join('/') + item.name, {}, rc.text, function() {
+                    me.show();
+                });
             }
         });
+    },
+
+    create: function() {
+        var me = this;
+        if (!this.path.length) return;
+        var item = ew_model.getS3Bucket(this.path[0])
+        var file = prompt("File name:")
+        if (file) {
+            var name = this.path.slice(1).join('/') + this.keyName(file)
+            var rc = { file: name, text: "", save: false };
+            window.openDialog("chrome://ew/content/dialog_edit_s3.xul", null, "chrome,centerscreen,modal,resizable", rc);
+            if (rc.save) {
+                ew_session.controller.writeS3BucketKey(item.name, name, {}, rc.text, function() {
+                    me.show();
+                });
+            }
+        }
     },
 
     manageAcls: function() {
@@ -172,16 +196,36 @@ var ew_S3BucketsTreeView = {
             }
         }
         window.openDialog("chrome://ew/content/dialog_manage_s3acl.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal, item);
-
         if (retVal.ok) {
-
             if (item.bucket) {
                 ew_session.controller.setS3BucketKeyAcl(item.bucket, item.name, retVal.content, function() { me.onSelection(); })
             } else {
                 ew_session.controller.setS3BucketAcl(item.name, retVal.content, function() { me.onSelection(); })
             }
         }
-    }
+    },
+
+    manageWebsite: function() {
+        var me = this;
+        var item = this.getSelected()
+        if (this.path.length) return;
+        if (item == null) return
+        var retVal = { bucket: item.name, ok: 0, enable: 0, index: '', error: '' };
+
+        ew_session.controller.getS3BucketWebsite(item.name, function(bucket, index, error) {
+            retVal.index = index;
+            retVal.error = error;
+        });
+        window.openDialog("chrome://ew/content/dialog_manage_s3website.xul", null, "chrome,centerscreen,modal,resizable", retVal);
+        if (retVal.ok) {
+            if (retVal.enable) {
+                ew_session.controller.setS3BucketWebsite(item.name, retVal.index, retVal.error, function() { me.onSelection(); })
+            } else {
+                ew_session.controller.deleteS3BucketWebsite(item.name, function() { me.onSelection(); })
+            }
+        }
+    },
+
 };
 ew_S3BucketsTreeView.__proto__ = TreeView;
 ew_S3BucketsTreeView.register();

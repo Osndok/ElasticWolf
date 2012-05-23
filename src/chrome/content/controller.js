@@ -1,15 +1,23 @@
 // controller: slightly higher level of abstraction over the EC2 API
 var ew_controller = {
+    errorHandlers: {},
+
     getNsResolver : function()
     {
         return ew_client.getNsResolver();
+    },
+
+    handleErrors: function(reqType)
+    {
+        this.errorHandlers[reqType] = true;
     },
 
     onResponseComplete : function(responseObject)
     {
         // In sync mode handle errors in the caller
         if (responseObject.isSync && responseObject.hasErrors) {
-            return;
+            // Some handlers can manage errors in the callback
+            if (!this.errorHandlers[responseObject.requestType]) return;
         }
         // In async mode callback must be called
         eval("this." + responseObject.requestType + "(responseObject)");
@@ -1719,6 +1727,65 @@ var ew_controller = {
         if (obj) obj.acls = null;
 
         if (objResponse.callback) objResponse.callback(bucket, key);
+    },
+
+    getS3BucketWebsite : function(bucket, callback)
+    {
+        this.handleErrors("onCompleteGetS3BucketWebsite");
+        ew_client.queryS3("GET", bucket, "", "?website", {}, null, this, true, "onCompleteGetS3BucketWebsite", callback);
+    },
+
+    onCompleteGetS3BucketWebsite : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+        var bucket = objResponse.data[0];
+
+        if (objResponse.hasErrors) {
+            // Ignore no website error
+            if (objResponse.faultCode == "NoSuchWebsiteConfiguration") {
+                objResponse.hasErrors = false;
+            }
+        } else {
+            var doc = xmlDoc.getElementsByTagName("IndexDocument");
+            var index = getNodeValueByName(doc[0], "Suffix");
+            var doc = xmlDoc.getElementsByTagName("ErrorDocument");
+            var error = getNodeValueByName(doc[0], "Key");
+            if (objResponse.callback) objResponse.callback(bucket, index, error);
+        }
+    },
+
+    setS3BucketWebsite : function(bucket, index, error, callback)
+    {
+        var content = '<WebsiteConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">';
+        if (index) {
+            content += '<IndexDocument><Suffix>' + index + '</Suffix></IndexDocument>';
+        }
+        if (error) {
+            content += '<ErrorDocument><Key>' + error + '</Key></ErrorDocument>';
+        }
+        content += '</WebsiteConfiguration>';
+        ew_client.queryS3("PUT", bucket, "", "?website", {}, content, this, true, "onCompleteSetS3BucketWebsite", callback);
+    },
+
+    onCompleteSetS3BucketWebsite : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+        var bucket = objResponse.data[0];
+
+        if (objResponse.callback) objResponse.callback(bucket);
+    },
+
+    deleteS3BucketWebsite : function(bucket, callback)
+    {
+        ew_client.queryS3("DELETE", bucket, "", "?website", {}, content, this, true, "onCompleteDeleteS3BucketWebsite", callback);
+    },
+
+    onCompleteDeleteS3BucketKeyAcl : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+        var bucket = objResponse.data[0];
+
+        if (objResponse.callback) objResponse.callback(bucket);
     },
 
     bundleInstance : function(instanceId, bucket, prefix, activeCred, callback)

@@ -393,7 +393,7 @@ var ew_client = {
                 if (progresscb) progresscb(filename, 100);
                 if (callback) callback(filename);
             } else {
-                var rsp = this.unpackXMLErrorRsp(xmlhttp);
+                var rsp = this.handleResponseError(xmlhttp);
                 this.errorDialog("S3 responded with an error for "+ bucket + "/" + key + path, rsp.faultCode, rsp.requestId, rsp.faultString)
             }
         };
@@ -457,20 +457,21 @@ var ew_client = {
         } catch(e) {
             debug(e)
             this.stopTimer(timerKey);
-            return this.newResponseObject(null, reqType, callback, true, "Send Request Error", e, "", data);
+            return this.createResponse(null, reqType, callback, true, "Send Request Error", e, "", data);
         }
         if (isSync) {
             this.stopTimer(timerKey);
+            return this.handleResponse(xmlhttp, reqType, isSync, objActions, callback, data);
         }
-        return this.handleResponse(xmlhttp, reqType, isSync, objActions, callback, data);
+        return { hasErrors: false };
     },
 
     handleResponse : function(xmlhttp, reqType, isSync, objActions, callback, data) {
         log((isSync ? "Sync" : "Async") + " Response, status: " + xmlhttp.status + ", req:" + reqType + ", response: " + xmlhttp.responseText);
 
         var rc = xmlhttp.status >= 200 && xmlhttp.status < 300 ?
-                 this.newResponseObject(xmlhttp, reqType, callback, false, "", "", "", data) :
-                 this.unpackXMLErrorRsp(xmlhttp, reqType, callback, data);
+                 this.createResponse(xmlhttp, reqType, callback, false, "", "", "", data) :
+                 this.handleResponseError(xmlhttp, reqType, callback, data);
 
         rc.isSync = isSync;
         // If context object is not specified call the callback directly
@@ -483,17 +484,7 @@ var ew_client = {
         return rc;
     },
 
-    newResponseObject : function(xmlhttp, reqType, callback, hasErrors, faultCode, faultString, requestId, data) {
-        var xmlDoc = xmlhttp ? xmlhttp.responseXML : null;
-        var strHeaders = xmlhttp ? xmlhttp.getAllResponseHeaders() : null;
-
-        return { xmlhttp: xmlhttp, xmlDoc: xmlDoc, strHeaders: strHeaders,
-                requestType: reqType, requestId: requestId,
-                faultCode: faultCode, faultString: faultString,
-                hasErrors: hasErrors, data: data, callback: callback, };
-    },
-
-    unpackXMLErrorRsp : function(xmlhttp, reqType, callback, data) {
+    handleResponseError : function(xmlhttp, reqType, callback, data) {
         var faultCode = "Unknown: " + xmlhttp.status;
         var faultString = "An unknown error occurred.";
         var requestId = "";
@@ -508,7 +499,17 @@ var ew_client = {
             faultString = getNodeValueByName(xmlDoc, "Message");
             requestId = getNodeValueByName(xmlDoc, "RequestID");
         }
-        return this.newResponseObject(xmlhttp, reqType, callback, true, faultCode, faultString, requestId, data);
+        return this.createResponse(xmlhttp, reqType, callback, true, faultCode, faultString, requestId, data);
+    },
+
+    createResponse : function(xmlhttp, reqType, callback, hasErrors, faultCode, faultString, requestId, data) {
+        return { xmlhttp: xmlhttp,
+                 xmlDoc: xmlhttp ? xmlhttp.responseXML : null,
+                 textBody: xmlhttp ? xmlhttp.responseText : '',
+                 requestType: reqType, requestId: requestId,
+                 faultCode: faultCode, faultString: faultString,
+                 hasErrors: hasErrors,
+                 data: data, callback: callback, };
     },
 
     queryVpnConnectionStylesheets : function(stylesheet) {
@@ -538,16 +539,7 @@ var ew_client = {
         xmlhttp.open("GET", "http://checkip.amazonaws.com/" + reqType, false);
         xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
         xmlhttp.overrideMimeType('text/plain');
-
-        var timerKey = this.getTimerKey();
-        this.startTimer(timerKey, xmlhttp.abort);
-        try {
-            xmlhttp.send(null);
-        } catch(e) {
-            debug(e)
-        }
-        this.stopTimer(timerKey);
-        retVal.ipAddress = xmlhttp.responseText;
+        return this.sendRequest(xmlhttp, null, true, "checkip", null, function(obj) { retVal.ipAddress = obj.textBody; });
     },
 
     download: function(url, headers, filename, callback, progresscb) {
