@@ -9,13 +9,25 @@
                 <caption label="S3 Buckets" />
                 <popupset>
                     <menupopup id="ew.s3.contextmenu">
+                        <menuitem oncommand="ew_S3BucketsTreeView.back()" label="Back" />
+                        <menuitem oncommand="ew_S3BucketsTreeView.onClick()" label="Show contents" />
+                        <menuseparator />
+                        <menuitem oncommand="ew_S3BucketsTreeView.refresh()" label="&ew.refresh.tip;" />
+                        <menuitem oncommand="ew_S3BucketsTreeView.create();" label="Create Bucket/Folder" />
+                        <menuitem oncommand="ew_S3BucketsTreeView.remove();" label="Delete Bucket/Folder" />
+                        <menuitem oncommand="ew_S3BucketsTreeView.manageAcls();" label="Manage ACLs" />
+                        <menuitem oncommand="ew_S3BucketsTreeView.manageWebsite();" label="Manage Website config" />
+                        <menuseparator />
+                        <menuitem oncommand="ew_S3BucketsTreeView.download();" label="Download select file" />
+                        <menuitem oncommand="ew_S3BucketsTreeView.upload();" label="Upload file" />
+                        <menuitem oncommand="ew_S3BucketsTreeView.edit();" label="Edit selected text file" />
                         <menuitem oncommand="ew_S3BucketsTreeView.create();" label="Create and edit new text file" />
                     </menupopup>
                 </popupset>
 
                 <toolbar>
-                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                     <toolbarbutton image="images/left.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.back()" tooltiptext="Back" />
+                    <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                     <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.create();" tooltiptext="Create Bucket/Folder" />
                     <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.remove();" tooltiptext="Delete Bucket/Folder" />
                     <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.manageAcls();" tooltiptext="Manage ACLs" />
@@ -24,7 +36,7 @@
                     <toolbarbutton image="images/upload.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.upload();" tooltiptext="Upload file" />
                     <toolbarbutton image="images/edit.png" style="-moz-box-pack:center;" oncommand="ew_S3BucketsTreeView.edit();" tooltiptext="Edit text file" />
                 </toolbar>
-                <hbox style="background-color:#AAAAAA;-moz-border-radius:5px;">
+                <hbox style="background-color:#EEEEEE;">
                 <label id="ew.s3.path" flex="1" />
                 <label id="ew.s3.status" style="color:green;text-align:right;" flex="1" />
                 </hbox>

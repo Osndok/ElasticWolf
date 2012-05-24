@@ -255,8 +255,8 @@ var ew_session = {
             if (cred.endPoint && cred.endPoint != "") {
                 var endpoint = new Endpoint("", cred.endPoint)
                 this.selectEndpoint(endpoint);
-                ew_toolbar.update();
             }
+            ew_toolbar.update();
             return true;
         }
         return false;
@@ -291,6 +291,7 @@ var ew_session = {
             this.prefs.setLastUsedEndpoint(endpoint.name);
             this.prefs.setServiceURL(endpoint.url);
             this.client.setEndpoint(endpoint);
+
             ew_toolbar.update();
             return true;
         }
@@ -301,8 +302,17 @@ var ew_session = {
     {
         if (this.locked || this.client.disabled) return;
 
+        var wasGovCloud = this.client.isGovCloud();
         var endpoint = this.endpointmap.get(name);
         if (this.selectEndpoint(endpoint)) {
+
+            // Switching between GovClound, reset credentials
+            if (this.client.isGovCloud() != wasGovCloud) {
+                debug('disable credentials when switching GovCloud')
+                this.client.setCredentials("", "");
+                this.prefs.setLastUsedAccount("");
+                ew_toolbar.update();
+            }
             this.loadAllTags();
 
             // Since we are switching creds, ensure that all the views are redrawn

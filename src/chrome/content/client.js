@@ -99,7 +99,7 @@ var ew_client = {
         if (endpoint != null) {
             this.serviceURL = endpoint.url;
             this.region = endpoint.name;
-            this.elbURL = "https://elasticloadbalancing."+this.region+".amazonaws.com";
+            this.elbURL = "https://elasticloadbalancing." + this.region + ".amazonaws.com";
         }
     },
 

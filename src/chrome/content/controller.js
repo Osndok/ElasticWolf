@@ -1643,14 +1643,14 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    getS3BucketKey : function(bucket, key, params, file, callback, progresscb)
+    getS3BucketKey : function(bucket, key, path, params, file, callback, progresscb)
     {
-        ew_client.downloadS3("GET", bucket, key, "", params, file, callback, progresscb);
+        ew_client.downloadS3("GET", bucket, key, path, params, file, callback, progresscb);
     },
 
-    readS3BucketKey : function(bucket, key, params, callback)
+    readS3BucketKey : function(bucket, key, path, params, callback)
     {
-        ew_client.queryS3("GET", bucket, key, "", {}, null, this, true, "onCompleteReadS3BucketKey", callback);
+        ew_client.queryS3("GET", bucket, key, path, {}, null, this, true, "onCompleteReadS3BucketKey", callback);
     },
 
     onCompleteReadS3BucketKey : function(objResponse)
@@ -1658,19 +1658,31 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(objResponse.xmlhttp.responseText);
     },
 
-    writeS3BucketKey : function(bucket, key, params, text, callback)
+    putS3BucketKey : function(bucket, key, path, params, text, callback)
     {
-        ew_client.queryS3("PUT", bucket, key, "", params, text, this, true, "onCompleteWriteS3BucketKey", callback);
+        ew_client.queryS3("PUT", bucket, key, path, params, text, this, true, "onCompletePutS3BucketKey", callback);
     },
 
-    onCompleteWriteS3BucketKey : function(objResponse)
+    onCompletePutS3BucketKey : function(objResponse)
     {
         if (objResponse.callback) objResponse.callback();
     },
 
-    putS3BucketKey : function(bucket, key, params, file, callback, progresscb)
+    initS3BucketKeyUpload : function(bucket, key, params, callback)
     {
-        ew_client.uploadS3(bucket, key, "", params, file, callback, progresscb);
+        ew_client.queryS3("POST", bucket, key, "?uploads", params, null, this, true, "onCompleteInitS3BucketKeyUpload", callback);
+    },
+
+    onCompleteInitS3BucketKeyUpload : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+        var bucket = getNodeValueByName(xmlDoc, "UploadId");
+        if (objResponse.callback) objResponse.callback(id);
+    },
+
+    uploadS3BucketFile : function(bucket, key, path, params, file, callback, progresscb)
+    {
+        ew_client.uploadS3(bucket, key, path, params, file, callback, progresscb);
     },
 
     getS3BucketKeyAcl : function(bucket, key, callback)
