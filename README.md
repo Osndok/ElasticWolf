@@ -38,17 +38,15 @@ clients for accessing Linux instances.
 
    * Download Git for Windows from http://code.google.com/p/msysgit/downloads/list
 
-   * Now launch cmd.exe and cd to the directory where you want to keep the source code
+   * Use Git UI to manage repository or
 
-   * Retrieve source code from the repository
+     * Launch cmd.exe and cd to the directory where you want to keep the source code
 
-       "C:\Program Files\Git\cmd\git" clone git://github.com/aws-ew-dev/ElasticWolf.git
+     * Retrieve source code from the repository
 
-     or
+        "C:\Program Files\Git\cmd\git" clone git://github.com/aws-ew-dev/ElasticWolf.git
 
-     Use git GUI instead
-
-   * Now execute run.bat which will enable javascript console for debugging purposes 
+   * To run the application execute run.bat which will enable javascript console for debugging purposes 
 
        run.bat
 
