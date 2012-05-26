@@ -46,9 +46,9 @@ clients for accessing Linux instances.
 
         "C:\Program Files\Git\cmd\git" clone git://github.com/aws-ew-dev/ElasticWolf.git
 
-   * To run the application execute run.bat which will enable javascript console for debugging purposes 
+   * To run the application execute with javascript console 
 
-       run.bat
+       ElasticWolf/ElasticWolf.exe -jsconsole
 
    * To get updates just execute inside the source directory
 
