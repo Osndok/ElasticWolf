@@ -50,6 +50,10 @@ clients for accessing Linux instances.
 
        ElasticWolf/ElasticWolf.exe -jsconsole
 
+       or
+
+       just execute ElasticWolf.exe from the Windows Explorer without debug console
+
    * To get updates just execute inside the source directory
 
       "C:\Program Files\Git\cmd\git" pull
