@@ -73,6 +73,7 @@ var TreeView = {
     atomService: null,
     properties: [],
     search: "",
+    searchElement: null,
     searchTimer: null,
 
     getModelName: function()
@@ -231,6 +232,9 @@ var TreeView = {
     },
     searchChanged : function(event)
     {
+        if (!this.searchElement) return;
+        this.search = $(this.searchElement).value;
+
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
         }

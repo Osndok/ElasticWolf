@@ -1,12 +1,7 @@
 var ew_VpcTreeView = {
     COLNAMES : [ 'vpc.id', 'vpc.cidr', 'vpc.state', 'vpc.dhcpoptions', 'vpc.tag' ],
     model: "vpcs",
-
-    searchChanged : function(event)
-    {
-        this.search = $('ew.vpcs.search').value
-        TreeView.searchChanged.call(this, event);
-    },
+    searchElement: 'ew.vpcs.search',
 
     enableOrDisableItems : function()
     {
@@ -23,15 +18,10 @@ var ew_VpcTreeView = {
 
     createVpc : function()
     {
-        var retVal = {
-            ok : null,
-            cidr : null,
-            dhcpOptionsId : null
-        }
+        var retVal = { ok : null, cidr : null, dhcpOptionsId : null }
         window.openDialog("chrome://ew/content/dialog_create_vpc.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            
             var me = this;
             var wrap = function(id)
             {
@@ -40,7 +30,7 @@ var ew_VpcTreeView = {
                 ew_InternetGatewayTreeView.attachInternetGateway(id, null);
             }
             ew_session.controller.createVpc(retVal.cidr, wrap);
-            
+
         }
     },
 
@@ -82,7 +72,7 @@ var ew_VpcTreeView = {
         window.openDialog("chrome://ew/content/dialog_associate_dhcp_options.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            
+
             var me = this;
             var wrap = function(id)
             {
@@ -90,7 +80,7 @@ var ew_VpcTreeView = {
                 me.selectByImageId(id);
             }
             ew_session.controller.associateDhcpOptions(retVal.dhcpOptionsId, retVal.vpcId, wrap);
-            
+
         }
     },
 

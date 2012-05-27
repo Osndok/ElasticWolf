@@ -1,4 +1,5 @@
 var ew_toolbar = {
+    // Order of te tabs should match order of tabpanels
     tabs: [ { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView }], },
             { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
             { tab: "ew.tabs.access",        views: [ { id: "ew.accesskeys.view", view: ew_AccessKeyTreeView },
@@ -28,10 +29,10 @@ var ew_toolbar = {
                                                      { id: "ew.acls.rules.view", view: ew_NetworkAclRulesTreeView }], },
             { tab: "ew.tabs.eni",           views: [ { id: "ew.enis.view", view: ew_NetworkInterfacesTreeView },
                                                      { id: "ew.enis.attachments.view", view: ew_NetworkInterfaceAttachmentsTreeView } ], },
-            { tab: "ew.tabs.vpn",           views: [ { id: "ew.vpngateways.view", view: ew_VpnGatewayTreeView },
-                                                     { id: "ew.vpnconnections.view", view: ew_VpnConnectionTreeView },
-                                                     { id: "ew.customergateways.view", view: ew_CustomerGatewayTreeView },
+            { tab: "ew.tabs.vgw",           views: [ { id: "ew.vpngateways.view", view: ew_VpnGatewayTreeView },
                                                      { id: "ew.vpnattachments.view", view: ew_VpnAttachmentTreeView } ], },
+            { tab: "ew.tabs.vpn",           views: [ { id: "ew.vpnconnections.view", view: ew_VpnConnectionTreeView } ] },
+            { tab: "ew.tabs.cgw",           views: [ { id: "ew.customergateways.view", view: ew_CustomerGatewayTreeView },] },
             { tab: "ew.tabs.availzone",     views: [ { id: "ew.azones.view", view: ew_AvailZoneTreeView }], },
             { tab: "ew.tabs.s3",            views: [ { id: "ew.s3.view", view: ew_S3BucketsTreeView }], },
     ],

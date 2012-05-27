@@ -745,7 +745,7 @@ var ew_session = {
         return true
     },
 
-    promptList: function(title, msg, items, columns)
+    promptList: function(title, msg, items, columns, wide)
     {
         var list = []
         for (var i = 0; i < items.length; i++) {
@@ -764,11 +764,14 @@ var ew_session = {
         }
 
         var selected = { value: -1 };
-        //window.openDialog("chrome://ew/content/dialog_select.xul", null, "chrome,centerscreen,modal,resizable", title, msg, list, selected);
-
-        var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-        if (!prompts.select(null, title, msg, list.length, list, selected)) {
-            return -1;
+        // For too wide items standard prompt will cut text, so use custom dialog
+        if (wide) {
+            window.openDialog("chrome://ew/content/dialog_select.xul", null, "chrome,centerscreen,modal,resizable", title, msg, list, selected);
+        } else {
+            var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+            if (!prompts.select(null, title, msg, list.length, list, selected)) {
+                return -1;
+            }
         }
         return selected.value
     },

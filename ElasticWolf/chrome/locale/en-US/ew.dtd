@@ -25,6 +25,8 @@
 <!ENTITY ew.tabs.subnet.label "Subnets">
 <!ENTITY ew.tabs.routing.label "Routing Tables">
 <!ENTITY ew.tabs.igw.label "Internet Gateways">
+<!ENTITY ew.tabs.cgw.label "Customer Gateways">
+<!ENTITY ew.tabs.vgw.label "VPN Gateways">
 <!ENTITY ew.tabs.vpn.label "VPN Connections">
 <!ENTITY ew.tabs.acl.label "Network ACLs">
 <!ENTITY ew.tabs.eni.label "Elastic Network Interfaces">

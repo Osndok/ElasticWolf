@@ -1,12 +1,7 @@
 var ew_SubnetsTreeView = {
     COLNAMES : [ 'subnet.id', 'subnet.vpcId', 'subnet.cidr', 'subnet.state', 'subnet.availableIp', 'subnet.availabilityZone', 'subnet.tag', 'subnet.routeId', 'subnet.aclId' ],
     model: [ "subnets", "vpcs", "routeTables", "networkAcls" ],
-
-    searchChanged : function(event)
-    {
-        this.search = $('ew.subnets.search').value;
-        TreeView.searchChanged.call(this, event);
-    },
+    searchElement: 'ew.subnets.search',
 
     enableOrDisableItems : function()
     {

@@ -423,7 +423,7 @@ function VpnGateway(id, availabilityZone, state, type, attachments, tag)
     this.availabilityZone = availabilityZone;
     this.state = state;
     this.type = type;
-    this.attachments = attachments;
+    this.attachments = attachments || [];
 
     if (tag) this.tag = tag;
 }

@@ -41,14 +41,9 @@ var ew_RouteTablesTreeView = {
             return;
         }
 
-        
         var me = this;
-        var wrap = function()
-        {
-            me.refresh();
-        }
-        ew_session.controller.createRouteTable(vpcs[rc].id, wrap);
-        
+        ew_session.controller.createRouteTable(vpcs[rc].id, function() { me.refresh() });
+
     },
 
     deleteSelected : function()
@@ -56,11 +51,7 @@ var ew_RouteTablesTreeView = {
         var table = this.getSelected();
         if (!table || !confirm("Delete route table " + table.id + "?")) return;
         var me = this;
-        var wrap = function()
-        {
-            me.refresh();
-        }
-        ew_session.controller.deleteRouteTable(table.id, wrap);
+        ew_session.controller.deleteRouteTable(table.id, function() { me.refresh() });
     },
 
 };
@@ -81,10 +72,7 @@ var ew_RoutesTreeView = {
         var gws = ew_session.model.getInternetGateways();
         for ( var i in gws) {
             if (gws[i].vpcs.indexOf(table.vpcId) > -1) {
-                gwList.push({
-                    text : gws[i].toStr(),
-                    id : gws[i].id
-                });
+                gwList.push({ text : gws[i].toStr(), id : gws[i].id });
             }
         }
         if (gwList.length == 0) {
@@ -92,15 +80,9 @@ var ew_RoutesTreeView = {
             return;
         }
 
-        var retVal = {
-            ok : null,
-            cidr : null,
-            gatewayId : null,
-            gws : gwList
-        }
+        var retVal = { ok : null, cidr : null, gatewayId : null, gws : gwList }
         window.openDialog("chrome://ew/content/dialog_create_route.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
         if (retVal.ok) {
-            
             var me = this;
             var wrap = function(id)
             {
@@ -108,7 +90,7 @@ var ew_RoutesTreeView = {
                 ew_RouteTablesTreeView.select({ id: table.id })
             }
             ew_session.controller.createRoute(table.id, retVal.cidr, retVal.gatewayId, wrap);
-            
+
         }
     },
 
@@ -192,11 +174,7 @@ var ew_InternetGatewayTreeView = {
     createInternetGateway : function()
     {
         var me = this;
-        var wrap = function(id)
-        {
-            me.refresh()
-        }
-        ew_session.controller.createInternetGateway(wrap);
+        ew_session.controller.createInternetGateway(function(){me.refresh()});
     },
 
     deleteInternetGateway : function()
@@ -206,41 +184,25 @@ var ew_InternetGatewayTreeView = {
         if (!ew_session.promptYesNo("Confirm", "Delete Internet Gateway " + igw.id + "?")) return;
 
         var me = this;
-        var wrap = function()
-        {
-            me.refresh();
-        }
-        ew_session.controller.deleteInternetGateway(igw.id, wrap);
+        ew_session.controller.deleteInternetGateway(igw.id, function() {me.refresh()});
     },
 
     attachInternetGateway : function(vpcid, igwid)
     {
         var igw = this.getSelected()
         if (!igwid) igwid = igw ? igw.id : null
-        var retVal = {
-            ok : null,
-            igwnew : 0,
-            igwid : igwid,
-            vpcid : vpcid
-        }
+        var retVal = { ok : null, igwnew : 0, igwid : igwid, vpcid : vpcid }
         window.openDialog("chrome://ew/content/dialog_attach_internet_gateway.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
         if (retVal.ok) {
-            
             var me = this;
-            var wrap = function(id)
-            {
-                me.refresh();
-            }
             if (retVal.igwnew) {
-                var wrap2 = function(id)
-                {
-                    ew_session.controller.attachInternetGateway(id, retVal.vpcid, wrap);
-                }
-                ew_session.controller.createInternetGateway(wrap2);
+                ew_session.controller.createInternetGateway(function(id) {
+                    ew_session.controller.attachInternetGateway(id, retVal.vpcid, function() {me.refresh()});
+                });
             } else {
-                ew_session.controller.attachInternetGateway(retVal.igwid, retVal.vpcid, wrap);
+                ew_session.controller.attachInternetGateway(retVal.igwid, retVal.vpcid, function() {me.refresh()});
             }
-            
+
         }
     },
 
@@ -250,14 +212,10 @@ var ew_InternetGatewayTreeView = {
         if (igw == null) return;
         if (!ew_session.promptYesNo("Confirm", "Detach Internet Gateway " + igw.id + " from " + igw.vpcs + "?")) return;
         var me = this;
-        var wrap = function(id)
-        {
-            me.refresh();
-        }
         for ( var i = 0; i < igw.vpcs.length; i++) {
-            ew_session.controller.detachInternetGateway(igw.id, igw.vpcs[i], wrap);
+            ew_session.controller.detachInternetGateway(igw.id, igw.vpcs[i], function() {me.refresh()});
         }
-        
+
     }
 
 };

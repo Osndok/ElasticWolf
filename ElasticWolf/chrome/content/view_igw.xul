@@ -27,7 +27,7 @@
                         <splitter class="tree-splitter" />
                         <treecol id="igw.vpcs" label="VPCs" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="igw.info" label="Info" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="igw.info" label="VPC Details" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="igw.tags" label="Tags" flex="1" persist="width ordinal hidden sortDirection" />
                     </treecols>
