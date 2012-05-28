@@ -621,15 +621,6 @@ var ew_session = {
         window.openDialog("chrome://ew/content/dialog_help.xul", null, "chrome,centerscreen,modal,resizable", this.client);
     },
 
-    showBusyCursor : function(fShow)
-    {
-        if (fShow) {
-            $("ew-window").setAttribute("wait-cursor", true);
-        } else {
-            $("ew-window").removeAttribute("wait-cursor");
-        }
-    },
-
     generateCertificate : function(name)
     {
         // Make sure we have directory

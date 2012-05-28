@@ -10,6 +10,7 @@ var ew_client = {
     errorMax: 3,
     timers : {},
     disabled: false,
+    httpCount: 0,
 
     VERSION: "1.28",
     NAME: 'ElasticWolf',
@@ -337,6 +338,7 @@ var ew_client = {
             log("Could not create xmlhttp object");
             return null;
         }
+        isSync = false;
         xmlhttp.open(req.method, req.url, !isSync);
 
         for (var p in req.headers) {
@@ -434,12 +436,26 @@ var ew_client = {
         return rsp;
     },
 
+    showBusy : function(fShow)
+    {
+        if (fShow) {
+            this.httpCount++;
+            window.setCursor("wait");
+        } else {
+            --this.httpCount;
+            if (this.httpCount <= 0) {
+                window.setCursor("auto");
+            }
+        }
+    },
+
     sendRequest: function(xmlhttp, content, isSync, reqType, objActions, callback, data) {
         var me = this;
 
         // Generate random timer
         var timerKey = this.getTimerKey();
         this.startTimer(timerKey, xmlhttp.abort);
+        this.showBusy(true);
 
         if (isSync) {
             xmlhttp.onreadystatechange = function() {}
@@ -447,6 +463,7 @@ var ew_client = {
             var xhr = xmlhttp;
             xmlhttp.onreadystatechange = function () {
                 if (xhr.readyState == 4) {
+                    me.showBusy(false);
                     me.stopTimer(timerKey);
                     me.handleResponse(xhr, reqType, isSync, objActions, callback, data)
                 }
@@ -457,10 +474,12 @@ var ew_client = {
             xmlhttp.send(content);
         } catch(e) {
             debug(e)
+            this.showBusy(false);
             this.stopTimer(timerKey);
             return this.createResponse(null, reqType, callback, true, "Send Request Error", e, "", data);
         }
         if (isSync) {
+            this.showBusy(false);
             this.stopTimer(timerKey);
             return this.handleResponse(xmlhttp, reqType, isSync, objActions, callback, data);
         }
