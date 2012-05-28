@@ -1152,6 +1152,19 @@ var ew_model = {
         return null;
     },
 
+    getInstancesByVpc: function(vpcId, subnetId, state) {
+        var list = [];
+        if (this.instances) {
+            var rx = new RegExp(state || '.*', 'i');
+            for (var i in this.instances) {
+                if ((vpcId && this.instances[i].vpcId == vpcId) || (subnetId && this.instances[i].subnetId == subnetId) && rx.match(this.instances[i].state)) {
+                    list.push(this.instances[i]);
+                }
+            }
+        }
+        return list;
+    },
+
     updateKeypairs : function(list)
     {
         this.keypairs = list;

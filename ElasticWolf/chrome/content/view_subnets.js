@@ -13,6 +13,12 @@ var ew_SubnetsTreeView = {
         var subnet = this.getSelected();
         if (subnet == null) return;
 
+        var instances = ew_model.getInstancesByVpc(null, subnet.id, 'running');
+        if (instances.length) {
+            alert("There is instance " + instances[0].id + "/" + instances[0].name + " still running in this subnet");
+            return false
+        }
+
         var confirmed = confirm("Delete " + subnet.id + " (" + subnet.cidr + ")" + (subnet.tag == null ? '' : " [" + subnet.tag + "]") + "?");
         if (!confirmed) return;
 

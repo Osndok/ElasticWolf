@@ -18,7 +18,7 @@ var ew_client = {
     IAM_API_VERSION : '2010-05-08',
     APP_SITE: 'https://github.com',
     APP_PATH: '/vseryakov/',
-    VPN_CONFIG_PATH : 'http://ec2-downloads.s3.amazonaws.com/',
+    VPN_CONFIG_PATH : 'https://ec2-downloads.s3.amazonaws.com/',
     SIG_VERSION: '2',
     IAM_GOV_URL: 'https://iam.us-gov.amazonaws.com',
     IAM_URL : 'https://iam.amazonaws.com',
@@ -253,6 +253,7 @@ var ew_client = {
             log("Could not create xmlhttp object");
             return null;
         }
+        isSync = false;
         xmlhttp.open("POST", url, !isSync);
         xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
         xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
