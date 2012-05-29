@@ -44,12 +44,14 @@
       <caption label="&ew.captions.secgroups.permissions.label;" />
       <popupset>
         <menupopup id="ew.permissions.contextmenu">
+          <menuitem oncommand="ew_PermissionsTreeView.grantPermission();" label="&ew.permissions.authorize.tip;" />
+          <menuitem oncommand="ew_PermissionsTreeView.grantPermission('Egress');" label="&ew.permissions.authorize.egress.tip;" />
           <menuitem oncommand="ew_PermissionsTreeView.revokePermission();" label="Revoke this permission" />
         </menupopup>
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
           <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_PermissionsTreeView.grantPermission();" tooltiptext="&ew.permissions.authorize.tip;" />
-          <toolbarbutton image="images/import.png" style="-moz-box-pack:center;" oncommand="ew_PermissionsTreeView.grantPermission('Egress');" tooltiptext="&ew.permissions.authorize.egress.tip;" />
+          <toolbarbutton image="images/powerup.png" style="-moz-box-pack:center;" oncommand="ew_PermissionsTreeView.grantPermission('Egress');" tooltiptext="&ew.permissions.authorize.egress.tip;" />
           <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_PermissionsTreeView.revokePermission();" tooltiptext="&ew.permissions.revoke.tip;" />
       </toolbar>
       <tree id="ew.permissions.view" enableColumnDrag="true" flex="1">

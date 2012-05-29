@@ -19,7 +19,7 @@ var ew_SecurityGroupsTreeView = {
         window.openDialog("chrome://ew/content/dialog_create_security_group.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
 
         if (retVal.ok) {
-            
+
             var me = this;
             var wrap = function(id) {
                 retVal.id = id
@@ -27,7 +27,7 @@ var ew_SecurityGroupsTreeView = {
                 me.authorizeCommonProtocolsByUserRequest(retVal);
             }
             ew_session.controller.createSecurityGroup(retVal.name, retVal.description, retVal.vpcId, wrap);
-            
+
         }
     },
 
@@ -116,9 +116,9 @@ var ew_PermissionsTreeView = {
 
                 var newPerm = retVal.newPerm;
                 if (newPerm.cidrIp != null) {
-                    ew_session.controller.authorizeSourceCIDR(type, group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.cidrIp,wrap);
+                    ew_session.controller.authorizeSourceCIDR(type, group, newPerm.ipProtocol, newPerm.fromPort, newPerm.toPort, newPerm.cidrIp,wrap);
                 } else {
-                    ew_session.controller.authorizeSourceGroup(type, group,newPerm.ipProtocol,newPerm.fromPort,newPerm.toPort,newPerm.srcGroup, wrap);
+                    ew_session.controller.authorizeSourceGroup(type, group, newPerm.ipProtocol, newPerm.fromPort, newPerm.toPort, newPerm.srcGroup, wrap);
                 }
             }
         },
@@ -127,19 +127,14 @@ var ew_PermissionsTreeView = {
             var group = ew_SecurityGroupsTreeView.getSelected();
             if (group == null) return;
             var perms = new Array();
-            for(var i in this.permissionList) {
+            for(var i in this.treeList) {
                 if (this.selection.isSelected(i)) {
-                    perms.push(this.permissionList[i]);
+                    perms.push(this.treeList[i]);
                 }
             }
-            if (perms.length == 0)
-                return;
+            if (perms.length == 0) return;
+            if (!confirm("Revoke selected permission(s) on group "+group.name+"?")) return;
 
-            var confirmed = confirm("Revoke selected permission(s) on group "+group.name+"?");
-            if (!confirmed)
-                return;
-
-            
             var me = this;
             var wrap = function() {
                 ew_SecurityGroupsTreeView.refresh();
@@ -154,7 +149,7 @@ var ew_PermissionsTreeView = {
                     ew_session.controller.revokeSourceGroup(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.srcGroup,wrap);
                 }
             }
-            
+
         },
 
 };

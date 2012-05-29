@@ -103,54 +103,55 @@
          <treeitem><treerow><treecell label="Endpoints" value="endpoints" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.access.label;" value="ew.tabs.access" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.keypair.label;" value="ew.tabs.keypair" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.securitygroup.label;" value="ew.tabs.securitygroup" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
       <treeitem container="true" open="true">
        <treerow>
-         <treecell label="EC2" src="images/ec2.png" />
+         <treecell label="EC2 instances and storage" src="images/ec2.png" />
        </treerow>
        <treechildren>
          <treeitem><treerow><treecell label="&ew.tabs.instance.label;" value="ew.tabs.instance" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.image.label;" value="ew.tabs.image" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.bundletask.label;" value="ew.tabs.bundletask" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.lease.label;" value="ew.tabs.lease" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.volume.label;" value="ew.tabs.volume" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.snapshot.label;" value="ew.tabs.snapshot" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.bundletask.label;" value="ew.tabs.bundletask" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.availzone.label;" value="ew.tabs.availzone" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
       <treeitem container="true" open="true">
        <treerow>
-         <treecell label="Network" src="images/cloudwatch.png" />
+         <treecell label="EC2 networking" src="images/cloudwatch.png" />
        </treerow>
        <treechildren>
+         <treeitem><treerow><treecell label="&ew.tabs.securitygroup.label;" value="ew.tabs.securitygroup" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.eip.label;" value="ew.tabs.eip" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.eni.label;" value="ew.tabs.eni" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.availzone.label;" value="ew.tabs.availzone" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.loadbalancer.label;" value="ew.tabs.loadbalancer" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.cgw.label;" value="ew.tabs.cgw" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.vgw.label;" value="ew.tabs.vgw" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.vpn.label;" value="ew.tabs.vpn" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
       <treeitem container="true" open="true">
        <treerow>
-         <treecell label="VPC" src="images/vpc.png" />
+         <treecell label="Virtual Private Cloud" src="images/vpc.png" />
        </treerow>
        <treechildren>
          <treeitem><treerow><treecell label="&ew.tabs.vpc.label;" value="ew.tabs.vpc" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.subnet.label;" value="ew.tabs.subnet" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.acl.label;" value="ew.tabs.acl" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.routing.label;" value="ew.tabs.routing" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.igw.label;" value="ew.tabs.igw" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.acl.label;" value="ew.tabs.acl" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.eip.label;" value="ew.tabs.eip" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.eni.label;" value="ew.tabs.eni" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.loadbalancer.label;" value="ew.tabs.loadbalancer" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.vgw.label;" value="ew.tabs.vgw" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.cgw.label;" value="ew.tabs.cgw" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.vpn.label;" value="ew.tabs.vpn" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
       <treeitem container="true" empty="true">
-       <treerow><treecell label="&ew.tabs.s3.label;" value="ew.tabs.s3" src="images/s3.png" /></treerow>
+       <treerow><treecell label="Simple Storage Service" value="ew.tabs.s3" src="images/s3.png" /></treerow>
       </treeitem>
 
     </treechildren>

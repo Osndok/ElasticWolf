@@ -30,7 +30,7 @@
 <!ENTITY ew.tabs.vpn.label "VPN Connections">
 <!ENTITY ew.tabs.acl.label "Network ACLs">
 <!ENTITY ew.tabs.eni.label "Elastic Network Interfaces">
-<!ENTITY ew.tabs.s3.label "S3">
+<!ENTITY ew.tabs.s3.label "Simple Storage Service">
 
 <!ENTITY ew.captions.images.images.label "Machine Images (AMIs)">
 <!ENTITY ew.captions.images.attribs.label "Launch Permissions">

@@ -11,13 +11,6 @@
 
     <groupbox flex="1" orient="vertical" id="ew.newpermission.add.box">
         <caption id="ew.newpermission.add.caption" label="Add New Permission for Security Group: " />
-        <tabbox flex="1">
-            <tabs id="ew.newpermission.tabs">
-                <tab label="External" selected="true" />
-            </tabs>
-
-            <tabpanels flex="1">
-                <tabpanel id="ew.newpermission.tab.external" orient="vertical" flex="1">
 
                     <description>
                         Select a protocol and specify a host/range
@@ -32,7 +25,7 @@
                             <rows>
                                 <row>
                                     <hbox flex="0">
-                                        <menulist id="ew.newpermission.protocol" selectedIndex="0" size="50">
+                                        <menulist id="ew.newpermission.protocol" selectedIndex="0" size="50" onselect="ew_Authorizer.selectionChanged()">
                                             <menupopup>
                                                 <menuitem label="SSH" value="ssh" oncommand="ew_Authorizer.displayProtocolDetails(false);" />
                                                 <menuitem label="RDP" value="rdp" oncommand="ew_Authorizer.displayProtocolDetails(false);" />
@@ -74,6 +67,8 @@
                                                 </menupopup>
                                             </menulist>
                                         </hbox>
+                                        <hbox flex="1" align="pack">
+                                        </hbox>
                                     </deck>
                                 </row>
                                 <row>
@@ -93,6 +88,8 @@
                                             <textbox id="ew.newpermission.icmptype" value="-1" size="10" />
                                             <label control="ew.newpermission.icmpcode" value="ICMP Code" />
                                             <textbox id="ew.newpermission.icmpcode" value="-1" size="10" />
+                                        </hbox>
+                                        <hbox flex="1" align="pack">
                                         </hbox>
                                     </deck>
                                 </row>
@@ -137,8 +134,5 @@
                             </grid>
                         </radiogroup>
                     </groupbox>
-                </tabpanel>
-            </tabpanels>
-        </tabbox>
     </groupbox>
 </dialog>

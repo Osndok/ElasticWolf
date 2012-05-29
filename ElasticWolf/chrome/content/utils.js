@@ -1530,6 +1530,7 @@ function __concatTags__(a, b)
 }
 
 var protPortMap = {
+    any: "-1",
     ssh : "22",
     rdp : "3389",
     http : "80",
