@@ -21,7 +21,7 @@ var ew_NetworkAclsTreeView = {
         for (var i in acl.associations) {
             var subnet = ew_model.getSubnetById(acl.associations[i].subnetId)
             if (subnet) {
-                acl.associations[i].cidr = subnet.toStr()
+                acl.associations[i].cidr = subnet.toString()
             }
         }
 

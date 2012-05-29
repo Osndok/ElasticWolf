@@ -27,7 +27,7 @@
                         <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.createVolume()" tooltiptext="&ew.createvolfromsnap.tip;" />
                         <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.deleteSnapshot()" tooltiptext="&ew.deletesnap.tip;" />
                         <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.tag();" tooltiptext="Edit EC2 Tag" />
-                        <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.viewDetails();" tooltiptext="&ew.contextmenu.details.label;" />
+                        <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.viewDetails();" tooltiptext="&ew.contextmenu.details.label;" />
                         <menulist id="ew_SnapshotTreeView.snapshot.type" selectedIndex="0" oncommand="ew_SnapshotTreeView.snapshotTypeChanged();">
                             <menupopup>
                                 <menuitem label="My Snapshots" value="my_snapshots" />

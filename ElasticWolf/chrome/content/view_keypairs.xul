@@ -19,7 +19,7 @@
                 <toolbarbutton image="images/import.png" tooltiptext="&ew.keypairs.import.tip;" oncommand="ew_KeypairTreeView.importKeypair();" />
                 <toolbarbutton image="images/delete.png" tooltiptext="&ew.keypairs.delete.tip;" oncommand="ew_KeypairTreeView.deleteSelected();" />
                 <toolbarbutton image="images/gen.png" tooltiptext="&ew.keypairs.generate.tip;" oncommand="ew_KeypairTreeView.createCertAndKeypair();" />
-                <toolbarbutton image="images/info.png" tooltiptext="&ew.keypairs.details.tip;" oncommand="ew_KeypairTreeView.viewDetails()"/>
+                <toolbarbutton image="images/details.png" tooltiptext="&ew.keypairs.details.tip;" oncommand="ew_KeypairTreeView.viewDetails()"/>
                 <toolbarbutton image="images/shell.png" tooltiptext="&ew.keypairs.shell.tip;" oncommand="ew_KeypairTreeView.runShell()"/>
             </toolbar>
             <tree enableColumnDrag="true" id="ew.keypairs.view" flex="1">

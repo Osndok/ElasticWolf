@@ -69,6 +69,7 @@ var TreeView = {
     treeList : new Array(),
     selection : null,
     registered : false,
+    initialized: false,
     model : '',
     atomService: null,
     properties: [],
@@ -83,6 +84,10 @@ var TreeView = {
     },
     getModel: function()
     {
+        if (!this.initialized) {
+            this.initialized = true;
+            this.refreshAll();
+        }
         return ew_model.getModel(this.getModelName(this.model));
     },
     getData: function()
@@ -201,6 +206,9 @@ var TreeView = {
     },
     refresh : function() {
         ew_model.refreshModel(this.getModelName(this.model));
+        this.refreshAll();
+    },
+    refreshAll: function() {
         if (this.model instanceof Array) {
             for (var i = 1; i < this.model.length; i++) {
                 if (ew_model.getModel(this.model[i]) == null) {
@@ -996,10 +1004,7 @@ function tagResource(res, session, attr)
 
 function __tagPrompt__(tag)
 {
-    var returnValue = {
-        accepted : false,
-        result : null
-    };
+    var returnValue = { accepted : false, result : null };
     openDialog('chrome://ew/content/dialog_tag.xul', null, 'chrome,centerscreen,modal,width=400,height=250', tag, returnValue);
     return returnValue.accepted ? (returnValue.result || '').trim() : null;
 }

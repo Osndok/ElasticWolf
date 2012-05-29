@@ -19,7 +19,7 @@ var ew_RouteTablesTreeView = {
             for ( var i = 0; i < table.associations.length; i++) {
                 for ( var j = 0; j < subnets.length; j++) {
                     if (table.associations[i].subnetId == subnets[j].id) {
-                        table.associations[i].info = subnets[j].toStr();
+                        table.associations[i].info = subnets[j].toString();
                         break;
                     }
                 }
@@ -72,7 +72,7 @@ var ew_RoutesTreeView = {
         var gws = ew_session.model.getInternetGateways();
         for ( var i in gws) {
             if (gws[i].vpcs.indexOf(table.vpcId) > -1) {
-                gwList.push({ text : gws[i].toStr(), id : gws[i].id });
+                gwList.push({ text : gws[i].toString(), id : gws[i].id });
             }
         }
         if (gwList.length == 0) {
@@ -171,13 +171,13 @@ var ew_InternetGatewayTreeView = {
         TreeView.display.call(this, list);
     },
 
-    createInternetGateway : function()
+    create : function()
     {
         var me = this;
         ew_session.controller.createInternetGateway(function(){me.refresh()});
     },
 
-    deleteInternetGateway : function()
+    destroy : function()
     {
         var igw = this.getSelected();
         if (igw == null) return;
@@ -187,10 +187,15 @@ var ew_InternetGatewayTreeView = {
         ew_session.controller.deleteInternetGateway(igw.id, function() {me.refresh()});
     },
 
-    attachInternetGateway : function(vpcid, igwid)
+    attach: function(vpcid, igwid, selected)
     {
         var igw = this.getSelected()
-        if (!igwid) igwid = igw ? igw.id : null
+        if (!igw) return
+        this.attachInternetGateway(null, igw.id)
+    },
+
+    attachInternetGateway : function(vpcid, igwid)
+    {
         var retVal = { ok : null, igwnew : 0, igwid : igwid, vpcid : vpcid }
         window.openDialog("chrome://ew/content/dialog_attach_internet_gateway.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
         if (retVal.ok) {
@@ -202,11 +207,10 @@ var ew_InternetGatewayTreeView = {
             } else {
                 ew_session.controller.attachInternetGateway(retVal.igwid, retVal.vpcid, function() {me.refresh()});
             }
-
         }
     },
 
-    detachInternetGateway : function()
+    detach : function()
     {
         var igw = this.getSelected();
         if (igw == null) return;

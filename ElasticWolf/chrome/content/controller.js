@@ -2133,9 +2133,19 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    createNetworkInterface : function(subnetId, callback)
+    createNetworkInterface : function(subnetId, ip, descr, groups, callback)
     {
-        ew_client.queryEC2("CreateNetworkInterface", [["subnetId", subnetId]], this, true, "onCompleteCreateNetworkInterface", callback);
+        var params = [["SubnetId", subnetId]];
+        if (ip) {
+            params.push( ["PrivateIpAddress", ip ])
+        }
+        if (descr) {
+            params.push([ "Description", descr])
+        }
+        if (groups) {
+
+        }
+        ew_client.queryEC2("CreateNetworkInterface", params, this, true, "onCompleteCreateNetworkInterface", callback);
     },
 
     onCompleteCreateNetworkInterface : function(objResponse)
@@ -2163,7 +2173,7 @@ var ew_controller = {
         var xmlDoc = objResponse.xmlDoc;
 
         var list = new Array();
-        var items = xmlDoc.evaluate("/ec2:DescribeNetworkInterfcesResponse/ec2:networkInterfaceSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var items = xmlDoc.evaluate("/ec2:DescribeNetworkInterfacesResponse/ec2:networkInterfaceSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
             var id = getNodeValueByName(items.snapshotItem(i), "networkInterfaceId");
             var subnetId = getNodeValueByName(items.snapshotItem(i), "subnetId");
@@ -2173,8 +2183,55 @@ var ew_controller = {
             var mac = getNodeValueByName(items.snapshotItem(i), "macAddress");
             var ip = getNodeValueByName(items.snapshotItem(i), "privateIpAddress");
             var check = getNodeValueByName(items.snapshotItem(i), "sourceDestCheck");
+            var tags = [];
+            var groups = [];
+            var attachment = null;
+            var association = null;
 
-            list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, mac, ip, check));
+            var groupSet = items.snapshotItem(i).getElementsByTagName("groupSet")[0];
+            var groupItems = groupSet.childNodes;
+            if (groupItems) {
+                for ( var j = 0; j < groupItems.length; j++) {
+                    if (groupItems.item(j).nodeName == '#text') continue;
+                    var gid = getNodeValueByName(groupItems.item(j), "groupId");
+                    var gname = getNodeValueByName(groupItems.item(j), "groupName");
+                    groups.push(new Group(gid, gname));
+                }
+            }
+
+            etags = items.snapshotItem(i).getElementsByTagName("tagSet")[0].getElementsByTagName("item");
+            for ( var j = 0; j < etags.length; j++) {
+                var key = getNodeValueByName(etags[j], "key");
+                var value = getNodeValueByName(etags[j], "value");
+                tags.push(new Tag(key, value))
+                if (descr == "" && key == "Name") {
+                    descr = value;
+                }
+            }
+
+            var aitem = items.snapshotItem(i).getElementsByTagName("attachment")[0];
+            if (aitem) {
+                var aid = getNodeValueByName(aitem, "attachmentId");
+                var instId = getNodeValueByName(aitem, "instanceId");
+                var owner = getNodeValueByName(aitem, "instanceOwnerId");
+                var index = getNodeValueByName(aitem, "deviceIndex");
+                var astatus = getNodeValueByName(aitem, "status");
+                var time = getNodeValueByName(aitem, "attachTime");
+                var del = getNodeValueByName(aitem, "deleteOnTermination");
+                attachment = new NetworkInterfaceAttachment(aid, instId, owner, index, astatus, time, del);
+            }
+
+            aitem = items.snapshotItem(i).getElementsByTagName("association")[0];
+            if (aitem) {
+                aid = getNodeValueByName(aitem, "associationId");
+                var pubip = getNodeValueByName(aitem, "publicIp");
+                var owner = getNodeValueByName(aitem, "ipOwnerId");
+                var instId = getNodeValueByName(aitem, "instanceID");
+                var attId = getNodeValueByName(aitem, "attachmentID");
+                association = new NetworkInterfaceAssociation(aid, pubip, owner, instId, attId);
+            }
+
+            list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, mac, ip, check, groups, attachment, association));
         }
 
         ew_model.updateNetworkInterfaces(list);
@@ -2560,10 +2617,10 @@ var ew_controller = {
         params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
-        ew_client.queryELB("DescribeInstanceHealth", params, this, true, "oncompletedescribeInstanceHealth", callback);
+        ew_client.queryELB("DescribeInstanceHealth", params, this, true, "onCompletedescribeInstanceHealth", callback);
     },
 
-    oncompletedescribeInstanceHealth : function(objResponse)
+    onCompletedescribeInstanceHealth : function(objResponse)
     {
         var xmlDoc = objResponse.xmlDoc;
         var list = new Array();
@@ -2586,10 +2643,10 @@ var ew_controller = {
         params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
-        ew_client.queryELB("DeleteLoadBalancer", params, this, true, "oncompleteDeleteLoadBalancer", callback);
+        ew_client.queryELB("DeleteLoadBalancer", params, this, true, "onCompleteDeleteLoadBalancer", callback);
     },
 
-    oncompleteDeleteLoadBalancer : function(objResponse)
+    onCompleteDeleteLoadBalancer : function(objResponse)
     {
         var xmlDoc = objResponse.xmlDoc;
         var items = getNodeValueByName(xmlDoc, "member");

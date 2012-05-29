@@ -82,10 +82,7 @@ var ew_client = {
     getNsResolver : function() {
         var client = this;
         return function(prefix) {
-            var ns = {
-                      's':  "http://schemas.xmlsoap.org/soap/envelope/",  // SOAP namespace
-                      'ec2': "http://ec2.amazonaws.com/doc/"+client.API_VERSION+"/"   // EC2 namespace, must match request version
-            };
+            var ns = { 's':  "http://schemas.xmlsoap.org/soap/envelope/", 'ec2': "http://ec2.amazonaws.com/doc/" + client.API_VERSION + "/" };
             return ns[prefix] || null;
         }
     },
@@ -167,20 +164,7 @@ var ew_client = {
         while (ew_prefs.isHttpEnabled()) {
             try {
                 rsp = this.queryEC2Impl(action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion);
-                if (rsp.hasErrors) {
-                    debug('action:' + action + ', errorCount:' + this.errorCount)
-                    // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
-                    this.errorCount++;
-                    if (this.errorCount < this.errorMax) {
-                        if (!this.errorDialog("EC2 responded with an error for " + action, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
-                            this.errorCount = this.errorMax;
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
-                } else {
-                    this.errorCount = 0;
+                if (!this.retryRequest(rsp, action)) {
                     break;
                 }
             } catch (e) {
@@ -190,6 +174,27 @@ var ew_client = {
             }
         }
         return rsp;
+    },
+
+    retryRequest: function(rsp, action)
+    {
+        if (rsp.hasErrors) {
+            debug('action: ' + action + ', errorCount: ' + this.errorCount)
+            // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
+            this.errorCount++;
+            if (this.errorCount < this.errorMax) {
+                if (!this.errorDialog("Server responded with an error for " + action, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
+                    this.errorCount = this.errorMax;
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        this.errorCount = 0;
+        return false;
     },
 
     errorDialog : function(msg, code, rId, fStr) {
@@ -411,20 +416,7 @@ var ew_client = {
         while (ew_prefs.isHttpEnabled()) {
             try {
                 rsp = this.queryS3Impl(method, bucket, key, path, params, content, objActions, isSync, reqType, callback);
-                if (rsp.hasErrors) {
-                    debug('errorCount:' + this.errorCount)
-                    // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
-                    this.errorCount++;
-                    if (this.errorCount < this.errorMax) {
-                        if (!this.errorDialog("S3 responded with an error for "+ method + " " + bucket + "/" + key + path, rsp.faultCode, rsp.requestId, rsp.faultString)) {
-                            this.errorCount = this.errorMax;
-                            break;
-                        }
-                    } else {
-                        break;
-                    }
-                } else {
-                    this.errorCount = 0;
+                if (!this.retryRequest(rsp, method + " " + bucket + "/" + key + path)) {
                     break;
                 }
             } catch (e) {
@@ -465,7 +457,8 @@ var ew_client = {
                 if (xhr.readyState == 4) {
                     me.showBusy(false);
                     me.stopTimer(timerKey);
-                    me.handleResponse(xhr, reqType, isSync, objActions, callback, data)
+                    var rsp = me.handleResponse(xhr, reqType, isSync, objActions, callback, data);
+                    me.retryRequest(rsp, reqType);
                 }
             }
         }

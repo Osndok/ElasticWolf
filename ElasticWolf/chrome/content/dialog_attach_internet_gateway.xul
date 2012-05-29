@@ -20,22 +20,31 @@
         this.retVal = window.arguments[1];
 
         var vpcMenu = document.getElementById("ew.attachigw.vpcid");
+        vpcMenu.disabled = false
         var vpcs = this.session.model.getVpcs();
         var selected = 0;
         for (var i in vpcs) {
             vpcMenu.appendItem(vpcs[i].id + " (" + vpcs[i].cidr + ")" + (vpcs[i].tag == null ? '' : " [" + vpcs[i].tag + "]"), vpcs[i].id)
-            if (vpcs[i].id == this.retVal.vpcid)
+            if (vpcs[i].id == this.retVal.vpcid) {
                 selected = i;
+                vpcMenu.disabled = true
+            }
         }
         vpcMenu.selectedIndex = selected;
 
+        var igwNew = document.getElementById("ew.attachigw.new");
+        igwNew.disabled = false;
         var igwMenu = document.getElementById("ew.attachigw.igwid");
+        igwMenu.disabled = false;
         var igws = this.session.model.getInternetGateways();
         selected = 0;
         for (var i in igws) {
-            igwMenu.appendItem(igws[i].toStr(), igws[i].id);
-            if (igws[i].id == this.retVal.igwid)
+            igwMenu.appendItem(igws[i].toString(), igws[i].id);
+            if (igws[i].id == this.retVal.igwid) {
                 selected = i;
+                igwMenu.disabled = true;
+                igwNew.disabled = true;
+            }
         }
         igwMenu.selectedIndex = selected;
     }
@@ -50,40 +59,29 @@
     </script>
 
     <vbox flex="1">
-        <description>Instances running in VPCs require Internet Gateway</description>
-        <spacer style="height: 10px" />
-        <grid flex="1">
+        <description>Attach Internet Gateway to VPC</description>
+        <groupbox orient="vertical" flex="1">
+          <caption label="VPC" />
+          <menulist id="ew.attachigw.vpcid" />
+        </groupbox>
+        <groupbox orient="vertical" flex="1">
+         <caption label="Internet Gateway" />
+          <grid flex="1">
             <columns>
-                <column />
-                <column />
+            <column />
+            <column />
             </columns>
             <rows>
-                <row>
-                    <label control="ew.attachigw.vpcid" value="VPC: " />
-                    <hbox>
-                        <menulist id="ew.attachigw.vpcid" />
-                    </hbox>
-                </row>
-                <groupbox orient="vertical" flex="1">
-                    <caption label="Internet Gateway" />
-                    <grid flex="1">
-                    <columns>
-                        <column />
-                        <column />
-                    </columns>
-                    <rows>
-                    <row>
-                        <label control="ew.attachigw.igwid" value="Select existing: " />
-                        <menulist id="ew.attachigw.igwid" />
-                    </row>
-                    <row>
-                        <label control="ew.attachigw.new" value="Create new: " />
-                        <checkbox id="ew.attachigw.new" checked="false" oncommand="newigw();" />
-                    </row>
-                    </rows>
-                    </grid>
-               </groupbox>
-            </rows>
+             <row>
+               <label control="ew.attachigw.igwid" value="Select existing: " />
+               <menulist id="ew.attachigw.igwid" />
+             </row>
+             <row>
+              <label control="ew.attachigw.new" value="Create new: " />
+              <checkbox id="ew.attachigw.new" checked="false" oncommand="newigw();" />
+            </row>
+          </rows>
         </grid>
+     </groupbox>
     </vbox>
 </dialog>

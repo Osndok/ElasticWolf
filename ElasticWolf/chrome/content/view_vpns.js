@@ -16,7 +16,7 @@ var ew_VpnConnectionTreeView = {
                     if (vgws[j].attachments.length) {
                         var vpc = ew_model.getVpcById(vgws[j].attachments[0].vpcId);
                         if (vpc) {
-                            list[i].vgw += " (" + vpc.id + ", " + vpc.toStr() + ")"
+                            list[i].vgw += " (" + vpc.id + ", " + vpc.toString() + ")"
                         }
                     }
                 }
@@ -154,7 +154,7 @@ var ew_VpnGatewayTreeView = {
                 var a = vgw.attachments[i];
                 var vpc = ew_model.getVpcById(a.vpcId)
                 if (vpc) {
-                    a.info = vpc.toStr()
+                    a.info = vpc.toString()
                 }
                 list.push(a)
             }

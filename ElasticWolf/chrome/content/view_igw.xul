@@ -8,18 +8,18 @@
                 <caption label="&ew.captions.internetgateways.label;" />
                 <popupset>
                     <menupopup id="ew.internetgateways.contextmenu">
-                        <menuitem oncommand="ew_InternetGatewayTreeView.createInternetGateway();" label="&ew.internetgateways.add.tip;" />
-                        <menuitem oncommand="ew_InternetGatewayTreeView.deleteInternetGateway();" label="&ew.internetgateways.remove.tip;" />
-                        <menuitem oncommand="ew_InternetGatewayTreeView.attachInternetGateway();" label="&ew.internetgateways.attach.tip;" />
-                        <menuitem oncommand="ew_InternetGatewayTreeView.detachInternetGateway();" label="&ew.internetgateways.detach.tip;" />
+                        <menuitem oncommand="ew_InternetGatewayTreeView.create();" label="&ew.internetgateways.add.tip;" />
+                        <menuitem oncommand="ew_InternetGatewayTreeView.destroy();" label="&ew.internetgateways.remove.tip;" />
+                        <menuitem oncommand="ew_InternetGatewayTreeView.attach();" label="&ew.internetgateways.attach.tip;" />
+                        <menuitem oncommand="ew_InternetGatewayTreeView.detach();" label="&ew.internetgateways.detach.tip;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
-                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.createInternetGateway();" tooltiptext="&ew.internetgateways.add.tip;" />
-                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.deleteInternetGateway();" tooltiptext="&ew.internetgateways.remove.tip;" />
-                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.attachInternetGateway();" tooltiptext="&ew.internetgateways.attach.tip;" />
-                    <toolbarbutton image="images/stop.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.detachInternetGateway();" tooltiptext="&ew.internetgateways.detach.tip;" />
+                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.create();" tooltiptext="&ew.internetgateways.add.tip;" />
+                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.destroy();" tooltiptext="&ew.internetgateways.remove.tip;" />
+                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.attach();" tooltiptext="&ew.internetgateways.attach.tip;" />
+                    <toolbarbutton image="images/stop.png" style="-moz-box-pack:center;" oncommand="ew_InternetGatewayTreeView.detach();" tooltiptext="&ew.internetgateways.detach.tip;" />
                 </toolbar>
                 <tree id="ew.internetgateways.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>

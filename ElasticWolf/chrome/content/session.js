@@ -209,7 +209,7 @@ var ew_session = {
 
     saveCredentials : function(cred)
     {
-        this.savePassword('Cred:' + cred.name, cred.toStr())
+        this.savePassword('Cred:' + cred.name, cred.toString())
     },
 
     manageCredentials : function()

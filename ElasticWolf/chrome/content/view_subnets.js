@@ -1,6 +1,6 @@
 var ew_SubnetsTreeView = {
-    COLNAMES : [ 'subnet.id', 'subnet.vpcId', 'subnet.cidr', 'subnet.state', 'subnet.availableIp', 'subnet.availabilityZone', 'subnet.tag', 'subnet.routeId', 'subnet.aclId' ],
-    model: [ "subnets", "vpcs", "routeTables", "networkAcls" ],
+    COLNAMES : [ 'subnet.id', 'subnet.vpc', 'subnet.cidr', 'subnet.state', 'subnet.availableIp', 'subnet.availabilityZone', 'subnet.tag', 'subnet.routeId', 'subnet.aclId' ],
+    model: [ "subnets", "vpcs", "routeTables", "networkAcls", "azones" ],
     searchElement: 'ew.subnets.search',
 
     enableOrDisableItems : function()
@@ -19,8 +19,7 @@ var ew_SubnetsTreeView = {
             return false
         }
 
-        var confirmed = confirm("Delete " + subnet.id + " (" + subnet.cidr + ")" + (subnet.tag == null ? '' : " [" + subnet.tag + "]") + "?");
-        if (!confirmed) return;
+        if (!confirm("Delete " + subnet.id + " (" + subnet.cidr + ")" + (subnet.tag == null ? '' : " [" + subnet.tag + "]") + "?")) return;
 
         var me = this;
         ew_session.controller.deleteSubnet(subnet.id, function() { me.refresh(); });
@@ -33,7 +32,12 @@ var ew_SubnetsTreeView = {
 
         if (retVal.ok) {
             var me = this;
-            ew_session.controller.createSubnet(retVal.vpcid, retVal.cidr, retVal.az, function() { me.refresh(); });
+            ew_session.controller.createSubnet(retVal.vpcid, retVal.cidr, retVal.az, function() {
+                me.refresh();
+                if (confirm('If this subnet will be a "public" subnet (one where instances can communicate to or from the Internet), please attach / create Internet Gateway.\nDo you want to do it now?')) {
+                    ew_InternetGatewayTreeView.attachInternetGateway(retVal.vpcid, null);
+                }
+            });
         }
     },
 
@@ -54,6 +58,10 @@ var ew_SubnetsTreeView = {
         var tables = ew_model.getRouteTables();
         var acls = ew_model.getNetworkAcls();
         for (var k in list) {
+            var vpc = ew_model.getVpcById(list[k].vpcId);
+            if (vpc) {
+                list[k].vpc = vpc.toString();
+            }
             if (tables) {
                 for (var i in tables) {
                     for (var j in tables[i].associations) {

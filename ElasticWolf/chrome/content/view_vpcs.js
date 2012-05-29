@@ -1,6 +1,6 @@
 var ew_VpcTreeView = {
     COLNAMES : [ 'vpc.id', 'vpc.cidr', 'vpc.state', 'vpc.dhcpoptions', 'vpc.tag' ],
-    model: [ "vpcs", "instances" ],
+    model: [ "vpcs", "instances", "internetGateways" ],
     searchElement: 'ew.vpcs.search',
 
     enableOrDisableItems : function()
@@ -23,13 +23,7 @@ var ew_VpcTreeView = {
 
         if (retVal.ok) {
             var me = this;
-            var wrap = function(id)
-            {
-                me.refresh();
-                ew_InternetGatewayTreeView.attachInternetGateway(id, null);
-            }
-            ew_session.controller.createVpc(retVal.cidr, wrap);
-
+            ew_session.controller.createVpc(retVal.cidr, function() { me.refresh();});
         }
     },
 
@@ -49,7 +43,7 @@ var ew_VpcTreeView = {
             if (subnets[i].vpcId == vpc.id) {
                 var instances = ew_model.getInstancesByVpc(null, subnets[i].id, 'running');
                 if (instances.length) {
-                    alert("There is instance " + instances[0].id + "/" + instances[0].name + " still running in subnet " + subnets[i].toStr());
+                    alert("There is instance " + instances[0].id + "/" + instances[0].name + " still running in subnet " + subnets[i].toString());
                     return;
                 }
             }

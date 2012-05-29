@@ -72,7 +72,7 @@
           <toolbarseparator />
           <toolbarbutton image="images/edit.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.fetchConsoleOutput();" tooltiptext="&ew.instances.console.tip;" />
           <toolbarbutton image="images/key.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.connectToSelectedInstances(3);" tooltiptext="&ew.instances.connect.tip;" />
-          <toolbarbutton image="images/info.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.viewDetails();" tooltiptext="View Details" />
+          <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.viewDetails();" tooltiptext="View Details" />
           <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.tag();" tooltiptext="Edit EC2 Tag" />
           <toolbarseparator />
           <checkbox id="ew.instances.noterminated" label="Hide Terminated" oncommand="ew_InstancesTreeView.filterChanged();"/>
