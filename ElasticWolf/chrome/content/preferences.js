@@ -216,7 +216,7 @@ var ew_prefs = {
             this.setHttpEnabled(this.isHttpEnabled());
             this.setOfflineEnabled(this.isOfflineEnabled());
             this.setAccountIdMap(this.getAccountIdMap());
-            this.setLastEC2PKeyFile(this.getLastEC2PKeyFile());
+            this.setLastEC2PrivateKeyFile(this.getLastEC2PrivateKeyFile());
             this.setInstanceTags(this.getInstanceTags());
             this.setVolumeTags(this.getVolumeTags());
             this.setSnapshotTags(this.getSnapshotTags());
@@ -301,9 +301,9 @@ var ew_prefs = {
     {
         this.setStringPreference(this.IDLE_ACTION, value);
     },
-    setLastEC2PKeyFile : function(value)
+    setLastEC2PrivateKeyFile : function(value)
     {
-        this.setEC2PKeyForUser(value, this.getLastUsedAccount());
+        this.setEC2PrivateKeyForUser(value, this.getLastUsedAccount());
     },
     setOpenConnectionPort : function(value)
     {
@@ -381,9 +381,9 @@ var ew_prefs = {
     {
         return this.getStringPreference(this.CURRENT_TAB, '');
     },
-    getLastEC2PKeyFile : function()
+    getLastEC2PrivateKeyFile : function()
     {
-        return this.getEC2PKeyForUser(this.getLastUsedAccount());
+        return this.getEC2PrivateKeyForUser(this.getLastUsedAccount());
     },
     isDebugEnabled : function()
     {
@@ -492,11 +492,6 @@ var ew_prefs = {
             if (FileIO.exists(cmd)) {
                 batch = "#!set HOME=" + this.getHome() + "#!" + quotepath(cmd) + " -o \"ServerAliveInterval 5\"" + args;
                 return [ 'c:\\\Windows\\System32\\cmd.exe', '/K '+ batch ]
-            }
-
-            cmd = this.getAppPath() + '"\\bin\putty.exe'
-            if (FileIO.exists(cmd)) {
-                return [ cmd, args ]
             }
             return [ "", args ];
         }
@@ -632,12 +627,12 @@ var ew_prefs = {
         return new WrappedMapTags({}, this);
     },
 
-    getEC2PKeyForUser : function(user)
+    getEC2PrivateKeyForUser : function(user)
     {
         return this.getStringPreference(this.LAST_EW_PKEY_FILE + "." + user + "." + this.getLastUsedEndpoint(), "");
     },
 
-    setEC2PKeyForUser : function(value, user)
+    setEC2PrivateKeyForUser : function(value, user)
     {
         this.setStringPreference(this.LAST_EW_PKEY_FILE + "." + user + "." + this.getLastUsedEndpoint(), value);
     },

@@ -236,7 +236,8 @@ var ew_Authorizer = {
     var proto = document.getElementById("ew.newpermission.protocol");
     document.getElementById("ew.newpermission.knownport").value = protPortMap[proto.value];
     if (this.group.vpcId) {
-        proto.appendItem("Any", "any");
+        proto.insertItemAt(0, "Any", "any");
+        proto.selectedIndex = 0;
     }
   }
 };
