@@ -339,7 +339,7 @@ function AvailabilityZone(name, state)
 function AddressMapping(address, instanceid, allocId, assocId, domain, tag)
 {
     this.address = address;
-    this.instanceid = instanceid;
+    this.instanceId = instanceid;
     this.allocationId = allocId || ""
     this.associationId = assocId || ""
     this.domain = domain || ""
@@ -753,6 +753,34 @@ var ew_model = {
             break;
         }
         return []
+    },
+
+    // Common replacement for cells by name, builds human readable value
+    modelValue: function(name, value)
+    {
+        switch (name) {
+        case "vpcId":
+            var vpc = ew_model.getVpcById(value);
+            if (vpc) {
+                return value + " " + vpc.toString();
+            }
+            break;
+
+        case "subnetId":
+            var subnet = ew_model.getSubnetById(value);
+            if (subnet) {
+                return value + " " + subnet.toString();
+            }
+            break;
+
+        case "instanceId":
+            var instance = ew_model.getInstanceById(value);
+            if (instance) {
+                return instance.name || value;
+            }
+            break;
+        }
+        return value;
     },
 
     notifyComponents : function(interest)
@@ -1281,29 +1309,7 @@ var ew_model = {
 
     updateAddresses : function(list)
     {
-        if (!this.instances) {
-            ew_session.controller.describeInstances();
-        }
-
         this.addresses = list;
-
-        if (this.instances && list) {
-            var instanceNames = new Object();
-            var instancePublicDnsNames = new Object();
-
-            for ( var i = 0; i < this.instances.length; i++) {
-                var instance = this.instances[i];
-                instanceNames[instance.id] = instance.name;
-                instancePublicDnsNames[instance.id] = instance.publicDnsName;
-            }
-
-            for ( var i = 0; i < list.length; i++) {
-                var address = list[i];
-                address.instanceName = instanceNames[address.instanceid];
-                address.instancePublicDnsName = instancePublicDnsNames[address.instanceid];
-            }
-        }
-
         this.notifyComponents("addresses");
     },
 

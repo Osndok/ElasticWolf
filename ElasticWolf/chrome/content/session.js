@@ -135,32 +135,33 @@ var ew_session = {
     selectTab: function(name) {
         if (this.client.disabled) return;
 
-        for (var i in this.tabs) {
-            if (this.tabs[i].tab == name) {
-                ew_toolbar.select(name);
-                this.tabMenu.selectedIndex = i;
-                this.prefs.setCurrentTab(name);
+        var tab = ew_toolbar.get(name);
+        if (!tab) return;
 
-                // Stop the refresh timers of all tabs
-                for (var tab in this.refreshedTabs) {
-                    if (this.refreshedTabs[tab] == 1) {
-                        this.refreshedTabs[tab] = 0;
-                        log("Stopping Refresh of tab: " + tab);
-                        eval(tab + ".stopRefreshTimer()");
-                    }
-                }
+        ew_toolbar.select(name);
+        this.tabMenu.selectedPanel = $(tab.id || name);
+        this.prefs.setCurrentTab(name);
 
-                // Refresh if no records yet
-                var tab = this.tabs[this.tabMenu.selectedIndex];
-                for (var i in tab.views) {
-                    if (tab.views[i].view.activate) {
-                        tab.views[i].view.activate();
-                    }
-                    if (tab.views[i].view.rowCount == 0) {
-                        tab.views[i].view.refresh();
-                    }
-                }
-                break;
+        // Stop the refresh timers of all tabs
+        for (var tab in this.refreshedTabs) {
+            if (this.refreshedTabs[tab] == 1) {
+                this.refreshedTabs[tab] = 0;
+                log("Stopping Refresh of tab: " + tab);
+                eval(tab + ".stopRefreshTimer()");
+            }
+        }
+
+        // Refresh if no records yet
+        for (var i in tab.views) {
+            if (tab.views[i].view.activate) {
+                tab.views[i].view.activate();
+            }
+
+            tab.views[i].view.filterList = tab.views[i].filterList;
+            if (tab.views[i].view.rowCount == 0) {
+                tab.views[i].view.refresh();
+            } else {
+                tab.views[i].view.invalidate();
             }
         }
     },
@@ -215,7 +216,7 @@ var ew_session = {
     manageCredentials : function()
     {
         if (this.locked || this.client.disabled) return;
-        window.openDialog("chrome://ew/content/dialog_manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ew_session);
+        window.openDialog("chrome://ew/content/dialogs/manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ew_session);
         this.loadCredentials();
         // Switch to the first account on first use
         if (!this.getActiveCredentials() && this.credentials.length) {
@@ -343,7 +344,7 @@ var ew_session = {
     manageEndpoints : function()
     {
         if (this.locked || this.client.disabled) return;
-        window.openDialog("chrome://ew/content/dialog_manage_endpoints.xul", null, "chrome,centerscreen,modal,resizable", this, this);
+        window.openDialog("chrome://ew/content/dialogs/manage_endpoints.xul", null, "chrome,centerscreen,modal,resizable", this, this);
         this.loadEndpointMap();
     },
 
@@ -585,7 +586,7 @@ var ew_session = {
     manageTools : function()
     {
         if (this.locked || this.client.disabled) return;
-        window.openDialog("chrome://ew/content/dialog_manage_tools.xul", null, "chrome,centerscreen,modal, resizable", this);
+        window.openDialog("chrome://ew/content/dialogs/manage_tools.xul", null, "chrome,centerscreen,modal, resizable", this);
     },
 
     loadAccountIdMap : function()
@@ -596,7 +597,7 @@ var ew_session = {
     manageAccountIds : function()
     {
         if (this.locked || this.client.disabled) return;
-        window.openDialog("chrome://ew/content/dialog_manage_accountids.xul", null, "chrome,centerscreen,modal,resizable", this.accountidmap);
+        window.openDialog("chrome://ew/content/dialogs/manage_accountids.xul", null, "chrome,centerscreen,modal,resizable", this.accountidmap);
         this.loadAccountIdMap();
     },
 
@@ -613,12 +614,12 @@ var ew_session = {
 
     displayAbout : function()
     {
-        window.openDialog("chrome://ew/content/dialog_about.xul", null, "chrome,centerscreen,modal,resizable", this.client);
+        window.openDialog("chrome://ew/content/dialogs/about.xul", null, "chrome,centerscreen,modal,resizable", this.client);
     },
 
     displayHelp : function()
     {
-        window.openDialog("chrome://ew/content/dialog_help.xul", null, "chrome,centerscreen,modal,resizable", this.client);
+        window.openDialog("chrome://ew/content/dialogs/help.xul", null, "chrome,centerscreen,modal,resizable", this.client);
     },
 
     generateCertificate : function(name)
@@ -736,7 +737,7 @@ var ew_session = {
         return true
     },
 
-    promptList: function(title, msg, items, columns, wide)
+    promptList: function(title, msg, items, columns, width)
     {
         var list = []
         for (var i = 0; i < items.length; i++) {
@@ -754,17 +755,9 @@ var ew_session = {
             }
         }
 
-        var selected = { value: -1 };
-        // For too wide items standard prompt will cut text, so use custom dialog
-        if (wide) {
-            window.openDialog("chrome://ew/content/dialog_select.xul", null, "chrome,centerscreen,modal,resizable", title, msg, list, selected);
-        } else {
-            var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-            if (!prompts.select(null, title, msg, list.length, list, selected)) {
-                return -1;
-            }
-        }
-        return selected.value
+        var rc = { value: -1 };
+        window.openDialog("chrome://ew/content/dialogs/select.xul", null, "chrome,centerscreen,modal,resizable", title, msg, list, rc, width);
+        return rc.value
     },
 
     promptForFile : function(msg, save, filename)

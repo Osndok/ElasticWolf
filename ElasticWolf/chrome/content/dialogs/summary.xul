@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
+
+<dialog id="ew.dialog.instance.summary"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  buttons="accept" ondialogaccept="return true;"
+  onload="ew_InstanceSummary.init();"
+  title="Instances Summary">
+
+  <script type="application/x-javascript"
+    src="chrome://ew/content/dialogs/summary.js" />
+  <script type="application/x-javascript"
+    src="chrome://ew/content/utils.js" />
+
+  <vbox flex="1">
+    <grid flex="1">
+      <columns>
+        <column />
+        <column />
+      </columns>
+      <rows>
+        <row>
+          <label control="ew.summary.total" value="Total:" />
+          <textbox id="ew.summary.total" size="40" readonly="true" />
+        </row>
+        <row>
+          <label control="ew.summary.linux_monthly_amount" value="Monthly Amount (Linux):" />
+          <textbox id="ew.summary.linux_monthly_amount" size="40" readonly="true" />
+        </row>
+        <row>
+          <label control="ew.summary.ri_linux_monthly_amount" value="RI Monthly Amount (Linux):" />
+          <textbox id="ew.summary.ri_linux_monthly_amount" size="40" readonly="true" />
+        </row>
+        <row>
+          <label control="ew.summary.windows_monthly_amount" value="Monthly Amount (Windows):" />
+          <textbox id="ew.summary.windows_monthly_amount" size="40" readonly="true" />
+        </row>
+        <row>
+          <label control="ew.summary.ri_windows_monthly_amount" value="RI Monthly Amount (Windows):" />
+          <textbox id="ew.summary.ri_windows_monthly_amount" size="40" readonly="true" />
+        </row>
+        <row>
+          <label control="ew.summary.state" value="State:" />
+          <textbox id="ew.summary.state" multiline="true" cols="70" rows="5"
+            wrap="false" style="font-family: monospace;" readonly="true"/>
+        </row>
+        <row>
+          <label control="ew.summary.instanceType" value="instanceType:" />
+          <textbox id="ew.summary.instanceType" multiline="true" cols="70" rows="5"
+            wrap="false" style="font-family: monospace;" readonly="true"/>
+        </row>
+        <row>
+          <label control="ew.summary.group" value="Group:" />
+          <textbox id="ew.summary.group" multiline="true" cols="70" rows="5"
+            wrap="false" style="font-family: monospace;" readonly="true"/>
+        </row>
+        <row>
+          <label control="ew.summary.availabilityZone" value="AvailabilityZone:" />
+          <textbox id="ew.summary.availabilityZone" multiline="true" cols="70" rows="10"
+            wrap="false" style="font-family: monospace;" readonly="true"/>
+        </row>
+      </rows>
+    </grid>
+  </vbox>
+</dialog>

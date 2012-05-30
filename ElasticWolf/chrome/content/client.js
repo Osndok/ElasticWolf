@@ -199,7 +199,7 @@ var ew_client = {
 
     errorDialog : function(msg, code, rId, fStr) {
         var retry = {value:null};
-        window.openDialog("chrome://ew/content/dialog_retry_cancel.xul", null, "chrome,centerscreen,modal,resizable", msg, code, rId, fStr, retry);
+        window.openDialog("chrome://ew/content/dialogs/retry_cancel.xul", null, "chrome,centerscreen,modal,resizable", msg, code, rId, fStr, retry);
         return retry.value;
     },
 

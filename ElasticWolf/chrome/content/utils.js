@@ -76,6 +76,7 @@ var TreeView = {
     search: "",
     searchElement: null,
     searchTimer: null,
+    filterList: null,
 
     getModelName: function()
     {
@@ -128,10 +129,11 @@ var TreeView = {
     getProgressMode : function(idx, column) {
     },
     getCellText : function(idx, column) {
-        return idx >= this.rowCount ? "" : this.treeList[idx][column.id.split(".").pop()];
+        var name = column.id.split(".").pop();
+        return idx >= this.rowCount ? "" : ew_model.modelValue(name, this.treeList[idx][name]);
     },
     getCellValue : function(idx, column) {
-        return idx >= this.rowCount ? "" : this.treeList[idx][column.id.split(".").pop()];
+        return this.getCellText(idx, columns);
     },
     setCellValue: function (idx, column, val) {
         if (idx >= 0 && idx < this.rowCount) this.treeList[idx][column.id.split(".").pop()] = val;
@@ -229,6 +231,26 @@ var TreeView = {
                     if (String(list[i][j]).match(rx)) {
                         nlist.push(list[i]);
                         break;
+                    }
+                }
+            }
+            list = nlist;
+        }
+        // Must be list of lists, each item is object with name: value: properties
+        if (this.filterList) {
+            var nlist = new Array();
+            for (var i in list) {
+                for (var j in this.filterList) {
+                    if (this.filterList[j].value) {
+                        if (list[i][this.filterList[j].name] == this.filterList[j].value) {
+                            nlist.push(list[i])
+                        }
+                    } else
+                    if (this.filterList[j].hasOwnProperty('empty')) {
+                        if ((this.filterList[j].empty && !list[i][this.filterList[j].name]) ||
+                            (!this.filterList[j].empty && list[i][this.filterList[j].name])) {
+                            nlist.push(list[i])
+                        }
                     }
                 }
             }
@@ -1005,7 +1027,7 @@ function tagResource(res, session, attr)
 function __tagPrompt__(tag)
 {
     var returnValue = { accepted : false, result : null };
-    openDialog('chrome://ew/content/dialog_tag.xul', null, 'chrome,centerscreen,modal,width=400,height=250', tag, returnValue);
+    openDialog('chrome://ew/content/dialogs/tag.xul', null, 'chrome,centerscreen,modal,width=400,height=250', tag, returnValue);
     return returnValue.accepted ? (returnValue.result || '').trim() : null;
 }
 

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
+
+<dialog id="ew.dialog.manageendpoints" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  buttons="extra2,extra1,accept,cancel" ondialogcancel="return true;"
+  ondialogextra1="ew_endpointManager.saveEndpoint();"
+  ondialogextra2="ew_endpointManager.removeEndpoint();"
+  ondialogaccept="ew_endpointManager.switchEndpoint();"
+  buttonlabelcancel="Close" buttonlabelextra1="Add" buttonlabelextra2="Remove" buttonlabelaccept="SwitchTo"
+  defaultButton="extra1" buttonpack="start" buttonalign="start"
+  onload="ew_endpointManager.initDialog();" title="Manage EC2 Regions">
+
+  <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/client.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/dialogs/manage_endpoints.js" />
+
+  <vbox flex="1">
+    <vbox flex="1">
+      <tree id="ew.endpoints.view" onselect="ew_endpointManager.selectMapping();" flex="2" rows="5">
+        <treecols>
+          <treecol id="endpoint.name" label="Endpoint Name" flex="2" persist="width ordinal hidden" />
+          <treecol id="endpoint.url" label="Endpoint URL" flex="2" persist="width ordinal hidden" />
+        </treecols>
+        <treechildren />
+      </tree>
+    </vbox>
+
+    <grid>
+      <columns>
+        <column />
+        <column />
+      </columns>
+      <rows>
+        <row>
+          <label control="ew.endpoints.name" value="Region Name:" />
+          <textbox id="ew.endpoints.name" size="20" />
+        </row>
+        <row>
+          <label control="ew.endpoints.url" value="Endpoint URL:" />
+          <textbox id="ew.endpoints.url" size="40" />
+        </row>
+      </rows>
+    </grid>
+  </vbox>
+</dialog>

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
+
+<dialog id="ew.dialog.newvolume" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  buttons="accept,cancel" ondialogaccept="return ew_VolumeCreator.create();" ondialogcancel="return true;"
+  onload="ew_VolumeCreator.init();" title="Create Volume" buttonlabelaccept="Create">
+
+  <script type="application/x-javascript" src="chrome://ew/content/dialogs/create_volume.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
+
+  <vbox flex="1">
+    <grid flex="1">
+      <columns>
+        <column />
+        <column />
+      </columns>
+      <rows>
+        <row>
+          <label control="ew.newvolume.size" value="&ew.volumes.size.label;" />
+          <textbox id="ew.newvolume.size" size="40" />
+        </row>
+        <row>
+          <label control="ew.newvolume.snapshotId" value="&ew.snapshots.id.label;" />
+          <menulist id="ew.newvolume.snapshotId" editable="true" />
+        </row>
+        <row>
+          <label control="ew.newvolume.availabilityzonelist" value="&ew.availabilityZone.label;" />
+          <menulist id="ew.newvolume.availabilityzonelist" />
+        </row>
+        <row>
+          <label control="ew.newvolume.tag" value="Tag" />
+          <textbox id="ew.newvolume.tag" size="40" />
+        </row>
+      </rows>
+    </grid>
+  </vbox>
+</dialog>
+

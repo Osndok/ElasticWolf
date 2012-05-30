@@ -3,28 +3,28 @@
 <?xml-stylesheet href="chrome://ew/skin/" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<?xul-overlay href="chrome://ew/content/view_instances.xul"?>
-<?xul-overlay href="chrome://ew/content/view_amis.xul"?>
-<?xul-overlay href="chrome://ew/content/view_access.xul"?>
-<?xul-overlay href="chrome://ew/content/view_keypairs.xul"?>
-<?xul-overlay href="chrome://ew/content/view_securitygroups.xul"?>
-<?xul-overlay href="chrome://ew/content/view_azone.xul"?>
-<?xul-overlay href="chrome://ew/content/view_eip.xul"?>
-<?xul-overlay href="chrome://ew/content/view_volumes.xul"?>
-<?xul-overlay href="chrome://ew/content/view_snapshots.xul"?>
-<?xul-overlay href="chrome://ew/content/view_bundletasks.xul"?>
-<?xul-overlay href="chrome://ew/content/view_leaseofferings.xul"?>
-<?xul-overlay href="chrome://ew/content/view_vpcs.xul"?>
-<?xul-overlay href="chrome://ew/content/view_subnets.xul"?>
-<?xul-overlay href="chrome://ew/content/view_vpns.xul"?>
-<?xul-overlay href="chrome://ew/content/view_loadbalancer.xul"?>
-<?xul-overlay href="chrome://ew/content/view_routing.xul"?>
-<?xul-overlay href="chrome://ew/content/view_igw.xul"?>
-<?xul-overlay href="chrome://ew/content/view_cgw.xul"?>
-<?xul-overlay href="chrome://ew/content/view_vgw.xul"?>
-<?xul-overlay href="chrome://ew/content/view_networkacls.xul"?>
-<?xul-overlay href="chrome://ew/content/view_enis.xul"?>
-<?xul-overlay href="chrome://ew/content/view_s3.xul"?>
+<?xul-overlay href="chrome://ew/content/views/instances.xul"?>
+<?xul-overlay href="chrome://ew/content/views/amis.xul"?>
+<?xul-overlay href="chrome://ew/content/views/access.xul"?>
+<?xul-overlay href="chrome://ew/content/views/keypairs.xul"?>
+<?xul-overlay href="chrome://ew/content/views/securitygroups.xul"?>
+<?xul-overlay href="chrome://ew/content/views/azone.xul"?>
+<?xul-overlay href="chrome://ew/content/views/eip.xul"?>
+<?xul-overlay href="chrome://ew/content/views/volumes.xul"?>
+<?xul-overlay href="chrome://ew/content/views/snapshots.xul"?>
+<?xul-overlay href="chrome://ew/content/views/bundletasks.xul"?>
+<?xul-overlay href="chrome://ew/content/views/leaseofferings.xul"?>
+<?xul-overlay href="chrome://ew/content/views/vpcs.xul"?>
+<?xul-overlay href="chrome://ew/content/views/subnets.xul"?>
+<?xul-overlay href="chrome://ew/content/views/vpns.xul"?>
+<?xul-overlay href="chrome://ew/content/views/loadbalancer.xul"?>
+<?xul-overlay href="chrome://ew/content/views/routing.xul"?>
+<?xul-overlay href="chrome://ew/content/views/igw.xul"?>
+<?xul-overlay href="chrome://ew/content/views/cgw.xul"?>
+<?xul-overlay href="chrome://ew/content/views/vgw.xul"?>
+<?xul-overlay href="chrome://ew/content/views/networkacls.xul"?>
+<?xul-overlay href="chrome://ew/content/views/enis.xul"?>
+<?xul-overlay href="chrome://ew/content/views/s3.xul"?>
 
 <window id="ew-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml" title="" orient="vertical"
@@ -37,29 +37,29 @@
   <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
   <script type="application/x-javascript" src="chrome://ew/content/session.js" />
 
-  <script type="application/x-javascript" src="chrome://ew/content/view_access.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_certs.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_instances.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_securitygroups.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_routing.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_azone.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_eip.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_baseimages.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_amis.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_volumes.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_snapshots.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_leaseofferings.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_reservedinstances.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_bundletasks.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_vpcs.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_dhcpoptions.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_vpns.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_loadbalancer.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_instancehealth.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_networkacls.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_enis.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_subnets.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/view_s3.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/access.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/certs.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/instances.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/securitygroups.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/routing.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/azone.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/eip.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/baseimages.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/amis.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/volumes.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/snapshots.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/leaseofferings.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/reservedinstances.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/bundletasks.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/vpcs.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/dhcpoptions.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/vpns.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/loadbalancer.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/instancehealth.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/networkacls.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/enis.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/subnets.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/s3.js" />
   <script type="application/x-javascript" src="chrome://ew/content/toolbar.js" />
 
   <stringbundleset>
@@ -138,11 +138,11 @@
        <treechildren>
          <treeitem><treerow><treecell label="&ew.tabs.vpc.label;" value="ew.tabs.vpc" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.subnet.label;" value="ew.tabs.subnet" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.securitygroup.label;" value="ew.tabs.securitygroup" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.securitygroup.label;" value="ew.tabs.vpcgroup" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.acl.label;" value="ew.tabs.acl" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.routing.label;" value="ew.tabs.routing" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.igw.label;" value="ew.tabs.igw" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.eip.label;" value="ew.tabs.eip" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.eip.label;" value="ew.tabs.vpceip" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.eni.label;" value="ew.tabs.eni" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.loadbalancer.label;" value="ew.tabs.loadbalancer" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.vgw.label;" value="ew.tabs.vgw" /></treerow></treeitem>
