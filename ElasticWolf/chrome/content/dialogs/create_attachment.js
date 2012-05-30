@@ -62,8 +62,8 @@ var ew_VolumeAttacher = {
     var instanceIdMenu = document.getElementById("ew.newattachment.instanceId");
     var instances = this.ew_session.model.getInstances();
     for (var i in instances) {
-        var zone = instances[i].placement.availabilityZone;
-        if (this.zone == instances[i].placement.availabilityZone &&
+        var zone = instances[i].availabilityZone;
+        if (this.zone == instances[i].availabilityZone &&
             instances[i].state == "running") {
             var label = instances[i].id;
             var name = __tagToName__(instances[i].tag);

@@ -261,7 +261,7 @@ function Volume(id, size, snapshotId, zone, status, createTime, instanceId, devi
     }
 }
 
-function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, placement, platform, tag, vpcId, subnetId, rootDeviceType)
+function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, tag, vpcId, subnetId, rootDeviceType)
 {
     this.resId = resId;
     this.ownerId = ownerId;
@@ -280,7 +280,8 @@ function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdisk
     this.instanceType = instanceType;
     this.launchTime = launchTime;
     this.launchTimeDisp = launchTime.strftime('%Y-%m-%d %H:%M:%S');
-    this.placement = placement;
+    this.availabilityZone = availabilityZone
+    this.tenancy = tenancy
     this.platform = platform;
     this.vpcId = vpcId;
     this.subnetId = subnetId;
@@ -511,7 +512,7 @@ function VpnGateway(id, availabilityZone, state, type, attachments, tag)
     this.tag = tag || "";
 
     this.toString = function() {
-        var text = this.id + " " + this.state  + "/" + this.type
+        var text = this.id + "/" + this.state
         for (var i in this.attachments) {
             text += ", " + this.attachments[i].toString();
         }
@@ -827,7 +828,8 @@ var ew_model = {
                       cgwId: this.customerGateways,
                       vgwId: this.vpnGateways,
                       igwId: this.internetGateways,
-                      groups: this.securityGroups, }
+                      groups: this.securityGroups, };
+
         var list = idMap[name];
         if (list) {
             if (value instanceof Array) {

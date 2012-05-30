@@ -17,8 +17,8 @@ var ew_InstancesTreeView = {
        'instance.amiLaunchIdx',
        'instance.instanceType',
        'instance.launchTimeDisp',
-       'instance.placement.availabilityZone',
-       'instance.placement.tenancy',
+       'instance.availabilityZone',
+       'instance.tenancy',
        'instance.platform',
        'instance.tag',
        'instance.vpcId',
@@ -47,10 +47,8 @@ var ew_InstancesTreeView = {
     },
     setTree     : function(treeBox)     { this.treeBox = treeBox; },
     getCellText : function(idx, column) {
-        if (idx >= this.rowCount) return "";
-        // Don't eliminate eval here because availability zone is retrieved via
-        // placement.availabilityZone.
-        return this.getInstanceDetail(this.instanceList[idx], column.id);
+        var name = column.id.split(".").pop();
+        return idx >= this.rowCount ? "" : ew_model.modelValue(name, this.instanceList[idx][name]);
     },
 
     getCellProperties : function(row, col, props) {
@@ -148,7 +146,7 @@ var ew_InstancesTreeView = {
         }
 
         if (instances.length == 1) {
-            tagEC2Resource(instances[0], ew_session);
+            ew_session.tagResource(instances[0]);
         } else {
             tagMultipleEC2Resources(instances, ew_session);
         }
@@ -225,21 +223,13 @@ var ew_InstancesTreeView = {
         if (!instance || !patt) return false;
 
         for (var i = 0; i < this.COLNAMES.length; i++) {
-            var text = this.getInstanceDetail(instance, this.COLNAMES[i]);
+            var col = this.COLNAMES[i].split(".").pop()
+            var text = String(ew_model.modelValue(col, instance[col]));
             if (text.match(patt)) {
                 return true;
             }
         }
-
         return false;
-    },
-
-    getInstanceDetail : function(instance, column) {
-        var detail = eval(column);
-        if (column.indexOf("ownerId") > 0) {
-            detail = ew_session.lookupAccountId(detail);
-        }
-        return detail || "";
     },
 
     showBundleDialog : function() {

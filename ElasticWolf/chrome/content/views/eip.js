@@ -127,8 +127,7 @@ var ew_ElasticIPTreeView = {
     tag : function() {
         var eip = this.getSelected();
         if (eip == null) return;
-        tagResource(eip, ew_session, "address");
-        this.selectByAddress(eip.address);
+        ew_session.tagResource(eip, "address");
     },
 
     copyToClipBoard : function(fieldName) {

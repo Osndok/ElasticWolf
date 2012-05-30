@@ -29,7 +29,7 @@ var ew_EBSVolumeAttacher = {
         this.ew_session = window.arguments[0];
         var instance = window.arguments[1];
         this.instanceId = instance.id;
-        var zone = instance.placement.availabilityZone;
+        var zone = instance.availabilityZone;
         this.retVal = window.arguments[2];
         this.volList = new Array();
 

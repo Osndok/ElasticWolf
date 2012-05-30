@@ -1096,7 +1096,6 @@ var ew_controller = {
             var placementElem = instanceItems[j].getElementsByTagName("placement")[0];
             var availabilityZone = getNodeValueByName(placementElem, "availabilityZone");
             var tenancy = getNodeValueByName(placementElem, "tenancy");
-            var placement = {  "availabilityZone" : availabilityZone, "tenancy": tenancy };
 
             // This value might not exist, but getNodeValueByName
             // returns "" in case the element is not defined.
@@ -1107,7 +1106,7 @@ var ew_controller = {
             }
             var rdt = getNodeValueByName(instanceItems[j], "rootDeviceType");
 
-            list.push(new Instance(resId, ownerId, groups, instanceId, imageId, kernelId || "", ramdiskId || "", stateName, dnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, placement, platform, null, vpcId, subnetId, rdt));
+            list.push(new Instance(resId, ownerId, groups, instanceId, imageId, kernelId || "", ramdiskId || "", stateName, dnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, null, vpcId, subnetId, rdt));
         }
 
         return list;

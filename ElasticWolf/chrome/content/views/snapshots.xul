@@ -4,7 +4,6 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabpanel id="ew.tabs.snapshot" flex="1">
         <vbox flex="1">
-            <hbox flex="1">
             <groupbox orient="vertical" flex="2">
                 <caption label="&ew.captions.volumes.snapshots.label;" />
                 <popupset>
@@ -68,7 +67,7 @@
                     <treechildren context="ew.snapshots.contextmenu" />
                 </tree>
             </groupbox>
-            <splitter style="max-width: 4px; height: 4px;" persist="state" collapse="after" resizebefore="closest">
+            <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
                 <grippy />
             </splitter>
             <groupbox flex="1" orient="vertical">
@@ -80,7 +79,6 @@
                 </toolbar>
                 <listbox id="ew.snapshot.permissions.list" seltype="single" rows="4" flex="1" />
             </groupbox>
-            </hbox>
         </vbox>
     </tabpanel>
 </overlay>

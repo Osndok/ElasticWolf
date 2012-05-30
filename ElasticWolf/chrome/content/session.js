@@ -816,6 +816,12 @@ var ew_session = {
         }, 10);
     },
 
+    promptForTag: function(tag)
+    {
+        var rc = { accepted : false, result : null };
+        openDialog('chrome://ew/content/dialogs/tag.xul', null, 'chrome,centerscreen,modal,width=400,height=250', tag, rc);
+        return rc.accepted ? (rc.result || '').trim() : null;
+    },
 
     savePassword : function(key, secret)
     {
@@ -872,5 +878,99 @@ var ew_session = {
             }
         }
         return list
-    }
+    },
+
+    tagResource: function(obj, attr)
+    {
+        if (!attr) attr = "id";
+        var tag = this.promptForTag(obj.tag);
+        if (tag == null) return;
+
+        obj.tag = tag;
+        __addNameTagToModel__(obj.tag, obj);
+        this.setResourceTag(obj[attr], obj.tag);
+        this.__tagging2ec2__([ obj[attr] ], obj.tag);
+    },
+
+    tagMultipleResources: function(list, attr)
+    {
+        if (!list) return;
+
+        if (!attr) attr = "id";
+
+        var tag = this.promptForTag(list[0].tag);
+        if (!tag) return;
+
+        var res = null;
+        var resIds = new Array();
+        for ( var i = 0; i < list.length; ++i) {
+            res = list[i];
+            res.tag = __concatTags__(res.tag, tag);
+            __addNameTagToModel__(res.tag, res);
+            this.setResourceTag(res[attr], res.tag);
+            resIds.push(res[attr]);
+        }
+        this.__tagging2ec2__(resIds, tag, true);
+    },
+
+    __tagging2ec2__: function(resIds, tagString, disableDeleteTags)
+    {
+        var me = this;
+        var multiIds = new Array();
+        var multiTags = new Array();
+
+        try {
+            var tags = new Array();
+            tagString += ',';
+            var keyValues = (tagString.match(/\s*[^,":]+\s*:\s*("(?:[^"]|"")*"|[^,]*)\s*,\s*/g) || []);
+
+            for ( var i = 0; i < keyValues.length; i++) {
+                var kv = keyValues[i].split(/\s*:\s*/, 2);
+                var key = (kv[0] || "").trim();
+                var value = (kv[1] || "").trim();
+                value = value.replace(/,\s*$/, '').trim();
+                value = value.replace(/^"/, '').replace(/"$/, '').replace(/""/, '"');
+
+                if (key.length == 0 || value.length == 0) {
+                    continue;
+                }
+                tags.push([ key, value ]);
+            }
+
+            for ( var i = 0; i < resIds.length; i++) {
+                var resId = resIds[i];
+
+                for ( var j = 0; j < tags.length; j++) {
+                    multiIds.push(resId);
+                }
+                multiTags = multiTags.concat(tags);
+            }
+
+            if (multiIds.length == 0) {
+                multiIds = resIds;
+            }
+
+            this.controller.describeTags(resIds, function(described) {
+                var delResIds = new Array();
+                var delKyes = new Array();
+
+                for ( var i = 0; i < described.length; i++) {
+                    delResIds.push(described[i][0]);
+                    delKyes.push(described[i][1]);
+                }
+                if (!disableDeleteTags) {
+                    if (delResIds.length > 0 && delKyes.length > 0) {
+                        me.controller.deleteTags(delResIds, delKyes);
+                    }
+                }
+                if (multiTags.length > 0) {
+                    me.controller.createTags(multiIds, multiTags);
+                }
+            });
+        }
+        catch (e) {
+            alert(e);
+        }
+    },
+
 };

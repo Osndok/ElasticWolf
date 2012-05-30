@@ -120,9 +120,9 @@
           <splitter class="tree-splitter" />
           <treecol id="instance.launchTimeDisp" label="&ew.instances.launchTime.label;" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="instance.placement.availabilityZone" label="&ew.availabilityZone.label;" flex="1" persist="width ordinal hidden sortDirection" />
+          <treecol id="instance.availabilityZone" label="&ew.availabilityZone.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="instance.placement.tenancy" label="Tenancy" flex="1" persist="width ordinal hidden sortDirection" />
+          <treecol id="instance.tenancy" label="Tenancy" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="instance.rootDeviceType" label="&ew.instances.rootDeviceType.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />

@@ -30,8 +30,8 @@
         document.getElementById("ew.instance.amiLaunchIdx").value = instance.amiLaunchIdx;
         document.getElementById("ew.instance.instanceType").value = instance.instanceType;
         document.getElementById("ew.instance.launchTime").value = instance.launchTime.toString();
-        document.getElementById("ew.instance.availabilityZone").value = instance.placement.availabilityZone;
-        document.getElementById("ew.instance.tenancy").value = instance.placement.tenancy;
+        document.getElementById("ew.instance.availabilityZone").value = instance.availabilityZone;
+        document.getElementById("ew.instance.tenancy").value = instance.tenancy;
         document.getElementById("ew.instance.platform").value = instance.platform;
         document.getElementById("ew.instance.vpcid").value = instance.vpcId;
         document.getElementById("ew.instance.subnetid").value = instance.subnetId;
