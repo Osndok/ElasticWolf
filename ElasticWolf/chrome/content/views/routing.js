@@ -121,7 +121,6 @@ var ew_RouteAssociationsTreeView = {
         var wrap = function()
         {
             ew_RouteTablesTreeView.refresh();
-            ew_RouteTablesTreeView.select({ id: table.id} )
         }
         ew_session.controller.AssociateRouteTable(table.id, subnets[rc].id, wrap);
     },
@@ -134,7 +133,6 @@ var ew_RouteAssociationsTreeView = {
         var wrap = function()
         {
             ew_RouteTablesTreeView.refresh();
-            ew_RouteTablesTreeView.select({ id:item.tableId })
         }
         ew_session.controller.DisassociateRouteTable(item.id, wrap);
     }
@@ -142,23 +140,8 @@ var ew_RouteAssociationsTreeView = {
 ew_RouteAssociationsTreeView.__proto__ = TreeView;
 
 var ew_InternetGatewayTreeView = {
-    COLNAMES : [ 'igw.id', "igw.vpcs", "igw.info", "igw.tags" ],
+    COLNAMES : [ 'igw.id', "igw.vpcId", "igw.tags" ],
     model : ["internetGateways", "vpcs"],
-
-    display : function(list)
-    {
-        for (var i in list) {
-            var info = [];
-            for (var j in list[i].vpcs) {
-                var vpc = ew_model.getVpcById(list[i].vpcs[j]);
-                if (vpc) {
-                    info.push(vpc.cidr);
-                }
-            }
-            list[i].info = info.join(',');
-        }
-        TreeView.display.call(this, list);
-    },
 
     create : function()
     {
@@ -203,12 +186,9 @@ var ew_InternetGatewayTreeView = {
     {
         var igw = this.getSelected();
         if (igw == null) return;
-        if (!ew_session.promptYesNo("Confirm", "Detach Internet Gateway " + igw.id + " from " + igw.vpcs + "?")) return;
+        if (!ew_session.promptYesNo("Confirm", "Detach Internet Gateway " + igw.id + " from " + igw.vpcId + "?")) return;
         var me = this;
-        for ( var i = 0; i < igw.vpcs.length; i++) {
-            ew_session.controller.detachInternetGateway(igw.id, igw.vpcs[i], function() {me.refresh()});
-        }
-
+        ew_session.controller.detachInternetGateway(igw.id, igw.vpcId, function() {me.refresh()});
     }
 
 };

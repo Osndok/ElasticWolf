@@ -39,8 +39,8 @@
         document.getElementById("ew.instance.eip").value = instance.eip;
 
         var secGroups = document.getElementById("ew.instance.securitygrouplist");
-        for(var i in instance.groupList) {
-            secGroups.appendItem(instance.groupList[i]);
+        for(var i in instance.groups) {
+            secGroups.appendItem(instance.groups[i]);
         }
 
         var volumeL = document.getElementById("ew.instance.volumelist");

@@ -25,9 +25,7 @@
                     <treecols>
                         <treecol id="igw.id" label="ID" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="igw.vpcs" label="VPCs" flex="1" persist="width ordinal hidden sortDirection" />
-                        <splitter class="tree-splitter" />
-                        <treecol id="igw.info" label="VPC Details" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="igw.vpcId" label="VPC" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="igw.tags" label="Tags" flex="1" persist="width ordinal hidden sortDirection" />
                     </treecols>

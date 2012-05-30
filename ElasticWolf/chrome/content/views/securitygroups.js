@@ -84,7 +84,7 @@ ew_SecurityGroupsTreeView.__proto__ = TreeView;
 ew_SecurityGroupsTreeView.register();
 
 var ew_PermissionsTreeView = {
-        COLNAMES : ['permission.type','permission.protocol','permission.fromPort','permission.toPort','permission.cidrIp','permission.group'],
+        COLNAMES : ['permission.type','permission.protocol','permission.fromPort','permission.toPort','permission.cidrIp','permission.srcGroup'],
 
         viewDetails : function(event) {
             var perm = this.getSelected();

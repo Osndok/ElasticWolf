@@ -679,13 +679,12 @@ var ew_controller = {
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeInternetGatewaysResponse/ec2:internetGatewaySet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
-            var vpcs = [], tags = []
+            var vpcId = null, tags = []
             var id = getNodeValueByName(items.snapshotItem(i), "internetGatewayId");
 
             var etags = items.snapshotItem(i).getElementsByTagName("attachmentSet")[0].getElementsByTagName("item");
             for ( var j = 0; j < etags.length; j++) {
-                var vpcId = getNodeValueByName(etags[j], "vpcId");
-                vpcs.push(vpcId)
+                vpcId = getNodeValueByName(etags[j], "vpcId");
             }
             etags = items.snapshotItem(i).getElementsByTagName("tagSet")[0].getElementsByTagName("item");
             for ( var j = 0; j < etags.length; j++) {
@@ -693,7 +692,7 @@ var ew_controller = {
                 var val = getNodeValueByName(etags[j], "value");
                 tags.push(new Tag(key, value))
             }
-            list.push(new InternetGateway(id, vpcs, tags));
+            list.push(new InternetGateway(id, vpcId, tags));
         }
 
         this.addResourceTags(list, ew_session.model.resourceMap.internetGateways, "id");
@@ -2304,7 +2303,7 @@ var ew_controller = {
 
     createSecurityGroup : function(name, desc, vpcId, callback)
     {
-        var params = [ [ "GroupName", name ], [ "GroupDescription", desc ] ]
+        var params = [ [ "GroupName", name ], [ "GroupDescription", desc ] ];
         if (vpcId && vpcId != "") {
             params.push([ "VpcId", vpcId ])
         }

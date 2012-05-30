@@ -745,8 +745,8 @@ var ew_session = {
                 var item = ""
                 for (p in items[i]) {
                     if (typeof items[i][p] == "function") continue;
-                    if (!columns || columns.indexOf(p) > -1) {
-                        item += (item != "" ? ": " : "") + items[i][p]
+                    if (!columns || columns.indexOf(p) >= 0) {
+                        item += (item != "" ? ": " : "") + ew_modelValue(p, items[i][p])
                     }
                 }
                 list.push(item)

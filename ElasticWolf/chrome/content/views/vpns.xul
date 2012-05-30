@@ -30,9 +30,9 @@
                     <treecols>
                         <treecol id="vpnConnection.id" label="&ew.vpnconnections.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="vpnConnection.vgw" label="&ew.vpnconnections.vgwid.label;" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="vpnConnection.vgwId" label="&ew.vpnconnections.vgwid.label;" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="vpnConnection.cgw" label="&ew.vpnconnections.cgwid.label;" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="vpnConnection.cgwId" label="&ew.vpnconnections.cgwid.label;" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="vpnConnection.type" label="&ew.vpnconnections.type.label;" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

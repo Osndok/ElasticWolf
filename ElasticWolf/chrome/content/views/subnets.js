@@ -97,7 +97,7 @@ var ew_SubnetsTreeView = {
             alert("No ACLs available, try later")
             return;
         }
-        var rc = ew_session.promptList("Replace Network ACL", "Select ACL", acls, [ "id", "vpcId", "cidr" ]);
+        var rc = ew_session.promptList("Replace Network ACL", "Select ACL", acls, [ "id", "vpcId" ]);
         if (rc < 0) {
             return;
         }
@@ -114,7 +114,7 @@ var ew_SubnetsTreeView = {
             alert("No route tables available, try later")
             return;
         }
-        var rc = ew_session.promptList("Associate Route Table", "Select route table", routes, [ "id", "vpcId", "info" ]);
+        var rc = ew_session.promptList("Associate Route Table", "Select route table", routes, [ "id", "vpcId" ]);
         if (rc < 0) {
             return;
         }

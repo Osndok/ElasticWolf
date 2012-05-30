@@ -782,7 +782,7 @@ var ew_InstancesTreeView = {
             ew_InstancesTreeView.selectByInstanceIds(list);
         }
         count = count.trim();
-        ew_session.controller.runInstances(instance.imageId, instance.kernelId, instance.ramdiskId, count, count, instance.keyName, instance.groupList, null, null, instance.instanceType, instance.placement, instance.subnetId, null, wrap);
+        ew_session.controller.runInstances(instance.imageId, instance.kernelId, instance.ramdiskId, count, count, instance.keyName, instance.groups, null, null, instance.instanceType, instance.placement, instance.subnetId, null, wrap);
     },
 
     terminateInstance : function() {
@@ -1139,11 +1139,11 @@ var ew_InstancesTreeView = {
     openConnectionPort : function(instance) {
         // Get the group in which this instance was launched
         var groups = ew_model.getSecurityGroups();
-        var instGroups = new Array(instance.groupList.length);
-        for (var j in instance.groupList) {
+        var instGroups = new Array(instance.groups.length);
+        for (var j in instance.groups) {
             instGroups[j] = null;
             for (var i in groups) {
-                if (groups[i].id == instance.groupList[j]) {
+                if (groups[i].id == instance.groups[j]) {
                     instGroups[j] = groups[i];
                     break;
                 }

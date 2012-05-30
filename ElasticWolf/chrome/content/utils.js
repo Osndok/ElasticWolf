@@ -62,6 +62,11 @@ function cloneObject(obj)
     return newObj;
 }
 
+String.prototype.trim = function()
+{
+    return this.replace(/^\s+|\s+$/g, "");
+}
+
 // Generic tree container
 var TreeView = {
     COLNAMES : [ 'name' ],

@@ -102,16 +102,13 @@ var ew_ElasticIPTreeView = {
             }
 
             var instanceIds = this.getUnassociatedInstanceIds();
-
-            var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-            var selected = {};
             var idx = ew_session.promptList("Associate Address with Instance", "Which Instance would you like to associate "+ eip.address +" with?", instanceIds);
-            if (ix < 0) return;
+            if (idx < 0) return;
             eip.instanceId = instanceIds[idx].split(":")[0];
         }
 
         var me = this;
-        ew_session.controller.associateAddress(eip, eip.instanceid, function() { me.refresh() });
+        ew_session.controller.associateAddress(eip, eip.instanceId, function() { me.refresh() });
         return true;
     },
 

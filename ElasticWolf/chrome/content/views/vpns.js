@@ -1,34 +1,7 @@
 var ew_VpnConnectionTreeView = {
-    COLNAMES: ['vpnConnection.id', 'vpnConnection.vgw', 'vpnConnection.cgw', 'vpnConnection.type', 'vpnConnection.state', 'vpnConnection.tag'],
-    model: 'vpnConnections',
+    COLNAMES: ['vpnConnection.id', 'vpnConnection.vgwId', 'vpnConnection.cgwId', 'vpnConnection.type', 'vpnConnection.state', 'vpnConnection.tag'],
+    model: ['vpnConnections','customerGateways','vpnGateways','vpcs'],
     searchElement: 'ew.vpnconnections.search',
-
-    display: function(list)
-    {
-        var vgws = ew_model.getVpnGateways();
-        var cgws = ew_model.getCustomerGateways();
-
-        for (var i in list) {
-            list[i].vgw = list[i].vgwId;
-            list[i].cgw = list[i].cgwId;
-            for (var j in vgws) {
-                if (vgws[j].id == list[i].vgwId) {
-                    if (vgws[j].attachments.length) {
-                        var vpc = ew_model.getVpcById(vgws[j].attachments[0].vpcId);
-                        if (vpc) {
-                            list[i].vgw += " (" + vpc.id + ", " + vpc.toString() + ")"
-                        }
-                    }
-                }
-            }
-            for (var j in cgws) {
-                if (cgws[j].id == list[i].cgwId) {
-                    list[i].cgw += " (" + cgws[j].ipAddress + "/" + cgws[j].bgpAsn + ")";
-                }
-            }
-        }
-        TreeView.display.call(this, list);
-    },
 
     enableOrDisableItems : function() {
         var image = this.getSelected();

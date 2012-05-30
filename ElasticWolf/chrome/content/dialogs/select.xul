@@ -12,7 +12,7 @@
 
     <script>
         function accept() {
-            selected.value = document.getElementById("list").selectedIndex;
+            selected.value = menulist.selectedIndex;
             return true;
         }
 
@@ -20,8 +20,8 @@
             document.title = window.arguments[0];
             document.getElementById("msg").value = window.arguments[1];
             var list = window.arguments[2];
-            this.selected = window.arguments[3];
-            var menulist = document.getElementById("list");
+            selected = window.arguments[3];
+            menulist = document.getElementById("list");
             for (var i in list) {
                 menulist.appendItem(list[i]);
             }

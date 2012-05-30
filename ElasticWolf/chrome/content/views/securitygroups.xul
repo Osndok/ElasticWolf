@@ -62,7 +62,7 @@
           <splitter class="tree-splitter" />
           <treecol id="permission.toPort" label="&ew.permissions.toport.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="permission.group" label="&ew.permissions.groups.label;" flex="1" persist="width ordinal hidden sortDirection" />
+          <treecol id="permission.srcGroup" label="&ew.permissions.groups.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="permission.cidrIp" label="&ew.permissions.cidrs.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
