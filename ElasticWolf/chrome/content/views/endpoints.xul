@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <tabpanel id="ew.tabs.endpoint" flex="1">
+   <vbox flex="1">
+     <groupbox orient="vertical" flex="1">
+     <caption label="Endpoints" />
+     <popupset>
+       <menupopup id="ew.endpoint.context">
+        <menuitem oncommand="ew_EndpointsTreeView.addEndpoint();" label="Create Credentials" />
+        <menuitem oncommand="ew_EndpointsTreeView.deleteEndpont();" label="Delete Credentials" />
+        <menuitem oncommand="ew_EndpointsTreeView.switchEndpoint();" label="Make this credentials current" />
+      </menupopup>
+     </popupset>
+     <toolbar style="padding: 0px 3px; -moz-box-align: center">
+      <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.addEndpoint();" tooltiptext="Add Credentials" />
+      <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.deleteEndpoint();" tooltiptext="Delete Credentials" />
+      <toolbarbutton image="images/powerup.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.switchEndpoint()" tooltiptext="Make this credentials current" />
+      </toolbar>
+      <tree id="ew.endpoints.view" seltype="single" enableColumnDrag="true" flex="1">
+        <treecols>
+          <treecol id="endpoint.name" label="Endpoint Name" flex="1" persist="width ordinal hidden" />
+          <treecol id="endpoint.url" label="Endpoint URL" flex="1" persist="width ordinal hidden" />
+        </treecols>
+        <treechildren context="ew.endpoint.context" />
+      </tree>
+     </groupbox>
+   </vbox>
+  </tabpanel>
+</overlay>
