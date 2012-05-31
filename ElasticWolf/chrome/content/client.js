@@ -12,7 +12,7 @@ var ew_client = {
     disabled: false,
     httpCount: 0,
 
-    VERSION: "1.28",
+    VERSION: "2.0",
     NAME: 'ElasticWolf',
     API_VERSION : '2011-12-15',
     ELB_API_VERSION : '2011-04-05',

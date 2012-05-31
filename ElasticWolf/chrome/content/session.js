@@ -341,13 +341,6 @@ var ew_session = {
         this.endpointmap = this.prefs.getEndpointMap();
     },
 
-    manageEndpoints : function()
-    {
-        if (this.locked || this.client.disabled) return;
-        window.openDialog("chrome://ew/content/dialogs/manage_endpoints.xul", null, "chrome,centerscreen,modal,resizable", this, this);
-        this.loadEndpointMap();
-    },
-
     getEndpoints : function()
     {
         return this.endpointmap.toArray(function(k, v) { return new Endpoint(k, v.url) });

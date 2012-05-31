@@ -1,6 +1,8 @@
 var ew_toolbar = {
     // Order of te tabs should match order of tabpanels
-    tabs: [ { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView }], },
+    tabs: [ { tab: "ew.tabs.credential",    views: [ { id: "ew.credentials.view", view: ew_CredentialsTreeView } ] },
+            { tab: "ew.tabs.endpoint",      views: [ { id: "ew.endpoints.view", view: ew_EndpointsTreeView } ] },
+            { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView } ], },
 
             { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
 
@@ -98,14 +100,6 @@ var ew_toolbar = {
         var id = tree.view.getCellValue(tree.currentIndex, tree.columns.getFirstColumn());
 
         switch (id) {
-        case "credentials":
-            ew_session.manageCredentials();
-            break;
-
-        case "endpoints":
-            ew_session.manageEndpoints();
-            break;
-
         case "":
             tree.view.toggleOpenState(tree.currentIndex);
             break;

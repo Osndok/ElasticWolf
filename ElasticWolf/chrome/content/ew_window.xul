@@ -25,6 +25,8 @@
 <?xul-overlay href="chrome://ew/content/views/networkacls.xul"?>
 <?xul-overlay href="chrome://ew/content/views/enis.xul"?>
 <?xul-overlay href="chrome://ew/content/views/s3.xul"?>
+<?xul-overlay href="chrome://ew/content/views/credentials.xul"?>
+<?xul-overlay href="chrome://ew/content/views/endpoints.xul"?>
 
 <window id="ew-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml" title="" orient="vertical"
@@ -60,6 +62,8 @@
   <script type="application/x-javascript" src="chrome://ew/content/views/enis.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/subnets.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/s3.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/credentials.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/endpoints.js" />
   <script type="application/x-javascript" src="chrome://ew/content/toolbar.js" />
 
   <stringbundleset>
@@ -70,8 +74,6 @@
   <menubar id="ew.menubar">
     <menu label="File">
       <menupopup>
-       <menuitem label="Manage Credentials" image="images/credentials.png" class="menuitem-iconic" oncommand="ew_session.manageCredentials()" />
-       <menuitem label="Manage Endpoints" image="images/regions.png" class="menuitem-iconic" oncommand="ew_session.manageEndpoints();"/>
        <menuitem label="Manage Accounts" image="images/accountids.png" class="menuitem-iconic" oncommand="ew_session.manageAccountIds();"/>
        <menuitem label="Preferences" id="menu_preferences" image="images/tools.png" class="menuitem-iconic" oncommand="ew_session.manageTools();"/>
        <menuseparator/>
@@ -99,8 +101,8 @@
          <treecell label="Access" src="images/iam.png" />
        </treerow>
        <treechildren>
-         <treeitem><treerow><treecell label="Credentials" value="credentials" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="Endpoints" value="endpoints" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Credentials" value="ew.tabs.credential" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Endpoints" value="ew.tabs.endpoint" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.access.label;" value="ew.tabs.access" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.keypair.label;" value="ew.tabs.keypair" /></treerow></treeitem>
        </treechildren>
@@ -162,8 +164,10 @@
         <grippy />
       </splitter>
 
-    <tabbox flex="1">
+    <tabbox flex="2">
     <tabpanels id="ew.tabs" flex="1" style="margin:5px;padding-top:0px;outline:0px;border:0px;">
+      <tabpanel id="ew.tabs.credential"/>
+      <tabpanel id="ew.tabs.endpoint"/>
       <tabpanel id="ew.tabs.instance"/>
       <tabpanel id="ew.tabs.image"/>
       <tabpanel id="ew.tabs.access"/>
