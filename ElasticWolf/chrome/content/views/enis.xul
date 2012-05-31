@@ -13,16 +13,14 @@
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.deleteInterface();" label="Delete ENI" />
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.attachInterface();" label="Attach to instance" />
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.detachInterface();" label="Detach from instance" />
-                        <menuitem oncommand="ew_NetworkInterfacesTreeView.associateInterface();" label="Associate with EIP" />
-                        <menuitem oncommand="ew_NetworkInterfacesTreeView.disassociateInterface();" label="Disassociate EIP" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                     <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.createInterface();" tooltiptext="Create ENI" />
                     <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.deleteInterface();" tooltiptext="Delete ENI" />
-                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeViewa.attachInterface();" tooltiptext="Attach to instance" />
-                    <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeViewa.detachInterface();" tooltiptext="Detach from instance" />
+                    <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.attachInterface();" tooltiptext="Attach to instance" />
+                    <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.detachInterface();" tooltiptext="Detach from instance" />
                     <toolbarbutton image="images/details.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.viewDetails()" tooltiptext="View Details" />
                 </toolbar>
                 <tree id="ew.enis.view" seltype="single" enableColumnDrag="true" onselect="ew_NetworkInterfacesTreeView.selectionChanged(event);" flex="1">

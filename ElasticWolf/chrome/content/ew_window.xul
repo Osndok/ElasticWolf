@@ -74,9 +74,7 @@
   <menubar id="ew.menubar">
     <menu label="File">
       <menupopup>
-       <menuitem label="Manage Accounts" image="images/accountids.png" class="menuitem-iconic" oncommand="ew_session.manageAccountIds();"/>
        <menuitem label="Preferences" id="menu_preferences" image="images/tools.png" class="menuitem-iconic" oncommand="ew_session.manageTools();"/>
-       <menuseparator/>
        <menuitem label="Exit" image="images/reboot.png" class="menuitem-iconic" oncommand="ew_session.quit();"/>
       </menupopup>
     </menu>

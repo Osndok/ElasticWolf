@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
+
+<dialog id="ew.dialog.eni" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  buttons="accept,cancel"
+  ondialogaccept="return accept();"
+  ondialogcancel="return true;"
+  onload="init()"
+  title="Create ENI">
+
+  <script type="application/x-javascript">
+  <![CDATA[
+
+  function init() {
+    this.session = window.arguments[0];
+
+    this.subnets = this.session.model.getSubnets();
+    var subnetList = document.getElementById('ew.eni.subnet');
+    for (var i = 0; i < this.subnets.length; i++) {
+        subnetList.appendItem(this.subnets[i].toString(), this.subnets[i].id);
+    }
+    subnetList.selectedIndex = 0;
+  }
+
+  function subnetSelected() {
+    var groupList = document.getElementById('ew.eni.groups');
+    for (var i = groupList.itemCount - 1; i >= 0; i--) {
+        groupList.removeItemAt(i);
+    }
+    var id = document.getElementById('ew.eni.subnet').value;
+    var subnet = this.session.model.getSubnetById(id);
+    var groups = this.session.model.getSecurityGroupsByVpcId(subnet.vpcId);
+    for (var i in groups) {
+        groupList.appendItem(groups[i].name, groups[i].id);
+    }
+    groupList.selectedIndex = -1;
+    return true;
+  }
+
+  function accept() {
+    var rc = window.arguments[1];
+    rc.groups = [];
+    var groupList = document.getElementById('ew.eni.groups');
+    for (var i = 0; i < groupList.selectedItems.length; i++) {
+        var selected = groupList.selectedItems[i];
+        rc.groups.push(selected.value);
+    }
+
+    rc.subnetId = document.getElementById('2ew.eni.subnet').value;
+    rc.ip = (document.getElementById('ew.eni.ip').value || '').trim();
+    rc.descr = (document.getElementById('ew.eni.descr').value || '').trim();
+    rc.ok = true;
+    return true;
+  }
+
+  ]]>
+  </script>
+
+  <vbox flex="1">
+    <grid flex="1">
+      <columns>
+        <column />
+        <column />
+      </columns>
+      <rows>
+        <row>
+          <label control="ew.eni.subnet" value="Subnet:" />
+          <menulist id="ew.eni.subnet" onselect="subnetSelected()" />
+        </row>
+        <row>
+          <label control="ew.eni.ip" value="Private Ip Address:" />
+          <textbox id="ew.eni.ip" size="40" value="" />
+        </row>
+        <row>
+          <label control="ew.eni.descr" value="Description:" />
+          <textbox id="ew.eni.descr" size="40" value="" />
+        </row>
+      </rows>
+    </grid>
+    <groupbox flex="1">
+      <caption label="Security Groups" />
+      <listbox id="ew.eni.groups" seltype="multiple" flex="1" />
+    </groupbox>
+  </vbox>
+</dialog>

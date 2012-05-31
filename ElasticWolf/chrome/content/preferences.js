@@ -37,30 +37,6 @@ function WrappedMapTags(map, prefs)
     return wmap;
 }
 
-function WrappedMapAccounts(map, prefs)
-{
-    var wmap = new WrappedMap(map);
-    wmap.prefs = prefs;
-    // Since this object is not yet formed, you need to pass
-    // wmap to the prefs so wmap the map can be written out
-    // to the preferences store.
-    prefs.setAccountIdMap(wmap);
-
-    wmap.put = function(key, value)
-    {
-        this.map[key] = value;
-        this.prefs.setAccountIdMap(this);
-    };
-
-    wmap.removeKey = function(key)
-    {
-        this.map[key] = null;
-        this.prefs.setAccountIdMap(this);
-    };
-
-    return wmap;
-}
-
 function WrappedMapEndpoints(map, prefs)
 {
     var wmap = new WrappedMap(map);
@@ -167,7 +143,6 @@ var ew_prefs = {
     EW_KEYHOME: "ew.keyhome",
     CURRENT_TAB : "ew.tab.current",
     REQUEST_TIMEOUT : "ew.timeout.request",
-    KNOWN_ACCOUNT_IDS : "ew.known.account.ids",
     LAST_EW_PKEY_FILE : "ew.last.ec2privatekey.file",
     HIDE_TERMINATED: "ew.instances.hide.terminated",
     HIDE_STOPPED: "ew.instances.hide.stopped",
@@ -215,7 +190,6 @@ var ew_prefs = {
             this.setDebugEnabled(this.isDebugEnabled());
             this.setHttpEnabled(this.isHttpEnabled());
             this.setOfflineEnabled(this.isOfflineEnabled());
-            this.setAccountIdMap(this.getAccountIdMap());
             this.setLastEC2PrivateKeyFile(this.getLastEC2PrivateKeyFile());
             this.setInstanceTags(this.getInstanceTags());
             this.setVolumeTags(this.getVolumeTags());
@@ -665,24 +639,6 @@ var ew_prefs = {
     {
         var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
         env.set(name, value);
-    },
-
-    // These ones manage a pseudo-complex pref. This preference is a JSON encoded JavaScript "map" mapping account IDs to friendly names.
-    setAccountIdMap : function(value)
-    {
-        this.setStringPreference(this.KNOWN_ACCOUNT_IDS, value.toJSONString());
-    },
-
-    getAccountIdMap : function()
-    {
-        var packedMap = this.getStringPreference(this.KNOWN_ACCOUNT_IDS, null);
-        var unpackedMap = {};
-        if (packedMap != null) {
-            // Unpack the map and return it
-            unpackedMap = eval(packedMap);
-        }
-
-        return new WrappedMapAccounts(unpackedMap, this);
     },
 
     getEC2Endpoints : function()

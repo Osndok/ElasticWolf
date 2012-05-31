@@ -1,17 +1,6 @@
 var ew_NetworkInterfacesTreeView = {
-    COLNAMES : [ 'eni.id', 'eni.status', 'eni.descr', 'eni.subnetId', 'eni.vpcId', 'acl.macAddress', 'eni.privateIpAddress', 'eni.sourceDestCheck', 'eni.groups', 'eni.attachment', 'eni.association' ],
-    model : [ "networkInterfaces", "vpcs", "subnets", "securitygroups", "instances" ],
-
-    display : function(list)
-    {
-        for (var i in list) {
-            var subnet = ew_model.getSubnetById(list[i].subnetId)
-            if (subnet) {
-                list[i].subnetId += " " + subnet.toString()
-            }
-        }
-        TreeView.display.call(this, list);
-    },
+    COLNAMES : [ 'eni.id', 'eni.status', 'eni.descr', 'eni.subnetId', 'eni.vpcId', 'eni.macAddress', 'eni.privateIpAddress', 'eni.sourceDestCheck', 'eni.groups', 'eni.attachment', 'eni.association' ],
+    model : [ "networkInterfaces", "vpcs", "subnets", "securityGroups", "instances" ],
 
     selectionChanged: function(event)
     {
@@ -23,22 +12,17 @@ var ew_NetworkInterfacesTreeView = {
     {
         var item = this.getSelected();
         if (item == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_eni.xul", null, "chrome,centerscreen,modal,resizable", item);
+        //window.openDialog("chrome://ew/content/dialogs/details_eni.xul", null, "chrome,centerscreen,modal,resizable", item);
     },
 
     createInterface : function()
     {
-        var subnets = ew_session.model.getSubnets();
-        if (!subnets) {
-            alert("No subnets available, try later")
-            return;
+        var rc = {ok:false};
+        openDialog('chrome://ew/content/dialogs/create_eni.xul',null,'chrome,centerscreen,modal,resizable', ew_session, rc);
+        if (rc.ok) {
+            var me = this;
+            ew_session.controller.createNetworkInterface(rc.subnetId, rc.ip, rc.descr, rc.groups, function() { me.refresh(); });
         }
-        var rc = ew_session.promptList("Create Network Interface", "Select Subnet", subnets, ['id', 'cidr' ]);
-        if (rc < 0) {
-            return;
-        }
-        var me = this;
-        ew_session.controller.createNetworkInterface(subnets[rc].id, null, null, null, function() { me.refresh(); });
     },
 
     deleteInterface : function()
@@ -56,31 +40,37 @@ var ew_NetworkInterfacesTreeView = {
             alert("Please, select ENI");
             return;
         }
-    },
-    detachInterface : function()
-    {
-        var eni = this.getSelected();
-        if (!eni) {
-            alert("Please, select ENI");
-            return;
+        var rc = {ok:false};
+        openDialog('chrome://ew/content/dialogs/attach_eni.xul',null,'chrome,centerscreen,modal,resizable', ew_session, eni, rc);
+        if (rc.ok) {
+            var me = this;
+            ew_session.controller.attachNetworkInterface(eni.id, rc.instanceId, rc.deviceIndex, function() { me.refresh();});
         }
     },
-    associateInterface : function()
-    {
+
+    detachNetworkInterface : function(force) {
         var eni = this.getSelected();
-        if (!eni) {
-            alert("Please, select ENI");
+        if (!eni) return;
+
+        if (!eni.attachment) {
+            alert("Interface is not attached");
             return;
         }
-    },
-    disassociateInterface : function()
-    {
-        var eni = this.getSelected();
-        if (!eni) {
-            alert("Please, select ENI");
+
+        var instance = ew_model.getInstanceById(eni.attachment.instanceId);
+        if (!instance) {
+            alert('Could not find attached instance');
             return;
         }
+        if (force) {
+            if (!confirm("Force detach interface " + eni.id + " (" + eni.descr + ") from " + instance.toString() +  "?")) return;
+        } else {
+            if (!confirm("Detach interface " + eni.id + " (" + eni.descr + ") from " + instance.toString() +  "?")) return;
+        }
+        var me = this;
+        ew_session.controller.detachNetworkInterface(eni.attachment.id, force, function() { me.refresh(); });
     },
+
 };
 ew_NetworkInterfacesTreeView.__proto__ = TreeView;
 ew_NetworkInterfacesTreeView.register();

@@ -60,12 +60,6 @@ function S3BucketKey(bucket, name, type, size, mtime, owner, etag)
     }
 }
 
-function AccountIdName(id, name)
-{
-    this.accountid = id;
-    this.displayname = name;
-}
-
 function Tag(name, value)
 {
     this.name = name || "";
@@ -88,17 +82,17 @@ function NetworkInterface(id, status, descr, subnetId, vpcId, macAddress, privat
 {
     this.id = id
     this.status = status
-    this.descr = descr
+    this.descr = descr || "";
     this.subnetId = subnetId
     this.vpcId = vpcId
     this.macAddress = macAddress
     this.privateIpAddress = privateIpAddress
     this.sourceDestCheck = sourceDestCheck
-    this.groups = groups
+    this.groups = groups || [];
     this.attachment = attachment
     this.association = association
     this.toString = function() {
-        return this.id + "/" + this.status + "/" + this.privateIpAddress + "/" + ew_model.modelValue("subnetId", this.subnetId);
+        return this.id + "/" + this.status + "/" + this.privateIpAddress + "/" + this.descr + "/" + ew_model.modelValue("subnetId", this.subnetId);
     }
 }
 
@@ -293,7 +287,7 @@ function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdisk
     this.rootDeviceType = rootDeviceType;
 
     this.toString = function() {
-        return this.id + "/" + this.name;
+        return this.id + "/" + this.name + "/" + this.state;
     }
 }
 
@@ -332,7 +326,7 @@ function SecurityGroup(id, ownerId, name, description, vpcId, permissions)
     this.ownerId = ownerId;
     this.name = name;
     this.description = description;
-    this.vpcId = vpcId
+    this.vpcId = vpcId;
     this.permissions = permissions;
     this.toString = function() {
         return this.id + "/" + this.name + (this.vpcId ? "/" + ew_model.modelValue("vpcId", this.vpcId) : "");
@@ -464,7 +458,7 @@ function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tag)
     this.tag = tag || "";
 
     this.toString = function() {
-        return this.cidr + " (" + this.availableIp + ") " + this.availabilityZone;
+        return this.id + "/" + this.cidr + "/" + this.availableIp + "/" + this.availabilityZone;
     }
 }
 
@@ -473,6 +467,9 @@ function DhcpOptions(id, options, tag)
     this.id = id;
     this.options = options;
     this.tag = tag || "";
+    this.toString = function() {
+        return this.id + "/" + this.options;
+    }
 }
 
 function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tag)
@@ -686,7 +683,7 @@ var ew_model = {
             return this.certs;
         case "azones":
             return this.azones;
-        case "securitygroups":
+        case "securityGroups":
             return this.securityGroups;
         case "addresses":
             return this.addresses;
@@ -756,7 +753,7 @@ var ew_model = {
         case "azones":
             ew_session.controller.describeAvailabilityZones();
             break;
-        case "securitygroups":
+        case "securityGroups":
             ew_session.controller.describeSecurityGroups();
             break;
         case "addresses":
@@ -1330,7 +1327,7 @@ var ew_model = {
     updateSecurityGroups : function(list)
     {
         this.securityGroups = list;
-        this.notifyComponents("securitygroups");
+        this.notifyComponents("securityGroups");
     },
 
     getSecurityGroups : function()
@@ -1344,6 +1341,19 @@ var ew_model = {
     getSecurityGroupById: function(id)
     {
         return this.getObjectById(this.securityGroups, id)
+    },
+
+    getSecurityGroupsByVpcId: function(vpcId)
+    {
+        var list = [];
+        if (this.securityGroups) {
+            for (var i in this.securityGroups) {
+                if (this.securityGroups[i].vpcId == vpcId) {
+                    list.push(this.securityGroups[i]);
+                }
+            }
+        }
+        return list;
     },
 
     getAddresses : function()

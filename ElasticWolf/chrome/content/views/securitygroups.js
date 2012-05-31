@@ -1,6 +1,6 @@
 var ew_SecurityGroupsTreeView = {
     COLNAMES : ['securityGroup.id', 'securitygroup.ownerId','securitygroup.name','securitygroup.vpcId','securitygroup.description'],
-    model: [ "securitygroups", "vpcs" ],
+    model: [ "securityGroups", "vpcs" ],
 
     viewDetails : function(event) {
         var group = this.getSelectedGroup();

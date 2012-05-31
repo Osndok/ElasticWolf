@@ -8,7 +8,6 @@ var ew_session = {
     model : null,
     client : null,
     credentials : null,
-    accountidmap : null,
     endpointmap : null,
     tabMenu: null,
     instanceTags : null,
@@ -38,7 +37,6 @@ var ew_session = {
         this.prefs = ew_prefs;
         this.tabMenu = $("ew.tabs");
 
-        this.loadAccountIdMap();
         this.loadCredentials();
         this.loadEndpointMap();
         this.loadAllTags();
@@ -582,27 +580,9 @@ var ew_session = {
         window.openDialog("chrome://ew/content/dialogs/manage_tools.xul", null, "chrome,centerscreen,modal, resizable", this);
     },
 
-    loadAccountIdMap : function()
-    {
-        this.accountidmap = this.prefs.getAccountIdMap();
-    },
-
-    manageAccountIds : function()
-    {
-        if (this.locked || this.client.disabled) return;
-        window.openDialog("chrome://ew/content/dialogs/manage_accountids.xul", null, "chrome,centerscreen,modal,resizable", this.accountidmap);
-        this.loadAccountIdMap();
-    },
-
     lookupAccountId : function(id)
     {
-        if (this.accountidmap == null) {
-            return id;
-        }
-        if (this.accountidmap.get(id) == null) {
-            return id;
-        }
-        return this.accountidmap.get(id);
+        return id;
     },
 
     displayAbout : function()

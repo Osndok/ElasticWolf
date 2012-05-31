@@ -2141,7 +2141,9 @@ var ew_controller = {
             params.push([ "Description", descr])
         }
         if (groups) {
-
+            for (var i in groups) {
+                params.push(["SecurityGroupId."+(i+1), groups[i]]);
+            }
         }
         ew_client.queryEC2("CreateNetworkInterface", params, this, true, "onCompleteCreateNetworkInterface", callback);
     },
@@ -2157,6 +2159,51 @@ var ew_controller = {
     },
 
     onCompleteDeleteNetworkInterface : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    modifyNetworkInterfaceAttributes : function (id, attributes, callback)
+    {
+        var params = [];
+        params.push(["NetworkInterfaceId", id]);
+
+        for (var i = 0; i < attributes.length; i++) {
+            var name = attributes[i][0];
+            var value = attributes[i][1];
+            params.push([name, value]);
+        }
+
+        ew_client.queryEC2("ModifyNetworkInterfaceAttribute", params, this, true, "onCompleteModifyNetworkInterfaceAttributes", callback);
+    },
+
+    onCompleteModifyNetworkInterfaceAttributes : function (objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    attachNetworkInterface : function (id, instanceId, deviceIndex, callback)
+    {
+        ew_client.queryEC2("AttachNetworkInterface", [["NetworkInterfaceId", id], ["InstanceId", instanceId], ["DeviceIndex", deviceIndex]], this, true, "onCompleteAttachNetworkInterface", callback);
+    },
+
+    onCompleteAttachNetworkInterface : function (objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    detachNetworkInterface : function (attachmentId, force, callback)
+    {
+        var params = [ ['AttachmentId', attachmentId] ];
+
+        if (force) {
+            params.push(['Force', force]);
+        }
+
+        ew_client.queryEC2("DetachNetworkInterface", params, this, true, "onCompleteDetachNetworkInterface", callback);
+    },
+
+    onCompleteDetachNetworkInterface : function (objResponse)
     {
         if (objResponse.callback) objResponse.callback();
     },
