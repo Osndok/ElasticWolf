@@ -94,7 +94,8 @@ function NetworkInterface(id, status, descr, subnetId, vpcId, macAddress, privat
     this.attachment = attachment
     this.association = association
     this.toString = function() {
-        return this.privateIpAddress + ew_model.separator + this.status + ew_model.separator + this.id + ew_model.separator + this.descr + ew_model.separator + ew_model.modelValue("subnetId", this.subnetId);
+        return this.privateIpAddress + ew_model.separator + this.status + ew_model.separator + this.id + ew_model.separator +  this.descr +
+               " (" + ew_model.modelValue("subnetId", this.subnetId) + ")";
     }
 }
 
@@ -110,7 +111,8 @@ function NetworkInterfaceAttachment(id, instanceId, instanceOwnerId, deviceIndex
     this.deleteOnTermination = deleteOnTermination;
 
     this.toString = function() {
-        return this.deviceIndex + ew_model.separator + this.status + ew_model.separator + this.id + ew_model.separator + ew_model.modelValue("instanceId", this.instanceId);
+        return this.deviceIndex + ew_model.separator + this.status + ew_model.separator + this.id +
+               (this.instanceId ? " (" + ew_model.modelValue("instanceId", this.instanceId) + ")" : "");
     }
 }
 
@@ -123,7 +125,8 @@ function NetworkInterfaceAssociation(id, publicIp, ipOwnerId, instanceId, attach
     this.instanceId = instanceId
     this.attachmentId = attachmentId
     this.toString = function() {
-        return this.publicIp + ew_model.separator + this.id + ew_model.separator + ew_model.modelValue("instanceId", this.instanceId);
+        return this.publicIp + ew_model.separator + this.id +
+               (this.instanceId ? " (" + ew_model.modelValue("instanceId", this.instanceId) + ")" : "");
     }
 }
 
@@ -162,7 +165,7 @@ function NetworkAcl(id, vpcId, dflt, rules, assocs)
     this.rules = rules
     this.associations = assocs
     this.toString = function() {
-        return this.id + ew_model.separator + (dflt ? "default" + ew_model.separator : "") + ew_model.modelValue("vpcId", this.vpcId);
+        return this.id + ew_model.separator + (dflt ? "default" : "") + " (" + ew_model.modelValue("vpcId", this.vpcId) + ")";
     }
 }
 
@@ -344,7 +347,7 @@ function SecurityGroup(id, ownerId, name, description, vpcId, permissions)
     this.vpcId = vpcId;
     this.permissions = permissions;
     this.toString = function() {
-        return this.name + ew_model.separator + this.id + (this.vpcId ? ew_model.separator + ew_model.modelValue("vpcId", this.vpcId) : "");
+        return this.name + ew_model.separator + this.id + (this.vpcId ? " (" + ew_model.modelValue("vpcId", this.vpcId) + ")" : "");
     }
 }
 
@@ -423,7 +426,7 @@ function EIP(publicIp, instanceid, allocId, assocId, domain, tag)
     this.tag = tag || "";
 
     this.toString = function() {
-        return this.publicIp + ew_model.separator + ew_model.modelValue('instanceId', this.instanceId);
+        return this.publicIp + (this.instanceId ?  " (" + ew_model.modelValue('instanceId', this.instanceId) + ")" : "");
     }
 }
 
@@ -521,7 +524,7 @@ function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tag)
     this.tag = tag || "";
 
     this.toString = function() {
-        return this.id + ew_model.separator + this.state + ew_model.separator + ew_model.modelValue("vgwId", this.vgwId);
+        return this.id + ew_model.separator + this.state + " (" + ew_model.modelValue("vgwId", this.vgwId) + ")";
     }
 }
 
