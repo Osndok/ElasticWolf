@@ -107,7 +107,7 @@ function NetworkInterfaceAttachment(id, instanceId, instanceOwnerId, deviceIndex
     this.deleteOnTermination = deleteOnTermination;
 
     this.toString = function() {
-        return this.id + ew_model.separator + this.status + ew_model.separator + ew_model.modelValue("instanceId", this.instanceId);
+        return this.id + ew_model.separator + this.status + ew_model.separator + this.deviceIndex + ew_model.separator + ew_model.modelValue("instanceId", this.instanceId);
     }
 }
 
@@ -143,7 +143,7 @@ function NetworkAclEntry(num, proto, action, egress, cidr, icmp, ports)
     this.icmp = icmp ? icmp : []
     this.ports = ports ? ports : []
     this.toString = function() {
-        return this.num + ew_model.separator + this.proto + ew_model.separator + this.action + ew_model.separator + (this.egress ? "Egress/" : "") + this.cidr;
+        return this.num + ew_model.separator + this.proto + ew_model.separator + this.action + ew_model.separator + (this.egress ? "Egress" + ew_model.separator : "") + this.cidr;
     }
 }
 
@@ -155,7 +155,7 @@ function NetworkAcl(id, vpcId, dflt, rules, assocs)
     this.rules = rules
     this.associations = assocs
     this.toString = function() {
-        return this.id + ew_model.separator + (dflt ? "default/" : "") + ew_model.modelValue("vpcId", this.vpcId);
+        return this.id + ew_model.separator + (dflt ? "default" + ew_model.separator : "") + ew_model.modelValue("vpcId", this.vpcId);
     }
 }
 
@@ -316,7 +316,7 @@ function AccessKey(name, status, secret, current)
     this.secret = secret
     this.current = current
     this.toString = function() {
-        return this.name + (this.current ? "/Current" : "");
+        return this.name + (this.current ? ew_model.separator + "Current" : "");
     }
 }
 

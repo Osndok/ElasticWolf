@@ -48,7 +48,7 @@ var ew_NetworkInterfacesTreeView = {
         }
     },
 
-    detachNetworkInterface : function(force) {
+    detachInterface : function(force) {
         var eni = this.getSelected();
         if (!eni) return;
 
