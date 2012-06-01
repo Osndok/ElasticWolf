@@ -43,13 +43,15 @@
     rc.groups = [];
     var groupList = document.getElementById('ew.eni.groups');
     for (var i = 0; i < groupList.selectedItems.length; i++) {
-        var selected = groupList.selectedItems[i];
-        rc.groups.push(selected.value);
+        rc.groups.push(groupList.selectedItems[i].value);
     }
-
-    rc.subnetId = document.getElementById('2ew.eni.subnet').value;
-    rc.ip = (document.getElementById('ew.eni.ip').value || '').trim();
-    rc.descr = (document.getElementById('ew.eni.descr').value || '').trim();
+    rc.subnetId = document.getElementById('ew.eni.subnet').value;
+    rc.ip = document.getElementById('ew.eni.ip').value.trim();
+    rc.descr = document.getElementById('ew.eni.descr').value.trim();
+    if (!rc.ip || !rc.subnetId) {
+       alert('IP Address within subnet must be specified');
+       return false;
+    }
     rc.ok = true;
     return true;
   }
