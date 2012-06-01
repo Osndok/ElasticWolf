@@ -13,9 +13,9 @@ var ew_SubnetsTreeView = {
         var subnet = this.getSelected();
         if (subnet == null) return;
 
-        var instances = ew_model.getInstancesByVpc(null, subnet.id, 'running');
+        var instances = ew_model.getInstances('subnetId', subnet.id, 'state', 'running');
         if (instances.length) {
-            alert("There is instance " + instances[0].id + "/" + instances[0].name + " still running in this subnet");
+            alert("There is instance " + instances[0].toString() + " in this subnet");
             return false
         }
 

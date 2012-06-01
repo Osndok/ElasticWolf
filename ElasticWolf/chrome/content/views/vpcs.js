@@ -32,24 +32,24 @@ var ew_VpcTreeView = {
         var vpc = this.getSelected();
         if (vpc == null) return;
 
-        var instances = ew_model.getInstancesByVpc(vpc.id, null, 'running');
+        var instances = ew_model.getInstances('vpcId', vpc.id, 'state', 'running');
         if (instances.length) {
-            alert("There is instance " + instances[0].id + "/" + instances[0].name + " still running in this VPC");
+            alert("There is instance " + instances[0].toString() + " in this VPC");
             return;
         }
 
         var subnets = ew_model.getSubnets();
         for (var i in subnets) {
             if (subnets[i].vpcId == vpc.id) {
-                var instances = ew_model.getInstancesByVpc(null, subnets[i].id, 'running');
+                var instances = ew_model.getInstances('subnetId', subnets[i].id, 'state', 'running');
                 if (instances.length) {
-                    alert("There is instance " + instances[0].id + "/" + instances[0].name + " still running in subnet " + subnets[i].toString());
+                    alert("There is instance " + instances[0].toString() + " in subnet " + subnets[i].toString());
                     return;
                 }
             }
         }
 
-        if (!confirm("Delete " + vpc.id + " (" + vpc.cidr + ")" + (vpc.tag == null ? '' : " [" + vpc.tag + "]") + "?")) return;
+        if (!confirm("Delete " + vpc.toString() + "?")) return;
 
         var me = this;
         ew_session.controller.deleteVpc(vpc.id, function() { me.refresh()});

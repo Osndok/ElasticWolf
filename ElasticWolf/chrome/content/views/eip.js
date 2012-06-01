@@ -40,18 +40,9 @@ var ew_ElasticIPTreeView = {
     },
 
     getUnassociatedInstances : function() {
-        var instances = new Array();
-        var instList = ew_model.getInstances();
-
-        for (var i in instList) {
-            var inst = instList[i];
-            if (inst.state == "running") {
-                instances.push(inst);
-            }
-        }
-
-        var eips = {};
+        var instances = ew_model.getInstances('state', 'running');
         var unassociated = new Array();
+        var eips = {};
 
         // Build the list of EIPs that are associated with an instance
         for (var i in this.treeList) {
@@ -86,7 +77,7 @@ var ew_ElasticIPTreeView = {
             var list = this.getUnassociatedInstances();
             list = list.concat(ew_model.getNetworkInterfaces())
 
-            var idx = ew_session.promptList("Associate Elastic IP", "Which Instance/ENI would you like to associate "+ eip.publicIp +" with?", list, null, 550);
+            var idx = ew_session.promptList("Associate Elastic IP", "Which Instance/ENI would you like to associate "+ eip.publicIp +" with?", list, ['_type', 'toString'], 550);
             if (idx < 0) return;
             // Determine what type we selected
             if (list[idx].imageId) {

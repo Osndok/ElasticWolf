@@ -720,9 +720,12 @@ var ew_session = {
                     item = items[i].toString()
                 } else {
                     for (p in items[i]) {
-                        if (typeof items[i][p] == "function") continue;
+                        if (typeof items[i][p] == "function") {
+                            if (p != "toString") continue;
+                            item += (item != "" ? ew_model.separator : "") + items[i].toString();
+                        } else
                         if (!columns || columns.indexOf(p) >= 0) {
-                            item += (item != "" ? " | " : "") + ew_model.modelValue(p, items[i][p])
+                            item += (item != "" ? ew_model.separator : "") + ew_model.modelValue(p, items[i][p])
                         }
                     }
                 }
