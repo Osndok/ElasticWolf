@@ -2509,7 +2509,7 @@ var ew_controller = {
             var allocId = getNodeValueByName(items[i], "allocationId");
             var assocId = getNodeValueByName(items[i], "associationId");
             var domain = getNodeValueByName(items[i], "domain");
-            list.push(new AddressMapping(publicIp, instanceid, allocId, assocId, domain));
+            list.push(new EIP(publicIp, instanceid, allocId, assocId, domain));
         }
 
         this.addResourceTags(list, ew_session.model.resourceMap.eips, "address");
@@ -2534,7 +2534,7 @@ var ew_controller = {
 
     releaseAddress : function(eip, callback)
     {
-        var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.address ]]
+        var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.publicIp ]]
         ew_client.queryEC2("ReleaseAddress", params, this, true, "onCompleteReleaseAddress", callback);
     },
 
@@ -2543,10 +2543,15 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    associateAddress : function(eip, instanceid, callback)
+    associateAddress : function(eip, instanceId, networkInterfaceId, callback)
     {
-        var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.address ]]
-        params.push([ 'InstanceId', instanceid ])
+        var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.publicIp ]]
+        if (instanceId) {
+            params.push([ 'InstanceId', instanceId ])
+        }
+        if (networkInterfaceId) {
+            params.push([ 'NetworkInterfaceId', networkInterfaceId ])
+        }
         ew_client.queryEC2("AssociateAddress", params, this, true, "onCompleteAssociateAddress", callback);
     },
 
@@ -2557,7 +2562,7 @@ var ew_controller = {
 
     disassociateAddress : function(eip, callback)
     {
-        var params = eip.associationId ? [["AssociationId", eip.associationId]] : [[ 'PublicIp', eip.address ]]
+        var params = eip.associationId ? [["AssociationId", eip.associationId]] : [[ 'PublicIp', eip.publicIp ]]
         ew_client.queryEC2("DisassociateAddress", params, this, true, "onCompleteDisassociateAddress", callback);
     },
 

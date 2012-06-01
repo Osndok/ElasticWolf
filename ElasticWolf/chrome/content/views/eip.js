@@ -1,6 +1,6 @@
 var ew_ElasticIPTreeView = {
-    COLNAMES : ['eip.address','eip.instanceId','eip.allocationId','eip.associationId','eip.domain','eip.tag'],
-    model: [ "addresses", "instances" ],
+    COLNAMES : ['eip.publicIp','eip.instanceId','eip.allocationId','eip.associationId','eip.domain','eip.tag'],
+    model: [ "addresses", "instances", "networkInterfaces" ],
 
     viewDetails : function(event) {
         var eip = this.getSelected();
@@ -22,10 +22,9 @@ var ew_ElasticIPTreeView = {
     },
 
     allocateAddress : function() {
+        var vpc = true
         if (!ew_session.client.isGovCloud()) {
-            var vpc = ew_session.promptYesNo("Confirm", "Is this Elastic IP to be used for VPC?");
-        } else {
-            var vpc = true
+            vpc = ew_session.promptYesNo("Confirm", "Is this Elastic IP to be used for VPC?");
         }
         var me = this;
         ew_session.controller.allocateAddress(vpc, function() { me.refresh() });
@@ -34,58 +33,41 @@ var ew_ElasticIPTreeView = {
     releaseAddress : function() {
         var eip = this.getSelected();
         if (eip == null) return;
-        if (!ew_session.promptYesNo("Confirm", "Release "+eip.address+"?")) return;
+        if (!ew_session.promptYesNo("Confirm", "Release "+eip.publicIp+"?")) return;
 
         var me = this;
         ew_session.controller.releaseAddress(eip, function() { me.refresh() });
     },
 
-    getUnassociatedInstanceIds : function() {
-        var instanceIds = new Array();
+    getUnassociatedInstances : function() {
+        var instances = new Array();
         var instList = ew_model.getInstances();
-        var i = 0;
 
-        var inst = null;
-        var tag = null;
-        var id = null;
-        for (i in instList) {
-            inst = instList[i];
+        for (var i in instList) {
+            var inst = instList[i];
             if (inst.state == "running") {
-                id = inst.id;
-                tag = __tagToName__(inst.tag);
-                if (tag && tag.length) {
-                    id = id + ":" +  tag;
-                }
-                instanceIds.push(id);
+                instances.push(inst);
             }
         }
 
         var eips = {};
         var unassociated = new Array();
 
-        i = 0;
-        var eip = null;
         // Build the list of EIPs that are associated with an instance
-        for (i in this.treeList) {
-            eip = this.treeList[i];
+        for (var i in this.treeList) {
+            var eip = this.treeList[i];
             if (eip.instanceId == null || eip.instanceId.length == 0) {
                 continue;
             }
-            eips[eip.instanceId] = eip.address;
+            eips[eip.instanceId] = eip.publicIp;
         }
 
-        i = 0;
-        var lastItem = 0;
-        var temp = null;
-        var instId = null;
-        for (i in instanceIds) {
-            instId = instanceIds[i].split(":")[0];
-            if (eips[instId]) {
+        for (var i in instances) {
+            if (eips[instances[i].id]) {
                 continue;
             }
-            unassociated.push(instanceIds[i]);
+            unassociated.push(instances[i]);
         }
-
         return unassociated;
     },
 
@@ -96,19 +78,26 @@ var ew_ElasticIPTreeView = {
             if (eip == null) return;
 
             if (eip.instanceId != null && eip.instanceId != '') {
-                var confirmed = confirm("Address "+eip.address+" is already mapped to an instance, are you sure?");
+                var confirmed = confirm("Address "+eip.publicIp+" is already mapped to an instance, are you sure?");
                 if (!confirmed)
                     return;
             }
 
-            var instanceIds = this.getUnassociatedInstanceIds();
-            var idx = ew_session.promptList("Associate Address with Instance", "Which Instance would you like to associate "+ eip.address +" with?", instanceIds);
+            var list = this.getUnassociatedInstances();
+            list = list.concat(ew_model.getNetworkInterfaces())
+
+            var idx = ew_session.promptList("Associate Elastic IP", "Which Instance/ENI would you like to associate "+ eip.publicIp +" with?", list, null, 500);
             if (idx < 0) return;
-            eip.instanceId = instanceIds[idx].split(":")[0];
+            // Determine what type we selected
+            if (list[idx].imageId) {
+                eip.instanceId = list[idx].id;
+            } else {
+                eip.eniId = list[idx].id;
+            }
         }
 
         var me = this;
-        ew_session.controller.associateAddress(eip, eip.instanceId, function() { me.refresh() });
+        ew_session.controller.associateAddress(eip, eip.instanceId, eip.eniId, function() { me.refresh() });
         return true;
     },
 
@@ -120,7 +109,7 @@ var ew_ElasticIPTreeView = {
             return;
         }
 
-        if (confirm("Disassociate "+eip.address+" and instance "+eip.instanceId+"?")) return;
+        if (confirm("Disassociate "+eip.publicIp+" and instance "+eip.instanceId+"?")) return;
         ew_session.controller.disassociateAddress(eip, function() { me.refresh() });
     },
 

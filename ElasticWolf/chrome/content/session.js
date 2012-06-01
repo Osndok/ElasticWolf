@@ -716,10 +716,14 @@ var ew_session = {
         for (var i = 0; i < items.length; i++) {
             if (typeof items[i] == "object") {
                 var item = ""
-                for (p in items[i]) {
-                    if (typeof items[i][p] == "function") continue;
-                    if (!columns || columns.indexOf(p) >= 0) {
-                        item += (item != "" ? ": " : "") + ew_modelValue(p, items[i][p])
+                if (!columns && items[i].toString) {
+                    item = items[i].toString()
+                } else {
+                    for (p in items[i]) {
+                        if (typeof items[i][p] == "function") continue;
+                        if (!columns || columns.indexOf(p) >= 0) {
+                            item += (item != "" ? " | " : "") + ew_model.modelValue(p, items[i][p])
+                        }
                     }
                 }
                 list.push(item)

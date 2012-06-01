@@ -388,35 +388,40 @@ var ew_InstancesTreeView = {
         }
 
         // Determine if there is actually an EIP to associate with
-        var addresses = ew_session.model.getAddresses();
-        if (addresses == null || addresses.length == 0) {
-            // There are no addresses to associate with.
-            var fAddEIP = confirm ("Would you like to create a new Elastic IP to associate with this instance?");
-            if (fAddEIP) {
+        var eipList = ew_session.model.getAddresses();
+        if (!eipList) {
+            if (confirm ("Would you like to create a new Elastic IP to associate with this instance?")) {;
                 ew_session.selectTab('ew.tabs.eip');
                 ew_ElasticIPTreeView.allocateAddress();
             }
             return;
         }
-
-        var retVal = {ok:null,eipMap:null};
-        window.openDialog("chrome://ew/content/dialogs/select_eip.xul", null, "chrome,centerscreen,modal,resizable", ew_session, instance, retVal);
-        if (retVal.ok) {
-            log(retVal.eipMap.address + " to be associated with " + retVal.eipMap.instanceId);
-            ew_ElasticIPTreeView.associateAddress(retVal.eipMap);
+        var eips = [];
+        for (var i in eipList) {
+            var eip = eipList[i];
+            if ((isVpc(instance) && eip.domain != "vpc") || (!isVpc(instance) && eip.domain == "vpc")) {
+                continue
+            }
+            eips.push(eip)
         }
+        var idx = ew_session.promptList("Associate EIP with Instance", "Which EIP would you like to associate with " + instance.toString() + "?", eips);
+        if (idx < 0) return;
+        var eip = eips[idx];
+
+        if (eip.instanceId) {
+            if (!this.session.promptYesNo("Confirm", "Address " + eip.publicIp + " is already mapped to an instance, continue?")) {
+                return false;
+            }
+        }
+        ew_session.controller.associateAddress(eip, instance.id, null, function() { me.refresh() });
     },
 
     getEIP: function(instance) {
-        var addresses = ew_session.model.getAddresses();
-        var addr = null;
-        for (var i in addresses) {
-            addr = addresses[i];
-            if (addr.instanceid == instance.id) {
-                var val = addr.address;
-                if (addr.tag) val = val + ":" + addr.tag;
-                return val;
-            }
+        var addr = ew_session.model.getAddressByInstanceId(instance.id);
+        if (addr) {
+            var val = addr.publicIp;
+            if (addr.tag) val = val + ":" + addr.tag;
+            return val;
         }
         return ""
     },

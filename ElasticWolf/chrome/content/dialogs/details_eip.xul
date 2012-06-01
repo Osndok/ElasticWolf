@@ -10,7 +10,7 @@
   <script>
    function init() {
       var eip = window.arguments[0];
-      document.getElementById("ew.eip.address").value = eip.address;
+      document.getElementById("ew.eip.address").value = eip.publicIp;
       document.getElementById("ew.eip.instanceid").value = eip.instanceid;
       document.getElementById("ew.eip.tag").value = eip.tag || "";
    }
