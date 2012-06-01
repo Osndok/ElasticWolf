@@ -11,6 +11,7 @@
     title="Select">
 
     <script>
+    <![CDATA[
         function accept() {
             selected.value = menulist.selectedIndex;
             return true;
@@ -25,15 +26,15 @@
             for (var i in list) {
                 menulist.appendItem(list[i]);
             }
-            menulist.rows = list.length &lt; 10 ? list.count : 10;
             menulist.width = window.arguments[4] || 400;
             menulist.selectedIndex = 0;
         }
+    ]]>
     </script>
 
     <vbox flex="1">
       <label id="msg" value="" />
-      <listbox id="list" flex="2" />
+      <listbox id="list" flex="2" rows="10" />
     </vbox>
 </dialog>
 

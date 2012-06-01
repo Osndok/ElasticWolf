@@ -21,7 +21,7 @@
           </menu>
           <menuseparator />
           <menuitem oncommand="ew_InstancesTreeView.launchMore();" label="Launch More of these" />
-          <menuitem oncommand="ew_InstancesTreeView.associateWithEIP();" label="&ew.addresses.contextmenu.associate.label;" />
+          <menuitem oncommand="ew_InstancesTreeView.associateWithEIP();" label="Associate with Elastic IP" />
           <menuitem oncommand="ew_InstancesTreeView.attachEBSVolume();" label="Attach an EBS Volume" />
           <menuitem id="instances.context.bundle" oncommand="ew_InstancesTreeView.showBundleDialog();" label="Bundle into an S3 AMI" />
           <menuitem id="instances.context.createimage" oncommand="ew_InstancesTreeView.showCreateImageDialog();" label="Create Image (EBS AMI)" />
