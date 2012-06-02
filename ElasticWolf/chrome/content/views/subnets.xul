@@ -45,9 +45,9 @@
                         <splitter class="tree-splitter" />
                         <treecol id="subnet.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="subnet.routeId" label="Route" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="subnet.tableId" label="Routes" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="subnet.aclId" label="ACL" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="subnet.aclId" label="ACLs" flex="1" persist="width ordinal hidden sortDirection" />
                     </treecols>
                     <treechildren context="ew.subnets.contextmenu" />
                 </tree>

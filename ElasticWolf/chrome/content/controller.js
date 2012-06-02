@@ -2228,6 +2228,7 @@ var ew_controller = {
             var mac = getNodeValueByName(items.snapshotItem(i), "macAddress");
             var ip = getNodeValueByName(items.snapshotItem(i), "privateIpAddress");
             var check = getNodeValueByName(items.snapshotItem(i), "sourceDestCheck");
+            var azone = getNodeValueByName(items.snapshotItem(i), "availabilityZone");
             var tags = [];
             var groups = [];
             var attachment = null;
@@ -2276,7 +2277,7 @@ var ew_controller = {
                 association = new NetworkInterfaceAssociation(aid, pubip, owner, instId, attId);
             }
 
-            list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, mac, ip, check, groups, attachment, association));
+            list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, azone, mac, ip, check, groups, attachment, association));
         }
 
         ew_model.updateNetworkInterfaces(list);
@@ -2658,14 +2659,13 @@ var ew_controller = {
                 list.push(new LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, azone, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName));
             }
         }
-        ew_model.updateLoadbalancer(list);
+        ew_model.updateLoadBalancers(list);
         if (objResponse.callback) objResponse.callback(list);
     },
 
     describeInstanceHealth : function(LoadBalancerName, callback)
     {
-        params = []
-        params.push([ "LoadBalancerName", LoadBalancerName ]);
+        var params =[ [ "LoadBalancerName", LoadBalancerName ] ];
 
         ew_client.queryELB("DescribeInstanceHealth", params, this, true, "onCompletedescribeInstanceHealth", callback);
     },
@@ -2684,7 +2684,9 @@ var ew_controller = {
             list.push(new InstanceHealth(Description, State, InstanceId, ReasonCode));
         }
 
-        ew_model.updateInstanceHealth(list);
+        var elbs = ew_model.getLoadBalancers('LoadBalancerName', objResponse.data[0][1]);
+        if (elbs) elbs[0].InstanceHealth = list;
+
         if (objResponse.callback) objResponse.callback(list);
     },
 

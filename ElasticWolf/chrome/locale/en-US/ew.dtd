@@ -600,8 +600,10 @@
 <!ENTITY ew.loadbalancer.Protocol.label "Protocol">
 <!ENTITY ew.loadbalancer.LoadBalancerPort.label "Loadbalancer Port">
 <!ENTITY ew.loadbalancer.InstancePort.label "Instance Port">
-<!ENTITY ew.loadbalancer.apppolicy.label "Application Policy">
-<!ENTITY ew.loadbalancer.lbpolicy.label "Loadbalancer Policy">
+<!ENTITY ew.loadbalancer.APolicy.label "Application Policy">
+<!ENTITY ew.loadbalancer.Cookie.label "Cookie">
+<!ENTITY ew.loadbalancer.CPolicy.label "CPolicy">
+<!ENTITY ew.loadbalancer.LBPolicy.label "Loadbalancer Policy">
 
 <!ENTITY ew.loadbalancerview.Name.label "Name:">
 <!ENTITY ew.loadbalancerview.creationtime.label "Creation Time:">

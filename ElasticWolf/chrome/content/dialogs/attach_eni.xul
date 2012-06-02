@@ -22,8 +22,9 @@
     var list = document.getElementById('ew.eni.instances');
     for (var i in instances) {
         var instance = instances[i];
-        if (instance.subnetId != eni.subnetId) continue;
-        list.appendItem(instance.toString(), instance.id);
+        if (instance.vpcId == eni.vpcId && instance.availabilityZone == eni.availabilityZone) {
+            list.appendItem(instance.toString(), instance.id);
+        }
     }
     return true;
   }

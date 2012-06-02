@@ -136,11 +136,22 @@ var ew_session = {
         var tab = ew_toolbar.get(name);
         if (!tab) return;
 
+        // Deactivate current tab
+        var curtab = ew_toolbar.getSelected();
+        if (curtab) {
+            for (var i in curtab.views) {
+                if (curtab.views[i].view.deactivate) {
+                    curtab.views[i].view.deactivate();
+                }
+            }
+        }
+
+        // Activate new tab
         ew_toolbar.select(name);
         this.tabMenu.selectedPanel = $(tab.id || name);
         this.prefs.setCurrentTab(name);
 
-        // Stop the refresh timers of all tabs
+        // Stop the refresh timers of all tabs (obsolete inetrface will be replace by new Treeview)
         for (var tab in this.refreshedTabs) {
             if (this.refreshedTabs[tab] == 1) {
                 this.refreshedTabs[tab] = 0;
@@ -149,12 +160,12 @@ var ew_session = {
             }
         }
 
-        // Refresh if no records yet
+        // Activate and refresh if no records yet
         for (var i in tab.views) {
             if (tab.views[i].view.activate) {
                 tab.views[i].view.activate();
             }
-
+            // Assign new filter list and refresh contents
             tab.views[i].view.filterList = tab.views[i].filterList;
             if (tab.views[i].view.rowCount == 0) {
                 tab.views[i].view.refresh();
@@ -715,7 +726,11 @@ var ew_session = {
         var list = []
         for (var i = 0; i < items.length; i++) {
             if (typeof items[i] == "object") {
-                var item = ""
+                var item = "";
+                // Show class name as the firt column for mutli object lists
+                if (columns && columns.indexOf("__class__") >= 0) {
+                    item = className(items[i])
+                }
                 if (!columns && items[i].toString) {
                     item = items[i].toString()
                 } else {

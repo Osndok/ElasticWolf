@@ -40,22 +40,19 @@
 
         var secGroups = document.getElementById("ew.instance.securitygrouplist");
         for(var i in instance.groups) {
-            secGroups.appendItem(instance.groups[i]);
+            var group = session.model.getSecurityGroupById(instance.groups[i]);
+            secGroups.appendItem(group ? group.toString() : instance.groups[i]);
         }
 
         var volumeL = document.getElementById("ew.instance.volumelist");
         // Enumerate the volumes associated with the instId
         var volumes = session.model.getVolumes();
 
-        // If a volume is associated with this instance,
-        // add it to the list
-        var vol = null;
+        // If a volume is associated with this instance, add it to the list
         for (var i in volumes) {
-            vol = volumes[i];
+            var vol = volumes[i];
             if (vol.instanceId == instance.id) {
-                var val = vol.id;
-                if (vol.tag) val = val + ":" + vol.tag;
-                volumeL.appendItem(val);
+                volumeL.appendItem(vol.toString());
             }
         }
     }
@@ -65,15 +62,13 @@
 
   <vbox flex="1">
     <grid flex="1">
-      <columns>
-        <column />
-        <column />
-        <column />
-        <column />
-        <column />
-        <column />
+      <columns flex="1">
+        <column flex="1" />
+        <column flex="1" />
+        <column flex="1" />
+        <column flex="1" />
       </columns>
-      <rows>
+      <rows flex="1">
         <row>
           <label control="ew.instance.name" value="Name:" />
           <textbox id="ew.instance.name" size="30" readonly="true" />

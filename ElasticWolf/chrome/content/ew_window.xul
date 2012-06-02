@@ -17,7 +17,7 @@
 <?xul-overlay href="chrome://ew/content/views/vpcs.xul"?>
 <?xul-overlay href="chrome://ew/content/views/subnets.xul"?>
 <?xul-overlay href="chrome://ew/content/views/vpns.xul"?>
-<?xul-overlay href="chrome://ew/content/views/loadbalancer.xul"?>
+<?xul-overlay href="chrome://ew/content/views/loadbalancers.xul"?>
 <?xul-overlay href="chrome://ew/content/views/routing.xul"?>
 <?xul-overlay href="chrome://ew/content/views/igw.xul"?>
 <?xul-overlay href="chrome://ew/content/views/cgw.xul"?>
@@ -56,8 +56,7 @@
   <script type="application/x-javascript" src="chrome://ew/content/views/vpcs.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/dhcpoptions.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/vpns.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/views/loadbalancer.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/views/instancehealth.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/loadbalancers.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/networkacls.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/enis.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/subnets.js" />

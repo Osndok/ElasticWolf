@@ -94,6 +94,12 @@ var ew_toolbar = {
         }
     },
 
+    getSelected: function()
+    {
+        var tree = $('ew.toolbar');
+        return tree.currentIndex >= 0 ? this.get(tree.view.getCellValue(tree.currentIndex, tree.columns.getFirstColumn())) : null;
+    },
+
     selectionChanged: function()
     {
         var tree = $('ew.toolbar');

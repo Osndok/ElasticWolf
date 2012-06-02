@@ -63,7 +63,7 @@ var ew_SubnetsTreeView = {
                     for (var j in tables[i].associations) {
                         if (tables[i].associations[j].subnetId == list[k].id) {
                             list[k].routes = tables[i].routes;
-                            list[k].routeId = tables[i].id;
+                            list[k].tableId = tables[i].id;
                             list[k].routeAssocId = tables[i].associations[j].id;
                             break;
                         }

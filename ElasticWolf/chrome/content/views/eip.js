@@ -77,7 +77,7 @@ var ew_ElasticIPTreeView = {
             var list = this.getUnassociatedInstances();
             list = list.concat(ew_model.getNetworkInterfaces())
 
-            var idx = ew_session.promptList("Associate Elastic IP", "Which Instance/ENI would you like to associate "+ eip.publicIp +" with?", list, ['_type', 'toString'], 550);
+            var idx = ew_session.promptList("Associate Elastic IP", "Which Instance/ENI would you like to associate "+ eip.publicIp +" with?", list, ['__class__', 'toString'], 550);
             if (idx < 0) return;
             // Determine what type we selected
             if (list[idx].imageId) {

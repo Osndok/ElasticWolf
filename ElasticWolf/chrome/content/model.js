@@ -71,7 +71,6 @@ function Tag(name, value)
 
 function Group(id, name)
 {
-    this._type = 'Group';
     this.id = id
     this.name = name
     this.toString = function() {
@@ -79,14 +78,14 @@ function Group(id, name)
     }
 }
 
-function NetworkInterface(id, status, descr, subnetId, vpcId, macAddress, privateIpAddress, sourceDestCheck, groups, attachment, association)
+function NetworkInterface(id, status, descr, subnetId, vpcId, availabilityZone, macAddress, privateIpAddress, sourceDestCheck, groups, attachment, association)
 {
-    this._type = 'ENI';
     this.id = id
     this.status = status
     this.descr = descr || "";
     this.subnetId = subnetId
     this.vpcId = vpcId
+    this.availabilityZone = availabilityZone
     this.macAddress = macAddress
     this.privateIpAddress = privateIpAddress
     this.sourceDestCheck = sourceDestCheck
@@ -101,7 +100,6 @@ function NetworkInterface(id, status, descr, subnetId, vpcId, macAddress, privat
 
 function NetworkInterfaceAttachment(id, instanceId, instanceOwnerId, deviceIndex, status, attachTime, deleteOnTermination)
 {
-    this._type = 'ENI Attachment';
     this.id = id;
     this.instanceId = instanceId;
     this.instanceOwnerId = instanceOwnerId;
@@ -118,7 +116,6 @@ function NetworkInterfaceAttachment(id, instanceId, instanceOwnerId, deviceIndex
 
 function NetworkInterfaceAssociation(id, publicIp, ipOwnerId, instanceId, attachmentId)
 {
-    this._type = 'ENI Association';
     this.id = id;
     this.publicIp = publicIp
     this.ipOwnerId = ipOwnerId
@@ -132,7 +129,6 @@ function NetworkInterfaceAssociation(id, publicIp, ipOwnerId, instanceId, attach
 
 function NetworkAclAssociation(id, acl, subnet)
 {
-    this._type = 'ACL Association';
     this.id = id
     this.aclId = acl
     this.subnetId = subnet
@@ -143,7 +139,6 @@ function NetworkAclAssociation(id, acl, subnet)
 
 function NetworkAclEntry(num, proto, action, egress, cidr, icmp, ports)
 {
-    this._type = 'ACL Entry';
     this.num = num
     this.proto = proto
     this.action = action
@@ -158,7 +153,6 @@ function NetworkAclEntry(num, proto, action, egress, cidr, icmp, ports)
 
 function NetworkAcl(id, vpcId, dflt, rules, assocs)
 {
-    this._type = 'Network ACL';
     this.id = id
     this.vpcId = vpcId
     this.dflt = dflt
@@ -200,7 +194,6 @@ function Endpoint(name, url)
 
 function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, rootDeviceType, ownerAlias, name, description, snapshotId, tag)
 {
-    this._type = 'AMI';
     this.id = id;
     this.location = location;
     this.state = state;
@@ -223,7 +216,6 @@ function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, roo
 
 function Snapshot(id, volumeId, status, startTime, progress, volumeSize, description, owner, ownerAlias, tag)
 {
-    this._type = 'Snapshot';
     this.id = id;
     this.volumeId = volumeId;
     this.status = status;
@@ -246,7 +238,6 @@ function Snapshot(id, volumeId, status, startTime, progress, volumeSize, descrip
 
 function Volume(id, size, snapshotId, zone, status, createTime, instanceId, device, attachStatus, attachTime, tag)
 {
-    this._type = 'Volume';
     this.id = id;
     this.size = size;
     this.snapshotId = snapshotId;
@@ -264,13 +255,13 @@ function Volume(id, size, snapshotId, zone, status, createTime, instanceId, devi
         __addNameTagToModel__(tag, this);
     }
     this.toString = function() {
-        return this.id;
+        return (this.name ? this.name + ew_model.separator : "") + this.id + ew_model.separator + this.device + ew_model.separator + this.status +
+               (this.instanceId ? " (" + ew_model.modelValue("instanceId", this.instanceId) + ")" : "");
     }
 }
 
 function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, tag, vpcId, subnetId, rootDeviceType)
 {
-    this._type = 'Instance'
     this.resId = resId;
     this.ownerId = ownerId;
     this.groups = groups;
@@ -307,7 +298,6 @@ function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdisk
 
 function Certificate(name, body)
 {
-    this._type = 'Certificate';
     this.name = name
     this.body = body
     this.toString = function() {
@@ -317,7 +307,6 @@ function Certificate(name, body)
 
 function KeyPair(name, fingerprint)
 {
-    this._type = 'Keypair';
     this.name = name;
     this.fingerprint = fingerprint;
     this.toString = function() {
@@ -327,7 +316,6 @@ function KeyPair(name, fingerprint)
 
 function AccessKey(name, status, secret, current)
 {
-    this._type = 'AccessKey';
     this.name = name;
     this.status = status;
     this.secret = secret
@@ -339,7 +327,6 @@ function AccessKey(name, status, secret, current)
 
 function SecurityGroup(id, ownerId, name, description, vpcId, permissions)
 {
-    this._type = 'Group';
     this.id = id
     this.ownerId = ownerId;
     this.name = name;
@@ -353,7 +340,6 @@ function SecurityGroup(id, ownerId, name, description, vpcId, permissions)
 
 function Permission(type, protocol, fromPort, toPort, srcGroup, cidrIp)
 {
-    this._type = 'Permission';
     this.type = type
     this.protocol = protocol;
     this.fromPort = fromPort;
@@ -372,7 +358,6 @@ function Permission(type, protocol, fromPort, toPort, srcGroup, cidrIp)
 
 function Route(tableId, cidr, gatewayId, state)
 {
-    this._type = 'Route';
     this.tableId = tableId
     this.cidr = cidr
     this.gatewayId = gatewayId
@@ -384,7 +369,6 @@ function Route(tableId, cidr, gatewayId, state)
 
 function RouteAssociation(id, tableId, subnetId)
 {
-    this._type = 'Route Association';
     this.id = id
     this.tableId = tableId || ""
     this.subnetId = subnetId || ""
@@ -395,19 +379,25 @@ function RouteAssociation(id, tableId, subnetId)
 
 function RouteTable(id, vpcId, routes, associations)
 {
-    this._type = 'Route Table';
     this.id = id
     this.vpcId = vpcId
     this.routes = routes
     this.associations = associations
     this.toString = function() {
-        return this.id + ew_model.separator + ew_model.modelValue("vpcId", this.vpcId);
+        var str = this.id
+        if (this.routes && this.routes.length > 0) {
+            str += " ("
+            for (var i in this.routes) {
+                str += (i > 0 ? "," : "") + this.routes[i].cidr;
+            }
+            str += ")"
+        }
+        return str;
     }
 }
 
 function AvailabilityZone(name, state)
 {
-    this._type = 'AZone';
     this.name = name;
     this.state = state;
     this.toString = function() {
@@ -417,7 +407,6 @@ function AvailabilityZone(name, state)
 
 function EIP(publicIp, instanceid, allocId, assocId, domain, tag)
 {
-    this._type = 'EIP';
     this.publicIp = publicIp;
     this.instanceId = instanceid;
     this.allocationId = allocId || "";
@@ -473,7 +462,6 @@ function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, 
 
 function Vpc(id, cidr, state, dhcpOptionsId, tag)
 {
-    this._type = 'VPC';
     this.id = id;
     this.cidr = cidr;
     this.state = state;
@@ -487,7 +475,6 @@ function Vpc(id, cidr, state, dhcpOptionsId, tag)
 
 function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tag)
 {
-    this._type = 'Subnet';
     this.id = id;
     this.vpcId = vpcId;
     this.cidr = cidr;
@@ -513,7 +500,6 @@ function DhcpOptions(id, options, tag)
 
 function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tag)
 {
-    this._type = 'VPN Connection';
     this.id = id;
     this.vgwId = vgwId;
     this.cgwId = cgwId;
@@ -530,7 +516,6 @@ function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tag)
 
 function InternetGateway(id, vpcId, tags)
 {
-    this._type = 'Internet Gateway';
     this.id = id
     this.vpcId = vpcId;
     this.tags = tags || []
@@ -542,7 +527,6 @@ function InternetGateway(id, vpcId, tags)
 
 function VpnGateway(id, availabilityZone, state, type, attachments, tag)
 {
-    this._type = 'VPN Gateway';
     this.id = id;
     this.availabilityZone = availabilityZone;
     this.state = state;
@@ -561,7 +545,6 @@ function VpnGateway(id, availabilityZone, state, type, attachments, tag)
 
 function VpnGatewayAttachment(vpcId, vgwId, state)
 {
-    this._type = 'VPN Attachment';
     this.vpcId = vpcId;
     this.vgwId = vgwId;
     this.state = state;
@@ -572,7 +555,6 @@ function VpnGatewayAttachment(vpcId, vgwId, state)
 
 function CustomerGateway(id, ipAddress, bgpAsn, state, type, tag)
 {
-    this._type = 'Customer Gateway';
     this.id = id;
     this.ipAddress = ipAddress;
     this.bgpAsn = bgpAsn;
@@ -641,8 +623,7 @@ var ew_model = {
     bundleTasks : null,
     offerings : null,
     reservedInstances : null,
-    loadbalancer : null,
-    InstanceHealth : null,
+    loadBalancers : null,
     subnets : null,
     vpcs : null,
     dhcpOptions : null,
@@ -650,7 +631,7 @@ var ew_model = {
     vpnGateways : null,
     customerGateways : null,
     internetGateways : null,
-    routetables: null,
+    routeTables: null,
     networkAcls: null,
     networkInterfaces: null,
     s3buckets: null,
@@ -668,7 +649,7 @@ var ew_model = {
         vpnGateways : 9,
         customerGateways : 10,
         internetGateways : 11,
-        routetables: 12,
+        routeTables: 12,
         networkAcls: 13,
         networkInterfaces: 14,
         s3buckets: 15,
@@ -693,8 +674,7 @@ var ew_model = {
         this.updateBundleTasks(null);
         this.updateLeaseOfferings(null);
         this.updateReservedInstances(null);
-        this.updateLoadbalancer(null);
-        this.updateInstanceHealth(null);
+        this.updateLoadBalancers(null);
         this.updateVpcs(null);
         this.updateSubnets(null);
         this.updateDhcpOptions(null);
@@ -738,10 +718,8 @@ var ew_model = {
             return this.offerings;
         case "reservedInstances":
             return this.reservedInstances;
-        case "loadbalancer":
-            return this.loadbalancer;
-        case "InstanceHealth":
-            return this.InstanceHealth;
+        case "loadBalancers":
+            return this.loadBalancers;
         case "subnets":
             return this.subnets;
         case "vpcs":
@@ -813,11 +791,8 @@ var ew_model = {
         case "reservedInstances":
             ew_session.controller.describeReservedInstances();
             break;
-        case "loadbalancer":
+        case "loadBalancers":
             ew_session.controller.describeLoadBalancers();
-            break;
-        case "InstanceHealth":
-            ew_session.controller.describeInstanceHealth();
             break;
         case "subnets":
             ew_session.controller.describeSubnets();
@@ -870,7 +845,7 @@ var ew_model = {
                       cgwId: this.customerGateways,
                       vgwId: this.vpnGateways,
                       igwId: this.internetGateways,
-                      groups: this.securityGroups, };
+                      groups: this.securityGroups };
 
         var list = idMap[name];
         if (list) {
@@ -900,6 +875,25 @@ var ew_model = {
             }
         }
         return null
+    },
+
+    // Return objects if all arguments match
+    getObjects: function(items, args)
+    {
+        if (!args.length) return items;
+        var list = [];
+        if (items) {
+            for (var i in items) {
+                var matches = 0;
+                for (var j = 0; j < args.length - 1; j += 2) {
+                    if (items[i][args[j]] == args[j + 1]) matches++;
+                }
+                if (matches == args.length/2) {
+                    list.push(items[i])
+                }
+            }
+        }
+        return list;
     },
 
     notifyComponents : function(interest)
@@ -1170,26 +1164,7 @@ var ew_model = {
 
     updateVolumes : function(list)
     {
-        if (!this.instances) {
-            ew_session.controller.describeInstances();
-        }
-
         this.volumes = list;
-
-        if (this.instances && list) {
-            var instanceNames = new Object();
-
-            for ( var i = 0; i < this.instances.length; i++) {
-                var instance = this.instances[i];
-                instanceNames[instance.id] = instance.name;
-            }
-
-            for ( var i = 0; i < list.length; i++) {
-                var volume = list[i];
-                volume.instanceName = instanceNames[volume.instanceId];
-            }
-        }
-
         this.notifyComponents("volumes");
     },
 
@@ -1311,21 +1286,7 @@ var ew_model = {
             ew_session.controller.describeInstances();
             return null;
         }
-        if (arguments.length == 0) return this.instances;
-
-        var list = [];
-        if (this.instances) {
-            for (var i in this.instances) {
-                var matches = 0;
-                for (var j = 0; j < arguments.length - 1; j += 2) {
-                    if (this.instances[i][arguments[j]] == arguments[j + 1]) matches++;
-                }
-                if (matches == arguments.length/2) {
-                    list.push(this.instances[i])
-                }
-            }
-        }
-        return list;
+        return this.getObjects(this.instances, arguments);
     },
 
     updateKeypairs : function(list)
@@ -1492,50 +1453,19 @@ var ew_model = {
         return this.reservedInstances;
     },
 
-    updateLoadbalancer : function(list)
+    updateLoadBalancers : function(list)
     {
-        this.loadbalancer = list;
-        this.notifyComponents("loadbalancer");
+        this.loadBalancers = list;
+        this.notifyComponents("loadBalancers");
     },
 
-    getLoadbalancer : function()
+    getLoadBalancers : function()
     {
-        if (this.loadbalancer == null) {
+        if (this.loadBalancers == null) {
             ew_session.controller.describeLoadBalancers();
+            return null;
         }
-        return this.loadbalancer;
+        return this.getObjects(this.loadBalancers, arguments);
     },
 
-    updateInstanceHealth : function(list)
-    {
-        if (!this.instances) {
-            ew_session.controller.describeInstances();
-        }
-
-        this.InstanceHealth = list;
-
-        if (this.instances && list) {
-            var instanceNames = new Object();
-
-            for ( var i = 0; i < this.instances.length; i++) {
-                var instance = this.instances[i];
-                instanceNames[instance.id] = instance.name;
-            }
-
-            for ( var i = 0; i < list.length; i++) {
-                var instanceHealth = list[i];
-                instanceHealth.InstanceName = instanceNames[instanceHealth.InstanceId];
-            }
-        }
-
-        this.notifyComponents("InstanceHealth");
-    },
-
-    getInstanceHealth : function()
-    {
-        if (this.InstanceHealth == null) {
-            ew_session.controller.describeInstanceHealth();
-        }
-        return this.InstanceHealth;
-    }
 }

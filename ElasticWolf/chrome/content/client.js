@@ -266,7 +266,7 @@ var ew_client = {
         xmlhttp.setRequestHeader("Content-Length", queryParams.length);
         xmlhttp.setRequestHeader("Connection", "close");
 
-        return this.sendRequest(xmlhttp, queryParams, isSync, reqType, objActions, callback);
+        return this.sendRequest(xmlhttp, queryParams, isSync, reqType, objActions, callback, params);
     },
 
     queryELB : function (action, params, objActions, isSync, reqType, callback) {

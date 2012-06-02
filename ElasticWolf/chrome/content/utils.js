@@ -62,6 +62,22 @@ function cloneObject(obj)
     return newObj;
 }
 
+// Return name of the class for given object
+function className(o) {
+    var t;
+    if (o === null) return "null";
+    if ((t = typeof o) !== "object") return t;
+    if ((t = Object.prototype.toString.call(o).slice(8,-1)) !== "Object") return t;
+    if (o.constructor && typeof o.constructor === "function" && (t = o.constructor.className())) return t;
+    return "Object";
+}
+
+Function.prototype.className = function()
+{
+    if ("name" in this) return this.name;
+    return this.name = this.toString().match(/function\s*([^(]*)\(/)[1];
+}
+
 String.prototype.trim = function()
 {
     return this.replace(/^\s+|\s+$/g, "");
@@ -78,6 +94,8 @@ var TreeView = {
     model : '',
     atomService: null,
     properties: [],
+    refreshTimeout: 10000,
+    refreshTimer: null,
     search: "",
     searchElement: null,
     searchTimer: null,
@@ -224,6 +242,21 @@ var TreeView = {
             }
         }
     },
+    isRefreshable: function() {
+        return false;
+    },
+    startRefreshTimer : function() {
+        if (this.refreshTimer) {
+            clearTimeout(this.refreshTimer);
+        }
+        var me = this;
+        this.refreshTimer = setTimeout(function() { me.refresh() }, this.refreshTimeout);
+    },
+    stopRefreshTimer : function() {
+        if (this.refreshTimer) {
+            clearTimeout(this.refreshTimer);
+        }
+    },
     invalidate : function() {
         this.display(this.filter(this.getList()));
     },
@@ -290,9 +323,17 @@ var TreeView = {
         if (!this.select(sel)) {
             this.selection.select(0);
         }
+        if (this.isRefreshable()) {
+            this.startRefreshTimer();
+        } else {
+            this.stopRefreshTimer();
+        }
     },
     activate: function() {
     },
+    deactivate: function() {
+        this.stopRefreshTimer();
+    }
 };
 
 var FileIO = {
