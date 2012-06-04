@@ -606,6 +606,33 @@ function InstanceHealth(Description, State, InstanceId, ReasonCode)
     }
 }
 
+function InstanceStatusEvent(instanceId, availabilityZone, code, description, startTime, endTime) {
+    this.instanceId = instanceId;
+    this.availabilityZone = availabilityZone;
+    this.code = code;
+    this.description = description;
+    this.startTime = startTime;
+    this.endTime = endTime;
+
+    this.toString = function() {
+        return this.instanceId + ew_model.separator + this.description;
+    }
+}
+
+function VolumeStatusEvent(volumeId, availabilityZone, eventId, eventType, description, startTime, endTime) {
+    this.volumeId = volumeId;
+    this.availabilityZone = availabilityZone;
+    this.eventId = eventId;
+    this.eventType = eventType;
+    this.description = description;
+    this.startTime = startTime;
+    this.endTime = endTime;
+
+    this.toString = function() {
+        return this.volumeId + ew_model.separator + this.description;
+    }
+}
+
 // Global model: home to things like lists of data that need to be shared (known
 // AMIs, keypairs etc)
 var ew_model = {
@@ -755,6 +782,12 @@ var ew_model = {
     {
         log('refreshModel: ' + name)
         switch (name) {
+        case "instanceStatus":
+            ew_session.controller.describeInstanceStatus();
+            break;
+        case "volumeStatus":
+            ew_session.controller.describeVolumeStatus();
+            break;
         case "volumes":
             ew_session.controller.describeVolumes();
             break;

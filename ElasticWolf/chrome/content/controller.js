@@ -2998,5 +2998,74 @@ var ew_controller = {
     onCompleteModifyInstanceAttribute : function(objResponse)
     {
         if (objResponse.callback) objResponse.callback();
-    }
+    },
+
+    describeInstanceStatus : function (callback) {
+        ew_client.queryEC2("DescribeInstanceStatus", [], this, true, "onCompleteDescribeInstanceStatus", callback);
+    },
+
+    onCompleteDescribeInstanceStatus : function (objResponse) {
+        var xmlDoc = objResponse.xmlDoc;
+        var items = xmlDoc.evaluate("/ec2:DescribeInstanceStatusResponse/ec2:instanceStatusSet/ec2:item",xmlDoc,this.getNsResolver(),XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
+
+        for (var i = 0 ; i < items.snapshotLength; i++) {
+            var item = items.snapshotItem(i);
+            var eventsSet = item.getElementsByTagName("eventsSet")[0];
+            if (!eventsSet) { continue; }
+            var instanceId = getNodeValueByName(item, "instanceId");
+            var availabilityZone = getNodeValueByName(item, "availabilityZone");
+            var eventsSetItems = eventsSet.childNodes;
+            var list = new Array();
+
+            for (var j = 0; j < eventsSetItems.length; j++) {
+                var event = eventsSetItems[j];
+                if (event.nodeName == '#text') continue;
+                var code = getNodeValueByName(event, "code");
+                var description = getNodeValueByName(event, "description");
+                var startTime = getNodeValueByName(event, "notBefore");
+                var endTime = getNodeValueByName(event, "notAfter");
+                list.push(new InstanceStatusEvent(instanceId, availabilityZone, code, description, startTime, endTime));
+            }
+            var instance = ew_model.getInstanceById(instanceId);
+            if (instance) {
+                instance.events = list;
+            }
+        }
+
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    describeVolumeStatus : function (callback) {
+        ew_client.queryEC2("DescribeVolumeStatus", [], this, true, "onCompleteDescribeVolumeStatus", callback);
+    },
+
+    onCompleteDescribeVolumeStatus : function (objResponse) {
+        var xmlDoc = objResponse.xmlDoc;
+        var items = xmlDoc.evaluate("/ec2:DescribeVolumeStatus/ec2:volumeStatusSet/ec2:item",xmlDoc,this.getNsResolver(),XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
+        var list = new Array();
+
+        for(var i = 0 ; i < items.snapshotLength; i++) {
+            var item = items.snapshotItem(i);
+            var eventsSet = item.getElementsByTagName("eventsSet")[0];
+
+            if (!eventsSet) { continue; }
+
+            var volumeId = getNodeValueByName(item, "volumeId");
+            var availabilityZone = getNodeValueByName(item, "availabilityZone");
+            var eventsSetItems = eventsSet.childNodes;
+
+            for (var j = 0; j < eventsSetItems.length; j++) {
+                var event = eventsSetItems[j];
+                if (event.nodeName == '#text') continue;
+                var eventId = getNodeValueByName(event, "eventId");
+                var eventType = getNodeValueByName(event, "eventType");
+                var description = getNodeValueByName(event, "description");
+                var startTime = getNodeValueByName(event, "notBefore");
+                var endTime = getNodeValueByName(event, "notAfter");
+                list.push(new VolumeStatusEvent(volumeId, availabilityZone, code, description, startTime, endTime));
+            }
+        }
+
+        if (objResponse.callback) objResponse.callback(list);
+    },
 };
