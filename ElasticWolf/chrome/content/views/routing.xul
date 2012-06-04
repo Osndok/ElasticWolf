@@ -40,9 +40,13 @@
                     <treecols>
                         <treecol id="route.cidr" label="CIDR" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
+                        <treecol id="route.state" label="State" flex="1" persist="width ordinal hidden sortDirection" />
                         <treecol id="route.gatewayId" label="Gateway" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="route.state" label="State" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="route.instanceId" label="Instance" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="route.networkInterfaceId" label="ENI" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
                     </treecols>
                     <treechildren />
                 </tree>

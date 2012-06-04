@@ -47,8 +47,8 @@ var ew_SubnetsTreeView = {
         if (subnet == null) return;
         ew_SubnetRoutesTreeView.display(subnet.routes);
         ew_SubnetAclRulesTreeView.display(subnet.rules);
-        ew_RouteTablesTreeView.select({ id: subnet.route });
-        ew_NetworkAclsTreeView.select({ id: subnet.acl });
+        ew_RouteTablesTreeView.select({ id: subnet.tableId });
+        ew_NetworkAclsTreeView.select({ id: subnet.aclId });
         ew_NetworkAclAssociationsTreeView.select({ subnetId: subnet.id }, ['subnetId'])
         ew_RouteAssociationsTreeView.select({ subnetId: subnet.id }, ['subnetId'])
     },
@@ -135,7 +135,7 @@ ew_SubnetsTreeView.__proto__ = TreeView;
 ew_SubnetsTreeView.register();
 
 var ew_SubnetRoutesTreeView = {
-   COLNAMES : [ "route.cidr", "route.gatewayId", "route.state" ],
+   COLNAMES : [ "route.cidr", "route.gatewayId", "route.instanceId", "route.networkInterfaceId", "route.state" ],
 };
 ew_SubnetRoutesTreeView.__proto__ = TreeView;
 

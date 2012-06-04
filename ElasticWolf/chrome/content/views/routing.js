@@ -42,38 +42,25 @@ var ew_RouteTablesTreeView = {
         var me = this;
         ew_session.controller.deleteRouteTable(table.id, function() { me.refresh() });
     },
-
 };
 ew_RouteTablesTreeView.__proto__ = TreeView;
 ew_RouteTablesTreeView.register();
 
 var ew_RoutesTreeView = {
-    COLNAMES : [ "route.cidr", "route.gatewayId", "route.state" ],
+    COLNAMES : [ "route.cidr", "route.state", "route.gatewayId", "route.instanceId", "route.networkInterfaceId",  ],
 
     createRoute : function()
     {
         var table = ew_RouteTablesTreeView.getSelected();
-        if (!table) {
-            alert("Please, select route table");
-            return;
-        }
-        var gwList = []
-        var gws = ew_session.model.getInternetGateways();
-        for (var i in gws) {
-            if (gws[i].vpcId == table.vpcId) {
-                gwList.push({ text : gws[i].toString(), id : gws[i].id });
-            }
-        }
-        if (gwList.length == 0) {
-            alert("VPC " + table.vpcId + " does not have Internet Gateways")
-            return;
-        }
+        if (!table) return;
+        var gws = ew_session.model.getInternetGateways('vpcId', table.vpcId);
+        var instances = ew_session.model.getInstances('vpcId', table.vpcId);
+        var enis = ew_session.model.getNetworkInterfaces('vpcId', table.vpcId);
 
-        var retVal = { ok : null, cidr : null, gatewayId : null, gws : gwList }
+        var retVal = { ok: false, title: table.toString(), gws : gws, instances: instances, enis: enis }
         window.openDialog("chrome://ew/content/dialogs/create_route.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
         if (retVal.ok) {
-            var me = this;
-            ew_session.controller.createRoute(table.id, retVal.cidr, retVal.gatewayId, function() { ew_RouteTablesTreeView.refresh(true); });
+            ew_session.controller.createRoute(table.id, retVal.cidr, retVal.gatewayId, retVal.instanceId, retVal.networkInterfaceId, function() { ew_RouteTablesTreeView.refresh(true); });
         }
     },
 
@@ -81,9 +68,8 @@ var ew_RoutesTreeView = {
     {
         var item = this.getSelected();
         if (!item || !confirm("Delete route  " + item.cidr + "?")) return;
-        var me = this;
-        ew_session.controller.deleteRoute(item.tableId, item.cidr, function() { ew_RouteTablesTreeView.refresh();});
-    }
+        ew_session.controller.deleteRoute(item.tableId, item.cidr, function() {ew_RouteTablesTreeView.refresh(true); });
+    },
 };
 ew_RoutesTreeView.__proto__ = TreeView;
 
@@ -106,25 +92,15 @@ var ew_RouteAssociationsTreeView = {
         if (rc < 0) {
             return;
         }
-        var me = this;
-        var wrap = function()
-        {
-            ew_RouteTablesTreeView.refresh();
-        }
-        ew_session.controller.associateRouteTable(table.id, subnets[rc].id, wrap);
+        ew_session.controller.associateRouteTable(table.id, subnets[rc].id, function() { ew_RouteTablesTreeView.refresh(); });
     },
 
     deleteAssociation : function()
     {
         var item = this.getSelected();
         if (!item || !confirm("Delete route association " + item.id + ":" + item.subnetId + "?")) return;
-        var me = this;
-        var wrap = function()
-        {
-            ew_RouteTablesTreeView.refresh();
-        }
-        ew_session.controller.disassociateRouteTable(item.id, wrap);
-    }
+        ew_session.controller.disassociateRouteTable(item.id, function() { ew_RouteTablesTreeView.refresh(); });
+    },
 };
 ew_RouteAssociationsTreeView.__proto__ = TreeView;
 
@@ -178,8 +154,7 @@ var ew_InternetGatewayTreeView = {
         if (!ew_session.promptYesNo("Confirm", "Detach Internet Gateway " + igw.id + " from " + igw.vpcId + "?")) return;
         var me = this;
         ew_session.controller.detachInternetGateway(igw.id, igw.vpcId, function() {me.refresh()});
-    }
-
+    },
 };
 ew_InternetGatewayTreeView.__proto__ = TreeView;
 ew_InternetGatewayTreeView.register();

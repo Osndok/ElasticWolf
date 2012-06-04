@@ -1,7 +1,12 @@
 var ew_toolbar = {
     // Order of te tabs should match order of tabpanels
-    tabs: [ { tab: "ew.tabs.credential",    views: [ { id: "ew.credentials.view", view: ew_CredentialsTreeView } ] },
+    tabs: [
+            { tab: "ew.tabs.prefs",         views: [ { view: ew_PrefsView } ] },
+
+            { tab: "ew.tabs.credential",    views: [ { id: "ew.credentials.view", view: ew_CredentialsTreeView } ] },
+
             { tab: "ew.tabs.endpoint",      views: [ { id: "ew.endpoints.view", view: ew_EndpointsTreeView } ] },
+
             { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView } ], },
 
             { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
@@ -76,7 +81,10 @@ var ew_toolbar = {
     init: function() {
         for (var i in this.tabs) {
             for (var v in this.tabs[i].views) {
-                $(this.tabs[i].views[v].id).view = this.tabs[i].views[v].view;
+                var view = $(this.tabs[i].views[v].id);
+                if (view) {
+                    view.view = this.tabs[i].views[v].view;
+                }
             }
         }
     },
@@ -96,9 +104,15 @@ var ew_toolbar = {
             if (val == id) {
                 tree.currentIndex = i;
                 tree.view.selection.select(i);
+                this.current = id;
+                debug('toolbar selected ' + id)
                 break;
             }
         }
+    },
+
+    getCurrent: function() {
+        return this.get(this.current);
     },
 
     getSelected: function()
@@ -125,10 +139,10 @@ var ew_toolbar = {
     update: function() {
         var tree = $('ew.toolbar')
         var cred = ew_session.getActiveCredentials();
-        tree.view.setCellText(1, tree.columns.getFirstColumn(), cred ? 'Account: ' + cred.name : "Manage Credentials");
+        tree.view.setCellText(2, tree.columns.getFirstColumn(), cred ? 'Account: ' + cred.name : "Manage Credentials");
 
         var endpoint = ew_session.getActiveEndpoint();
-        tree.view.setCellText(2, tree.columns.getFirstColumn(), endpoint ? 'Endpoint: ' + endpoint.name : "Manage Endpoints");
+        tree.view.setCellText(3, tree.columns.getFirstColumn(), endpoint ? 'Endpoint: ' + endpoint.name : "Manage Endpoints");
     },
 
 };

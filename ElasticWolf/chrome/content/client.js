@@ -14,7 +14,7 @@ var ew_client = {
 
     VERSION: "2.0",
     NAME: 'ElasticWolf',
-    API_VERSION : '2011-12-15',
+    EC2_API_VERSION : '2012-05-01',
     ELB_API_VERSION : '2011-11-15',
     IAM_API_VERSION : '2010-05-08',
     APP_SITE: 'https://github.com',
@@ -82,7 +82,7 @@ var ew_client = {
     getNsResolver : function() {
         var client = this;
         return function(prefix) {
-            var ns = { 's':  "http://schemas.xmlsoap.org/soap/envelope/", 'ec2': "http://ec2.amazonaws.com/doc/" + client.API_VERSION + "/" };
+            var ns = { 's':  "http://schemas.xmlsoap.org/soap/envelope/", 'ec2': "http://ec2.amazonaws.com/doc/" + client.EC2_API_VERSION + "/" };
             return ns[prefix] || null;
         }
     },
@@ -223,7 +223,7 @@ var ew_client = {
         sigValues.push(new Array("AWSAccessKeyId", this.accessCode));
         sigValues.push(new Array("SignatureVersion", sigVersion ? sigVersion : this.SIG_VERSION));
         sigValues.push(new Array("SignatureMethod", "HmacSHA1"));
-        sigValues.push(new Array("Version", apiVersion ? apiVersion : this.API_VERSION));
+        sigValues.push(new Array("Version", apiVersion ? apiVersion : this.EC2_API_VERSION));
         sigValues.push(new Array("Timestamp", formattedTime));
 
         // Mix in the additional parameters. params must be an Array of tuples as for sigValues above

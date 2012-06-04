@@ -1063,12 +1063,7 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    firstChild : function(node)
-    {
-        return node == null ? "" : node.firstChild.nodeValue
-    },
-
-    unpackReservationInstances : function(resId, ownerId, groups, instanceItems)
+    unpackInstances : function(resId, ownerId, groups, instanceItems)
     {
         var list = new Array();
 
@@ -1097,8 +1092,7 @@ var ew_controller = {
             var availabilityZone = getNodeValueByName(placementElem, "availabilityZone");
             var tenancy = getNodeValueByName(placementElem, "tenancy");
 
-            // This value might not exist, but getNodeValueByName
-            // returns "" in case the element is not defined.
+            // This value might not exist, but getNodeValueByName returns "" in case the element is not defined.
             var platform = getNodeValueByName(instanceItems[j], "platform");
             if (!isWindows(platform)) {
                 var kernelId = getNodeValueByName(instanceItems[j], "kernelId");
@@ -1181,7 +1175,7 @@ var ew_controller = {
             var instanceItems = instancesSet.childNodes;
 
             if (instanceItems) {
-                var resList = this.unpackReservationInstances(resId, ownerId, groups, instanceItems);
+                var resList = this.unpackInstances(resId, ownerId, groups, instanceItems);
                 for ( var j = 0; j < resList.length; j++) {
                     list.push(resList[j]);
                 }
@@ -1304,7 +1298,7 @@ var ew_controller = {
             var instanceItems = instancesSet.childNodes;
 
             if (instanceItems) {
-                var resList = this.unpackReservationInstances(resId, ownerId, groups, instanceItems);
+                var resList = this.unpackInstances(resId, ownerId, groups, instanceItems);
                 list = list.concat(resList);
 
                 for ( var j = 0; j < instanceItems.length; j++) {
@@ -2025,8 +2019,11 @@ var ew_controller = {
                 if (routeItems.item(j).nodeName == '#text') continue;
                 var cidr = getNodeValueByName(routeItems.item(j), "destinationCidrBlock");
                 var gateway = getNodeValueByName(routeItems.item(j), "gatewayId");
+                var instance = getNodeValueByName(routeItems.item(j), "instanceId");
+                var owner = getNodeValueByName(routeItems.item(j), "instanceOwnerId");
+                var eni = getNodeValueByName(routeItems.item(j), "networkInterfaceId");
                 var state = getNodeValueByName(routeItems.item(j), "state");
-                routes.push(new Route(id, cidr, gateway, state));
+                routes.push(new Route(id, cidr, state, gateway, eni, instance, owner));
             }
             var assocSet = items.snapshotItem(i).getElementsByTagName("associationSet")[0];
             var assocItems = assocSet.childNodes;
@@ -2065,9 +2062,21 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    createRoute : function(tableId, cidr, gatewayId, callback)
+    createRoute : function(tableId, cidr, gatewayId, instanceId, networkInterfaceId, callback)
     {
-        ew_client.queryEC2("CreateRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr], ["GatewayId", gatewayId]], this, true, "onCompleteCreateRoute", callback);
+        var params = [];
+        params.push(["RouteTableId", tableId]);
+        params.push(["DestinationCidrBlock", cidr]);
+        if (gatewayId) {
+            params.push(["GatewayId", gatewayId]);
+        }
+        if (instanceId) {
+            params.push(["InstanceId", instanceId]);
+        }
+        if (networkInterfaceId) {
+            params.push(["NetworkInterfaceId", networkInterfaceId]);
+        }
+        ew_client.queryEC2("CreateRoute", params, this, true, "onCompleteCreateRoute", callback);
     },
 
     onCompleteCreateRoute : function(objResponse)
@@ -2444,7 +2453,6 @@ var ew_controller = {
         } else {
             output = "";
         }
-
         if (objResponse.callback) objResponse.callback(instanceId, timestamp, output);
         return output;
     },

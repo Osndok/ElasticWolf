@@ -10,7 +10,6 @@
   <script type="application/x-javascript">
   function updateVersion() {
     document.getElementById("ew.version").innerHTML = window.arguments[0].VERSION;
-    document.getElementById("ew.apiversion").innerHTML = window.arguments[0].API_VERSION;
     document.getElementById("ew.appurl").innerHTML = window.arguments[0].getAppUrl();
     document.getElementById("ew.appname").innerHTML = window.arguments[0].getAppName();
     document.getElementById("ew.appname1").innerHTML = window.arguments[0].getAppName();
@@ -20,7 +19,7 @@
 
   <vbox flex="1">
     <groupbox>
-      <description class="header"><html:span id="ew.appname">APPNAME</html:span> version <html:span id="ew.version">VERSION</html:span> (EC2 API <html:span id="ew.apiversion">API-VERSION</html:span>)</description>
+      <description class="header"><html:span id="ew.appname">APPNAME</html:span> version <html:span id="ew.version">VERSION</html:span></description>
       <description><html:p><html:span id="ew.appname1">APPNAME</html:span> (<html:span id="ew.appurl">URL</html:span>)
                    is a Firefox extension for<html:br /> interacting with Amazon's EC2/S3 web services.
                    The code is fork of ElasticFox-ec2tag<html:br/> extension which was based on original Elasticfox from Amazon</html:p>

@@ -356,11 +356,14 @@ function Permission(type, protocol, fromPort, toPort, srcGroup, cidrIp)
     }
 }
 
-function Route(tableId, cidr, gatewayId, state)
+function Route(tableId, cidr, state, gatewayId, eniId, instanceId, instanceOwner)
 {
     this.tableId = tableId
     this.cidr = cidr
     this.gatewayId = gatewayId
+    this.instanceId = instanceId
+    this.instanceOwnerId = instanceOwner
+    this.networkInterfaceId = eniId
     this.state = state
     this.toString = function() {
         return this.cidr + ew_model.separator + ew_model.modelValue("gatewayId", this.gatewayId);
@@ -881,6 +884,7 @@ var ew_model = {
                       cgwId: this.customerGateways,
                       vgwId: this.vpnGateways,
                       igwId: this.internetGateways,
+                      networkInterfaceId: this.networkInterfaces,
                       groups: this.securityGroups,
                       subnets: this.subnets };
 
@@ -981,7 +985,7 @@ var ew_model = {
         if (this.s3buckets == null) {
             ew_session.controller.listS3Buckets();
         }
-        return this.s3buckets;
+        return this.getObjects(this.s3buckets, arguments);
     },
 
     getS3Bucket: function(bucket) {
@@ -1018,7 +1022,7 @@ var ew_model = {
         if (this.networkInterfaces == null) {
             ew_session.controller.describeNetworkInterfaces();
         }
-        return this.networkInterfaces;
+        return this.getObjects(this.networkInterfaces, arguments);
     },
 
     updateVpcs : function(list)
@@ -1032,7 +1036,7 @@ var ew_model = {
         if (this.vpcs == null) {
             ew_session.controller.describeVpcs();
         }
-        return this.vpcs;
+        return this.getObjects(this.vpns, arguments);
     },
 
     getVpcById: function(id)
@@ -1051,7 +1055,7 @@ var ew_model = {
         if (this.subnets == null) {
             ew_session.controller.describeSubnets();
         }
-        return this.subnets;
+        return this.getObjects(this.subnets, arguments);
     },
 
     getSubnetById: function(id)
@@ -1095,7 +1099,7 @@ var ew_model = {
         if (this.vpnConnections == null) {
             ew_session.controller.describeVpnConnections();
         }
-        return this.vpnConnections;
+        return this.getObjects(this.vpnConnections, arguments);
     },
 
     updateVpnGateways : function(list)
@@ -1109,7 +1113,7 @@ var ew_model = {
         if (this.vpnGateways == null) {
             ew_session.controller.describeVpnGateways();
         }
-        return this.vpnGateways;
+        return this.getObjects(this.vpnGateways, arguments);
     },
 
     updateCustomerGateways : function(list)
@@ -1123,7 +1127,7 @@ var ew_model = {
         if (this.customerGateways == null) {
             ew_session.controller.describeCustomerGateways();
         }
-        return this.customerGateways;
+        return this.getObjects(this.customerGateways, arguments);
     },
 
     updateInternetGateways : function(list)
@@ -1137,7 +1141,7 @@ var ew_model = {
         if (this.internetGateways == null) {
             ew_session.controller.describeInternetGateways();
         }
-        return this.internetGateways;
+        return this.getObjects(this.internetGateways, arguments);
     },
 
     updateRouteTables : function(list)
@@ -1151,7 +1155,7 @@ var ew_model = {
         if (this.routeTables == null) {
             ew_session.controller.describeRouteTables();
         }
-        return this.routeTables;
+        return this.getObjects(this.routeTables, arguments);
     },
 
     updateNetworkAcls : function(list)
@@ -1165,7 +1169,7 @@ var ew_model = {
         if (this.networkAcls == null) {
             ew_session.controller.describeNetworkAcls();
         }
-        return this.networkAcls;
+        return this.getObjects(this.networkAcls, arguments);
     },
 
     getNetworkAclsByVpcId: function(vpcId)
@@ -1196,7 +1200,7 @@ var ew_model = {
         if (this.volumes == null) {
             ew_session.controller.describeVolumes();
         }
-        return this.volumes;
+        return this.getObjects(this.volumes, arguments);
     },
 
     updateVolumes : function(list)
@@ -1245,7 +1249,7 @@ var ew_model = {
         if (this.snapshots == null) {
             ew_session.controller.describeSnapshots();
         }
-        return this.snapshots;
+        return this.getObjects(this.snapshots, arguments);
     },
 
     addToAmiManifestMap : function(ami, map)
@@ -1284,13 +1288,21 @@ var ew_model = {
         if (this.images == null) {
             ew_session.controller.describeImages();
         }
-        return this.images;
+        return this.getObjects(this.images, arguments);
     },
 
     getAmiManifestForId : function(imageId)
     {
         if (imageId == null) return "";
         return this.amiIdManifestMap[imageId] || "";
+    },
+
+    getInstances: function() {
+        if (this.instances == null) {
+            ew_session.controller.describeInstances();
+            return null;
+        }
+        return this.getObjects(this.instances, arguments);
     },
 
     updateInstances : function(list)
@@ -1316,14 +1328,6 @@ var ew_model = {
 
     getInstanceById: function(id) {
         return this.getObjectById(this.instances, id)
-    },
-
-    getInstances: function() {
-        if (this.instances == null) {
-            ew_session.controller.describeInstances();
-            return null;
-        }
-        return this.getObjects(this.instances, arguments);
     },
 
     updateKeypairs : function(list)
@@ -1379,7 +1383,7 @@ var ew_model = {
         if (this.securityGroups == null) {
             ew_session.controller.describeSecurityGroups();
         }
-        return this.securityGroups;
+        return this.getObjects(this.securityGroups, arguments);
     },
 
     getSecurityGroupById: function(id)
@@ -1405,7 +1409,7 @@ var ew_model = {
         if (this.addresses == null) {
             ew_session.controller.describeAddresses();
         }
-        return this.addresses;
+        return this.getObjects(this.addresses, arguments);
     },
 
     updateAddresses : function(list)

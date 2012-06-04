@@ -137,7 +137,7 @@ var ew_session = {
         if (!tab) return;
 
         // Deactivate current tab
-        var curtab = ew_toolbar.getSelected();
+        var curtab = ew_toolbar.getCurrent();
         if (curtab) {
             for (var i in curtab.views) {
                 if (curtab.views[i].view.deactivate) {
@@ -793,6 +793,9 @@ var ew_session = {
 
     savePassword : function(key, secret)
     {
+        if (!secret || secret == "") {
+            return this.deletePassword(key);
+        }
         var loginManager = Components.classes["@mozilla.org/login-manager;1"].getService(Components.interfaces.nsILoginManager);
         var nsLoginInfo = new Components.Constructor("@mozilla.org/login-manager/loginInfo;1", Components.interfaces.nsILoginInfo, "init");
         var login = new nsLoginInfo(this.client.HOST, null, this.client.REALM, key, secret, "", "");
@@ -863,7 +866,6 @@ var ew_session = {
     tagMultipleResources: function(list, attr)
     {
         if (!list) return;
-
         if (!attr) attr = "id";
 
         var tag = this.promptForTag(list[0].tag);
@@ -940,5 +942,4 @@ var ew_session = {
             alert(e);
         }
     },
-
 };

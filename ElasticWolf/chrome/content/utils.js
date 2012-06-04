@@ -229,14 +229,14 @@ var TreeView = {
         }
         return false;
     },
-    refresh : function() {
+    refresh : function(force) {
         ew_model.refreshModel(this.getModelName(this.model));
-        this.refreshAll();
+        this.refreshAll(force);
     },
-    refreshAll: function() {
+    refreshAll: function(force) {
         if (this.model instanceof Array) {
             for (var i = 1; i < this.model.length; i++) {
-                if (ew_model.getModel(this.model[i]) == null) {
+                if (force || ew_model.getModel(this.model[i]) == null) {
                     ew_model.refreshModel(this.model[i]);
                 }
             }

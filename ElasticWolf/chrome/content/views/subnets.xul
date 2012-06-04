@@ -61,6 +61,7 @@
                 <caption label="&ew.captions.routes.label;" />
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox>
+                        <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_RouteTablesTreeView.refresh();" tooltiptext="&ew.refresh.tip;" />
                         <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_RoutesTreeView.createRoute();" tooltiptext="&ew.routes.create.tip;" />
                         <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_RoutesTreeView.deleteRoute();" tooltiptext="&ew.routes.delete.tip;" />
                     </hbox>
@@ -72,6 +73,11 @@
                         <treecol id="route.gatewayId" label="Gateway" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="route.state" label="State" flex="1" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="route.instanceId" label="Instance" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
+                        <treecol id="route.networkInterfaceId" label="ENI" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                        <splitter class="tree-splitter" />
                     </treecols>
                     <treechildren />
                 </tree>

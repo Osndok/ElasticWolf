@@ -2,100 +2,18 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ew.dialog.managetools" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-    buttons="accept,extra1,cancel"
-    ondialogaccept="saveDialog();return true;"
-    ondialogcancel="return true;"
-    ondialogextra1="resetDialog();"
-    buttonlabelextra1="Reset"
-    onload="initDialog();"
-    title="Manage EC2 Tools"
-    buttonlabelcancel="Close">
-
-    <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
-    <script type="application/x-javascript">
-    var session, prefs;
-
-   function initDialog() {
-      session = window.arguments[0];
-      prefs = session.prefs;
-      document.getElementById("ew.tools.version").value = session.client.VERSION;
-      document.getElementById("ew.tools.home").value = prefs.getHome();
-      document.getElementById("ew.tools.profile").value = prefs.getProfileHome();
-      document.getElementById("ew.tools.keyhome").value = prefs.getKeyHome();
-      document.getElementById("ew.tools.ssh.command").value = prefs.getSSHCommand();
-      document.getElementById("ew.tools.ssh.args").value = prefs.getSSHArgs();
-      document.getElementById("ew.tools.ssh.user").value = prefs.getSSHUser();
-      document.getElementById("ew.tools.rdp.command").value = prefs.getRDPCommand();
-      document.getElementById("ew.tools.rdp.args").value = prefs.getRDPArgs();
-      document.getElementById("ew.tools.openssl.command").value = prefs.getOpenSSLCommand();
-      document.getElementById("ew.tools.shell.command").value = prefs.getShellCommand();
-      document.getElementById("ew.tools.path.ec2").value = prefs.getStringPreference(prefs.EC2_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.iam").value = prefs.getStringPreference(prefs.IAM_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.ami").value = prefs.getStringPreference(prefs.AMI_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.autoscale").value = prefs.getStringPreference(prefs.AWS_AUTOSCALING_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.cloudwatch").value = prefs.getStringPreference(prefs.CLOUDWATCH_TOOLS_PATH, "");
-      document.getElementById("ew.tools.path.java").value = prefs.getStringPreference(prefs.JAVA_TOOLS_PATH, prefs.getDefaultJavaHome());
-      document.getElementById("ew.tools.debug").checked = prefs.isDebugEnabled();
-      document.getElementById("ew.tools.http").checked = prefs.isHttpEnabled();
-      document.getElementById("ew.tools.idle.timeout").value = prefs.getIdleTimeout();
-      document.getElementById("ew.tools.idle.action").value = prefs.getIdleAction();
-      document.getElementById("ew.tools.pin").value = session.getPassword('ew.pin');
-      return true;
-   }
-   function resetDialog() {
-      var items = document.getElementsByTagName("textbox")
-      for (var i = 0; i &lt; items.length; i++) {
-          items[i].value = ""
-      }
-   }
-
-   function saveDialog() {
-      prefs.setKeyHome(document.getElementById("ew.tools.keyhome").value.toString());
-      prefs.setSSHCommand(document.getElementById("ew.tools.ssh.command").value.toString());
-      prefs.setSSHArgs(document.getElementById("ew.tools.ssh.args").value.toString());
-      prefs.setSSHUser(document.getElementById("ew.tools.ssh.user").value.toString());
-      prefs.setRDPCommand(document.getElementById("ew.tools.rdp.command").value.toString());
-      prefs.setRDPArgs(document.getElementById("ew.tools.rdp.args").value.toString());
-      prefs.setOpenSSLCommand(document.getElementById("ew.tools.openssl.command").value.toString());
-      prefs.setShellCommand(document.getElementById("ew.tools.shell.command").value.toString());
-      prefs.setStringPreference(prefs.EC2_TOOLS_PATH, document.getElementById("ew.tools.path.ec2").value.toString());
-      prefs.setStringPreference(prefs.IAM_TOOLS_PATH, document.getElementById("ew.tools.path.iam").value.toString());
-      prefs.setStringPreference(prefs.AMI_TOOLS_PATH, document.getElementById("ew.tools.path.ami").value.toString());
-      prefs.setStringPreference(prefs.AWS_AUTOSCALING_TOOLS_PATH, document.getElementById("ew.tools.path.autoscale").value.toString());
-      prefs.setStringPreference(prefs.CLOUDWATCH_TOOLS_PATH, document.getElementById("ew.tools.path.cloudwatch").value.toString());
-      prefs.setStringPreference(prefs.JAVA_TOOLS_PATH, document.getElementById("ew.tools.path.java").value.toString());
-      prefs.setDebugEnabled(document.getElementById("ew.tools.debug").checked);
-      prefs.setHttpEnabled(document.getElementById("ew.tools.http").checked);
-      prefs.setIdleTimeout(parseInt(document.getElementById("ew.tools.idle.timeout").value));
-      prefs.setIdleAction(document.getElementById("ew.tools.idle.action").value.toString());
-      session.setIdleTimer();
-      session.savePassword('ew.pin', document.getElementById("ew.tools.pin").value);
-      return true;
-   }
-
-   function browse(id, forFile) {
-      if (forFile) {
-         var path = session.promptForFile("Choose command:");
-      } else {
-         var path = session.promptForDir("Choose directory where tools are located:");
-      }
-      if (path) {
-          document.getElementById(id).value = path;
-      }
-   }
-    </script>
-
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  <tabpanel id="ew.tabs.prefs" flex="1">
     <vbox flex="1">
-    <tabbox flex="1">
+    <tabbox flex="1" style="padding: 20px;" >
        <tabs id="ew.tools.tabs">
          <tab label="Paths" selected="true" />
          <tab label="Security" selected="true" />
          <tab label="System" selected="true" />
        </tabs>
 
-       <tabpanels flex="1">
-        <tabpanel orient="vertical" flex="1">
+       <tabpanels flex="1" style="padding: 20px;-moz-appearance:tabpanels;" >
+        <tabpanel orient="vertical" flex="1" style="-moz-appearance:tabpanel;" align="center">
         <grid>
             <columns>
                 <column />
@@ -202,7 +120,7 @@
         </grid>
         </tabpanel>
 
-        <tabpanel orient="vertical" flex="1">
+        <tabpanel orient="vertical" flex="1" style="-moz-appearance:tabpanel;" align="center">
         <grid>
             <columns>
                 <column />
@@ -237,7 +155,7 @@
         </grid>
         </tabpanel>
 
-        <tabpanel id="ew.tab.tools" orient="vertical" flex="1">
+        <tabpanel id="ew.tab.tools" orient="vertical" flex="1" style="-moz-appearance:tabpanel;" align="center">
         <grid>
             <columns>
                 <column />
@@ -246,29 +164,38 @@
             <rows>
                 <row>
                    <label control="ew.tools.version" value="Version:" />
-                    <hbox>
-                        <textbox id="ew.tools.version" readonly="true" style="-moz-appearance:none;"/>
-                        <button id="ew.tools.updates" label="Check for Updates" oncommand="session.client.checkForUpdates()" />
-                    </hbox>
+                   <label id="ew.tools.version" />
+                </row>
+                <row>
+                   <label control="ew.tools.version" value="EC2 API Version:" />
+                   <label id="ew.tools.ec2_version" />
+                </row>
+                <row>
+                   <label control="ew.tools.version" value="IAM API Version:" />
+                   <label id="ew.tools.iam_version" />
+                </row>
+                <row>
+                   <label control="ew.tools.version" value="ELB API Version:" />
+                   <label id="ew.tools.elb_version" />
                 </row>
                 <row>
                     <label control="ew.tools.debug" value="Enable debug output:" />
-                    <hbox>
-                        <checkbox id="ew.tools.debug" />
-                    </hbox>
+                    <checkbox id="ew.tools.debug" />
                 </row>
                 <row>
                     <label control="ew.tools.debug" value="Enable HTTP requests:" />
-                    <hbox>
-                        <checkbox id="ew.tools.http" />
-                    </hbox>
+                    <checkbox id="ew.tools.http" />
+                </row>
+                <row>
+                    <label control="ew.tools.debug" value="" />
+                    <button id="ew.tools.updates" label="Check for Updates" oncommand="session.client.checkForUpdates()" />
                 </row>
             </rows>
         </grid>
         </tabpanel>
-
        </tabpanels>
     </tabbox>
     </vbox>
-</dialog>
+  </tabpanel>
+</overlay>
 

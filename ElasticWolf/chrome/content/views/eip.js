@@ -99,8 +99,8 @@ var ew_ElasticIPTreeView = {
             alert("This EIP is not associated")
             return;
         }
-
-        if (confirm("Disassociate "+eip.publicIp+" and instance "+eip.instanceId+"?")) return;
+        if (!confirm("Disassociate "+eip.publicIp+" and instance "+eip.instanceId+"?")) return;
+        var me = this;
         ew_session.controller.disassociateAddress(eip, function() { me.refresh() });
     },
 
