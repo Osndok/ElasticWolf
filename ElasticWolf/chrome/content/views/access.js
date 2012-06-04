@@ -72,7 +72,7 @@ var ew_KeypairTreeView = {
         }
 
         // Delay to avoid "not valid yet" error due to clock drift
-        setTimeout(function() { ew_session.controller.UploadSigningCertificate(body, function() {ew_CertTreeView.refresh();}); }, 30000);
+        setTimeout(function() { ew_session.controller.uploadSigningCertificate(body, function() {ew_CertTreeView.refresh();}); }, 30000);
 
         // Import new public key as new keypair
         var file = ew_prefs.getPublicKeyFile(name);

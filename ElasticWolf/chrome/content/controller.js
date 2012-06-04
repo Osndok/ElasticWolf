@@ -1273,9 +1273,7 @@ var ew_controller = {
             var instanceItems = instancesSet.getElementsByTagName("item");
             for ( var j = 0; j < instanceItems.length; j++) {
                 var instanceId = getNodeValueByName(instanceItems[j], "instanceId");
-                list.push({
-                    id : instanceId
-                });
+                list.push({ id : instanceId });
             }
         }
 
@@ -1311,11 +1309,9 @@ var ew_controller = {
 
                 for ( var j = 0; j < instanceItems.length; j++) {
                     var instanceItem = instanceItems[j];
-
                     if (instanceItem.nodeName == '#text') {
                         continue;
                     }
-
                     this.walkTagSet(instanceItem, "instanceId", tags);
                 }
             }
@@ -1345,44 +1341,31 @@ var ew_controller = {
                     tagSetItemValue = tagSetItemValue.replace(/"/g, '""');
                     tagSetItemValue = '"' + tagSetItemValue + '"';
                 }
-
                 var keyValue = tagSetItemKey + ":" + tagSetItemValue;
-
                 if (tagSetItemKey == "Name") {
                     nameTag = keyValue;
                 } else {
                     tagArray.push(keyValue);
                 }
             }
-
             tagArray.sort();
-
             if (nameTag) {
                 tagArray.unshift(nameTag);
             }
-
             tags[instanceId] = tagArray.join(", ");
         }
     },
 
     addResourceTags : function(list, resourceType, attribute)
     {
-        if (!list || list.length == 0) {
-            return;
-        }
+        if (!list || list.length == 0) return;
 
         var tags = ew_session.getResourceTags(resourceType);
-
-        if (!tags) {
-            return;
-        }
-
+        if (!tags) return;
         var new_tags = ew_prefs.getEmptyWrappedMap();
-        var res = null;
-        var tag = null;
         for ( var i in list) {
-            res = list[i];
-            tag = tags.get(res[attribute]);
+            var res = list[i];
+            var tag = tags.get(res[attribute]);
             if (tag && tag.length) {
                 res.tag = unescape(tag);
                 new_tags.put(res[attribute], escape(res.tag));
@@ -1394,19 +1377,10 @@ var ew_controller = {
 
     addEC2Tag : function(list, attribute, tags)
     {
-        if (!list || list.length == 0) {
-            return;
-        }
-
-        if (!tags) {
-            return;
-        }
-
-        var res = null;
-        var tag = null;
+        if (!list || list.length == 0 || !tags) return;
         for ( var i in list) {
-            res = list[i];
-            tag = tags[res[attribute]];
+            var res = list[i];
+            var tag = tags[res[attribute]];
             if (tag && tag.length) {
                 res.tag = tag
                 __addNameTagToModel__(tag, res);
@@ -2006,7 +1980,7 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(list);
     },
 
-    UploadSigningCertificate : function(body, callback)
+    uploadSigningCertificate : function(body, callback)
     {
         ew_client.queryIAM("UploadSigningCertificate", [ [ "CertificateBody", body ] ], this, true, "onCompleteUploadSigningCertificate", callback);
     },
@@ -2020,7 +1994,7 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(id);
     },
 
-    DeleteSigningCertificate : function(cert, callback)
+    deleteSigningCertificate : function(cert, callback)
     {
         ew_client.queryIAM("DeleteSigningCertificate", [ [ "CertificateId", cert ] ], this, true, "onCompleteDeleteSigningCertificate", callback);
     },
@@ -2111,7 +2085,7 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    AssociateRouteTable : function(tableId, subnetId, callback)
+    associateRouteTable : function(tableId, subnetId, callback)
     {
         ew_client.queryEC2("AssociateRouteTable", [["RouteTableId", tableId], ["SubnetId", subnetId]], this, true, "onCompleteAssociateRouteTable", callback);
     },
@@ -2121,7 +2095,7 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    DisassociateRouteTable : function(assocId, callback)
+    disassociateRouteTable : function(assocId, callback)
     {
         ew_client.queryEC2("DisassociateRouteTable", [["AssociationId", assocId]], this, true, "onCompleteDisassociateRouteTable", callback);
     },
@@ -2163,15 +2137,16 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
+    modifyNetworkInterfaceAttribute : function (id, name, value, callback)
+    {
+        ew_client.queryEC2("ModifyNetworkInterfaceAttribute", [ ["NetworkInterfaceId", id], [name + ".Value", value] ], this, true, "onCompleteModifyNetworkInterfaceAttributes", callback);
+    },
+
     modifyNetworkInterfaceAttributes : function (id, attributes, callback)
     {
-        var params = [];
-        params.push(["NetworkInterfaceId", id]);
-
-        for (var i = 0; i < attributes.length; i++) {
-            var name = attributes[i][0];
-            var value = attributes[i][1];
-            params.push([name, value]);
+        var params = [ ["NetworkInterfaceId", id] ];
+        for (var i in attributes) {
+            params.push(attributes[i]);
         }
 
         ew_client.queryEC2("ModifyNetworkInterfaceAttribute", params, this, true, "onCompleteModifyNetworkInterfaceAttributes", callback);
@@ -2350,7 +2325,9 @@ var ew_controller = {
 
     createSecurityGroup : function(name, desc, vpcId, callback)
     {
-        var params = [ [ "GroupName", name ], [ "GroupDescription", desc ] ];
+        var params = [];
+        params.push([ "GroupName", name ]);
+        params.push([ "GroupDescription", desc ]);
         if (vpcId && vpcId != "") {
             params.push([ "VpcId", vpcId ])
         }
@@ -2634,12 +2611,12 @@ var ew_controller = {
                 var Target = getNodeValueByName(HealthCheck[k], "Target");
             }
 
-            var azone = new Array();
+            var azones = new Array();
             var AvailabilityZones = items[i].getElementsByTagName("AvailabilityZones");
             for ( var k = 0; k < AvailabilityZones.length; k++) {
                 var zone = AvailabilityZones[k].getElementsByTagName("member");
                 for ( var j = 0; j < zone.length; j++) {
-                    azone.push(zone[j].firstChild.nodeValue);
+                    azones.push(zone[j].firstChild.nodeValue);
                 }
             }
 
@@ -2655,12 +2632,33 @@ var ew_controller = {
                 var CPolicyName = getNodeValueByName(LBCookieStickinessPolicies[k], "PolicyName");
             }
 
-            if (LoadBalancerName != '' && CreatedTime != '') {
-                list.push(new LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, azone, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName));
+            var securityGroups = items[i].getElementsByTagName("SecurityGroups");
+            var groupList = [];
+
+            if (securityGroups[0] && securityGroups[0].childNodes.length > 0) {
+                var securityGroupMembers = securityGroups[0].getElementsByTagName("member");
+                for ( var k = 0; k < securityGroupMembers.length; k++) {
+                    groupList.push(securityGroupMembers[k].firstChild.nodeValue);
+                }
             }
+
+            var vpcId = getNodeValueByName(items[i], "VPCId");
+            var subnets = items[i].getElementsByTagName("Subnets");
+            var subnetList = [];
+
+            if (subnets[0] && subnets[0].childNodes.length > 0) {
+                var subnetMembers = subnets[0].getElementsByTagName("member");
+                for ( var k = 0; k < subnetMembers.length; k++) {
+                    subnetList.push(subnetMembers[k].firstChild.nodeValue);
+                }
+            }
+
+            if (LoadBalancerName != '' && CreatedTime != '') {
+                list.push(new LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, azones, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName, vpcId, subnetList, groupList));
+            }
+            ew_model.updateLoadBalancers(list);
+            if (objResponse.callback) objResponse.callback(list);
         }
-        ew_model.updateLoadBalancers(list);
-        if (objResponse.callback) objResponse.callback(list);
     },
 
     describeInstanceHealth : function(LoadBalancerName, callback)
@@ -2705,12 +2703,17 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(items);
     },
 
-    CreateLoadBalancer : function(LoadBalancerName, Protocol, elbport, instanceport, Zone, callback)
+    createLoadBalancer : function(LoadBalancerName, Protocol, elbport, instanceport, Zone, subnet, groups, callback)
     {
         var params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
-
         params.push([ "AvailabilityZones.member.1", Zone ]);
+        if (subnet) {
+            params.push(["Subnets.member.1", subnet]);
+            for (var i = 0; i < groups.length; i++) {
+                params.push(["SecurityGroups.member." + (i + 1), groups[i]]);
+            }
+        }
         params.push([ "Listeners.member.Protocol", Protocol ]);
         if (Protocol == "HTTPS") {
             params.push([ "Listeners.member.SSLCertificateId", "arn:aws:iam::322191361670:server-certificate/testCert" ]);
@@ -2727,21 +2730,15 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(items);
     },
 
-    ConfigureHealthCheck : function(LoadBalancerName, pingprotocol, pingport, pingpath, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, callback)
+    configureHealthCheck : function(LoadBalancerName, Target, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, callback)
     {
-        var params = []
-        if (pingprotocol != null) {
-            if (pingprotocol == 'HTTP') {
-                params.push([ "HealthCheck.Target", pingprotocol + ":" + pingport + "/" + pingpath ]);
-            } else {
-                params.push([ "HealthCheck.Target", pingprotocol + ":" + pingport ]);
-            }
-        }
-        if (LoadBalancerName != null) params.push([ "LoadBalancerName", LoadBalancerName ]);
-        if (Interval != null) params.push([ "HealthCheck.Interval", Interval ]);
-        if (Timeout != null) params.push([ "HealthCheck.Timeout", Timeout ]);
-        if (HealthyThreshold != null) params.push([ "HealthCheck.HealthyThreshold", HealthyThreshold ]);
-        if (UnhealthyThreshold != null) params.push([ "HealthCheck.UnhealthyThreshold", UnhealthyThreshold ]);
+        var params = [];
+        params.push([ "LoadBalancerName", LoadBalancerName ]);
+        params.push([ "HealthCheck.Target", Target ]);
+        params.push([ "HealthCheck.Interval", Interval ]);
+        params.push([ "HealthCheck.Timeout", Timeout ]);
+        params.push([ "HealthCheck.HealthyThreshold", HealthyThreshold ]);
+        params.push([ "HealthCheck.UnhealthyThreshold", UnhealthyThreshold ]);
 
         ew_client.queryELB("ConfigureHealthCheck", params, this, true, "onCompleteConfigureHealthCheck", callback);
     },
@@ -2751,14 +2748,16 @@ var ew_controller = {
         var xmlDoc = objResponse.xmlDoc;
         var items = getNodeValueByName(xmlDoc, "HealthCheck");
         if (objResponse.callback) objResponse.callback(items);
-
     },
 
-    RegisterInstancesWithLoadBalancer : function(LoadBalancerName, RegInstance, callback)
+    registerInstancesWithLoadBalancer : function(LoadBalancerName, instances, callback)
     {
-        params = []
+        var params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
-        params.push([ "Instances.member.InstanceId", RegInstance ]);
+        for (var i = 0; i < instances.length; i++) {
+            params.push([ "Instances.member." + (i + 1) + ".InstanceId", instances[i] ]);
+        }
+        debug(params)
         ew_client.queryELB("RegisterInstancesWithLoadBalancer", params, this, true, "onCompleteRegisterInstancesWithLoadBalancer", callback);
     },
 
@@ -2769,12 +2768,13 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(items);
     },
 
-    DeregisterInstancesWithLoadBalancer : function(LoadBalancerName, RegInstance, callback)
+    deregisterInstancesWithLoadBalancer : function(LoadBalancerName, instances, callback)
     {
-        params = []
+        var params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
-        params.push([ "Instances.member.InstanceId", RegInstance ]);
-
+        for (var i = 0; i < instances.length; i++) {
+            params.push([ "Instances.member." + (i + 1) + ".InstanceId", instances[i] ]);
+        }
         ew_client.queryELB("DeregisterInstancesFromLoadBalancer", params, this, true, "onCompleteDeregisterInstancesWithLoadBalancer", callback);
     },
 
@@ -2785,71 +2785,51 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(items);
     },
 
-    Enableazonewithloadbalancer : function(LoadBalancerName, Zone, callback)
-    {
-        params = []
-        params.push([ "LoadBalancerName", LoadBalancerName ]);
-        params.push([ "AvailabilityZones.member.1", Zone ]);
-
-        ew_client.queryELB("EnableAvailabilityZonesForLoadBalancer", params, this, true, "onCompleteenableazonewithloadbalancer", callback);
-    },
-
-    onCompleteenableazonewithloadbalancer : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValueByName(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
-    },
-
-    Disableazonewithloadbalancer : function(LoadBalancerName, Zone, callback)
-    {
-        params = []
-        params.push([ "LoadBalancerName", LoadBalancerName ]);
-        params.push([ "AvailabilityZones.member.1", Zone ]);
-
-        ew_client.queryELB("DisableAvailabilityZonesForLoadBalancer", params, this, true, "onCompletedisableazonewithloadbalancer", callback);
-    },
-
-    onCompletedisableazonewithloadbalancer : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValueByName(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
-    },
-
-    EditHealthCheck : function(LoadBalancerName, Target, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, callback)
+    enableAvailabilityZonesForLoadBalancer : function(LoadBalancerName, Zones, callback)
     {
         var params = []
-        params.push([ "HealthCheck.Target", Target ]);
         params.push([ "LoadBalancerName", LoadBalancerName ]);
-        params.push([ "HealthCheck.Interval", Interval ]);
-        params.push([ "HealthCheck.Timeout", Timeout ]);
-        params.push([ "HealthCheck.HealthyThreshold", HealthyThreshold ]);
-        params.push([ "HealthCheck.UnhealthyThreshold", UnhealthyThreshold ]);
-
-        ew_client.queryELB("ConfigureHealthCheck", params, this, true, "onCompleteEditHealthCheck", callback);
+        for (var i = 0; i < Zones.length; i++) {
+            params.push([ "AvailabilityZones.member." + (i + 1), Zones[i] ]);
+        }
+        ew_client.queryELB("EnableAvailabilityZonesForLoadBalancer", params, this, true, "onCompleteEnableZoneForLoadBalancer", callback);
     },
 
-    onCompleteEditHealthCheck : function(objResponse)
+    onCompleteEnableZoneForLoadBalancer : function(objResponse)
     {
         var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValueByName(xmlDoc, "HealthCheck");
+        var items = getNodeValueByName(xmlDoc, "member");
         if (objResponse.callback) objResponse.callback(items);
-
     },
 
-    CreateAppCookieSP : function(LoadBalancerName, CookieName, callback)
+    disableAvailabilityZonesForLoadBalancer : function(LoadBalancerName, Zones, callback)
+    {
+        params = []
+        params.push([ "LoadBalancerName", LoadBalancerName ]);
+        for (var i = 0 ; i < Zones.length; i++) {
+            params.push([ "AvailabilityZones.member." + (i + 1), Zones[i] ]);
+        }
+        ew_client.queryELB("DisableAvailabilityZonesForLoadBalancer", params, this, true, "onCompletedisableZoneForLoadBalancer", callback);
+    },
+
+    onCompleteDisableZoneForLoadBalancer : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+        var items = getNodeValueByName(xmlDoc, "member");
+        if (objResponse.callback) objResponse.callback(items);
+    },
+
+    createAppCookieStickinessPolicy : function(LoadBalancerName, CookieName, callback)
     {
         var uniqueid = new Date;
         var id = uniqueid.getTime();
 
         var PolicyName = "AWSConsolePolicy-" + id;
-        params = []
+        var params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "CookieName", CookieName ]);
         params.push([ "PolicyName", PolicyName ]);
         ew_client.queryELB("CreateAppCookieStickinessPolicy", params, this, true, "oncompleteCreateAppCookieSP", callback);
-        //no = no + 1;
     },
 
     oncompleteCreateAppCookieSP : function(objResponse)
@@ -2859,13 +2839,13 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(items);
     },
 
-    CreateLBCookieSP : function(LoadBalancerName, CookieExpirationPeriod, callback)
+    createLBCookieStickinessPolicy : function(LoadBalancerName, CookieExpirationPeriod, callback)
     {
         var uniqueid = new Date;
         var id = uniqueid.getTime();
 
         var PolicyName = "AWSConsolePolicy-" + id;
-        params = []
+        var params = []
         params.push([ "CookieExpirationPeriod", CookieExpirationPeriod ]);
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "PolicyName", PolicyName ]);
@@ -2879,9 +2859,9 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(items);
     },
 
-    DeleteLoadBalancerPolicy : function(LoadBalancerName, policy, callback)
+    deleteLoadBalancerPolicy : function(LoadBalancerName, policy, callback)
     {
-        params = []
+        var params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
         params.push([ "PolicyName", policy ]);
@@ -2895,17 +2875,31 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(items);
     },
 
-    uploadservercertificate : function(ServerCertificateName, CertificateBody, PrivateKey, Path, callback)
+    applySecurityGroupsToLoadBalancer : function (loadBalancerName, groups, callback)
     {
-        params = []
+        var params = [ ["LoadBalancerName", loadBalancerName] ];
+        for (var i = 0; i < groups.length; i++) {
+            var group = groups[i];
+            params.push(["SecurityGroups.member." + (i + 1), group]);
+        }
+        ew_client.queryELB("ApplySecurityGroupsToLoadBalancer", params, this, true, "onCompleteApplySecurityGroupsToLoadBalancer", callback);
+    },
+
+    onCompleteApplySecurityGroupsToLoadBalancer : function (objResponse) {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    uploadServerCertificate : function(ServerCertificateName, CertificateBody, PrivateKey, Path, callback)
+    {
+        var params = []
         params.push([ "ServerCertificateName", ServerCertificateName ]);
         params.push([ "CertificateBody", CertificateBody ]);
         params.push([ "PrivateKey", PrivateKey ]);
         if (Path != null) params.push([ "Path", Path ]);
-        ew_client.queryIAM("UploadServerCertificate", params, this, true, "oncompleteuploadserversertificate", callback);
+        ew_client.queryIAM("UploadServerCertificate", params, this, true, "oncompleteUploadServerCertificate", callback);
     },
 
-    oncompleteuploadservercertificate : function(objResponse)
+    oncompleteUploadServerCertificate : function(objResponse)
     {
         var xmlDoc = objResponse.xmlDoc;
         var items = getNodeValueByName(xmlDoc, "ServerCertificateMetadata");
@@ -2984,40 +2978,25 @@ var ew_controller = {
 
     describeInstanceAttribute : function(instanceId, attribute, callback)
     {
-        var params = new Array();
-        params.push([ "InstanceId", instanceId ]);
-        params.push([ "Attribute", attribute ]);
-        ew_client.queryEC2("DescribeInstanceAttribute", params, this, true, "onCompleteDescribeInstanceAttribute", callback);
+        ew_client.queryEC2("DescribeInstanceAttribute", [[ "InstanceId", instanceId ], [ "Attribute", attribute ]], this, true, "onCompleteDescribeInstanceAttribute", callback);
     },
 
     onCompleteDescribeInstanceAttribute : function(objResponse)
     {
         var xmlDoc = objResponse.xmlDoc;
         var items = xmlDoc.evaluate("/ec2:DescribeInstanceAttributeResponse/*", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-
         var value = getNodeValueByName(items.snapshotItem(2), "value");
 
-        if (objResponse.callback) {
-            objResponse.callback(value);
-        }
+        if (objResponse.callback) objResponse.callback(value);
     },
 
-    modifyInstanceAttribute : function(instanceId, attribute, callback)
+    modifyInstanceAttribute : function(instanceId, name, value, callback)
     {
-        var params = new Array();
-        var name = attribute[0];
-        var value = attribute[1];
-
-        params.push([ "InstanceId", instanceId ]);
-        params.push([ name + ".Value", value ]);
-
-        ew_client.queryEC2("ModifyInstanceAttribute", params, this, true, "onCompleteModifyInstanceAttribute", callback);
+        ew_client.queryEC2("ModifyInstanceAttribute", [ [ "InstanceId", instanceId ], [ name + ".Value", value ] ], this, true, "onCompleteModifyInstanceAttribute", callback);
     },
 
     onCompleteModifyInstanceAttribute : function(objResponse)
     {
-        if (objResponse.callback) {
-            objResponse.callback();
-        }
+        if (objResponse.callback) objResponse.callback();
     }
 };

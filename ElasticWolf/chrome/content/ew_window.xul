@@ -143,7 +143,7 @@
          <treeitem><treerow><treecell label="&ew.tabs.igw.label;" value="ew.tabs.igw" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.eip.label;" value="ew.tabs.vpceip" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.eni.label;" value="ew.tabs.eni" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.loadbalancer.label;" value="ew.tabs.loadbalancer" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.loadbalancer.label;" value="ew.tabs.vpcelb" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.vgw.label;" value="ew.tabs.vgw" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.cgw.label;" value="ew.tabs.cgw" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.vpn.label;" value="ew.tabs.vpn" /></treerow></treeitem>

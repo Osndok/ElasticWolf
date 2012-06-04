@@ -5,36 +5,51 @@
 
 <dialog id="ew.dialog.select" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
-    ondialogaccept="return accept();"
+    ondialogaccept="return done();"
     ondialogcancel="return true;"
     onload="init();"
     title="Select">
 
+    <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
+
     <script>
     <![CDATA[
-        function accept() {
-            selected.value = menulist.selectedIndex;
+        function done() {
+            ew_ListBox.done();
+            params.selectedIndex = ew_ListBox.selectedIndex;
+            params.selectedItems = ew_ListBox.selectedItems;
+            params.selectedIndexes = ew_ListBox.selectedIndexes;
             return true;
         }
-
         function init() {
-            document.title = window.arguments[0];
-            document.getElementById("msg").value = window.arguments[1];
-            var list = window.arguments[2];
-            selected = window.arguments[3];
-            menulist = document.getElementById("list");
-            for (var i in list) {
-                menulist.appendItem(list[i]);
-            }
-            menulist.width = window.arguments[4] || 400;
-            menulist.selectedIndex = 0;
+            params = window.arguments[0];
+            document.title = params.title;
+            document.getElementById("msg").value = params.msg;
+            ew_ListBox.session = params.session;
+            ew_ListBox.name = 'list';
+            ew_ListBox.columns = params.columns;
+            ew_ListBox.width = params.width || 400;
+            ew_ListBox.listItems = params.listItems;
+            ew_ListBox.header = params.header || [];
+            ew_ListBox.multiple = params.multiple;
+            ew_ListBox.checkedItems = params.checkedItems;
+            ew_ListBox.init();
         }
     ]]>
     </script>
 
     <vbox flex="1">
       <label id="msg" value="" />
-      <listbox id="list" flex="2" rows="10" />
+      <listbox id="list" flex="2" rows="10" onclick="ew_ListBox.selectionChanged()">
+      <listhead>
+        <listheader label=" " id="list.header0" width="100"/>
+        <listheader label=" " id="list.header1" width="150"/>
+      </listhead>
+      <listcols>
+        <listcol/>
+        <listcol flex="1"/>
+      </listcols>
+      </listbox>
     </vbox>
 </dialog>
 

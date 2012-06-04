@@ -122,7 +122,7 @@ var ew_RouteAssociationsTreeView = {
         {
             ew_RouteTablesTreeView.refresh();
         }
-        ew_session.controller.AssociateRouteTable(table.id, subnets[rc].id, wrap);
+        ew_session.controller.associateRouteTable(table.id, subnets[rc].id, wrap);
     },
 
     deleteAssociation : function()
@@ -134,7 +134,7 @@ var ew_RouteAssociationsTreeView = {
         {
             ew_RouteTablesTreeView.refresh();
         }
-        ew_session.controller.DisassociateRouteTable(item.id, wrap);
+        ew_session.controller.disassociateRouteTable(item.id, wrap);
     }
 };
 ew_RouteAssociationsTreeView.__proto__ = TreeView;

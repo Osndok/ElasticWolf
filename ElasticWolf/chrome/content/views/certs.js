@@ -101,7 +101,7 @@ var ew_CertTreeView = {
             }
             var body = ew_session.generateCertificate();
             if (body) {
-                ew_session.controller.UploadSigningCertificate(body, wrap);
+                ew_session.controller.uploadSigningCertificate(body, wrap);
             } else {
                 alert("Could not generate new X509 certificate")
             }
@@ -115,7 +115,7 @@ var ew_CertTreeView = {
             var file = ew_session.promptForFile("Select the certificate file to upload:")
             if (file) {
                 var body = FileIO.toString(file);
-                ew_session.controller.UploadSigningCertificate(body, wrap);
+                ew_session.controller.uploadSigningCertificate(body, wrap);
             }
         },
 
@@ -129,7 +129,7 @@ var ew_CertTreeView = {
             var wrap = function() {
                 me.refresh();
             }
-            ew_session.controller.DeleteSigningCertificate(item.name, wrap);
+            ew_session.controller.deleteSigningCertificate(item.name, wrap);
         }
 };
 

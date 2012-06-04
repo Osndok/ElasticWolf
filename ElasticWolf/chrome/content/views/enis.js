@@ -10,18 +10,38 @@ var ew_NetworkInterfacesTreeView = {
 
     viewDetails : function(event)
     {
-        var item = this.getSelected();
-        if (item == null) return;
-        //window.openDialog("chrome://ew/content/dialogs/details_eni.xul", null, "chrome,centerscreen,modal,resizable", item);
+        var eni = this.getSelected();
+        if (eni == null) return;
+        var rc = { ok: false, title: "Update ENI, press OK to update ENI attributes" };
+        for (var p in eni) {
+            rc[p] = eni[p];
+        }
+        window.openDialog("chrome://ew/content/dialogs/details_eni.xul", null, "chrome,centerscreen,modal,resizable", ew_session, rc);
+        if (rc.ok) {
+            var me = this;
+            if (eni.sourceDestCheck != rc.sourceDestCheck) {
+                ew_session.controller.modifyNetworkInterfaceAttribute(eni.id, "SourceDestCheck", rc.SourceDestCheck, function() { me.refresh(); });
+            }
+            if (eni.descr != rc.descr) {
+                ew_session.controller.modifyNetworkInterfaceAttribute(eni.id, "Description", rc.descr, function() { me.refresh(); });
+            }
+            if (eni.groups.toString() != rc.groups.toString()) {
+                var attrs = [];
+                for (var i in rc.groups) {
+                    attrs.push(['SecurityGroupId.' + (i + 1), rc.groups[i]]);
+                }
+                ew_session.controller.modifyNetworkInterfaceAttributes(eni.id, attrs, function() { me.refresh(); });
+            }
+        }
     },
 
     createInterface : function()
     {
-        var rc = {ok:false};
-        openDialog('chrome://ew/content/dialogs/create_eni.xul',null,'chrome,centerscreen,modal,resizable', ew_session, rc);
+        var rc = { ok: false, title: "Create ENI" };
+        openDialog('chrome://ew/content/dialogs/details_eni.xul',null,'chrome,centerscreen,modal,resizable', ew_session, rc);
         if (rc.ok) {
             var me = this;
-            ew_session.controller.createNetworkInterface(rc.subnetId, rc.ip, rc.descr, rc.groups, function() { me.refresh(); });
+            ew_session.controller.createNetworkInterface(rc.subnetId, rc.privateIpAddress, rc.descr, rc.groups, function() { me.refresh(); });
         }
     },
 

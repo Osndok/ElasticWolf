@@ -3,11 +3,12 @@
 <!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
 <dialog id="ew.dialog.loadbalancer.detail" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	onload="init();" ondialogaccept="return true;" title="&ew.dialog.title.loadbalancer_details;">
+    onload="init();" ondialogaccept="return true;" title="&ew.dialog.title.loadbalancer_details;">
 
-	<script type="application/x-javascript">
+    <script type="application/x-javascript">
      function init() {
-        var loadbalancer = window.arguments[0];
+        var session = window.arguments[0];
+        var loadbalancer = window.arguments[1];
         document.getElementById("ew.loadbalancer.LoadBalancerName").value = loadbalancer.LoadBalancerName;
         document.getElementById("ew.loadbalancer.CreatedTime").value = loadbalancer.CreatedTime;
         document.getElementById("ew.loadbalancer.DNSName").value = loadbalancer.DNSName;
@@ -20,74 +21,88 @@
         document.getElementById("ew.loadbalancer.UnhealthyThreshold").value = loadbalancer.UnhealthyThreshold;
         document.getElementById("ew.loadbalancer.Timeout").value = loadbalancer.Timeout;
         document.getElementById("ew.loadbalancer.Instances").value = loadbalancer.InstanceId;
-        document.getElementById("ew.loadbalancer.zone").value = loadbalancer.zone;
+        document.getElementById("ew.loadbalancer.zone").value = loadbalancer.zones;
+        document.getElementById("ec2ui.loadbalancer.vpcId").value = session.model.modelValue('vpcId', loadbalancer.vpcId);
+        document.getElementById("ec2ui.loadbalancer.subnets").value = session.model.modelValue('subnets', loadbalancer.subnets);
+        document.getElementById("ec2ui.loadbalancer.groups").value = session.model.modelValue('groups', loadbalancer.groups);
     }
-	</script>
-	<script type="application/x-javascript" src="chrome://ew/content/model.js" />
+    </script>
+    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
 
-	<vbox flex="1">
-		<grid flex="1">
-			<columns>
-				<column />
-				<column />
-				<column />
-                                <column />
-			</columns>
-			<rows>
-				<row>
-					<label control="ew.loadbalancer.LoadBalancerName" value="&ew.loadbalancerview.Name.label;" />
-					<textbox id="ew.loadbalancer.LoadBalancerName" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ew.loadbalancer.CreatedTime" value="&ew.loadbalancerview.creationtime.label;" />
-					<textbox id="ew.loadbalancer.CreatedTime" size="40" readonly="true" />
-				</row>
+    <vbox flex="1">
+        <grid flex="1">
+            <columns>
+                <column />
+                <column />
+                <column />
+                <column />
+            </columns>
+            <rows>
+                <row>
+                    <label control="ew.loadbalancer.LoadBalancerName" value="&ew.loadbalancerview.Name.label;" />
+                    <textbox id="ew.loadbalancer.LoadBalancerName" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.CreatedTime" value="&ew.loadbalancerview.creationtime.label;" />
+                    <textbox id="ew.loadbalancer.CreatedTime" size="40" readonly="true" />
+                </row>
                                 <row>
-					<label control="ew.loadbalancer.DNSName" value="&ew.loadbalancerview.dnsname.label;" />
-					<textbox id="ew.loadbalancer.DNSName" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ew.loadbalancer.Protocol" value="&ew.loadbalancerview.protocol.label;" />
-					<textbox id="ew.loadbalancer.Protocol" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ew.loadbalancer.LoadBalancerPort" value="&ew.loadbalancerview.lbport.label;" />
-					<textbox id="ew.loadbalancer.LoadBalancerPort" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ew.loadbalancer.InstancePort" value="&ew.loadbalancerview.iport.label;" />
-					<textbox id="ew.loadbalancer.InstancePort" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ew.loadbalancer.Interval" value="&ew.loadbalancerview.interval.label;" />
-					<textbox id="ew.loadbalancer.Interval" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ew.loadbalancer.Target" value="&ew.loadbalancerview.target.label;" />
-					<textbox id="ew.loadbalancer.Target" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ew.loadbalancer.HealthyThreshold" value="&ew.loadbalancerview.HealthyThreshold.label;" />
-					<textbox id="ew.loadbalancer.HealthyThreshold" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ew.loadbalancer.UnhealthyThreshold" value="&ew.loadbalancerview.UnhealthyThreshold.label;" />
-					<textbox id="ew.loadbalancer.UnhealthyThreshold" size="40" readonly="true" />
-				</row>
-				<row>
-					<label control="ew.loadbalancer.Timeout" value="&ew.loadbalancerview.Timeout.label;" />
-					<textbox id="ew.loadbalancer.Timeout" size="40" readonly="true" />
-				</row>
-                                <row>
-					<label control="ew.loadbalancer.Instances" value="&ew.loadbalancerview.Instances.label;" />
-					<textbox id="ew.loadbalancer.Instances" size="40" readonly="true" />
-				</row>
-                                 <row>
-					<label control="ew.loadbalancer.zone" value="&ew.loadbalancerview.AvailabilityZones.label;" />
-					<textbox id="ew.loadbalancer.zone" size="40" readonly="true" />
-				</row>
-
-			</rows>
-		</grid>
-	</vbox>
+                    <label control="ew.loadbalancer.DNSName" value="&ew.loadbalancerview.dnsname.label;" />
+                    <textbox id="ew.loadbalancer.DNSName" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.Protocol" value="&ew.loadbalancerview.protocol.label;" />
+                    <textbox id="ew.loadbalancer.Protocol" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.LoadBalancerPort" value="&ew.loadbalancerview.lbport.label;" />
+                    <textbox id="ew.loadbalancer.LoadBalancerPort" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.InstancePort" value="&ew.loadbalancerview.iport.label;" />
+                    <textbox id="ew.loadbalancer.InstancePort" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.Interval" value="&ew.loadbalancerview.interval.label;" />
+                    <textbox id="ew.loadbalancer.Interval" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.Target" value="&ew.loadbalancerview.target.label;" />
+                    <textbox id="ew.loadbalancer.Target" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.HealthyThreshold" value="&ew.loadbalancerview.HealthyThreshold.label;" />
+                    <textbox id="ew.loadbalancer.HealthyThreshold" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.UnhealthyThreshold" value="&ew.loadbalancerview.UnhealthyThreshold.label;" />
+                    <textbox id="ew.loadbalancer.UnhealthyThreshold" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.Timeout" value="&ew.loadbalancerview.Timeout.label;" />
+                    <textbox id="ew.loadbalancer.Timeout" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.Instances" value="&ew.loadbalancerview.Instances.label;" />
+                    <textbox id="ew.loadbalancer.Instances" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ew.loadbalancer.zone" value="&ew.loadbalancerview.AvailabilityZones.label;" />
+                    <textbox id="ew.loadbalancer.zone" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ec2ui.loadbalancer.vpcId" value="VPC" />
+                    <textbox id="ec2ui.loadbalancer.vpcId" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ec2ui.loadbalancer.subnets" value="Subnets" />
+                    <textbox id="ec2ui.loadbalancer.subnets" size="40" readonly="true" />
+                </row>
+                <row>
+                    <label control="ec2ui.loadbalancer.groups" value="Security Groups" />
+                    <textbox id="ec2ui.loadbalancer.groups" size="40" readonly="true" />
+                </row>
+            </rows>
+        </grid>
+    </vbox>
 </dialog>

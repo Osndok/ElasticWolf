@@ -3,12 +3,13 @@
 <!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
 <dialog id="ew.dialog.newinstances" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  buttons="accept,cancel" ondialogaccept="return launch();" ondialogcancel="return true;"
-  onload="init();" title="&ew.dialog.title.Configure_Healthckeck;" buttonlabelaccept="&ew.dialog.button.accept.Configure.label;">
+  buttons="accept,cancel"
+  ondialogaccept="return launch();"
+  ondialogcancel="return true;"
+  onload="init();"
+  title="&ew.dialog.title.Configure_Healthckeck;"
+  buttonlabelaccept="&ew.dialog.button.accept.Configure.label;">
 
-  <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/base64.js" />
   <script>
     function launch() {
         this.retVal.LoadBalancerName = document.getElementById("ew.loadbalancer.LoadBalancerName").value.trim();
@@ -23,8 +24,7 @@
 
     function init() {
         var loadbalancer = window.arguments[0];
-        this.ew_session = window.arguments[1];
-        this.retVal = window.arguments[2];
+        this.retVal = window.arguments[1];
         document.getElementById("ew.loadbalancer.LoadBalancerName").value = loadbalancer.LoadBalancerName;
         document.getElementById("ew.loadbalancer.target").value = loadbalancer.Target;
         document.getElementById("ew.loadbalancer.timeout").value = loadbalancer.Timeout;

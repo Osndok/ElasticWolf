@@ -336,6 +336,115 @@ var TreeView = {
     }
 };
 
+var ew_ListBox = {
+    header: [],
+    name: null,
+    columns: null,
+    multiple: false,
+    width: 400,
+    listItems: [],
+    checkedItems: [],
+    selectedIndex: -1,
+    selectedIndexes: [],
+    selectedItems: [],
+    session: null,
+
+    done: function()
+    {
+        var list = $(this.name);
+        this.selectedIndex = list.selectedIndex;
+        if (this.multiple) {
+            for (var i in this.listItems) {
+                var cell = $(this.name + '.check' + i);
+                if (cell && cell.hasAttribute('checked', 'true')) {
+                    this.selectedIndexes.push(i);
+                    this.selectedItems.push(this.listItems[i]);
+                }
+            }
+        }
+        return true;
+    },
+
+    init: function() {
+        this.selectedIndex = -1;
+        this.selectedIndexes = [];
+        this.selectedItems = [];
+        var list = $(this.name);
+        list.width = this.width;
+        for (var i in this.listItems) {
+            if (this.listItems[i] == null) continue;
+            if (this.multiple) {
+                var row = document.createElement('listitem');
+                var cell = document.createElement('listcell');
+                cell.setAttribute('type', 'checkbox');
+                cell.setAttribute('id', this.name + '.check' + i);
+                // Check if this item is already selected
+                for (var j in this.checkedItems) {
+                    if (this.listItems[i] == this.checkedItems[j]) {
+                        cell.setAttribute('checked', 'true');
+                        break;
+                    }
+                }
+                row.appendChild(cell);
+                cell = document.createElement('listcell');
+                cell.setAttribute('label', this.toItem(this.listItems[i]));
+                row.appendChild(cell);
+                list.appendChild(row);
+            } else {
+                list.appendItem(this.toItem(this.listItems[i]), i);
+            }
+        }
+        list.selectedIndex = 0;
+        for (var i in this.header) {
+            var hdr = $(this.name + '.header' + i)
+            if (hdr) hdr.setAttribute('label', this.header[i]);
+        }
+    },
+
+    selectionChanged: function() {
+        if (this.multiple) {
+            var list = $(this.name);
+            if (list.currentIndex == -1) return;
+            var cell = $(this.name + '.check' + list.currentIndex);
+            if (!cell) return;
+            var checked = cell.getAttribute('checked');
+            if (!checked || checked == "false") {
+                cell.setAttribute('checked', 'true');
+            } else {
+                cell.setAttribute('checked','false');
+            }
+        }
+    },
+
+    // Convert object into plain text to be used by list box
+    toItem: function(obj)
+    {
+        if (obj == null) return null;
+        if (typeof obj == "object") {
+            var item = "";
+            // Show class name as the firt column for mutli object lists
+            if (this.columns && this.columns.indexOf("__class__") >= 0) {
+                item = className(obj)
+            }
+            if (!this.columns && obj.toString) {
+                item = obj.toString()
+            } else {
+                for (p in obj) {
+                    if (typeof obj[p] == "function") {
+                        if (p != "toString") continue;
+                        item += (item != "" ? this.session.model.separator : "") + obj.toString();
+                    } else
+                    if (!this.columns || this.columns.indexOf(p) >= 0) {
+                        item += (item != "" ? this.session.model.separator : "") + this.session.model.modelValue(p, obj[p]);
+                    }
+                }
+            }
+            return item
+        }
+        return obj;
+    },
+};
+
 var FileIO = {
     localfileCID : '@mozilla.org/file/local;1',
     localfileIID : Components.interfaces.nsILocalFile,
@@ -857,7 +966,7 @@ function debug(msg)
         if (this.consoleService == null) {
             this.consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
         }
-        this.consoleService.logStringMessage("[" + ew_prefs.getAppName() + "] [" + formatDate(new Date(), "yyyy-MM-dd hh:mm:ss") + "] " + msg);
+        this.consoleService.logStringMessage("[ ew ] [" + formatDate(new Date(), "yyyy-MM-dd hh:mm:ss") + "] " + msg);
     }
     catch (e) {
         alert("debug:" + e)

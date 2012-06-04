@@ -15,7 +15,7 @@ var ew_client = {
     VERSION: "2.0",
     NAME: 'ElasticWolf',
     API_VERSION : '2011-12-15',
-    ELB_API_VERSION : '2011-04-05',
+    ELB_API_VERSION : '2011-11-15',
     IAM_API_VERSION : '2010-05-08',
     APP_SITE: 'https://github.com',
     APP_PATH: '/vseryakov/',

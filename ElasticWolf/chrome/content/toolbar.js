@@ -16,20 +16,27 @@ var ew_toolbar = {
 
             { tab: "ew.tabs.vpcgroup",      views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: false }] },
                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }],
-              id: "ew.tabs.securitygroup" },
+              id: "ew.tabs.securitygroup"
+            },
 
             { tab: "ew.tabs.eip",           views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView, filterList: [ { name: "domain", value: "standard" }] }], },
 
             { tab: "ew.tabs.vpceip",        views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView, filterList: [ { name: "domain", value: "vpc" }] }],
-              id: "ew.tabs.eip"  },
+              id: "ew.tabs.eip"
+            },
 
             { tab: "ew.tabs.volume",        views: [ { id: "ew.volumes.view", view: ew_VolumeTreeView }], },
 
             { tab: "ew.tabs.snapshot",      views: [ { id: "ew.snapshots.view", view: ew_SnapshotTreeView }], },
 
-            { tab: "ew.tabs.loadbalancer",  views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView },
-
+            { tab: "ew.tabs.loadbalancer",  views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView, filterList: [ { name: "vpcId", empty: true }] },
                                                      { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }], },
+
+            { tab: "ew.tabs.vpcelb",        views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView, filterList: [ { name: "vpcId", empty: false }] },
+                                                     { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }],
+              id: "ew.tabs.loadbalancer"
+            },
+
             { tab: "ew.tabs.bundletask",    views: [ { id: "ew.bundleTasks.view", view: ew_BundleTasksTreeView } ], },
 
             { tab: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },

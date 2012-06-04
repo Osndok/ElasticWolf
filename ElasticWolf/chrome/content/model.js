@@ -567,12 +567,12 @@ function CustomerGateway(id, ipAddress, bgpAsn, state, type, tag)
     }
 }
 
-function LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, azone, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName)
+function LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, azones, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName, vpcId, subnets, groups)
 {
     this.LoadBalancerName = LoadBalancerName;
     this.CreatedTime = CreatedTime;
     this.DNSName = DNSName;
-    this.InstanceId = Instances;
+    this.Instances = Instances;
     this.Protocol = Protocol;
     this.LoadBalancerPort = LoadBalancerPort;
     this.InstancePort = InstancePort;
@@ -581,11 +581,14 @@ function LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protoco
     this.HealthyThreshold = HealthyThreshold;
     this.UnhealthyThreshold = UnhealthyThreshold;
     this.Target = Target;
-    this.zone = azone;
+    this.zones = azones;
     this.CookieName = CookieName;
     this.APolicyName = APolicyName;
     this.CookieExpirationPeriod = CookieExpirationPeriod;
     this.CPolicyName = CPolicyName;
+    this.vpcId = vpcId
+    this.subnets = subnets
+    this.groups = groups
 
     this.toString = function() {
         return this.LoadBalancerName;
@@ -845,7 +848,8 @@ var ew_model = {
                       cgwId: this.customerGateways,
                       vgwId: this.vpnGateways,
                       igwId: this.internetGateways,
-                      groups: this.securityGroups };
+                      groups: this.securityGroups,
+                      subnets: this.subnets };
 
         var list = idMap[name];
         if (list) {

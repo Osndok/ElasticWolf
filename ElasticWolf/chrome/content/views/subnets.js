@@ -118,7 +118,7 @@ var ew_SubnetsTreeView = {
         if (rc < 0) {
             return;
         }
-        ew_session.controller.AssociateRouteTable(routes[rc].id, subnet.id, function () { ew_SubnetsTreeView.refresh(); });
+        ew_session.controller.associateRouteTable(routes[rc].id, subnet.id, function () { ew_SubnetsTreeView.refresh(); });
     },
 
     disassociateRoute: function()
@@ -127,7 +127,7 @@ var ew_SubnetsTreeView = {
         if (!subnet) return;
 
         if (!confirm("Delete route association " + subnet.routeId + "?")) return;
-        ew_session.controller.DisassociateRouteTable(subnet.routeAssocId, function () { ew_SubnetsTreeView.refresh(); });
+        ew_session.controller.disassociateRouteTable(subnet.routeAssocId, function () { ew_SubnetsTreeView.refresh(); });
 
     },
 };

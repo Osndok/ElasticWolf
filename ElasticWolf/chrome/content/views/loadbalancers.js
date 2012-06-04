@@ -1,10 +1,19 @@
 var ew_LoadbalancerTreeView = {
-    COLNAMES : ['loadbalancer.LoadBalancerName','loadbalancer.CreatedTime','loadbalancer.DNSName','loadbalancer.InstanceId',
+    COLNAMES : ['loadbalancer.LoadBalancerName','loadbalancer.CreatedTime','loadbalancer.DNSName','loadbalancer.Instances',
                 'loadbalancer.Protocol','loadbalancer.LoadBalancerPort','loadbalancer.InstancePort',
                 'loadbalancer.Interval','loadbalancer.Timeout','loadbalancer.HealthyThreshold','loadbalancer.UnhealthyThreshold',
-                'loadbalancer.Target','loadbalancer.zone','loadbalancer.CookieName','loadbalancer.APolicyName',
-                'loadbalancer.CookieExpirationPeriod','loadbalancer.CPolicyName'],
-    model: "loadBalancers",
+                'loadbalancer.Target','loadbalancer.zones','loadbalancer.CookieName','loadbalancer.APolicyName',
+                'loadbalancer.CookieExpirationPeriod','loadbalancer.CPolicyName',
+                'loadbalancer.vpcId','loadbalancer.subnets','loadbalancer.groups'],
+    model: ["loadBalancers", "azones", "instances" ],
+
+    display: function(list)
+    {
+        TreeView.display.call(this, list);
+        if (!list || !list.length) {
+            ew_InstanceHealthTreeView.display([]);
+        }
+    },
 
     selectionChanged : function() {
         var elb = this.getSelected();
@@ -17,157 +26,138 @@ var ew_LoadbalancerTreeView = {
     },
 
     deleteLoadBalancer : function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        if (!confirm("Delete Loadbalancer "+loadbalancer.LoadBalancerName+"?")) return;
+        var elb = this.getSelected();
+        if (elb == null) return;
+        if (!confirm("Delete Loadbalancer "+elb.LoadBalancerName+"?")) return;
         var me = this;
-        ew_session.controller.deleteLoadBalancer(loadbalancer.LoadBalancerName, function () { me.refresh() });
+        ew_session.controller.deleteLoadBalancer(elb.LoadBalancerName, function () { me.refresh() });
     },
 
     viewDetails : function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_loadbalancer.xul", null, "chrome,centerscreen,modal,resizable", loadbalancer);
+        var elb = this.getSelected();
+        if (elb == null) return;
+        window.openDialog("chrome://ew/content/dialogs/details_loadbalancer.xul", null, "chrome,centerscreen,modal,resizable", ew_session, elb);
     },
 
     create: function() {
-        var retVal = {ok:null};
-        window.openDialog("chrome://ew/content/dialogs/create_loadbalancer.xul",null,"chrome,centerscreen,modal,resizable",ew_session,retVal,null);
+        var retVal = {ok:null, vpc: ew_prefs.getCurrentTab(name).match("vpc") };
+        window.openDialog("chrome://ew/content/dialogs/create_loadbalancer.xul",null,"chrome,centerscreen,modal,resizable",ew_session,retVal);
         var me = this;
         if (retVal.ok) {
-            var Zone = retVal.placement;
-            ew_session.controller.CreateLoadBalancer(retVal.LoadBalancerName,retVal.Protocol,retVal.elbport,retVal.instanceport,Zone);
-            ew_session.controller.ConfigureHealthCheck(retVal.LoadBalancerName,retVal.pingprotocol,retVal.pingport,retVal.pingpath,retVal.Interval,retVal.Timeout,retVal.HealthyThreshold,retVal.UnhealthyThreshold);
-            var Instancechk = retVal.Instances;
-            var newStr = Instancechk.substring(",", Instancechk.length-1);
-            var instanceid = new String(newStr);
-            var RegInstance = new Array();
-            RegInstance = instanceid.split(",");
-            for(var a=0;a<RegInstance.length;a++) {
-                ew_session.controller.RegisterInstancesWithLoadBalancer(retVal.LoadBalancerName,RegInstance[a]);
-            }
-            me.refresh();
+            ew_session.controller.createLoadBalancer(retVal.LoadBalancerName,retVal.Protocol,retVal.elbport,retVal.instanceport,retVal.Zone,retVal.subnetId,retVal.groups, function() {
+                ew_session.controller.configureHealthCheck(retVal.LoadBalancerName,retVal.Target,retVal.Interval,retVal.Timeout,retVal.HealthyThreshold,retVal.UnhealthyThreshold, function() {
+                    if (retVal.instances.length > 0) {
+                        ew_session.controller.registerInstancesWithLoadBalancer(retVal.LoadBalancerName, retVal.instances, function() { me.refresh() });
+                    } else {
+                        me.refresh();
+                    }
+                });
+            });
         }
      },
 
      ConfigureHealthCheck: function() {
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
+        var elb = this.getSelected();
+        if (elb == null) return;
         var retVal = {ok:null};
-        window.openDialog("chrome://ew/content/dialogs/configure_healthcheck.xul",null,"chrome,centerscreen,modal,resizable",loadbalancer,ew_session,retVal);
+        window.openDialog("chrome://ew/content/dialogs/configure_healthcheck.xul",null,"chrome,centerscreen,modal,resizable",elb,retVal);
         var me = this;
         if (retVal.ok) {
-            ew_session.controller.EditHealthCheck(loadbalancer.LoadBalancerName,retVal.Target,retVal.Interval,retVal.Timeout,retVal.HealthyThreshold,retVal.UnhealthyThreshold,function() { me.refresh(); });
+            ew_session.controller.configureHealthCheck(elb.LoadBalancerName,retVal.Target,retVal.Interval,retVal.Timeout,retVal.HealthyThreshold,retVal.UnhealthyThreshold,function() { me.refresh(); });
         }
     },
 
     registerinstances : function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        var retVal = {ok:null};
-         window.openDialog("chrome://ew/content/dialogs/register_lbinstances.xul",null,"chrome,centerscreen,modal,resizable",ew_session,retVal,loadbalancer);
-        var me = this;
-        if (retVal.ok) {
-            var Instancechk = retVal.Instances;
-            var newStr = Instancechk.substring(",", Instancechk.length-1);
-            var instanceid = new String(newStr);
-            var RegInstance = new Array();
-            RegInstance = instanceid.split(",");
-            for(var a=0;a<RegInstance.length;a++) {
-                ew_session.controller.RegisterInstancesWithLoadBalancer(retVal.LoadBalancerName,RegInstance[a]);
-            }
-            me.refresh();
+        var elb = this.getSelected();
+        if (elb == null) return;
+        var instances = [];
+        if (elb.vpcId) {
+            instances = ew_model.getInstances('state', 'running', 'vpcId', elb.vpcId);
+        } else {
+            instances = ew_model.getInstances('state', 'running');
         }
+        var list = ew_session.promptList('Register Instances', 'Select instances to register with this load balancer:', instances, null, null, true);
+        if (!list || !list.length) return;
+        var me = this;
+        instances = []
+        for (var i in list) {
+            instances.push(list[i].id)
+        }
+        ew_session.controller.registerInstancesWithLoadBalancer(elb.LoadBalancerName, instances, function() { me.refresh() });
     },
 
     deregisterinstances : function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        var retVal = {ok:null};
-         window.openDialog("chrome://ew/content/dialogs/deregister_lbinstances.xul",null,"chrome,centerscreen,modal,resizable",ew_session,retVal,loadbalancer);
-        var me = this;
-        if (retVal.ok) {
-            var Instancechk = retVal.Instances;
-            var newStr = Instancechk.substring(",", Instancechk.length-1);
-            var instanceid = new String(newStr);
-            var RegInstance = new Array();
-            RegInstance = instanceid.split(",");
-            for(var a=0;a<RegInstance.length;a++) {
-                ew_session.controller.DeregisterInstancesWithLoadBalancer(retVal.LoadBalancerName,RegInstance[a]);
-            }
-            me.refresh();
+        var elb = this.getSelected();
+        if (elb == null) return;
+        var instances = [];
+        for (var  i in elb.Instances) {
+            instances.push(ew_model.getInstanceById(elb.Instances[i]))
         }
+        var list = ew_session.promptList('Deregister Instances', 'Select instances to deregister with this load balancer:', instances, null, null, true);
+        if (!list || !list.length) return;
+        var me = this;
+        instances = []
+        for (var i in list) {
+            instances.push(list[i].id)
+        }
+        ew_session.controller.deregisterInstancesWithLoadBalancer(elb.LoadBalancerName, instances, function() { me.refresh() });
     },
 
-    enableazone : function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        var retVal = {ok:null};
-        window.openDialog("chrome://ew/content/dialogs/enable_lbazone.xul",null,"chrome,centerscreen,modal,resizable",ew_session,retVal,loadbalancer);
-        var me = this;
-        if (retVal.ok) {
-            var Zonechk = retVal.Zone;
-            var newStr = Zonechk.substring(",", Zonechk.length-1);
-            var zones = new String(newStr);
-            var Zone = new Array();
-            Zone = zones.split(",");
-            for(var a=0;a<Zone.length;a++) {
-            ew_session.controller.Enableazonewithloadbalancer(retVal.LoadBalancerName,Zone[a]);
+    manageZones : function(enable) {
+        var elb = this.getSelected();
+        if (elb == null) return;
+        var zones = ew_model.getAvailabilityZones();
+        var checked = [];
+        if (enable) {
+            for (var i in zones) {
+                if (elb.zones.indexOf(zones[i].name) >= 0) {
+                    checked.push(zones[i]);
+                }
             }
-            me.refresh();
         }
-    },
-
-    disableazone : function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        var retVal = {ok:null};
-        window.openDialog("chrome://ew/content/dialogs/disable_lbazone.xul",null,"chrome,centerscreen,modal,resizable",ew_session,retVal,loadbalancer);
-         var me = this;
-        if (retVal.ok) {
-            var Zonechk = retVal.Zone;
-            var newStr = Zonechk.substring(",", Zonechk.length-1);
-            var zones = new String(newStr);
-            var Zone = new Array();
-            Zone = zones.split(",");
-            for(var a=0;a<Zone.length;a++) {
-                ew_session.controller.Disableazonewithloadbalancer(retVal.LoadBalancerName,Zone[a]);
-            }
-            me.refresh();
+        var list = ew_session.promptList((enable ? "Enable" : "Disable") + 'Availability Zones', 'Select Zones to ' + (enable ? "enable" : "disable") + ' for this load balancer:', zones, null, null, true, checked);
+        if (!list || !list.length) return;
+        var zonelist = []
+        for (var i in list) {
+            zonelist.push(list[i].name);
+        }
+        var me = this;
+        if (enable) {
+            ew_session.controller.enableAvailabilityZonesForLoadBalancer(elb.LoadBalancerName, zonelist, function() { me.refresh() });
+        } else {
+            ew_session.controller.disableAvailabilityZonesForLoadBalancer(elb.LoadBalancerName, zonelist, function() { me.refresh() });
         }
     },
 
     copyToClipBoard : function(fieldName) {
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) {
-            return;
-        }
-        copyToClipboard(loadbalancer[fieldName]);
+        var elb = this.getSelected();
+        if (elb == null) return;
+        copyToClipboard(elb[fieldName]);
     },
 
     disablestickness :function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        if (!confirm("Delete Load balancer" + loadbalancer.LoadBalancerName+"?")) return;
+        var elb = this.getSelected();
+        if (elb == null) return;
+        if (!confirm("Disable stickiness for Load balancer " + elb.LoadBalancerName+"?")) return;
         var me = this;
 
-        if (loadbalancer.APolicyName == ""){
-            var policy =  loadbalancer.CPolicyName;
-            ew_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy, function() { me.refresh(); });
+        if (elb.APolicyName == "") {
+            var policy = elb.CPolicyName;
+            ew_session.controller.DeleteLoadBalancerPolicy(elb.LoadBalancerName,policy, function() { me.refresh(); });
         } else {
-            var policy = loadbalancer.APolicyName;
-            ew_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy, function() { me.refresh(); });
+            var policy = elb.APolicyName;
+            ew_session.controller.DeleteLoadBalancerPolicy(elb.LoadBalancerName,policy, function() { me.refresh(); });
         }
     },
 
     applicationsticknesss :function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        var loadbalancername = loadbalancer.LoadBalancerName;
-        var cname = loadbalancer.CookieName;
-        var policy = loadbalancer.APolicyName;
+        var elb = this.getSelected();
+        if (elb == null) return;
+        var loadbalancername = elb.LoadBalancerName;
+        var cname = elb.CookieName;
+        var policy = elb.APolicyName;
         if (cname){
-            ew_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy);
+            ew_session.controller.DeleteLoadBalancerPolicy(elb.LoadBalancerName,policy);
         }
         var CookieName = prompt("Please provide your application cookie name:");
         if (CookieName == null) return;
@@ -181,13 +171,13 @@ var ew_LoadbalancerTreeView = {
     },
 
     loadbalancerstickness :function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        var loadbalancername = loadbalancer.LoadBalancerName;
-        var policy = loadbalancer.CPolicyName;
-        var CookieExpirationPeriod = loadbalancer.CookieExpirationPeriod;
+        var elb = this.getSelected();
+        if (elb == null) return;
+        var loadbalancername = elb.LoadBalancerName;
+        var policy = elb.CPolicyName;
+        var CookieExpirationPeriod = elb.CookieExpirationPeriod;
         if (CookieExpirationPeriod){
-           ew_session.controller.DeleteLoadBalancerPolicy(loadbalancer.LoadBalancerName,policy);
+           ew_session.controller.DeleteLoadBalancerPolicy(elb.LoadBalancerName,policy);
         }
         var CookieExpirationPeriod = prompt("Please provide your Cookie Expiration Period:");
         if (CookieExpirationPeriod == null) return;
@@ -197,36 +187,45 @@ var ew_LoadbalancerTreeView = {
             alert('Cookie expiration period must be long integer.');
             return;
         }
-
         var me = this;
         ew_session.controller.CreateLBCookieSP(loadbalancername,CookieExpirationPeriod, function() { me.refresh(); });
     },
 
     enableOrDisableItems : function(){
-        var loadbalancer = this.getSelected();
-        if (loadbalancer == null) return;
-        var stickness = loadbalancer.CookieExpirationPeriod;
-        var astickness = loadbalancer.CookieName;
-        var instances = loadbalancer.InstanceId;
-        var zones = loadbalancer.zone;
-        var disableazones = new Array();
-        var Rzone = new String(zones);
-        var zoneArray = new Array();
-        zoneArray = Rzone.split(",");
-
-        var index =  this.selection.currentIndex;
+        var elb = this.getSelected();
+        if (elb == null) return;
         document.getElementById("loadbalancer.tree.contextmenu").disabled = true;
-        document.getElementById("loadbalancer.context.appstickness").disabled = !astickness ? true : false;
-        document.getElementById("loadbalancer.context.lbstickness").disabled = !stickness ? true : false;
-        if (!stickness && !astickness) {
+        document.getElementById("loadbalancer.context.appstickness").disabled = !elb.CookieName ? true : false;
+        document.getElementById("loadbalancer.context.lbstickness").disabled = !elb.CookieExpirationPeriod ? true : false;
+        if (!elb.CookieName && !elb.CookieExpirationPeriod) {
             document.getElementById("loadbalancer.context.disablestickness").disabled = true;
             document.getElementById("loadbalancer.context.lbstickness").disabled = false;
             document.getElementById("loadbalancer.context.appstickness").disabled = false;
         } else {
             document.getElementById("loadbalancer.context.disablestickness").disabled = false;
         }
-        document.getElementById("loadbalancer.context.instances").disabled = instances == "" ? true : false;
-        document.getElementById("loadbalancer.context.zones").disabled = zoneArray.length == 1 ? true : false;
+        document.getElementById("loadbalancer.context.instances").disabled = elb.Instances.length == 0 ? true : false;
+        document.getElementById("loadbalancer.context.disablezones").disabled = elb.zones.length > 1 ? false : true;
+        document.getElementById("loadbalancer.context.changegroups").disabled = elb.subnetId != '' ? true : false;
+    },
+
+    changeSecurityGroup: function() {
+        var elb = this.getSelected();
+        if (!elb) return;
+        if (!elb.vpcId) {
+            alert('Change of a security group is only for VPC.');
+            return;
+        }
+        var groups = ec2ui_model.getSecurityGroupsByVpcId(elb.vpcId);
+        var list = ew_session.promptList('Change Security Groups', 'Select security groups for load balancer:', groups, null, null, true);
+        if (!list || !list.length) return;
+        var me = this;
+        groups = []
+        for (var i in list) {
+            groups.push(list[i].id)
+        }
+        var me = this;
+        ew_session.controller.applySecurityGroupsToLoadBalancer(elb.LoadBalancerName, groups, function() { me.refresh();});
     },
 };
 ew_LoadbalancerTreeView.__proto__ = TreeView;

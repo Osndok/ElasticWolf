@@ -721,38 +721,11 @@ var ew_session = {
         return true
     },
 
-    promptList: function(title, msg, items, columns, width)
+    promptList: function(title, msg, items, columns, width, multiple, checked)
     {
-        var list = []
-        for (var i = 0; i < items.length; i++) {
-            if (typeof items[i] == "object") {
-                var item = "";
-                // Show class name as the firt column for mutli object lists
-                if (columns && columns.indexOf("__class__") >= 0) {
-                    item = className(items[i])
-                }
-                if (!columns && items[i].toString) {
-                    item = items[i].toString()
-                } else {
-                    for (p in items[i]) {
-                        if (typeof items[i][p] == "function") {
-                            if (p != "toString") continue;
-                            item += (item != "" ? ew_model.separator : "") + items[i].toString();
-                        } else
-                        if (!columns || columns.indexOf(p) >= 0) {
-                            item += (item != "" ? ew_model.separator : "") + ew_model.modelValue(p, items[i][p])
-                        }
-                    }
-                }
-                list.push(item)
-            } else {
-                list.push(items[i])
-            }
-        }
-
-        var rc = { value: -1 };
-        window.openDialog("chrome://ew/content/dialogs/select.xul", null, "chrome,centerscreen,modal,resizable", title, msg, list, rc, width);
-        return rc.value
+        var params = { session: ew_session, listItems: items, checkedItems: checked, selectedIndex: -1, selectedItems: [], selectedIndexes: [], columns: columns, width: width, multiple: multiple, title: title, msg: msg };
+        window.openDialog("chrome://ew/content/dialogs/select.xul", null, "chrome,centerscreen,modal,resizable", params);
+        return params.multiple ? params.selectedItems : params.selectedIndex;
     },
 
     promptForFile : function(msg, save, filename)

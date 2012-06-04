@@ -875,9 +875,7 @@ var ew_InstancesTreeView = {
             if (returnValue.result == null) {
                 return;
             }
-
-            var attribute = ['UserData', Base64.encode(returnValue.result)];
-            ew_session.controller.modifyInstanceAttribute(instanceId, attribute);
+            ew_session.controller.modifyInstanceAttribute(instanceId, 'UserData', Base64.encode(returnValue.result));
         });
     },
 
@@ -904,9 +902,7 @@ var ew_InstancesTreeView = {
             if (returnValue.result == null) {
                 return;
             }
-
-            var attribute = ['InstanceType', returnValue.result];
-            ew_session.controller.modifyInstanceAttribute(instanceId, attribute, function() {
+            ew_session.controller.modifyInstanceAttribute(instanceId, 'InstanceType', returnValue.result, function() {
                 ew_InstancesTreeView.refresh();
                 ew_InstancesTreeView.selectByInstanceIds();
             });
@@ -964,7 +960,7 @@ var ew_InstancesTreeView = {
     },
 
     doChangeTerminationProtection : function(instanceId, enable) {
-        ew_session.controller.modifyInstanceAttribute(instanceId, ["DisableApiTermination", enable]);
+        ew_session.controller.modifyInstanceAttribute(instanceId, "DisableApiTermination", enable);
     },
 
     startInstance : function() {

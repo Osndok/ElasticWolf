@@ -4,11 +4,11 @@
 
 <dialog id="ew.dialog.managetools" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,extra1,cancel"
-    ondialogaccept="return saveDialog()"
+    ondialogaccept="saveDialog();return true;"
     ondialogcancel="return true;"
     ondialogextra1="resetDialog();"
     buttonlabelextra1="Reset"
-    onload="return initDialog();"
+    onload="initDialog();"
     title="Manage EC2 Tools"
     buttonlabelcancel="Close">
 

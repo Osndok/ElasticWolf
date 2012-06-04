@@ -14,8 +14,8 @@
               <menuitem oncommand="ew_LoadbalancerTreeView.registerinstances(event);" label="&ew.loadbalancer.contextmenu.registerinstance.label;" />
               <menuitem id="loadbalancer.context.instances" oncommand="ew_LoadbalancerTreeView.deregisterinstances(event);" label="&ew.loadbalancer.contextmenu.deregisterinstance.label;" />
               <menuseparator/>
-              <menuitem oncommand="ew_LoadbalancerTreeView.enableazone(event);" label="&ew.loadbalancer.contextmenu.enableavailability.label;" />
-              <menuitem id="loadbalancer.context.zones" oncommand="ew_LoadbalancerTreeView.disableazone(event);" label="&ew.loadbalancer.contextmenu.disableavailability.label;" />
+              <menuitem oncommand="ew_LoadbalancerTreeView.manageZones(true);" label="&ew.loadbalancer.contextmenu.enableavailability.label;" />
+              <menuitem id="loadbalancer.context.disablezones" oncommand="ew_LoadbalancerTreeView.manageZones(false);" label="&ew.loadbalancer.contextmenu.disableavailability.label;" />
               <menuseparator/>
               <menuitem id="loadbalancer.context.disablestickness" oncommand="ew_LoadbalancerTreeView.disablestickness(event);" label="&ew.loadbalancer.contextmenu.disablestickness.label;" />
               <menuitem id="loadbalancer.context.appstickness" oncommand="ew_LoadbalancerTreeView.applicationsticknesss(event);" label="&ew.loadbalancer.contextmenu.appstickness.label;" />
@@ -23,48 +23,58 @@
               <menuseparator/>
               <menuitem oncommand="ew_LoadbalancerTreeView.ConfigureHealthCheck(event);" label="&ew.loadbalancer.contextmenu.configurehealthcheck.label;" />
               <menuseparator/>
+              <menuitem id="loadbalancer.context.changegroups" oncommand="ew_LoadbalancerTreeView.changeSecurityGroup(event);" label="Change Security Group" />
               <menuitem oncommand="ew_LoadbalancerTreeView.deleteLoadBalancer(event);" label="&ew.loadbalancer.contextmenu.delete.label;" />
           </menupopup>
         </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
         <toolbarbutton image="images/refresh.png" oncommand="ew_LoadbalancerTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
         <toolbarbutton image="images/add.png" tooltiptext="&ew.create.loadbalancer.tip;" oncommand="ew_LoadbalancerTreeView.create();" />
+        <toolbarbutton image="images/delete.png" tooltiptext="&ew.loadbalancer.contextmenu.delete.label;" oncommand="ew_LoadbalancerTreeView.deleteLoadBalancer();" />
+        <toolbarbutton image="images/details.png" tooltiptext="&ew.loadbalancer.contextmenu.viewdetails.label;" oncommand="ew_LoadbalancerTreeView.viewDetails();" />
       </toolbar>
       <tree enableColumnDrag="true" id="ew.loadbalancer.view" flex="1" ondblclick="ew_LoadbalancerTreeView.viewDetails(event)" onselect="ew_LoadbalancerTreeView.selectionChanged(event);">
         <treecols>
           <treecol id="loadbalancer.LoadBalancerName" label="&ew.loadbalancer.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.CreatedTime" label="&ew.loadbalancer.creationtime.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.CreatedTime" label="&ew.loadbalancer.creationtime.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.DNSName" label="&ew.loadbalancer.dnsname.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.DNSName" label="&ew.loadbalancer.dnsname.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.InstanceId" label="&ew.loadbalancer.instances.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.InstanceId" label="&ew.loadbalancer.instances.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.Protocol" label="&ew.loadbalancer.Protocol.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.Protocol" label="&ew.loadbalancer.Protocol.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.LoadBalancerPort" label="&ew.loadbalancer.LoadBalancerPort.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.LoadBalancerPort" label="&ew.loadbalancer.LoadBalancerPort.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.InstancePort" label="&ew.loadbalancer.InstancePort.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.InstancePort" label="&ew.loadbalancer.InstancePort.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.zone" label="&ew.loadbalancer.zone.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.zones" label="&ew.loadbalancer.zone.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.Interval" label="&ew.loadbalancer.Interval.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.Interval" label="&ew.loadbalancer.Interval.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.Timeout" label="&ew.loadbalancer.Timeout.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.Timeout" label="&ew.loadbalancer.Timeout.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.HealthyThreshold" label="&ew.loadbalancer.HealthyThreshold.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.HealthyThreshold" label="&ew.loadbalancer.HealthyThreshold.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.UnhealthyThreshold" label="&ew.loadbalancer.UnhealthyThreshold.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.UnhealthyThreshold" label="&ew.loadbalancer.UnhealthyThreshold.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.Target" label="&ew.loadbalancer.Target.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.Target" label="&ew.loadbalancer.Target.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.CookieName" label="&ew.loadbalancer.Cookie.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.CookieName" label="&ew.loadbalancer.Cookie.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.APolicyName" label="&ew.loadbalancer.APolicy.label;" flex="5" persist="width ordinal hidden sortDirection" hidden="true" />
+          <treecol id="loadbalancer.APolicyName" label="&ew.loadbalancer.APolicy.label;" flex="1" persist="width ordinal hidden sortDirection" hidden="true" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.CookieExpirationPeriod" label="&ew.loadbalancer.LBPolicy.label;" flex="5" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.CookieExpirationPeriod" label="&ew.loadbalancer.LBPolicy.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="loadbalancer.CPolicyName" label="&ew.loadbalancer.CPolicy.label;" flex="5" persist="width ordinal hidden sortDirection" hidden="true" />
+          <treecol id="loadbalancer.CPolicyName" label="&ew.loadbalancer.CPolicy.label;" flex="1" persist="width ordinal hidden sortDirection" hidden="true" />
+          <splitter class="tree-splitter" />
+          <treecol id="loadbalancer.vpcId" label="VPC" flex="1" persist="width ordinal hidden sortDirection" hidden="true" />
+          <splitter class="tree-splitter" />
+          <treecol id="loadbalancer.subnets" label="Subnets" flex="1" persist="width ordinal hidden sortDirection" hidden="true" />
+          <splitter class="tree-splitter" />
+          <treecol id="loadbalancer.groups" label="Groups" flex="1" persist="width ordinal hidden sortDirection" hidden="true" />
+          <splitter class="tree-splitter" />
          </treecols>
         <treechildren id="loadbalancer.tree.children" context="loadbalancer.tree.contextmenu" />
       </tree>
