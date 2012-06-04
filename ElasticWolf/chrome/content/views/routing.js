@@ -59,8 +59,8 @@ var ew_RoutesTreeView = {
         }
         var gwList = []
         var gws = ew_session.model.getInternetGateways();
-        for ( var i in gws) {
-            if (gws[i].vpcs.indexOf(table.vpcId) > -1) {
+        for (var i in gws) {
+            if (gws[i].vpcId == table.vpcId) {
                 gwList.push({ text : gws[i].toString(), id : gws[i].id });
             }
         }
@@ -73,13 +73,7 @@ var ew_RoutesTreeView = {
         window.openDialog("chrome://ew/content/dialogs/create_route.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
         if (retVal.ok) {
             var me = this;
-            var wrap = function(id)
-            {
-                ew_RouteTablesTreeView.refresh(true);
-                ew_RouteTablesTreeView.select({ id: table.id })
-            }
-            ew_session.controller.createRoute(table.id, retVal.cidr, retVal.gatewayId, wrap);
-
+            ew_session.controller.createRoute(table.id, retVal.cidr, retVal.gatewayId, function() { ew_RouteTablesTreeView.refresh(true); });
         }
     },
 
@@ -88,12 +82,7 @@ var ew_RoutesTreeView = {
         var item = this.getSelected();
         if (!item || !confirm("Delete route  " + item.cidr + "?")) return;
         var me = this;
-        var wrap = function()
-        {
-            ew_RouteTablesTreeView.refresh();
-            ew_RouteTablesTreeView.select({ id: item.tableId })
-        }
-        ew_session.controller.deleteRoute(item.tableId, item.cidr, wrap);
+        ew_session.controller.deleteRoute(item.tableId, item.cidr, function() { ew_RouteTablesTreeView.refresh();});
     }
 };
 ew_RoutesTreeView.__proto__ = TreeView;
