@@ -87,3 +87,36 @@ var ew_VpcTreeView = {
 ew_VpcTreeView.__proto__ = TreeView;
 ew_VpcTreeView.register();
 
+var ew_DhcpoptsTreeView = {
+    COLNAMES: ['dhcpoption.id', 'dhcpoption.options', 'dhcpoption.tag'],
+    model: "dhcpOptions",
+    searchElement: 'ew.dhcpopts.search',
+
+    enableOrDisableItems : function() {
+        var image = this.getSelected();
+        document.getElementById("ew.dhcpopts.contextmenu").disabled = (image == null);
+    },
+
+    deleteDhcpOptions : function() {
+        var opts = this.getSelected();
+        if (opts == null) return;
+        if (!confirm("Delete " + opts.id + (opts.tag == null ? '' : " [" + opts.tag + "]") + "?")) return;
+        var me = this;
+        ew_session.controller.deleteDhcpOptions(opts.id, function() { me.refresh(); });
+    },
+
+    createDhcpOptions : function () {
+        var retVal = {ok:null, opts:null}
+        window.openDialog("chrome://ew/content/dialogs/create_dhcp_options.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
+        if (retVal.ok) {
+            var me = this;
+            var wrap = function(id) {
+                me.refresh();
+                me.selectByImageId(id);
+            }
+            ew_session.controller.createDhcpOptions(retVal.opts, function() { me.refresh(); });
+        }
+    },
+};
+ew_DhcpoptsTreeView.__proto__ = TreeView;
+ew_DhcpoptsTreeView.register();

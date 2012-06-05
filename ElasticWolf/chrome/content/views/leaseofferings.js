@@ -1,57 +1,33 @@
-var ew_LeaseOfferingsTreeView = { COLNAMES :
-    [ 'offering.id', 'offering.instanceType', 'offering.azone', 'offering.duration', 'offering.fixedPrice', 'offering.usagePrice', 'offering.offering', 'offering.tenancy', 'offering.description' ],
+var ew_ReservedInstancesTreeView = {
+    COLNAMES: ['rsvdInst.id','rsvdInst.instanceType','rsvdInst.tenancy','rsvdInst.azone','rsvdInst.start','rsvdInst.duration','rsvdInst.fixedPrice','rsvdInst.usagePrice','rsvdInst.count','rsvdInst.description','rsvdInst.state'],
+    model: 'reservedInstances',
+    searchElement: 'ew.rsvdInst.search',
 
-    imageIdRegex : new RegExp(".*"),
-
-    getSearchText : function()
-    {
-        return document.getElementById('ew.offerings.search').value;
+    viewDetails : function(event) {
+        var image = this.getSelected();
+        if (image == null) return;
+        window.openDialog("chrome://ew/content/dialogs/details_reserved_instances.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
-    refresh : function()
-    {
-
-        ew_session.controller.describeLeaseOfferings();
-
-    },
-
-    invalidate : function()
-    {
-        var target = ew_LeaseOfferingsTreeView;
-        target.displayImages(target.filterImages(ew_model.offerings));
-    },
-
-    searchChanged : function(event)
-    {
-        if (this.searchTimer) {
-            clearTimeout(this.searchTimer);
+    isRefreshable: function() {
+        for (var i in this.treeList) {
+            if (list[i].state == "payment-pending") return true;
         }
-
-        this.searchTimer = setTimeout(this.invalidate, 500);
+        return false;
     },
+};
 
-    register : function()
-    {
-        if (!this.registered) {
-            this.registered = true;
-            ew_model.registerInterest(this, 'offerings');
-        }
-    },
+ew_ReservedInstancesTreeView.__proto__ = TreeView;
+ew_ReservedInstancesTreeView.register();
 
-    displayImages : function(imageList)
-    {
-        // Determine if there are any pending operations
-        if (this.pendingUpdates()) {
-            this.startRefreshTimer("", ew_LeaseOfferingsTreeView.refresh);
-        } else {
-            this.stopRefreshTimer("ew_LeaseOfferingsTreeView");
-        }
-        BaseImagesView.displayImages.call(this, imageList);
-    },
+var ew_LeaseOfferingsTreeView = {
+    COLNAMES: [ 'offering.id', 'offering.instanceType', 'offering.azone', 'offering.duration', 'offering.fixedPrice', 'offering.usagePrice', 'offering.offering', 'offering.tenancy', 'offering.description' ],
+    model: 'offerings',
+    searchElement: 'ew.offerings.search',
 
     viewDetails : function(event)
     {
-        var image = this.getSelectedImage();
+        var image = this.getSelected();
         if (image == null) return;
         window.openDialog("chrome://ew/content/dialogs/details_offering.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
@@ -59,7 +35,7 @@ var ew_LeaseOfferingsTreeView = { COLNAMES :
     purchaseOffering : function()
     {
         var retVal = { ok : null, id : null, count : null };
-        var image = this.getSelectedImage();
+        var image = this.getSelected();
         if (image == null) return;
         retVal.id = image.id;
         var fRepeat = true;
@@ -81,7 +57,6 @@ var ew_LeaseOfferingsTreeView = { COLNAMES :
                 msg = msg + " Availability Zone for $";
                 msg = msg + retVal.count * parseInt(image.fixedPrice);
                 msg = msg + ". Are you sure?\n\nAn email will be sent to you shortly after we receive your order.";
-
                 var button = prompts.confirmEx(window, "Confirm Reserved Instances Offering Purchase", msg, flags, "Edit Order", "Place Order", "", null, {});
 
                 // Edit: 0
@@ -89,15 +64,8 @@ var ew_LeaseOfferingsTreeView = { COLNAMES :
                 // Cancel: 2
                 if (button == 1) {
                     fRepeat = false;
-                    // The user wants to purchase this offering
-                    var wrap = function(id)
-                    {
-                        ew_ReservedInstancesTreeView.refresh();
-                        ew_ReservedInstancesTreeView.selectByImageId(id);
-                    }
-
-                    // purchase this lease offering
-                    ew_session.controller.purchaseOffering(retVal.id, retVal.count, wrap);
+                    // The user wants to purchase this offering purchase this lease offering
+                    ew_session.controller.purchaseOffering(retVal.id, retVal.count, function(id) { ew_ReservedInstancesTreeView.refresh(); });
                 } else
                     if (button == 0) {
                         // The user wants to edit the order
@@ -108,15 +76,7 @@ var ew_LeaseOfferingsTreeView = { COLNAMES :
             }
         }
     },
-
-    pendingUpdates : function()
-    {
-        return false;
-    },
-
 };
 
-// poor-man's inheritance
-ew_LeaseOfferingsTreeView.__proto__ = BaseImagesView;
-
+ew_LeaseOfferingsTreeView.__proto__ = TreeView;
 ew_LeaseOfferingsTreeView.register();

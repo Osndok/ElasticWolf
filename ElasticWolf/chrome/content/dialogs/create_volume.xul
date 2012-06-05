@@ -3,12 +3,81 @@
 <!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
 <dialog id="ew.dialog.newvolume" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  buttons="accept,cancel" ondialogaccept="return ew_VolumeCreator.create();" ondialogcancel="return true;"
-  onload="ew_VolumeCreator.init();" title="Create Volume" buttonlabelaccept="Create">
+  buttons="accept,cancel"
+  ondialogaccept="return create();"
+  ondialogcancel="return true;"
+  onload="init();"
+  title="Create Volume" buttonlabelaccept="Create">
 
-  <script type="application/x-javascript" src="chrome://ew/content/dialogs/create_volume.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/model.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
+  <script type="application/x-javascript">
+  <![CDATA[
+      function create() {
+        this.retVal.size = document.getElementById("ew.newvolume.size").value.trim();
+        if (this.retVal.size.length == 0) this.retVal.size = null;
+
+        this.retVal.snapshotId = document.getElementById("ew.newvolume.snapshotId").value.trim();
+        if (this.retVal.snapshotId.length == 0 || this.retVal.snapshotId.indexOf("<none>") == 0) {
+            this.retVal.snapshotId = null;
+        }
+
+        this.retVal.zone = document.getElementById("ew.newvolume.availabilityzonelist").value;
+
+        if (!this.validateSize()) return false;
+
+        this.retVal.tag = document.getElementById("ew.newvolume.tag").value.trim();
+        this.retVal.ok = true;
+        return true;
+    }
+
+    function validateSize() {
+        var val = (this.retVal.size != null) ? this.retVal.size : "";
+        val = parseInt(val);
+        var textbox = document.getElementById("ew.newvolume.size");
+        if ((!isNaN(val) && val < 1) || (isNaN(val) && this.retVal.snapshotId == null)) {
+            alert("Size must be >= 1 if a snapshot is not selected");
+            textbox.select();
+            return false;
+        }
+
+        return true;
+    }
+
+    function init() {
+        var srcSnap = window.arguments[0];
+        this.ew_session = window.arguments[1];
+        this.retVal = window.arguments[2];
+
+        // availability zones
+        var availZoneMenu = document.getElementById("ew.newvolume.availabilityzonelist");
+        var availZones = this.ew_session.model.getAvailabilityZones();
+        for (var i in availZones) {
+            availZoneMenu.appendItem(availZones[i].toString(), availZones[i].name);
+        }
+        availZoneMenu.selectedIndex = 0;
+
+        // snapshots
+        var snapshotIdMenu = document.getElementById("ew.newvolume.snapshotId");
+        snapshotIdMenu.appendItem("<none>");
+        var snapshots = this.ew_session.model.getSnapshots();
+        var snap = null;
+        for (var i in snapshots) {
+            snap = snapshots[i];
+            if (snap.status == "completed") {
+                snapshotIdMenu.appendItem(snap.toString(), snap.id);
+                if (srcSnap && snap.id == srcSnap.id) {
+                    snapshotIdMenu.selectedIndex = i;
+                }
+            }
+        }
+        // To accommodate the <NONE> element added at the head of the list
+        snapshotIdMenu.selectedIndex += 1;
+
+        if (srcSnap) {
+            document.getElementById("ew.newvolume.tag").value = srcSnap.tag || "";
+        }
+    }
+  ]]>
+  </script>
 
   <vbox flex="1">
     <grid flex="1">
@@ -23,11 +92,11 @@
         </row>
         <row>
           <label control="ew.newvolume.snapshotId" value="&ew.snapshots.id.label;" />
-          <menulist id="ew.newvolume.snapshotId" editable="true" />
+          <menulist id="ew.newvolume.snapshotId" editable="true" sizetopopup="none" style="max-width:500px;"/>
         </row>
         <row>
           <label control="ew.newvolume.availabilityzonelist" value="&ew.availabilityZone.label;" />
-          <menulist id="ew.newvolume.availabilityzonelist" />
+          <menulist id="ew.newvolume.availabilityzonelist" sizetopopup="none" style="max-width:500px;"/>
         </row>
         <row>
           <label control="ew.newvolume.tag" value="Tag" />

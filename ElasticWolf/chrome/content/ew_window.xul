@@ -47,15 +47,12 @@
   <script type="application/x-javascript" src="chrome://ew/content/views/routing.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/azone.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/eip.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/views/baseimages.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/amis.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/volumes.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/snapshots.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/leaseofferings.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/views/reservedinstances.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/bundletasks.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/vpcs.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/views/dhcpoptions.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/vpns.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/loadbalancers.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/networkacls.js" />

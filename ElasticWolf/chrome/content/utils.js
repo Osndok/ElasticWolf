@@ -333,7 +333,19 @@ var TreeView = {
     },
     deactivate: function() {
         this.stopRefreshTimer();
-    }
+    },
+    tag: function(event) {
+        var item = this.getSelected();
+        if (item) {
+            ew_session.tagResource(item);
+        }
+    },
+    copyToClipBoard : function(name) {
+        var item = this.getSelected();
+        if (item) {
+            copyToClipboard(item[name]);
+        }
+    },
 };
 
 var ew_ListBox = {

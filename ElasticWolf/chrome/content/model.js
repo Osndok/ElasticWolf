@@ -232,7 +232,7 @@ function Snapshot(id, volumeId, status, startTime, progress, volumeSize, descrip
     }
 
     this.toString = function() {
-        return this.id;
+        return this.description + ew_model.separator + this.id + ew_model.separator + this.status + "/" + this.progress;
     }
 }
 
@@ -636,8 +636,6 @@ function VolumeStatusEvent(volumeId, availabilityZone, eventId, eventType, descr
     }
 }
 
-// Global model: home to things like lists of data that need to be shared (known
-// AMIs, keypairs etc)
 var ew_model = {
     components : new Array(),
     componentInterests : new Object(),
@@ -840,7 +838,7 @@ var ew_model = {
             ew_session.controller.describeVpcs();
             break;
         case "dhcpOptions":
-            ew_session.controller.describedhcpOptions();
+            ew_session.controller.describeDhcpOptions();
             break;
         case "vpnConnections":
             ew_session.controller.describeVpnConnections();
