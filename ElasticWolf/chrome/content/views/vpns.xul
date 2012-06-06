@@ -26,7 +26,7 @@
                         <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_VpnConnectionTreeView.tag();" tooltiptext="Add Tag" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.vpnconnections.view" seltype="single" enableColumnDrag="true" onselect="ew_VpnConnectionTreeView.selectionChanged(event)" flex="1">
+                <tree id="ew.vpnconnections.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="vpnConnection.id" label="&ew.vpnconnections.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

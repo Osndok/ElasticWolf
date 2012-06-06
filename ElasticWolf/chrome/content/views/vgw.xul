@@ -28,7 +28,7 @@
                         <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_VpnGatewayTreeView.tag();" tooltiptext="Add Tag" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.vpngateways.view" seltype="single" enableColumnDrag="true" onselect="ew_VpnGatewayTreeView.selectionChanged(event)" flex="1">
+                <tree id="ew.vpngateways.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="vpnGateway.id" label="&ew.vpngateways.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -61,7 +61,7 @@
                         <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VpnAttachmentTreeView.deleteVpnAttachment()" tooltiptext="&ew.deletevpnattachment.tip;" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.vpnattachments.view" seltype="single" enableColumnDrag="true" onselect="ew_VpnAttachmentTreeView.selectionChanged(event)" flex="1">
+                <tree id="ew.vpnattachments.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="vpnattachment.vgwId" label="&ew.vpnattachments.vgwId.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

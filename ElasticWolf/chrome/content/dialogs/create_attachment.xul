@@ -23,8 +23,7 @@
         </row>
         <row>
           <label id="ew.newattachment.instanceLabel" control="ew.newattachment.instanceId" value="&ew.instances.id.label;" />
-          <menulist id="ew.newattachment.instanceId" editable="true" size="30"
-            oncommand="ew_VolumeAttacher.enableOrDisableDeviceField();"/>
+          <menulist id="ew.newattachment.instanceId" editable="true" size="30" oncommand="ew_VolumeAttacher.enableOrDisableDeviceField();"/>
         </row>
         <row>
           <label control="ew.newattachment.device" value="&ew.volumes.attachment.device.label;" />

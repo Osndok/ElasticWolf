@@ -38,11 +38,11 @@ var ew_LaunchPermissions = {
 
     copyAccountIdToClipBoard : function(event)
     {
-    var name = this.getSelectedLaunchPermission();
-    if (name == null) return;
+        var name = this.getSelectedLaunchPermission();
+        if (name == null) return;
 
-    copyToClipboard(name);
-},
+        copyToClipboard(name);
+    },
 
     refreshLaunchPermissions : function()
     {
@@ -117,10 +117,9 @@ var ew_LaunchPermissions = {
             return x < y ? -1 : (x == y ? 0 : 1);
         });
 
-        var perm = null;
         for ( var i in permList) {
-            perm = permList[i];
-            list.appendItem(this.session.lookupAccountId(perm), perm);
+            var perm = permList[i];
+            list.appendItem(perm, perm);
         }
     },
 

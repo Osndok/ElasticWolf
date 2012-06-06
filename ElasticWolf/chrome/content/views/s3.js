@@ -52,14 +52,7 @@ var ew_S3BucketsTreeView = {
         }
     },
 
-    onSelection: function(event)
-    {
-        var me = this;
-        var item = this.getSelected()
-        if (item == null) return
-    },
-
-    onClick: function(event)
+    viewDetails: function(event)
     {
         var me = this;
         var item = this.getSelected()

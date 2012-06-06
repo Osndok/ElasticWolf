@@ -16,7 +16,7 @@ var ew_NetworkInterfacesTreeView = {
         for (var p in eni) {
             rc[p] = eni[p];
         }
-        window.openDialog("chrome://ew/content/dialogs/details_eni.xul", null, "chrome,centerscreen,modal,resizable", ew_session, rc);
+        window.openDialog("chrome://ew/content/dialogs/edit_eni.xul", null, "chrome,centerscreen,modal,resizable", ew_session, rc);
         if (rc.ok) {
             var me = this;
             if (eni.sourceDestCheck != rc.sourceDestCheck) {

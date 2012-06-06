@@ -20,7 +20,7 @@ var ew_CredentialsTreeView = {
     },
 
     addCredentials : function() {
-        var rc = { ok: null, endpoints: ew_session.getEndpoints() };
+        var rc = { ok: null, endpoints: ew_prefs.getEndpoints() };
         window.openDialog("chrome://ew/content/dialogs/create_credentials.xul", null, "chrome,centerscreen, modal, resizable", rc);
         if (rc.ok) {
             var cred = new Credential(rc.name, rc.accessKey, rc.secretKey, rc.endpoint);
@@ -37,3 +37,48 @@ var ew_CredentialsTreeView = {
     },
 };
 ew_CredentialsTreeView.__proto__ = TreeView;
+
+var ew_EndpointsTreeView = {
+   COLNAMES: ['endpoint.name','endpoint.url'],
+
+   activate : function() {
+       this.refresh();
+       var name = ew_prefs.getLastUsedEndpoint();
+       if (name != null) {
+           this.select({name:name});
+       }
+   },
+
+   refresh: function() {
+       ew_session.refreshEndpoints();
+       this.invalidate();
+   },
+
+   getData: function() {
+       return ew_session.getEndpoints();
+   },
+
+   switchEndpoint : function() {
+       var item = this.getSelected();
+       if (!item) return;
+       ew_session.ew_switchEndpoints(item.name);
+   },
+
+   deleteEndpoint : function() {
+       var item = this.getSelected();
+       if (!item) return;
+       if (!confirm('Delete endpoint ' + item.name)) return;
+       ew_session.deleteEndpoint(item.name);
+       this.refresh();
+   },
+
+   addEndpoint: function(name, url) {
+       var url = prompt("Enter endpoint URL:");
+       if (!url) return;
+       var endpoint = new Endpoint(null, url)
+       ew_session.addEndpoint(endpoint.name, endpoint);
+       this.refresh();
+   },
+}
+
+ew_EndpointsTreeView.__proto__ = TreeView;

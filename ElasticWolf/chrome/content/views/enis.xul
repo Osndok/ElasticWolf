@@ -23,7 +23,7 @@
                     <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.detachInterface();" tooltiptext="Detach from instance" />
                     <toolbarbutton image="images/details.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.viewDetails()" tooltiptext="View Details" />
                 </toolbar>
-                <tree id="ew.enis.view" seltype="single" enableColumnDrag="true" onselect="ew_NetworkInterfacesTreeView.selectionChanged(event);" flex="1">
+                <tree id="ew.enis.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="eni.id" label="ID" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

@@ -84,9 +84,18 @@ var ew_toolbar = {
     init: function() {
         for (var i in this.tabs) {
             for (var v in this.tabs[i].views) {
-                var view = $(this.tabs[i].views[v].id);
-                if (view) {
-                    view.view = this.tabs[i].views[v].view;
+                var tree = $(this.tabs[i].views[v].id);
+                if (tree) {
+                    var view = this.tabs[i].views[v].view;
+                    tree.view = view;
+                    // Assign tab name
+                    view.tab = this.tabs[i].tab;
+                    // Wrapping handlers to preserve correct context for 'this'
+                    if (!this.tabs[i].id) {
+                        (function(v) { var me = v; tree.addEventListener('dblclick', function(e) { e.stopPropagation();me.viewDetails(e); }, false); }(view));
+                        (function(v) { var me = v; tree.addEventListener('select', function(e) { e.stopPropagation();me.selectionChanged(e); }, false); }(view));
+                        (function(v) { var me = v; tree.addEventListener('click', function(e) { e.stopPropagation();me.clicked(e); }, false); }(view));
+                    }
                 }
             }
         }

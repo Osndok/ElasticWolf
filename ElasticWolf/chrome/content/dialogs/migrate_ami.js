@@ -69,7 +69,7 @@ var ew_AMIMigrator = {
         }
 
         // Populate the regions
-        var endpointlist = this.session.getEndpoints();
+        var endpointlist = this.session.prefs.getEndpoints();
         var active = this.session.getActiveEndpoint();
 
         var regionList = this.getRegionList();

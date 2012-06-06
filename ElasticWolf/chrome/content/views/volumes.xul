@@ -38,7 +38,7 @@
                         <checkbox id="ew.volumes.norootdev" label="Hide /dev/sda1" checked="false" oncommand="ew_VolumeTreeView.invalidate();" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.volumes.view" seltype="single" enableColumnDrag="true" onselect="ew_VolumeTreeView.selectionChanged(event)" flex="1">
+                <tree id="ew.volumes.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="vol.name" label="Name" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

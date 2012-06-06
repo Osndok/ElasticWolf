@@ -37,7 +37,7 @@
                         <checkbox id="ew.snapshots.noami" label="Hide AMI Snapshot" checked="false" oncommand="ew_SnapshotTreeView.invalidate();" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.snapshots.view" seltype="single" enableColumnDrag="true" onselect="ew_SnapshotTreeView.selectionChanged(event)" flex="1">
+                <tree id="ew.snapshots.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="snap.name" label="Name" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

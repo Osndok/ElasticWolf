@@ -40,7 +40,7 @@
                 <label id="ew.s3.path" flex="1" />
                 <label id="ew.s3.status" style="color:green;text-align:right;" flex="1" />
                 </hbox>
-                <tree id="ew.s3.view" seltype="single" enableColumnDrag="true" ondblclick="ew_S3BucketsTreeView.onClick(event);" onselect="ew_S3BucketsTreeView.onSelection(event);" flex="1" >
+                <tree id="ew.s3.view" seltype="single" enableColumnDrag="true" flex="1" >
                     <treecols>
                         <treecol id="s3.label" label="Name" flex="2" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

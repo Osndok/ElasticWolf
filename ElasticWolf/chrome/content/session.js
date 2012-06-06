@@ -8,22 +8,10 @@ var ew_session = {
     model : null,
     client : null,
     credentials : null,
-    endpointmap : null,
     tabMenu: null,
-    instanceTags : null,
-    volumeTags : null,
-    snapshotTags : null,
-    imageTags : null,
-    eipTags : null,
-    vpcTags : null,
-    subnetTags : null,
-    dhcpOptionsTags : null,
-    vgwTags : null,
-    cgwTags : null,
-    vpnTags : null,
-    refreshedTabs : new Array(),
     cmdline: null,
     tabs: {},
+    endpoints: null,
 
     initialize : function()
     {
@@ -38,8 +26,7 @@ var ew_session = {
         this.tabMenu = $("ew.tabs");
 
         this.loadCredentials();
-        this.loadEndpointMap();
-        this.loadAllTags();
+        this.getEndpoints();
 
         document.title = ew_prefs.getAppName();
 
@@ -114,22 +101,6 @@ var ew_session = {
         app.quit(Components.interfaces.nsIAppStartup.eForceQuit);
     },
 
-    addTabToRefreshList : function(tab)
-    {
-        log("Called by: " + tab + " to start refreshing");
-        if (tab != null) {
-            this.refreshedTabs[tab] = 1;
-        }
-    },
-
-    removeTabFromRefreshList : function(tab)
-    {
-        log("Called by: " + tab + " to stop refreshing");
-        if (tab != null) {
-            this.refreshedTabs[tab] = 0;
-        }
-    },
-
     selectTab: function(name) {
         if (this.client.disabled) return;
 
@@ -150,15 +121,6 @@ var ew_session = {
         ew_toolbar.select(name);
         this.tabMenu.selectedPanel = $(tab.id || name);
         this.prefs.setCurrentTab(name);
-
-        // Stop the refresh timers of all tabs (obsolete inetrface will be replace by new Treeview)
-        for (var tab in this.refreshedTabs) {
-            if (this.refreshedTabs[tab] == 1) {
-                this.refreshedTabs[tab] = 0;
-                log("Stopping Refresh of tab: " + tab);
-                eval(tab + ".stopRefreshTimer()");
-            }
-        }
 
         // Activate and refresh if no records yet
         for (var i in tab.views) {
@@ -237,9 +199,7 @@ var ew_session = {
     {
         var cur = this.prefs.getLastUsedAccount();
         for (var i in this.credentials) {
-            if (cur == this.credentials[i].name) {
-                return this.credentials[i];
-            }
+            if (cur == this.credentials[i].name) return this.credentials[i];
         }
         return null;
     },
@@ -251,7 +211,7 @@ var ew_session = {
             this.prefs.setLastUsedAccount(cred.name);
             this.client.setCredentials(cred.accessKey, cred.secretKey);
 
-            if (cred.endPoint && cred.endPoint != "") {
+            if (cred.endPoint != "") {
                 var endpoint = new Endpoint("", cred.endPoint)
                 this.selectEndpoint(endpoint);
             }
@@ -265,21 +225,21 @@ var ew_session = {
     {
         if (this.locked || this.client.disabled) return;
 
+        var wasGovCloud = this.client.isGovCloud();
         if (this.selectCredentials(cred)) {
-            this.loadAllTags();
-
+            // GovCloud credentials require endpoint to be set explicitely, switching from GovCloud without explicit endpoint will result in errros
+            if (wasGovCloud && cred.endPoint == '') {
+                this.selectEndpoint(this.prefs.getEndpoint("us-east-1"));
+            }
             // Since we are switching creds, ensure that all the views are redrawn
             this.model.invalidate();
-
-            // Set the active tab to the last tab we were viewing
-            this.selectTab(this.prefs.getCurrentTab());
         }
     },
 
     getActiveEndpoint : function()
     {
         var name = this.prefs.getLastUsedEndpoint();
-        var endpoint = this.endpointmap.get(name);
+        var endpoint = this.getEndpoint(name);
         return endpoint ? endpoint : new Endpoint(name, this.prefs.getServiceURL());
     },
 
@@ -301,56 +261,90 @@ var ew_session = {
         if (this.locked || this.client.disabled) return;
 
         var wasGovCloud = this.client.isGovCloud();
-        var endpoint = this.endpointmap.get(name);
+        var endpoint = this.getEndpoint(name);
         if (this.selectEndpoint(endpoint)) {
-
             // Switching between GovClound, reset credentials
             if (this.client.isGovCloud() != wasGovCloud) {
-                debug('disable credentials when switching GovCloud')
+                debug('disable credentials when switching to/from GovCloud')
                 this.client.setCredentials("", "");
                 this.prefs.setLastUsedAccount("");
                 ew_toolbar.update();
             }
-            this.loadAllTags();
-
             // Since we are switching creds, ensure that all the views are redrawn
             this.model.invalidate();
-
-            // Set the active tab to the last tab we were viewing
-            this.selectTab(this.prefs.getCurrentTab());
         } else {
             alert('Endpoint ' + name + ' does not exists?')
         }
     },
 
-    loadEndpointMap : function()
+    getEndpoint: function(name)
     {
-        this.endpointmap = this.prefs.getEndpointMap();
+        if (this.endpoints) {
+            for (var i in this.endpoints) {
+                if (this.endpoints[i].name == name) return this.endpoints[i];
+            }
+        }
+        return null;
+    },
+
+    addEndpoint: function(name, url)
+    {
+        if (this.endpoints) {
+            for (var i in this.endpoints) {
+                if (this.endpoints[i].name == name) return;
+            }
+            this.endpoints.push(new Endpoint(name, url))
+            this.prefs.setEndpoints(this.endpoints);
+        }
+    },
+
+    deleteEndpoint: function(name)
+    {
+        if (this.endpoints) {
+            for (var i in this.endpoints) {
+                if (this.endpoints[i].name == name) {
+                    this.endpoints.splice(i, 1);
+                    this.prefs.setEndpoints(this.endpoints);
+                    break;
+                }
+            }
+        }
     },
 
     getEndpoints : function()
     {
-        return this.endpointmap.toArray(function(k, v) { return new Endpoint(k, v.url) });
+        if (this.endpoints == null) {
+            this.endpoints = [];
+
+            var list = this.prefs.getEndpoints();
+            for (var i in list) {
+                if (list[i] && list[i].name && list[i].url) {
+                    this.endpoints.push(new Endpoint(list[i].name, list[i].url));
+                }
+            }
+            // Default regions
+            var regions = this.prefs.getEC2Regions();
+            for (var i in regions) {
+                if (this.getEndpoint(regions[i].name) == null) {
+                    this.endpoints.push(regions[i]);
+                }
+            }
+            this.refreshEndpoints();
+        }
+
+        return this.endpoints;
     },
 
-    loadAllTags : function()
+    refreshEndpoints: function()
     {
-        this.imageTags = this.prefs.getImageTags();
-        this.instanceTags = this.prefs.getInstanceTags();
-        this.volumeTags = this.prefs.getVolumeTags();
-        this.snapshotTags = this.prefs.getSnapshotTags();
-        this.eipTags = this.prefs.getEIPTags();
-        this.vpcTags = this.prefs.getVpcTags();
-        this.subnetTags = this.prefs.getSubnetTags();
-        this.dhcpOptionsTags = this.prefs.getDhcpOptionsTags();
-        this.vpnTags = this.prefs.getVpnConnectionTags();
-        this.cgwTags = this.prefs.getCustomerGatewayTags();
-        this.vgwTags = this.prefs.getVpnGatewayTags();
-    },
-
-    lookupAccountId : function(id)
-    {
-        return id;
+        // Merge with saved list of regions
+        ew_model.getRegions(function(regions) {
+            for (var i in regions) {
+                if (this.getEndpoint(regions[i].name) == null) {
+                    this.endpoints.push(regions[i]);
+                }
+            }
+        });
     },
 
     displayAbout : function()
@@ -658,7 +652,7 @@ var ew_session = {
 
             for ( var i = 0; i < resIds.length; i++) {
                 var resId = resIds[i];
-                for ( var j = 0; j < tags.length; j++) {
+                for (var j = 0; j < tags.length; j++) {
                     multiIds.push(resId);
                 }
                 multiTags = multiTags.concat(tags);

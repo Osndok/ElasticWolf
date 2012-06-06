@@ -9,15 +9,17 @@
      <caption label="Endpoints" />
      <popupset>
        <menupopup id="ew.endpoint.context">
-        <menuitem oncommand="ew_EndpointsTreeView.addEndpoint();" label="Create Credentials" />
-        <menuitem oncommand="ew_EndpointsTreeView.deleteEndpont();" label="Delete Credentials" />
-        <menuitem oncommand="ew_EndpointsTreeView.switchEndpoint();" label="Make this credentials current" />
+        <menuitem oncommand="ew_EndpointsTreeView.refresh();" label="Refresh Endpoints" />
+        <menuitem oncommand="ew_EndpointsTreeView.addEndpoint();" label="Create Endpoint" />
+        <menuitem oncommand="ew_EndpointsTreeView.deleteEndpont();" label="Delete Endpoint" />
+        <menuitem oncommand="ew_EndpointsTreeView.switchEndpoint();" label="Make this Endpoint current" />
       </menupopup>
      </popupset>
      <toolbar style="padding: 0px 3px; -moz-box-align: center">
-      <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.addEndpoint();" tooltiptext="Add Credentials" />
-      <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.deleteEndpoint();" tooltiptext="Delete Credentials" />
-      <toolbarbutton image="images/powerup.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.switchEndpoint()" tooltiptext="Make this credentials current" />
+      <toolbarbutton image="images/refresh.png" style="-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.refresh();" tooltiptext="Refresh" />
+      <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.addEndpoint();" tooltiptext="Add Endpoint" />
+      <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.deleteEndpoint();" tooltiptext="Delete Endpoint" />
+      <toolbarbutton image="images/powerup.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_EndpointsTreeView.switchEndpoint()" tooltiptext="Make this Endpoint current" />
       </toolbar>
       <tree id="ew.endpoints.view" seltype="single" enableColumnDrag="true" flex="1">
         <treecols>

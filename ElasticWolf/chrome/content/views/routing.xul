@@ -13,7 +13,7 @@
                    <toolbarbutton image="images/delete.png" tooltiptext="&ew.routetable.delete.tip;" oncommand="ew_RouteTablesTreeView.deleteSelected();" />
                </hbox>
            </toolbar>
-           <tree id="ew.routetables.view" seltype="single" enableColumnDrag="true" onselect="ew_RouteTablesTreeView.selectionChanged(event);" flex="1">
+           <tree id="ew.routetables.view" seltype="single" enableColumnDrag="true" flex="1">
                <treecols>
                    <treecol id="routeTable.id" label="ID" flex="1" persist="width ordinal hidden sortDirection" />
                    <splitter class="tree-splitter" />

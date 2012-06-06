@@ -3,12 +3,6 @@ var ew_ElasticIPTreeView = {
     model: [ "addresses", "instances", "networkInterfaces" ],
     tagId: "publicIp",
 
-    viewDetails : function(event) {
-        var eip = this.getSelected();
-        if (!eip) return;
-        window.openDialog("chrome://ew/content/dialogs/details_eip.xul", null, "chrome,centerscreen,modal,resizable", eip);
-    },
-
     enableOrDisableItems : function() {
         var eip = this.getSelected();
         document.getElementById("ew.addresses.contextmenu").disabled = (eip == null);

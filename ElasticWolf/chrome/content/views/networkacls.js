@@ -11,13 +11,6 @@ var ew_NetworkAclsTreeView = {
         ew_NetworkAclAssociationsTreeView.display(acl.associations);
     },
 
-    viewDetails : function(event)
-    {
-        var group = this.getSelected();
-        if (group == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_acl.xul", null, "chrome,centerscreen,modal,resizable", group);
-    },
-
     createACL : function()
     {
         var vpcs = ew_session.model.getVpcs();

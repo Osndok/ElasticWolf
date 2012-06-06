@@ -37,7 +37,7 @@
                             <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_AMIsTreeView.tag();" tooltiptext="Edit EC2 Tag" />
                             <menulist id="ew.images.type" oncommand="ew_AMIsTreeView.imageTypeChanged();">
                                 <menupopup>
-                                    <menuitem label="No Filter" value="all" />
+                                    <menuitem label="No Filter" selected="true" value="all" />
                                     <menuitem label="My AMIs" value="my_ami" />
                                     <menuitem label="All AMIs" value="ami" />
                                     <menuitem label="All AMIs with EBS Root Device" value="rdt_ebs" />
@@ -52,7 +52,7 @@
                             </menulist>
                         </hbox>
                     </toolbar>
-                    <tree id="ew.images.view" seltype="single" enableColumnDrag="true" onselect="ew_AMIsTreeView.selectionChanged(event)" flex="1">
+                    <tree id="ew.images.view" seltype="single" enableColumnDrag="true" flex="1">
                         <treecols>
                             <treecol id="ami.id" label="&ew.images.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                             <splitter class="tree-splitter" />

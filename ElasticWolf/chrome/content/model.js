@@ -4,7 +4,7 @@ function Credential(name, accessKey, secretKey, endPoint)
     this.name = name;
     this.accessKey = accessKey;
     this.secretKey = secretKey;
-    this.endPoint = endPoint ? endPoint : "";
+    this.endPoint = endPoint || "";
 
     this.toString = function() {
         return this.accessKey + ";;" + this.secretKey + ";;" + this.endPoint;
@@ -178,21 +178,6 @@ function Endpoint(name, url)
     this.toString = function() {
         return this.name;
     }
-
-    this.toJSONString = function() {
-        var pairs = new Array();
-        for (k in this) {
-            if (this.hasOwnProperty(k)) {
-                v = this[k];
-                if (v != null && typeof v != "function") {
-                    pairs.push("'" + k + "':'" + v + "'");
-                }
-            }
-        }
-        return "({" + pairs.join(',') + "})";
-    };
-
-    return this;
 }
 
 function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, rootDeviceType, ownerAlias, name, description, snapshotId, tags)
@@ -261,9 +246,9 @@ function Volume(id, size, snapshotId, zone, status, createTime, instanceId, devi
     }
 }
 
-function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, vpcId, subnetId, rootDeviceType, tags)
+function Instance(reservationId, ownerId, groups, instanceId, imageId, kernelId, ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, vpcId, subnetId, rootDeviceType, tags)
 {
-    this.resId = resId;
+    this.reservationId = reservationId;
     this.ownerId = ownerId;
     this.groups = groups;
     this.id = instanceId;
@@ -279,13 +264,14 @@ function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdisk
     this.amiLaunchIdx = amiLaunchIdx;
     this.instanceType = instanceType;
     this.launchTime = launchTime;
-    this.launchTimeDisp = launchTime.strftime('%Y-%m-%d %H:%M:%S');
     this.availabilityZone = availabilityZone
     this.tenancy = tenancy
     this.platform = platform;
     this.vpcId = vpcId;
     this.subnetId = subnetId;
     this.tags = tags;
+    this.publicIpAddress = '';
+    this.elasticIp = '';
     ew_model.processTags(this);
 
     this.rootDeviceType = rootDeviceType;
@@ -692,8 +678,7 @@ var ew_model = {
     networkAcls: null,
     networkInterfaces: null,
     s3buckets: null,
-
-    amiIdManifestMap : {},
+    regions: null,
 
     invalidate : function()
     {
@@ -729,6 +714,8 @@ var ew_model = {
     getModel : function(name)
     {
         switch (name) {
+        case "regions":
+            return this.regions;
         case "volumes":
             return this.volumes;
         case "images":
@@ -789,6 +776,9 @@ var ew_model = {
     {
         log('refreshModel: ' + name)
         switch (name) {
+        case "regions":
+            ew_session.controller.describeRegions();
+            break;
         case "instanceStatus":
             ew_session.controller.describeInstanceStatus();
             break;
@@ -911,6 +901,33 @@ var ew_model = {
         return value;
     },
 
+    toString: function(obj, columns)
+    {
+        if (obj == null) return null;
+        if (typeof obj == "object") {
+            var item = "";
+            // Show class name as the firt column for mutli object lists
+            if (columns && columns.indexOf("__class__") >= 0) {
+                item = className(obj)
+            }
+            if (!columns && obj.hasOwnProperty('toString')) {
+                item = obj.toString()
+            } else {
+                for (p in obj) {
+                    if (typeof obj[p] == "function") {
+                        if (p != "toString") continue;
+                        item += (item != "" ? this.separator : "") + obj.toString();
+                    } else
+                    if (!columns || columns.indexOf(p) >= 0) {
+                        item += (item != "" ? this.separator : "") + this.modelValue(p, obj[p]);
+                    }
+                }
+            }
+            return item
+        }
+        return obj;
+    },
+
     processTags: function(obj, name)
     {
         if (!obj || !obj.tags) return;
@@ -974,6 +991,20 @@ var ew_model = {
             }
             this.componentInterests[list[i]].push(component);
         }
+    },
+
+    updateRegions : function(list)
+    {
+        this.users = list;
+        this.notifyComponents("regions");
+    },
+
+    getRegions : function()
+    {
+        if (this.regins == null) {
+            ew_session.controller.describeRegions();
+        }
+        return this.regions;
     },
 
     updateUsers : function(list)
@@ -1268,34 +1299,9 @@ var ew_model = {
         return this.getObjects(this.snapshots, arguments);
     },
 
-    addToAmiManifestMap : function(ami, map)
-    {
-        if (!ami) return;
-        if (!map) map = this.amiIdManifestMap;
-        if (ami.id.match(regExs["ami"])) {
-            map[ami.id] = ami.location;
-        }
-    },
-
     updateImages : function(list)
     {
         this.images = list;
-
-        var amiMap = new Object();
-        if (list) {
-            // Rebuild the list that maps ami-id to ami-manifest
-            for ( var i = 0; i < list.length; ++i) {
-                var ami = list[i];
-                this.addToAmiManifestMap(ami, amiMap);
-
-                var manifest = ami.location;
-                manifest = manifest.toLowerCase();
-                if (ami.platform == "windows" && manifest.indexOf("winauth") >= 0) {
-                    ami.platform += " authenticated";
-                }
-            }
-        }
-        this.amiIdManifestMap = amiMap;
         this.notifyComponents("images");
     },
 
@@ -1305,12 +1311,6 @@ var ew_model = {
             ew_session.controller.describeImages();
         }
         return this.getObjects(this.images, arguments);
-    },
-
-    getAmiManifestForId : function(imageId)
-    {
-        if (imageId == null) return "";
-        return this.amiIdManifestMap[imageId] || "";
     },
 
     getInstances: function() {
@@ -1324,21 +1324,6 @@ var ew_model = {
     updateInstances : function(list)
     {
         this.instances = list;
-        if (list != null) {
-            for ( var i = 0; i < list.length; ++i) {
-                var instance = list[i];
-                if (instance.platform == "windows") {
-                    // Retrieve the ami manifest from the amiid
-                    var manifest = this.amiIdManifestMap[instance.imageId] || "";
-                    log("Manifest requested for: " + instance.imageId + ", received: " + manifest);
-                    manifest = manifest.toLowerCase();
-                    if (manifest.indexOf("winauth") >= 0) {
-                        // This is an authenticated Windows instance
-                        instance.platform += " authenticated";
-                    }
-                }
-            }
-        }
         this.notifyComponents("instances");
     },
 

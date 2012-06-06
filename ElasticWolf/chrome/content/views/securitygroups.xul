@@ -20,7 +20,7 @@
           <toolbarbutton image="images/add.png" tooltiptext="&ew.secgroups.create.tip;" oncommand="ew_SecurityGroupsTreeView.createNewGroup();" />
           <toolbarbutton image="images/delete.png" tooltiptext="&ew.secgroups.delete.tip;" oncommand="ew_SecurityGroupsTreeView.deleteSelected();" />
       </toolbar>
-      <tree id="ew.securitygroups.view" seltype="single" enableColumnDrag="true" onselect="ew_SecurityGroupsTreeView.selectionChanged(event);" flex="1">
+      <tree id="ew.securitygroups.view" seltype="single" enableColumnDrag="true" flex="1">
         <treecols>
           <treecol id="securitygroup.id" label="ID" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />

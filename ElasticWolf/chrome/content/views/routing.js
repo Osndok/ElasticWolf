@@ -2,13 +2,6 @@ var ew_RouteTablesTreeView = {
     COLNAMES : [ 'routeTable.id', 'routeTable.vpcId', ],
     model : [ "routeTables", "vpcs", "subnets" ],
 
-    viewDetails : function(event)
-    {
-        var group = this.getSelected();
-        if (group == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_routetable.xul", null, "chrome,centerscreen,modal,resizable", group);
-    },
-
     selectionChanged : function()
     {
         var table = this.getSelected()

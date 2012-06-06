@@ -33,12 +33,6 @@ var ew_LoadbalancerTreeView = {
         ew_session.controller.deleteLoadBalancer(elb.LoadBalancerName, function () { me.refresh() });
     },
 
-    viewDetails : function(){
-        var elb = this.getSelected();
-        if (elb == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_loadbalancer.xul", null, "chrome,centerscreen,modal,resizable", ew_session, elb);
-    },
-
     create: function() {
         var retVal = {ok:null, vpc: ew_prefs.getCurrentTab(name).match("vpc") };
         window.openDialog("chrome://ew/content/dialogs/create_loadbalancer.xul",null,"chrome,centerscreen,modal,resizable",ew_session,retVal);

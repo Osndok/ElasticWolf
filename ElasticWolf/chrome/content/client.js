@@ -119,7 +119,7 @@ var ew_client = {
         if (reg != region) {
             var newURL = null;
             // Determine the region's EC2 URL
-            var endpointlist = ew_session.getEndpoints();
+            var endpointlist = ew_prefs.getEndpoints();
             region = region.toLowerCase();
             for (var i = 0; i < endpointlist.length; ++i) {
                 var curr = endpointlist[i];

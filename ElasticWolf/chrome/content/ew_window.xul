@@ -60,7 +60,6 @@
   <script type="application/x-javascript" src="chrome://ew/content/views/subnets.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/s3.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/credentials.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/views/endpoints.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/prefs.js" />
   <script type="application/x-javascript" src="chrome://ew/content/toolbar.js" />
 

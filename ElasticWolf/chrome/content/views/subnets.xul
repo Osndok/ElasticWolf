@@ -29,7 +29,7 @@
                         <toolbarbutton image="images/import.png" style="-moz-box-pack:center;" oncommand="ew_SubnetsTreeView.associateACL();" tooltiptext="Replace Network ACL" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.subnets.view" seltype="single" enableColumnDrag="true" onselect="ew_SubnetsTreeView.selectionChanged(event)" flex="1">
+                <tree id="ew.subnets.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>
                         <treecol id="subnet.id" label="&ew.subnets.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

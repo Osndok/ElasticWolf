@@ -1,131 +1,3 @@
-function encodeJSONMap(map)
-{
-    var pairs = new Array();
-    for (k in map) {
-        if (map.hasOwnProperty(k)) {
-            var v = map[k];
-            if (v != null) {
-                if (typeof v === 'object') {
-                    pairs.push("'" + k + "':" + encodeJSONMap(v));
-                } else
-                    if (typeof v != 'function') {
-                        pairs.push("'" + k + "':'" + v + "'");
-                    }
-            }
-        }
-    }
-    return "({" + pairs.join(',') + "})";
-}
-
-function WrappedMapTags(map, prefs)
-{
-    var wmap = new WrappedMap(map);
-    wmap.prefs = prefs;
-
-    wmap.put = function(key, value, method)
-    {
-        this.map[key] = value;
-        eval("this.prefs." + method + "(this)");
-    };
-
-    wmap.removeKey = function(key, method)
-    {
-        this.map[key] = null;
-        eval("this.prefs." + method + "(this)");
-    };
-
-    return wmap;
-}
-
-function WrappedMapEndpoints(map, prefs)
-{
-    var wmap = new WrappedMap(map);
-    wmap.prefs = prefs;
-    // Since this object is not yet formed, you need to pass
-    // wmap to the prefs so wmap the map can be written out
-    // to the preferences store.
-    prefs.setEndpointMap(wmap);
-
-    wmap.put = function(key, value)
-    {
-        this.map[key] = value;
-        this.prefs.setEndpointMap(this);
-    };
-
-    wmap.removeKey = function(key)
-    {
-        this.map[key] = null;
-        this.prefs.setEndpointMap(this);
-    };
-
-    return wmap;
-}
-
-function WrappedMap(map)
-{
-    this.map = map;
-
-    this.get = function(key)
-    {
-        return this.map[key];
-    };
-
-    this.put = function(key, value)
-    {
-        this.map[key] = value;
-    };
-
-    this.removeKey = function(key)
-    {
-        this.map[key] = null;
-    };
-
-    this.toArray = function(block)
-    {
-        var list = null;
-        if (block) {
-            list = new Array();
-        } else {
-            list = {};
-        }
-        var keys = this.keys();
-        var key = "";
-        var v = null;
-        for ( var i in keys) {
-            key = keys[i];
-            v = this.map[key];
-            if (block) {
-                list.push(block(key, v));
-            } else {
-                list[key] = v;
-            }
-        }
-        return list;
-    };
-
-    this.keys = function()
-    {
-        var list = new Array();
-        var v = null;
-        for (k in this.map) {
-            if (this.map.hasOwnProperty(k) && typeof this.map[k] != "function") {
-                v = this.map[k];
-                if (v != null) {
-                    list.push(k);
-                }
-            }
-        }
-        return list;
-    };
-
-    this.toJSONString = function()
-    {
-        return encodeJSONMap(this.map);
-    };
-
-    return this;
-};
-
 var ew_prefs = {
     ACTIVE_USER_NAME : "ew.active.credentials.name",
     ACTIVE_ENDPOINT : "ew.active.endpoint",
@@ -136,7 +8,6 @@ var ew_prefs = {
     SSH_USER : "ew.tools.ssh.user",
     HTTP_ENABLED : "ew.http.enabled",
     DEBUG_ENABLED : "ew.debugging.enabled",
-    OFFLINE : "ew.offline.enabled",
     IDLE_TIMEOUT: "ew.idle.timeout",
     IDLE_ACTION: "ew.idle.action",
     EW_URL : "ew.url",
@@ -144,28 +15,11 @@ var ew_prefs = {
     CURRENT_TAB : "ew.tab.current",
     REQUEST_TIMEOUT : "ew.timeout.request",
     LAST_EW_PKEY_FILE : "ew.last.ec2privatekey.file",
-    HIDE_TERMINATED: "ew.instances.hide.terminated",
-    HIDE_STOPPED: "ew.instances.hide.stopped",
-    INSTANCES_FILTER: "ew.instances.filter",
-    IMAGES_FILTER: "ew.images.filter",
-    IMAGES_TYPE: "ew.images.type",
     ENDPOINTS : "ew.endpoints",
-    IMAGE_TAGS : "ew.imagetags",
-    EIP_TAGS : "ew.eiptags",
-    INSTANCE_TAGS : "ew.instancetags",
-    VOLUME_TAGS : "ew.volumetags",
-    SNAPSHOT_TAGS : "ew.snapshotTags",
-    VPC_TAGS : "ew.vpcTags",
-    SUBNET_TAGS : "ew.subnetTags",
-    VGW_TAGS : "ew.vgwTags",
-    VPN_TAGS : "ew.vpnTags",
-    CGW_TAGS : "ew.cgwTags",
-    DHCP_OPTIONS_TAGS : "ew.dhcpOptionsTags",
     PROMPT_OPEN_PORT : "ew.prompt.open.port",
     OPEN_CONNECTION_PORT : "ew.open.connection.port",
     OPENSSL_COMMAND : "ew.tools.openssl.command",
     SHELL_COMMAND : "ew.tools.shell.command",
-    AMI_FAVORITES: "ew.ami.favorites",
     EC2_TOOLS_PATH: "ew.tools.path.ec2_home",
     IAM_TOOLS_PATH: "ew.tools.path.aws_iam_home",
     AMI_TOOLS_PATH: "ew.tools.path.ec2_amitool_home",
@@ -189,17 +43,7 @@ var ew_prefs = {
             this.setCurrentTab(this.getCurrentTab());
             this.setDebugEnabled(this.isDebugEnabled());
             this.setHttpEnabled(this.isHttpEnabled());
-            this.setOfflineEnabled(this.isOfflineEnabled());
             this.setLastEC2PrivateKeyFile(this.getLastEC2PrivateKeyFile());
-            this.setInstanceTags(this.getInstanceTags());
-            this.setVolumeTags(this.getVolumeTags());
-            this.setSnapshotTags(this.getSnapshotTags());
-            this.setVpcTags(this.getVpcTags());
-            this.setSubnetTags(this.getSubnetTags());
-            this.setDhcpOptionsTags(this.getDhcpOptionsTags());
-            this.setVpnGatewayTags(this.getVpnGatewayTags());
-            this.setCustomerGatewayTags(this.getCustomerGatewayTags());
-            this.setVpnConnectionTags(this.getVpnConnectionTags());
             this.setPromptForPortOpening(this.getPromptForPortOpening());
             this.setOpenConnectionPort(this.getOpenConnectionPort());
             this.setKeyHome(this.getKeyHome());
@@ -262,10 +106,6 @@ var ew_prefs = {
     setHttpEnabled : function(enabled)
     {
         this.setBoolPreference(this.HTTP_ENABLED, enabled);
-    },
-    setOfflineEnabled : function(enabled)
-    {
-        this.setBoolPreference(this.OFFLINE, enabled);
     },
     setIdleTimeout : function(value)
     {
@@ -366,10 +206,6 @@ var ew_prefs = {
     isHttpEnabled : function()
     {
         return this.getBoolPreference(this.HTTP_ENABLED, true);
-    },
-    isOfflineEnabled : function()
-    {
-        return this.getBoolPreference(this.OFFLINE, false);
     },
     getOpenConnectionPort : function()
     {
@@ -591,16 +427,6 @@ var ew_prefs = {
         return 1
     },
 
-    getEmptyWrappedMap : function()
-    {
-        return new WrappedMap({});
-    },
-
-    getEmptyTagMap : function()
-    {
-        return new WrappedMapTags({}, this);
-    },
-
     getEC2PrivateKeyForUser : function(user)
     {
         return this.getStringPreference(this.LAST_EW_PKEY_FILE + "." + user + "." + this.getLastUsedEndpoint(), "");
@@ -641,64 +467,6 @@ var ew_prefs = {
         env.set(name, value);
     },
 
-    getEC2Endpoints : function()
-    {
-        var me = this;
-        var wrap = function(regionMap)
-        {
-            log("Endpoints callback");
-            me.endpoints = regionMap;
-        }
-        ew_session.controller.describeRegions(wrap);
-    },
-
-    // These ones manage a pseudo-complex pref. This preference is a JSON
-    // encoded JavaScript "map" mapping endpoints to friendly names.
-    setEndpointMap : function(value)
-    {
-        this.setStringPreference(this.ENDPOINTS, value.toJSONString());
-    },
-
-    getEndpointMap : function()
-    {
-        var packedMap = this.getStringPreference(this.ENDPOINTS, null);
-
-        // Default regions
-        var endpointmap = new Object();
-        endpointmap['us-east-1'] = new Endpoint('us-east-1', 'https://ec2.us-east-1.amazonaws.com');
-        endpointmap['eu-west-1'] = new Endpoint('eu-west-1', 'https://ec2.eu-west-1.amazonaws.com');
-        endpointmap['us-west-1'] = new Endpoint('us-west-1', 'https://ec2.us-west-1.amazonaws.com');
-        endpointmap['ap-southeast-1'] = new Endpoint('ap-southeast-1', 'https://ec2.ap-southeast-1.amazonaws.com');
-        endpointmap['ap-northeast-1'] = new Endpoint('ap-northeast-1', 'https://ec2.ap-northeast-1.amazonaws.com');
-        endpointmap['us-gov-west-1'] = new Endpoint('us-gov-west-1', 'https://ec2.us-gov-west-1.amazonaws.com');
-
-        if (packedMap != null && packedMap.length > 0) {
-            var map = eval(packedMap);
-            for (k in map) {
-                if (map.hasOwnProperty(k)) {
-                    var v = map[k];
-                    if (v != null && endpointmap[k] == null) {
-                        endpointmap[k] = v;
-                    }
-                }
-            }
-        }
-        this.getEC2Endpoints();
-
-        // Reconcile the endpointmap with the map retrieved from EC2
-        var map = this.endpoints;
-        for (k in map) {
-            if (map.hasOwnProperty(k)) {
-                var v = map[k];
-                if (v != null && endpointmap[k] == null) {
-                    endpointmap[k] = v;
-                }
-            }
-        }
-
-        return new WrappedMapEndpoints(endpointmap, this);
-    },
-
     getS3Protocol: function(region, bucket)
     {
         return this.getStringPreference(this.S3_PROTO + "." + region + "." + bucket, 'http://');
@@ -732,139 +500,6 @@ var ew_prefs = {
         return regions[0]
     },
 
-    setEIPTags : function(value)
-    {
-        this.setTags(this.EIP_TAGS, value);
-    },
-
-    setImageTags : function(value)
-    {
-        this.setTags(this.IMAGE_TAGS, value);
-    },
-
-    setInstanceTags : function(value)
-    {
-        this.setTags(this.INSTANCE_TAGS, value);
-    },
-
-    setVolumeTags : function(value)
-    {
-        this.setTags(this.VOLUME_TAGS, value);
-    },
-
-    setSnapshotTags : function(value)
-    {
-        this.setTags(this.SNAPSHOT_TAGS, value);
-    },
-
-    setVpcTags : function(value)
-    {
-        this.setTags(this.VPC_TAGS, value);
-    },
-
-    setSubnetTags : function(value)
-    {
-        this.setTags(this.SUBNET_TAGS, value);
-    },
-
-    setDhcpOptionsTags : function(value)
-    {
-        this.setTags(this.DHCP_OPTIONS_TAGS, value);
-    },
-
-    setVpnGatewayTags : function(value)
-    {
-        this.setTags(this.VGW_TAGS, value);
-    },
-
-    setCustomerGatewayTags : function(value)
-    {
-        this.setTags(this.CGW_TAGS, value);
-    },
-
-    setVpnConnectionTags : function(value)
-    {
-        this.setTags(this.VPN_TAGS, value);
-    },
-
-    setTags : function(pref, value)
-    {
-        pref = pref + "." + this.getLastUsedAccount() + "." + this.getLastUsedEndpoint();
-        this.setStringPreference(pref, value.toJSONString());
-    },
-
-    getEIPTags : function()
-    {
-        return this.getTags(this.EIP_TAGS);
-    },
-
-    getImageTags : function()
-    {
-        return this.getTags(this.IMAGE_TAGS);
-    },
-
-    getInstanceTags : function()
-    {
-        return this.getTags(this.INSTANCE_TAGS);
-    },
-
-    getVolumeTags : function()
-    {
-        return this.getTags(this.VOLUME_TAGS);
-    },
-
-    getSnapshotTags : function()
-    {
-        return this.getTags(this.SNAPSHOT_TAGS);
-    },
-
-    getVpcTags : function()
-    {
-        return this.getTags(this.VPC_TAGS);
-    },
-
-    getSubnetTags : function()
-    {
-        return this.getTags(this.SUBNET_TAGS);
-    },
-
-    getDhcpOptionsTags : function()
-    {
-        return this.getTags(this.DHCP_OPTIONS_TAGS);
-    },
-
-    getVpnGatewayTags : function()
-    {
-        return this.getTags(this.VGW_TAGS);
-    },
-
-    getCustomerGatewayTags : function()
-    {
-        return this.getTags(this.CGW_TAGS);
-    },
-
-    getVpnConnectionTags : function()
-    {
-        return this.getTags(this.VPN_TAGS);
-    },
-
-    getTags : function(pref)
-    {
-        var orig = this.getStringPreference(pref, null);
-        pref = pref + "." + this.getLastUsedAccount();
-        // Get the current endpoint
-        pref = pref + "." + this.getLastUsedEndpoint();
-
-        var packedMap = this.getStringPreference(pref, orig);
-        var unpackedMap = {};
-        if (packedMap != null) {
-            // Unpack the map and return it
-            unpackedMap = eval(packedMap);
-        }
-
-        return new WrappedMapTags(unpackedMap, this);
-    },
-
     setLastUsedEndpoint : function(value)
     {
         this.setStringPreference(this.ACTIVE_ENDPOINT, value);
@@ -875,53 +510,80 @@ var ew_prefs = {
         return this.getStringPreference(this.ACTIVE_ENDPOINT, "us-east-1");
     },
 
+    setEndpoints : function(value)
+    {
+        this.setListPreference(this.ENDPOINTS, value);
+    },
+
+    getEndpoints : function()
+    {
+        return this.getListPreference(this.ENDPOINTS);
+    },
+
+    getEC2Regions: function()
+    {
+        return [ { name: 'us-east-1', url: 'https://ec2.us-east-1.amazonaws.com' },
+                 { name: 'eu-west-1', url: 'https://ec2.eu-west-1.amazonaws.com' },
+                 { name: 'us-west-1', url: 'https://ec2.us-west-1.amazonaws.com' },
+                 { name: 'ap-southeast-1', url: 'https://ec2.ap-southeast-1.amazonaws.com' },
+                 { name: 'ap-northeast-1', url: 'https://ec2.ap-northeast-1.amazonaws.com' },
+                 { name: 'us-gov-west-1', url: 'https://ec2.us-gov-west-1.amazonaws.com' },
+            ];
+    },
+
+    getListPreference: function(name)
+    {
+        var list = [];
+        try {
+            list = JSON.parse(this.getStringPreference(name));
+        }
+        catch(e) {}
+        if (!(list && list instanceof Array)) list = [];
+        return list;
+    },
+
     getStringPreference : function(name, defValue)
     {
-        if (this.prefs) {
+        if (!defValue || defValue == null) defValue = '';
+        if (this.prefs && name) {
             if (!this.prefs.prefHasUserValue(name)) {
                 return defValue;
             }
             if (this.prefs.getPrefType(name) != this.prefs.PREF_STRING) {
                 return defValue;
             }
-
             var prefValue = this.prefs.getCharPref(name).toString();
             if (prefValue.length == 0) {
                 prefValue = defValue;
             }
-
             return prefValue;
         }
-
         return defValue;
     },
 
     getIntPreference : function(name, defValue)
     {
-        if (this.prefs) {
+        if (this.prefs && name) {
             if (!this.prefs.prefHasUserValue(name)) {
                 return defValue;
             }
             if (this.prefs.getPrefType(name) != this.prefs.PREF_INT) {
                 return defValue;
             }
-
             return this.prefs.getIntPref(name);
         }
-
         return defValue;
     },
 
     getBoolPreference : function(name, defValue)
     {
-        if (this.prefs) {
+        if (this.prefs && name) {
             if (!this.prefs.prefHasUserValue(name)) {
                 return defValue;
             }
             if (this.prefs.getPrefType(name) != this.prefs.PREF_BOOL) {
                 return defValue;
             }
-
             return this.prefs.getBoolPref(name);
         }
         return defValue;
@@ -929,16 +591,22 @@ var ew_prefs = {
 
     setStringPreference : function(name, value)
     {
-        this.prefs.setCharPref(name, value);
+        if (name) this.prefs.setCharPref(name, value || '');
     },
 
     setIntPreference : function(name, value)
     {
-        this.prefs.setIntPref(name, value);
+        if (name) this.prefs.setIntPref(name, value);
     },
 
     setBoolPreference : function(name, value)
     {
-        this.prefs.setBoolPref(name, value);
-    }
+        if (name) this.prefs.setBoolPref(name, value);
+    },
+
+    setListPreference: function(name, list)
+    {
+        if (name) this.setStringPreference(name, JSON.stringify((list && list instanceof Array) ? list : []));
+    },
+
 }

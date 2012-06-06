@@ -25,45 +25,11 @@ var ew_InstancesTreeView = {
        'instance.subnetId',
        'instance.rootDeviceType'
     ],
-    model: 'instances',
+    model: ['instances', 'images', 'addresses'],
     searchElement: 'ew.instances.search',
-
-    activate: function() {
-        $("ew.instances.noterminated").checked = ew_prefs.getBoolPreference(ew_prefs.HIDE_TERMINATED, false);
-        $("ew.instances.nostopped").checked = ew_prefs.getBoolPreference(ew_prefs.HIDE_STOPPED, false);
-        $('ew.instances.search').value = ew_prefs.getStringPreference(ew_prefs.INSTANCES_FILTER, "");
-        this.invalidate();
-    },
-
-    tag : function(event) {
-        var instance = this.getSelected();
-        if (!instance) return;
-        var me = this;
-        ew_session.tagResource(instance, "id", function() { me.refresh()});
-    },
-
-    viewDetails : function(event) {
-        var instance = this.getSelected();
-        if (instance == null) return;
-
-        instance.eip = this.getEIP(instance);
-        var mani = ew_session.model.getAmiManifestForId(instance.imageId);
-        if (mani.length == 0) {
-            // Need to call describe Image
-            ew_session.controller.describeImage(instance.imageId);
-        }
-        window.openDialog("chrome://ew/content/dialogs/details_instance.xul", null, "chrome,centerscreen,modeless,resizable", ew_session, instance);
-    },
-
-    searchChanged : function(event) {
-        ew_prefs.setStringPreference(ew_prefs.INSTANCES_FILTER, $("ew.instances.search").value);
-        TreeView.searchChanged.call(this, event);
-    },
 
     filterChanged: function()
     {
-        ew_prefs.setBoolPreference(ew_prefs.HIDE_TERMINATED, $("ew.instances.noterminated").checked);
-        ew_prefs.setBoolPreference(ew_prefs.HIDE_STOPPED, $("ew.instances.nostopped").checked);
         this.invalidate();
     },
 
@@ -133,7 +99,7 @@ var ew_InstancesTreeView = {
 
                 // Navigate to the Bundle Tasks tab
                 ew_BundleTasksTreeView.refresh();
-                ew_BundleTasksTreeView.selectByBundleId(list[0].id);
+                ew_BundleTasksTreeView.select({ id: list[0].id });
                 ew_session.selectTab('ew.tabs.bundletask');
             }
             ew_session.controller.bundleInstance(instance.id, retVal.bucketName, retVal.prefix, ew_session.getActiveCredentials(), wrap);
@@ -244,14 +210,6 @@ var ew_InstancesTreeView = {
             }
         }
         ew_session.controller.associateAddress(eip, instance.id, null, function() { me.refresh() });
-    },
-
-    getEIP: function(instance) {
-        var addr = ew_session.model.getAddressByInstanceId(instance.id);
-        if (addr) {
-            return addr.toString();
-        }
-        return ""
     },
 
     retrieveRSAKeyFromKeyFile : function(keyFile, fSilent) {
@@ -462,8 +420,7 @@ var ew_InstancesTreeView = {
     },
 
     getAdminPassword : function(fSilent, instance) {
-        // Since we are retrieving a new password, ensure that we are
-        // starting with a clean slate.
+        // Since we are retrieving a new password, ensure that we are starting with a clean slate.
         if (instance == null) {
             instance = this.getSelected();
         }
@@ -478,40 +435,16 @@ var ew_InstancesTreeView = {
         return this.instPassword;
     },
 
-    selectByInstanceIds : function(list) {
-        if (!list) return;
-        this.selection.clearSelection();
-        for(var i in list) {
-            this.selectByInstanceId(list[i].id, true);
-        }
-    },
-
-    selectByInstanceId : function(id, fPreservePrev) {
-        if (!id) return;
-        var inst = null;
-        var len = this.treeList.length;
-
-        if (!fPreservePrev) {
-            this.selection.clearSelection();
-        }
-
-        for(var i = 0; i < len; ++i) {
-            inst = this.treeList[i];
-            if (inst.id == id) {
-                log (inst.id + ": Select this instance post sort");
-                this.selection.toggleSelect(i);
-                this.treeBox.ensureRowIsVisible(i);
-                return;
-            }
-        }
-    },
-
     selectionChanged : function(event) {
         var instance = this.getSelected();
         if (instance == null) return;
-        this.selectedInstanceId = instance.id;
-        instance.publicIpAddress = getIPFromHostname(instance);
-        instance.eip = this.getEIP(instance);
+        if (instance.publicIpAddress == '') {
+            instance.publicIpAddress = getIPFromHostname(instance);
+        }
+        if (instance.elasticIp == '') {
+            var eip = ew_session.model.getAddressByInstanceId(instance.id);
+            instance.elasticIp = eip ? eip.publicIp : '';
+        }
     },
 
     enableOrDisableItems  : function(event) {
@@ -527,8 +460,8 @@ var ew_InstancesTreeView = {
           document.getElementById("instances.context.getPassword").disabled = true;
         }
 
-        document.getElementById("instances.context.connectPublic").disabled = getIPFromHostname(instance) == ""
-        document.getElementById("instances.context.connectElastic").disabled = this.getEIP(instance) == ""
+        document.getElementById("instances.context.connectPublic").disabled = instance.publicIpAddress == ""
+        document.getElementById("instances.context.connectElastic").disabled = instance.elasticIp == ""
 
         if (isEbsRootDeviceType(instance.rootDeviceType)) {
             document.getElementById("instances.context.bundle").disabled = true;
@@ -555,13 +488,13 @@ var ew_InstancesTreeView = {
 
     launchMore : function() {
         var instance = this.getSelected();
-        if (instance== null) return;
+        if (instance == null) return;
 
         var count = prompt("How many more instances of "+instance.id+"?", "1");
         if (count == null || count.trim().length == 0) return;
+        count = count.trim();
 
         var me = this;
-        count = count.trim();
         ew_session.controller.runMoreInstances(instance, count, function() { me.refresh()});
     },
 
@@ -574,15 +507,7 @@ var ew_InstancesTreeView = {
         ew_session.controller.terminateInstances(instances, function() { me.refresh()});
     },
 
-    stopInstance : function() {
-        this.doStopInstances(false);
-    },
-
-    forceStopInstance : function() {
-        this.doStopInstances(true);
-    },
-
-    doStopInstances : function(force) {
+    stopInstance : function(force) {
         var instances = this.getSelectedAll();
         if (instanceIds.length == 0) return;
 
@@ -652,6 +577,16 @@ var ew_InstancesTreeView = {
                 }
             }
         });
+    },
+
+    rebootInstance: function()
+    {
+        var instances = this.getSelectedAll();
+        if (instances.length == 0) return;
+
+        if (!confirm("Reboot "+instances.length+" instance(s)?")) return;
+        var me = this;
+        ew_session.controller.rebootInstances(instances, function() { me.refresh(); });
     },
 
     startInstance : function() {
@@ -829,9 +764,9 @@ var ew_InstancesTreeView = {
         var hostname = !ipType ? instance.privateIpAddress :
                        ipType == 1 || ipType == 3 ? getIPFromHostname(instance) :
                        ipType == 4 ? instance.publicDnsName :
-                       ipType == 2 ? this.getEIP(instance) : "";
+                       ipType == 2 ? instance.elasticIP : "";
         if (hostname == "" && ipType == 3) {
-            hostname = this.getEIP(instance)
+            hostname = this.instance.elasticIP
         }
 
         // Open ports for non private connection
@@ -920,16 +855,6 @@ var ew_InstancesTreeView = {
         }
 
         ew_session.launchProcess(cmd, [filename]);
-    },
-
-    rebootInstance: function()
-    {
-        var instances = this.getSelectedAll();
-        if (instances.length == 0) return;
-
-        if (!confirm("Reboot "+instances.length+" instance(s)?")) return;
-        var me = this;
-        ew_session.controller.rebootInstances(instances, function() { me.refresh(); });
     },
 
     isRefreshable : function(instances) {

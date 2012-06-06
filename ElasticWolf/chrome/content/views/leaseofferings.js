@@ -3,12 +3,6 @@ var ew_ReservedInstancesTreeView = {
     model: 'reservedInstances',
     searchElement: 'ew.rsvdInst.search',
 
-    viewDetails : function(event) {
-        var image = this.getSelected();
-        if (image == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_reserved_instances.xul", null, "chrome,centerscreen,modal,resizable", image);
-    },
-
     isRefreshable: function() {
         for (var i in this.treeList) {
             if (list[i].state == "payment-pending") return true;
@@ -24,13 +18,6 @@ var ew_LeaseOfferingsTreeView = {
     COLNAMES: [ 'offering.id', 'offering.instanceType', 'offering.azone', 'offering.duration', 'offering.fixedPrice', 'offering.usagePrice', 'offering.offering', 'offering.tenancy', 'offering.description' ],
     model: 'offerings',
     searchElement: 'ew.offerings.search',
-
-    viewDetails : function(event)
-    {
-        var image = this.getSelected();
-        if (image == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_offering.xul", null, "chrome,centerscreen,modal,resizable", image);
-    },
 
     purchaseOffering : function()
     {

@@ -36,12 +36,6 @@ var ew_SnapshotTreeView = {
         this.invalidate();
     },
 
-    viewDetails : function(event) {
-        var image = this.getSelected();
-        if (image == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_snapshot.xul", null, "chrome,centerscreen,modal,resizable", image);
-    },
-
     selectionChanged : function(event) {
         var me = this;
         var image = this.getSelected();

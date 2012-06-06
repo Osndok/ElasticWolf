@@ -19,12 +19,6 @@ var ew_VolumeTreeView = {
         return TreeView.filter.call(this, list);
     },
 
-    viewDetails : function(event) {
-        var image = this.getSelected();
-        if (image == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_volume.xul", null, "chrome,centerscreen,modal,resizable", image);
-    },
-
     enableOrDisableItems : function() {
         var image = this.getSelected();
         document.getElementById("ew.volumes.contextmenu").disabled = (image == null);

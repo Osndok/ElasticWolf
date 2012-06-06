@@ -8,68 +8,40 @@
       <popupset>
         <menupopup id="ew.bundleTasks.contextmenu"
           onpopupshown="ew_BundleTasksTreeView.enableOrDisableItems();">
-          <menuitem oncommand="ew_BundleTasksTreeView.viewDetails();"
-            label="&ew.contextmenu.details.label;" />
+          <menuitem oncommand="ew_BundleTasksTreeView.viewDetails();" label="&ew.contextmenu.details.label;" />
           <menuseparator />
-          <menuitem id="bundleTasks.context.register"
-            oncommand="ew_BundleTasksTreeView.registerNewImage();"
-            label="&ew.images.contextmenu.register.label;" />
-          <menuitem id="bundleTasks.context.cancel"
-            oncommand="ew_BundleTasksTreeView.cancelBundleTask();"
-            label="&ew.bundleTasks.contextmenu.cancel.label;" />
+          <menuitem id="bundleTasks.context.register" oncommand="ew_BundleTasksTreeView.registerNewImage();" label="&ew.images.contextmenu.register.label;" />
+          <menuitem id="bundleTasks.context.cancel" oncommand="ew_BundleTasksTreeView.cancelBundleTask();" label="&ew.bundleTasks.contextmenu.cancel.label;" />
           <menuseparator />
-          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipBoard('id');"
-            label="&ew.bundleTasks.contextmenu.copybunid.label;" />
-          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipBoard('instanceId');"
-            label="&ew.instances.contextmenu.copyid.label;" />
+          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipBoard('id');" label="&ew.bundleTasks.contextmenu.copybunid.label;" />
+          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipBoard('instanceId');" label="&ew.instances.contextmenu.copyid.label;" />
         </menupopup>
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
         <hbox flex="10">
-          <textbox id="ew.bundleTasks.search" size="15" value=""
-            onkeypress="ew_BundleTasksTreeView.searchChanged(event);" />
-          <toolbarbutton image="images/refresh.png"
-            style="-moz-box-orient:horizontal;-moz-box-pack:center;"
-            oncommand="ew_BundleTasksTreeView.refresh()"
-            tooltiptext="&ew.refresh.tip;" />
-          <toolbarbutton image="images/delete.png"
-            style="-moz-box-orient:horizontal;-moz-box-pack:center;"
-            oncommand="ew_BundleTasksTreeView.cancelBundleTask()"
-            tooltiptext="&ew.cancelBundleTask.tip;" />
-
-          <toolbarbutton image="images/add.png"
-            style="-moz-box-orient:horizontal;-moz-box-pack:center;"
-            tooltiptext="&ew.images.register.tip;"
-            oncommand="ew_BundleTasksTreeView.registerNewImage();" />
+          <textbox id="ew.bundleTasks.search" size="15" value="" onkeypress="ew_BundleTasksTreeView.searchChanged(event);" />
+          <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_BundleTasksTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
+          <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_BundleTasksTreeView.cancelBundleTask()" tooltiptext="&ew.cancelBundleTask.tip;" />
+          <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" tooltiptext="&ew.images.register.tip;" oncommand="ew_BundleTasksTreeView.registerNewImage();" />
         </hbox>
       </toolbar>
-      <tree id="ew.bundleTasks.view" seltype="single" enableColumnDrag="true"
-        ondblclick="ew_BundleTasksTreeView.viewDetails(event)"
-        onselect="ew_BundleTasksTreeView.selectionChanged(event)" flex="1">
+      <tree id="ew.bundleTasks.view" seltype="single" enableColumnDrag="true" flex="1">
         <treecols>
-          <treecol id="bun.instanceId" label="&ew.instances.id.label;" flex="1" sortDirection="ascending"
-            persist="width ordinal hidden sortDirection" />
+          <treecol id="bun.instanceId" label="&ew.instances.id.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.id" label="&ew.bundleTasks.id.label;" flex="1"
-            persist="width ordinal hidden sortDirection" />
+          <treecol id="bun.id" label="&ew.bundleTasks.id.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.state" label="&ew.bundleTasks.state.label;" flex="1"
-            persist="width ordinal hidden sortDirection" />
+          <treecol id="bun.state" label="&ew.bundleTasks.state.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.startTime" label="&ew.bundleTasks.startTime.label;" flex="1"
-            persist="width ordinal hidden sortDirection" />
+          <treecol id="bun.startTime" label="&ew.bundleTasks.startTime.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.updateTime" label="&ew.bundleTasks.updateTime.label;" flex="1"
-            persist="width ordinal hidden sortDirection" />
+          <treecol id="bun.updateTime" label="&ew.bundleTasks.updateTime.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.s3bucket" label="&ew.bundleTasks.s3.bucket.label;" flex="1"
-            persist="width ordinal hidden sortDirection" />
+          <treecol id="bun.s3bucket" label="&ew.bundleTasks.s3.bucket.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.s3prefix" label="&ew.bundleTasks.s3.prefix.label;" flex="1"
-            persist="width ordinal hidden sortDirection" />
+          <treecol id="bun.s3prefix" label="&ew.bundleTasks.s3.prefix.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="bun.errorMsg" label="&ew.bundleTasks.errorMessage.label;" flex="1"
-            persist="width ordinal hidden sortDirection" />
+          <treecol id="bun.errorMsg" label="&ew.bundleTasks.errorMessage.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
         </treecols>
         <treechildren context="ew.bundleTasks.contextmenu"/>

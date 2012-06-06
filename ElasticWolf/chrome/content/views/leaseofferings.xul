@@ -22,7 +22,7 @@
                         <toolbarbutton image="images/cash.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_LeaseOfferingsTreeView.purchaseOffering();" tooltiptext="PurchaseOffering" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.offerings.view" seltype="single" enableColumnDrag="true" ondblclick="ew_LeaseOfferingsTreeView.viewDetails(event)" onselect="ew_LeaseOfferingsTreeView.selectionChanged(event)" flex="1" >
+                <tree id="ew.offerings.view" seltype="single" enableColumnDrag="true" flex="1" >
                     <treecols>
                         <treecol id="offering.id" label="&ew.offerings.id.label;" flex="3" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -64,7 +64,7 @@
                         <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_ReservedInstancesTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.rsvdInst.view" seltype="single" enableColumnDrag="true" ondblclick="ew_ReservedInstancesTreeView.viewDetails(event)" onselect="ew_ReservedInstancesTreeView.selectionChanged(event)" flex="1" >
+                <tree id="ew.rsvdInst.view" seltype="single" enableColumnDrag="true" flex="1" >
                     <treecols>
                         <treecol id="rsvdInst.id" label="&ew.rsvdInst.id.label;" flex="3" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

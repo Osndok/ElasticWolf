@@ -2,12 +2,7 @@ var ew_AMIsTreeView = {
     COLNAMES : [ 'ami.id', 'ami.location', 'ami.state', 'ami.owner', 'ami.ownerAlias', 'ami.isPublic', 'ami.arch', 'ami.platform', 'ami.rootDeviceType', 'ami.name', 'ami.description', 'ami.tags' ],
     model : ['images','securityGroups','instances'],
     searchElement: "ew.images.search",
-
-    activate: function() {
-        $('ew.images.search').value = ew_prefs.getStringPreference(ew_prefs.IMAGES_FILTER, "");
-        $('ew.images.type').value = ew_prefs.getStringPreference(ew_prefs.IMAGES_TYPE, "all");
-        this.invalidate();
-    },
+    favorites: "ew.images.favorites",
 
     enableOrDisableItems : function(event)
     {
@@ -50,15 +45,13 @@ var ew_AMIsTreeView = {
     imageTypeChanged : function()
     {
         $("ew.images.search").value = "";
-        ew_prefs.setStringPreference(ew_prefs.IMAGES_FILTER, $("ew.images.search").value);
-        ew_prefs.setStringPreference(ew_prefs.IMAGES_TYPE, $('ew.images.type').value);
         this.invalidate();
     },
 
     manageFavorites: function(remove) {
         var image = this.getSelected();
         if (image == null) return;
-        var favs = ew_prefs.getStringPreference(ew_prefs.AMI_FAVORITES, "").split("^");
+        var favs = ew_prefs.getStringPreference(this.favorites, "").split("^");
         debug(remove + ":" + favs)
         if (remove) {
             var i = favs.indexOf(image.id)
@@ -70,7 +63,7 @@ var ew_AMIsTreeView = {
                 favs.push(image.id)
             }
         }
-        ew_prefs.setStringPreference(ew_prefs.AMI_FAVORITES, favs.join("^"));
+        ew_prefs.setStringPreference(this.favorites, favs.join("^"));
         if (remove) {
             this.invalidate();
         }
@@ -81,7 +74,7 @@ var ew_AMIsTreeView = {
         if (!list) return list;
         var type = $("ew.images.type");
         if (type.value == "fav") {
-            var favs = ew_prefs.getStringPreference(ew_prefs.AMI_FAVORITES, "").split("^");
+            var favs = ew_prefs.getStringPreference(this.favorites, "").split("^");
             var images = [];
             for (var i in list) {
                 if (favs.indexOf(list[i].id) >= 0) {
@@ -125,12 +118,6 @@ var ew_AMIsTreeView = {
         return TreeView.filter.call(this, nlist);
     },
 
-    searchChanged : function(event)
-    {
-        ew_prefs.setStringPreference(ew_prefs.IMAGES_FILTER, $(this.searchElement).value);
-        TreeView.searchChanged.call(this, event);
-    },
-
     launchNewInstances : function()
     {
         var image = this.getSelected();
@@ -146,7 +133,7 @@ var ew_AMIsTreeView = {
                 if (retVal.tag != "") {
                     for (var i in list) {
                         list[i].tags = ew_session.parseTags(retVal.tag);
-                        ew_session.setTags([ list[i].id ], list[i].tags);
+                        ew_session.setTags([ list[i].id ], list[i].tags, function() { ew_InstancesTreeView.refresh() });
                     }
                 }
                 ew_InstancesTreeView.refresh();
@@ -278,12 +265,6 @@ var ew_AMIsTreeView = {
             }
             ew_session.controller.deregisterImage(ami, wrap);
         }
-    },
-
-    viewDetails : function(event) {
-        var image = this.getSelected();
-        if (image == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_ami.xul", null, "chrome,centerscreen,modal,resizable", image);
     },
 
     viewPermissions: function()

@@ -33,7 +33,7 @@
         <toolbarbutton image="images/delete.png" tooltiptext="&ew.loadbalancer.contextmenu.delete.label;" oncommand="ew_LoadbalancerTreeView.deleteLoadBalancer();" />
         <toolbarbutton image="images/details.png" tooltiptext="&ew.loadbalancer.contextmenu.viewdetails.label;" oncommand="ew_LoadbalancerTreeView.viewDetails();" />
       </toolbar>
-      <tree enableColumnDrag="true" id="ew.loadbalancer.view" flex="1" ondblclick="ew_LoadbalancerTreeView.viewDetails(event)" onselect="ew_LoadbalancerTreeView.selectionChanged(event);">
+      <tree enableColumnDrag="true" id="ew.loadbalancer.view" flex="1" >
         <treecols>
           <treecol id="loadbalancer.LoadBalancerName" label="&ew.loadbalancer.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />

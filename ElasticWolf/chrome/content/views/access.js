@@ -2,12 +2,6 @@ var ew_KeypairTreeView = {
     COLNAMES : ['keypair.name','keypair.fingerprint'],
     model: "keypairs",
 
-    viewDetails : function(event) {
-        var keypair = this.getSelected();
-        if (keypair == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_keypair.xul", null, "chrome,centerscreen,modal,resizable", keypair);
-    },
-
     runShell: function() {
         var keypair = this.getSelected();
         ew_session.launchShell(keypair ? keypair.name: null);
@@ -96,78 +90,106 @@ ew_KeypairTreeView.__proto__ = TreeView;
 ew_KeypairTreeView.register();
 
 var ew_AccessKeyTreeView = {
-        COLNAMES : ['accesskey.name',"accesskey.status", "accesskey.current"],
-        model: "accesskeys",
+    COLNAMES : ['accesskey.name',"accesskey.status", "accesskey.current"],
+    model: "accesskeys",
 
-        viewDetails : function(event) {
-            var key = this.getSelected();
-            if (key == null) return;
-            key.secret = this.getAccessKeySecret(key.name)
-            window.openDialog("chrome://ew/content/dialogs/details_accesskey.xul", null, "chrome,centerscreen,modal,resizable", key);
-        },
-
-        createAccessKey : function () {
-            var me = this;
-            var wrap = function(key, secret) {
-                ew_session.savePassword('AccessKey:' + key, secret);
-                me.refresh()
-            }
-            ew_session.controller.createAccessKey(wrap);
-        },
-
-        getAccessKeySecret : function(key) {
-            var secret = ew_session.getPassword('AccessKey:' + key)
-            if (secret == "" && key == ew_session.client.accessCode) {
-                secret = ew_session.client.secretKey
-            }
-            return secret
-        },
-
-        deleteSelected  : function () {
-            var key = this.getSelected();
-            if (key == null) return;
-            if (key.current) {
-                alert("You cannot delete current access key")
-                return;
-            }
-            if (!ew_session.promptYesNo("Confirm", "Delete access key "+key.name+"?")) return;
-
-            var me = this;
-            var wrap = function() {
-                ew_session.deletePassword('AccessKey:' + key.name)
-                me.refresh();
-            }
-            ew_session.controller.deleteAccessKey(key.name, wrap);
-        },
-
-        exportSelected  : function () {
-            var key = this.getSelected();
-            if (key == null) return;
-            key.secret = this.getAccessKeySecret(key.name)
-            if (key.secret == "") {
-                alert("No secret key available for this access key")
-                return
-            }
-            var path = ew_session.promptForFile("Choose file where to export this access key", true)
-            if (path) {
-                FileIO.write(FileIO.open(path), "AWSAccessKeyId=" + key.name + "\nAWSSecretKey=" + key.secret + "\n")
-            }
-        },
-
-        switchCredentials  : function () {
-            var key = this.getSelected();
-            if (key == null) return;
-            key.secret = this.getAccessKeySecret(key.name)
-            if (key.secret == "") {
-                alert("Access key " + key.name + " does not have secret code available, cannot use this key");
-                return;
-            }
-
-            if (!ew_session.promptYesNo("Confirm", "Use access key "+key.name+" for authentication for user " + ew_prefs.getLastUsedAccount() + "?, current access key/secret will be discarded.")) return;
-            ew_session.client.setCredentials(key.name, key.secret);
-            ew_session.updateCredentials(ew_session.getActiveCredentials(), key.name, key.secret);
-            this.refresh();
+    createAccessKey : function () {
+        var me = this;
+        var wrap = function(key, secret) {
+            ew_session.savePassword('AccessKey:' + key, secret);
+            me.refresh()
         }
+        ew_session.controller.createAccessKey(wrap);
+    },
+
+    getAccessKeySecret : function(key) {
+        var secret = ew_session.getPassword('AccessKey:' + key)
+        if (secret == "" && key == ew_session.client.accessCode) {
+            secret = ew_session.client.secretKey
+        }
+        return secret
+    },
+
+    deleteSelected  : function () {
+        var key = this.getSelected();
+        if (key == null) return;
+        if (key.current) {
+            alert("You cannot delete current access key")
+            return;
+        }
+        if (!ew_session.promptYesNo("Confirm", "Delete access key "+key.name+"?")) return;
+
+        var me = this;
+        var wrap = function() {
+            ew_session.deletePassword('AccessKey:' + key.name)
+            me.refresh();
+        }
+        ew_session.controller.deleteAccessKey(key.name, wrap);
+    },
+
+    exportSelected  : function () {
+        var key = this.getSelected();
+        if (key == null) return;
+        key.secret = this.getAccessKeySecret(key.name)
+        if (key.secret == "") {
+            alert("No secret key available for this access key")
+            return
+        }
+        var path = ew_session.promptForFile("Choose file where to export this access key", true)
+        if (path) {
+            FileIO.write(FileIO.open(path), "AWSAccessKeyId=" + key.name + "\nAWSSecretKey=" + key.secret + "\n")
+        }
+    },
+
+    switchCredentials  : function () {
+        var key = this.getSelected();
+        if (key == null) return;
+        key.secret = this.getAccessKeySecret(key.name)
+        if (key.secret == "") {
+            alert("Access key " + key.name + " does not have secret code available, cannot use this key");
+            return;
+        }
+
+        if (!ew_session.promptYesNo("Confirm", "Use access key "+key.name+" for authentication for user " + ew_prefs.getLastUsedAccount() + "?, current access key/secret will be discarded.")) return;
+        ew_session.client.setCredentials(key.name, key.secret);
+        ew_session.updateCredentials(ew_session.getActiveCredentials(), key.name, key.secret);
+        this.refresh();
+    }
 };
 ew_AccessKeyTreeView.__proto__ = TreeView;
 ew_AccessKeyTreeView.register();
+
+var ew_CertTreeView = {
+    COLNAMES : ['certs.name'],
+    model: 'certs',
+
+    createCert : function () {
+        var me = this;
+        var body = ew_session.generateCertificate();
+        if (body) {
+            ew_session.controller.uploadSigningCertificate(body, function(name, cert) { me.refresh(); });
+        } else {
+            alert("Could not generate new X509 certificate")
+        }
+    },
+
+    uploadCert : function () {
+        var me = this;
+        var file = ew_session.promptForFile("Select the certificate file to upload:")
+        if (file) {
+            var body = FileIO.toString(file);
+            ew_session.controller.uploadSigningCertificate(body, function(name, cert) { me.refresh(); });
+        }
+    },
+
+    deleteSelected  : function () {
+        var item = this.getSelected();
+        if (item == null) return;
+        if (!confirm("Delete certificate "+item.name+"?")) return;
+
+        var me = this;
+        ew_session.controller.deleteSigningCertificate(item.name, function(name, cert) { me.refresh(); });
+    },
+};
+ew_CertTreeView.__proto__ = TreeView;
+ew_CertTreeView.register();

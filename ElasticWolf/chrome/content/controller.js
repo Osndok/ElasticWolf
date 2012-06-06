@@ -850,7 +850,6 @@ var ew_controller = {
             ami = new AMI(imageId, imageLocation, imageState, owner, (isPublic == 'true' ? 'public' : 'private'), platform, aki, ari, rdt, ownerAlias, name, description, snapshotId, tags);
         }
 
-        ew_model.addToAmiManifestMap(ami);
         if (objResponse.callback && ami) objResponse.callback(ami);
     },
 
@@ -1055,7 +1054,7 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    unpackInstances : function(resId, ownerId, groups, instanceItems)
+    unpackInstances : function(reservationId, ownerId, groups, instanceItems)
     {
         var list = new Array();
 
@@ -1093,17 +1092,16 @@ var ew_controller = {
             var rdt = getNodeValueByName(instanceItems[j], "rootDeviceType");
             var tags = this.getTags(instanceItems[j]);
 
-            list.push(new Instance(resId, ownerId, groups, instanceId, imageId, kernelId || "", ramdiskId || "", stateName, dnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, vpcId, subnetId, rdt, tags));
+            list.push(new Instance(reservationId, ownerId, groups, instanceId, imageId, kernelId || "", ramdiskId || "", stateName, dnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, vpcId, subnetId, rdt, tags));
         }
 
         return list;
     },
 
     runMoreInstances: function(instance, count, callback) {
-        ew_session.controller.describeInstanceAttribute(instance.id, "userData", function(userData) {
+        ew_session.controller.describeInstanceAttribute(instance.id, "userData", function(data) {
             var placement = { availabilityZone: instance.availabilityZone, tenancy: instance.tenancy };
-            this.runInstances(instance.imageId, instance.kernelId, instance.ramdiskId, count, count, instance.keyName, instance.groups,
-                              userData, null, instance.instanceType, placement, instance.subnetId, null, callback);
+            this.runInstances(instance.imageId, instance.kernelId, instance.ramdiskId, count, count, instance.keyName, instance.groups, data, null, instance.instanceType, placement, instance.subnetId, null, callback);
         });
     },
 
@@ -1285,7 +1283,7 @@ var ew_controller = {
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeInstancesResponse/ec2:reservationSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
-            var resId = getNodeValueByName(items.snapshotItem(i), "reservationId");
+            var reservationId = getNodeValueByName(items.snapshotItem(i), "reservationId");
             var ownerId = getNodeValueByName(items.snapshotItem(i), "ownerId");
             var groups = new Array();
             var groupIds = items.snapshotItem(i).getElementsByTagName("groupId");
@@ -1295,7 +1293,7 @@ var ew_controller = {
             var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
             var instanceItems = instancesSet.childNodes;
             if (instanceItems) {
-                list = this.unpackInstances(resId, ownerId, groups, instanceItems);
+                list = this.unpackInstances(reservationId, ownerId, groups, instanceItems);
             }
         }
 
@@ -2476,22 +2474,18 @@ var ew_controller = {
     onCompleteDescribeRegions : function(objResponse)
     {
         var xmlDoc = objResponse.xmlDoc;
-
+        var list = [];
         var items = xmlDoc.evaluate("/ec2:DescribeRegionsResponse/ec2:regionInfo/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        var endPointMap = new Object();
         for ( var i = 0; i < items.snapshotLength; ++i) {
             var name = getNodeValueByName(items.snapshotItem(i), "regionName");
             var url = getNodeValueByName(items.snapshotItem(i), "regionEndpoint");
             if (url.indexOf("https://") != 0) {
                 url = "https://" + url;
             }
-            endPointMap[name] = new Endpoint(name, url);
-            log("name: " + name + ", url: " + url);
+            list.push(new Endpoint(name, url));
         }
 
-        if (objResponse.callback) {
-            objResponse.callback(endPointMap);
-        }
+        if (objResponse.callback) objResponse.callback(list);
     },
 
     describeLoadBalancers : function(callback)

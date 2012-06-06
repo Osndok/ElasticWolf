@@ -28,25 +28,6 @@ function waitForFile(file, ms)
     return FileIO.exists(file);
 }
 
-function generateCSVForObject(obj)
-{
-    var pairs = new Array();
-    for (k in obj) {
-        if (obj.hasOwnProperty(k)) {
-            var v = obj[k];
-            if (v != null) {
-                if (typeof v === 'object') {
-                    pairs.push(generateCSVForObject(v));
-                } else
-                    if (typeof v != 'function') {
-                        pairs.push(v);
-                    }
-            }
-        }
-    }
-    return pairs.join(',');
-}
-
 // Deep copy of an object
 function cloneObject(obj)
 {
@@ -101,6 +82,8 @@ var TreeView = {
     searchTimer: null,
     filterList: null,
     tagId: null,
+    winDetails: null,
+    tab: null,
 
     getModelName: function()
     {
@@ -161,6 +144,9 @@ var TreeView = {
     },
     getProgressMode : function(idx, column) {
     },
+    getParentIndex: function(idx) {
+        return -1;
+    },
     getCellText : function(idx, column) {
         var name = column.id.split(".").pop();
         return idx >= this.rowCount ? "" : ew_model.modelValue(name, this.treeList[idx][name]);
@@ -174,9 +160,18 @@ var TreeView = {
     notifyModelChanged : function(interest) {
         this.invalidate();
     },
+    hasNextSibling: function(idx, after) {
+        return false;
+    },
+    canDrop: function(idx, orientation, data) {
+        return true;
+    },
+    drop: function(idx, orientation, data) {
+    },
     cycleCell : function(idx, column) {
     },
     performAction : function(action) {
+        debug('action ' + action);
     },
     performActionOnCell : function(action, index, column) {
     },
@@ -325,6 +320,7 @@ var TreeView = {
     {
         if (!this.searchElement) return;
         this.search = $(this.searchElement).value;
+        ew_prefs.setStringPreference(this.searchElement, this.search);
 
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
@@ -353,9 +349,11 @@ var TreeView = {
         }
     },
     activate: function() {
+        this.restorePreferences();
     },
     deactivate: function() {
         this.stopRefreshTimer();
+        this.savePreferences();
     },
     tag: function(event) {
         var item = this.getSelected();
@@ -368,6 +366,42 @@ var TreeView = {
         if (item) {
             copyToClipboard(item[name]);
         }
+    },
+    clicked: function(event) {
+        if (ew_session.winDetails && event) {
+            this.viewDetails();
+        }
+    },
+    viewDetails : function(event) {
+        var item = this.getSelected();
+        if (item == null) return;
+        var me = this;
+        if (!ew_session.winDetails) {
+            ew_session.winDetails = window.openDialog("chrome://ew/content/dialogs/details.xul", null, "chrome,centerscreen,modeless,resizable", ew_session, item, className(item));
+        } else {
+            ew_session.winDetails.setup.call(ew_session.winDetails, ew_session, item, className(item));
+        }
+    },
+    restorePreferences: function()
+    {
+        // Restore saved filters
+        if (!this.tab) return;
+        var tab = $(this.tab);
+        if (!tab) return;
+        var toolbar = tab.getElementsByTagName('toolbar');
+        if (!toolbar.length) return;
+        toolbar = toolbar[0];
+        for (var type in ['textbox' ,'checkbox', 'menulist', 'listbox']) {
+            var items = toolbar.getElementsByTagName(type);
+            for (var i = 0; i < items.length; i++) {
+                items[i].value = ew_prefs.getStringPreference(items[i].id);
+                debug(items[i].id + " " + items[i].value);
+            }
+        }
+    },
+    savePreferences: function()
+    {
+
     },
 };
 
@@ -454,29 +488,7 @@ var ew_ListBox = {
     // Convert object into plain text to be used by list box
     toItem: function(obj)
     {
-        if (obj == null) return null;
-        if (typeof obj == "object") {
-            var item = "";
-            // Show class name as the firt column for mutli object lists
-            if (this.columns && this.columns.indexOf("__class__") >= 0) {
-                item = className(obj)
-            }
-            if (!this.columns && obj.hasOwnProperty('toString')) {
-                item = obj.toString()
-            } else {
-                for (p in obj) {
-                    if (typeof obj[p] == "function") {
-                        if (p != "toString") continue;
-                        item += (item != "" ? this.session.model.separator : "") + obj.toString();
-                    } else
-                    if (!this.columns || this.columns.indexOf(p) >= 0) {
-                        item += (item != "" ? this.session.model.separator : "") + this.session.model.modelValue(p, obj[p]);
-                    }
-                }
-            }
-            return item
-        }
-        return obj;
+        return this.session.model.toString(obj, this.columns);
     },
 };
 

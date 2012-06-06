@@ -2,12 +2,6 @@ var ew_SecurityGroupsTreeView = {
     COLNAMES : ['securityGroup.id', 'securitygroup.ownerId','securitygroup.name','securitygroup.vpcId','securitygroup.description'],
     model: [ "securityGroups", "vpcs" ],
 
-    viewDetails : function(event) {
-        var group = this.getSelectedGroup();
-        if (group == null) return;
-        window.openDialog("chrome://ew/content/dialogs/details_securitygroup.xul", null, "chrome,centerscreen,modal,resizable", group);
-    },
-
     selectionChanged : function() {
         var group = this.getSelected();
         if (!group) return;
@@ -84,64 +78,58 @@ ew_SecurityGroupsTreeView.__proto__ = TreeView;
 ew_SecurityGroupsTreeView.register();
 
 var ew_PermissionsTreeView = {
-        COLNAMES : ['permission.type','permission.protocol','permission.fromPort','permission.toPort','permission.cidrIp','permission.srcGroup'],
+    COLNAMES : ['permission.type','permission.protocol','permission.fromPort','permission.toPort','permission.cidrIp','permission.srcGroup'],
 
-        viewDetails : function(event) {
-            var perm = this.getSelected();
-            if (perm == null) return;
-            window.openDialog("chrome://ew/content/dialogs/details_permission.xul", null, "chrome,centerscreen,modal,resizable", perm);
-        },
+    grantPermission : function(type) {
+        var group = ew_SecurityGroupsTreeView.getSelected();
+        if (group == null) return;
 
-        grantPermission : function(type) {
-            var group = ew_SecurityGroupsTreeView.getSelected();
-            if (group == null) return;
+        retVal = {ok:null, type: 'Ingress'};
+        window.openDialog("chrome://ew/content/dialogs/create_permission.xul", null, "chrome,centerscreen,modal,resizable", group, ew_session, retVal);
 
-            retVal = {ok:null, type: 'Ingress'};
-            window.openDialog("chrome://ew/content/dialogs/create_permission.xul", null, "chrome,centerscreen,modal,resizable", group, ew_session, retVal);
-
-            if (retVal.ok) {
-                var me = this;
-                var wrap = function() {
-                    ew_SecurityGroupsTreeView.refresh();
-                }
-
-                var newPerm = retVal.newPerm;
-                if (newPerm.cidrIp != null) {
-                    ew_session.controller.authorizeSourceCIDR(retVal.type, group, newPerm.ipProtocol, newPerm.fromPort, newPerm.toPort, newPerm.cidrIp, wrap);
-                } else {
-                    ew_session.controller.authorizeSourceGroup(retVal.type, group, newPerm.ipProtocol, newPerm.fromPort, newPerm.toPort, newPerm.srcGroup, wrap);
-                }
-            }
-        },
-
-        revokePermission : function() {
-            var group = ew_SecurityGroupsTreeView.getSelected();
-            if (group == null) return;
-            var perms = new Array();
-            for(var i in this.treeList) {
-                if (this.selection.isSelected(i)) {
-                    perms.push(this.treeList[i]);
-                }
-            }
-            if (perms.length == 0) return;
-            if (!confirm("Revoke selected permission(s) on group "+group.name+"?")) return;
-
+        if (retVal.ok) {
             var me = this;
             var wrap = function() {
                 ew_SecurityGroupsTreeView.refresh();
             }
 
-            var permission = null;
-            for (i in perms) {
-                permission = perms[i];
-                if (permission.cidrIp) {
-                    ew_session.controller.revokeSourceCIDR(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.cidrIp,wrap);
-                } else {
-                    ew_session.controller.revokeSourceGroup(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.srcGroup,wrap);
-                }
+            var newPerm = retVal.newPerm;
+            if (newPerm.cidrIp != null) {
+                ew_session.controller.authorizeSourceCIDR(retVal.type, group, newPerm.ipProtocol, newPerm.fromPort, newPerm.toPort, newPerm.cidrIp, wrap);
+            } else {
+                ew_session.controller.authorizeSourceGroup(retVal.type, group, newPerm.ipProtocol, newPerm.fromPort, newPerm.toPort, newPerm.srcGroup, wrap);
             }
+        }
+    },
 
-        },
+    revokePermission : function() {
+        var group = ew_SecurityGroupsTreeView.getSelected();
+        if (group == null) return;
+        var perms = new Array();
+        for(var i in this.treeList) {
+            if (this.selection.isSelected(i)) {
+                perms.push(this.treeList[i]);
+            }
+        }
+        if (perms.length == 0) return;
+        if (!confirm("Revoke selected permission(s) on group "+group.name+"?")) return;
+
+        var me = this;
+        var wrap = function() {
+            ew_SecurityGroupsTreeView.refresh();
+        }
+
+        var permission = null;
+        for (i in perms) {
+            permission = perms[i];
+            if (permission.cidrIp) {
+                ew_session.controller.revokeSourceCIDR(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.cidrIp,wrap);
+            } else {
+                ew_session.controller.revokeSourceGroup(permission.type,group,permission.protocol,permission.fromPort,permission.toPort,permission.srcGroup,wrap);
+            }
+        }
+
+    },
 
 };
 

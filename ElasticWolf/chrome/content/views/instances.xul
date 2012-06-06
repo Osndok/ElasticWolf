@@ -15,7 +15,7 @@
               <menuitem id="instances.context.start" oncommand="ew_InstancesTreeView.startInstance();" label="Start" />
               <menuitem oncommand="ew_InstancesTreeView.rebootInstance();" label="Reboot" />
               <menuitem id="instances.context.stop" oncommand="ew_InstancesTreeView.stopInstance();" label="Stop" />
-              <menuitem id="instances.context.forceStop" oncommand="ew_InstancesTreeView.forceStopInstance();" label="Force Stop" />
+              <menuitem id="instances.context.forceStop" oncommand="ew_InstancesTreeView.stopInstance(true);" label="Force Stop" />
               <menuitem oncommand="ew_InstancesTreeView.terminateInstance();" label="Terminate" style="color:red; font-weight:bold;"/>
             </menupopup>
           </menu>
@@ -80,7 +80,7 @@
         </hbox>
       </toolbar>
 
-      <tree id="ew.instances.view" onselect="ew_InstancesTreeView.selectionChanged(event)"  enableColumnDrag="true" flex="1">
+      <tree id="ew.instances.view" enableColumnDrag="true" flex="1">
         <treecols>
           <treecol id="instance.name" label="Name" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
@@ -118,7 +118,7 @@
           <splitter class="tree-splitter" />
           <treecol id="instance.instanceType" label="&ew.instances.instanceType.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="instance.launchTimeDisp" label="&ew.instances.launchTime.label;" flex="2" persist="width ordinal hidden sortDirection" />
+          <treecol id="instance.launchTime" label="&ew.instances.launchTime.label;" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="instance.availabilityZone" label="&ew.availabilityZone.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
