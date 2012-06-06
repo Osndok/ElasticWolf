@@ -100,6 +100,7 @@ var TreeView = {
     searchElement: null,
     searchTimer: null,
     filterList: null,
+    tagId: null,
 
     getModelName: function()
     {
@@ -145,6 +146,15 @@ var TreeView = {
     },
     setSelected : function(index) {
         this.selection.select(index);
+    },
+    getSelectedAll: function() {
+        var list = new Array();
+        for(var i in this.treeList) {
+            if (this.selection.isSelected(i)) {
+                list.push(this.treeList[i]);
+            }
+        }
+        return list;
     },
     getImageSrc : function(idx, column) {
         return ""
@@ -337,7 +347,7 @@ var TreeView = {
     tag: function(event) {
         var item = this.getSelected();
         if (item) {
-            ew_session.tagResource(item);
+            ew_session.tagResource(item, this.tagId);
         }
     },
     copyToClipBoard : function(name) {
@@ -1227,86 +1237,6 @@ function secondsToYears(secs)
     // duration is provided in days. Let's convert it to years
     dur = dur / (365);
     return dur.toString();
-}
-
-function __addNameTagToModel__(tag, model)
-{
-    var kvs = tag.split(/\s*,\s*/);
-
-    for ( var i = 0; i < kvs.length; i++) {
-        var kv = kvs[i].split(/\s*:\s*/, 2);
-        var key = kv[0].trim();
-        var value = (kv[1] || "").trim();
-
-        if (key == "Name") {
-            model.name = value;
-            return;
-        }
-    }
-
-    model.name = null;
-}
-
-function __tagToName__(tag)
-{
-    var kvs = (tag || '').split(/\s*,\s*/);
-
-    for ( var i = 0; i < kvs.length; i++) {
-        var kv = kvs[i].split(/\s*:\s*/, 2);
-        var key = kv[0].trim();
-        var value = (kv[1] || "").trim();
-
-        if (key == "Name") {
-            return value;
-        }
-    }
-
-    return null;
-}
-
-function __concatTags__(a, b)
-{
-    if (!a) {
-        a = "";
-    }
-    if (!b) {
-        b = "";
-    }
-
-    function putTagsToHash(tagString, hash)
-    {
-        tagString += ',';
-        var kvs = (tagString.match(/\s*[^,":]+\s*:\s*("(?:[^"]|"")*"|[^,]*)\s*,\s*/g) || []);
-
-        for ( var i = 0; i < kvs.length; i++) {
-            var kv = kvs[i].split(/\s*:\s*/, 2);
-            var key = kv[0].trim();
-            var value = (kv[1] || "").trim();
-            value = value.replace(/,\s*$/, '').trim();
-            value = value.replace(/^"/, '').replace(/"$/, '').replace(/""/, '"');
-
-            if (key && value) {
-                if (/[,"]/.test(value)) {
-                    value = value.replace(/"/g, '""');
-                    value = '"' + value + '"';
-                }
-
-                hash[key] = value;
-            }
-        }
-    }
-
-    var tags = new Object();
-    var tagArray = new Array();
-
-    putTagsToHash(a, tags);
-    putTagsToHash(b, tags);
-
-    for ( var i in tags) {
-        tagArray.push(i + ":" + tags[i]);
-    }
-
-    return tagArray.join(", ");
 }
 
 var protPortMap = {

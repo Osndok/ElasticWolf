@@ -1,5 +1,5 @@
 var ew_SubnetsTreeView = {
-    COLNAMES : [ 'subnet.id', 'subnet.vpcId', 'subnet.cidr', 'subnet.state', 'subnet.availableIp', 'subnet.availabilityZone', 'subnet.tag', 'subnet.routeId', 'subnet.aclId' ],
+    COLNAMES : [ 'subnet.id', 'subnet.vpcId', 'subnet.cidr', 'subnet.state', 'subnet.availableIp', 'subnet.availabilityZone', 'subnet.tags', 'subnet.routeId', 'subnet.aclId' ],
     model: [ "subnets", "vpcs", "routeTables", "networkAcls", "azones" ],
     searchElement: 'ew.subnets.search',
 
@@ -19,7 +19,7 @@ var ew_SubnetsTreeView = {
             return false
         }
 
-        if (!confirm("Delete " + subnet.id + " (" + subnet.cidr + ")" + (subnet.tag == null ? '' : " [" + subnet.tag + "]") + "?")) return;
+        if (!confirm("Delete " + subnet.toString() + "?")) return;
 
         var me = this;
         ew_session.controller.deleteSubnet(subnet.id, function() { me.refresh(); });

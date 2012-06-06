@@ -38,7 +38,7 @@
                         <splitter class="tree-splitter" />
                         <treecol id="vpnGateway.state" label="&ew.vpngateways.state.label;" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="vpnGateway.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="vpnGateway.tags" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                     </treecols>
                     <treechildren context="ew.vpngateways.contextmenu" />

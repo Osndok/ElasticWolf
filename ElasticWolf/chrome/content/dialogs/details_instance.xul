@@ -13,10 +13,7 @@
         document.getElementById("ew.instance.instanceid").value = instance.id;
         document.getElementById("ew.instance.name").value = instance.name;
 
-        var amiLabel = session.getResourceTag(instance.imageId);
-        amiLabel = instance.imageId + (amiLabel ? ":" + amiLabel : "");
-
-        document.getElementById("ew.instance.amiid").value = amiLabel;
+        document.getElementById("ew.instance.amiid").value = instance.imageId;
         document.getElementById("ew.instance.amimanifest").value = session.model.getAmiManifestForId(instance.imageId);
         document.getElementById("ew.instance.akiid").value = instance.kernelId;
         document.getElementById("ew.instance.ariid").value = instance.ramdiskId;

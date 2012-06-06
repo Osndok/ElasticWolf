@@ -1,6 +1,7 @@
 var ew_ElasticIPTreeView = {
-    COLNAMES : ['eip.publicIp','eip.instanceId','eip.allocationId','eip.associationId','eip.domain','eip.tag'],
+    COLNAMES : ['eip.publicIp','eip.instanceId','eip.allocationId','eip.associationId','eip.domain','eip.tags'],
     model: [ "addresses", "instances", "networkInterfaces" ],
+    tagId: "publicIp",
 
     viewDetails : function(event) {
         var eip = this.getSelected();
@@ -102,18 +103,6 @@ var ew_ElasticIPTreeView = {
         if (!confirm("Disassociate "+eip.publicIp+" and instance "+eip.instanceId+"?")) return;
         var me = this;
         ew_session.controller.disassociateAddress(eip, function() { me.refresh() });
-    },
-
-    tag : function() {
-        var eip = this.getSelected();
-        if (eip == null) return;
-        ew_session.tagResource(eip, "address");
-    },
-
-    copyToClipBoard : function(fieldName) {
-        var eip = this.getSelected();
-        if (eip == null) return;
-        copyToClipboard(eip[fieldName]);
     },
 
     copyPublicDnsToClipBoard : function(fieldName) {

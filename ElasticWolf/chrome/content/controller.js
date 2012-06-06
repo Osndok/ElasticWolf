@@ -23,6 +23,21 @@ var ew_controller = {
         eval("this." + responseObject.requestType + "(responseObject)");
     },
 
+    getTags : function(item, idName)
+    {
+        var tags = [];
+        var tagSet = item.getElementsByTagName("tagSet")[0];
+        if (tagSet) {
+            var items = tagSet.getElementsByTagName("item");
+            for (var i = 0; i < items.length; i++) {
+                var key = getNodeValueByName(items[i], "key");
+                var value = getNodeValueByName(items[i], "value");
+                tags.push(new Tag(key, value));
+            }
+        }
+        return tags;
+    },
+
     registerImageInRegion : function(manifestPath, region, callback)
     {
         // Determine the current region
@@ -166,7 +181,6 @@ var ew_controller = {
         var xmlDoc = objResponse.xmlDoc;
 
         var list = new Array();
-        var tags = new Object();
         var items = xmlDoc.evaluate("/ec2:DescribeVolumesResponse/ec2:volumeSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
             var id = getNodeValueByName(items.snapshotItem(i), "volumeId");
@@ -193,12 +207,10 @@ var ew_controller = {
                 }
                 attachTime.setISO8601(getNodeValueByName(items.snapshotItem(i), "attachTime"));
             }
-            list.push(new Volume(id, size, snapshotId, zone, status, createTime, instanceId, device, attachStatus, attachTime));
-
-            this.walkTagSet(items.snapshotItem(i), "volumeId", tags);
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new Volume(id, size, snapshotId, zone, status, createTime, instanceId, device, attachStatus, attachTime, tags));
         }
 
-        this.addEC2Tag(list, "id", tags);
         ew_model.updateVolumes(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -213,7 +225,6 @@ var ew_controller = {
         var xmlDoc = objResponse.xmlDoc;
 
         var list = new Array();
-        var tags = new Object();
         var items = xmlDoc.evaluate("/ec2:DescribeSnapshotsResponse/ec2:snapshotSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
             var id = getNodeValueByName(items.snapshotItem(i), "snapshotId");
@@ -226,12 +237,10 @@ var ew_controller = {
             var description = getNodeValueByName(items.snapshotItem(i), "description");
             var ownerId = getNodeValueByName(items.snapshotItem(i), "ownerId")
             var ownerAlias = getNodeValueByName(items.snapshotItem(i), "ownerAlias")
-            list.push(new Snapshot(id, volumeId, status, startTime, progress, volumeSize, description, ownerId, ownerAlias));
-
-            this.walkTagSet(items.snapshotItem(i), "snapshotId", tags);
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new Snapshot(id, volumeId, status, startTime, progress, volumeSize, description, ownerId, ownerAlias, tags));
         }
 
-        this.addEC2Tag(list, "id", tags);
         ew_model.updateSnapshots(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -299,10 +308,9 @@ var ew_controller = {
             var cidr = getNodeValueByName(items.snapshotItem(i), "cidrBlock");
             var state = getNodeValueByName(items.snapshotItem(i), "state");
             var dhcpopts = getNodeValueByName(items.snapshotItem(i), "dhcpOptionsId");
-            list.push(new Vpc(id, cidr, state, dhcpopts));
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new Vpc(id, cidr, state, dhcpopts, tags));
         }
-
-        this.addResourceTags(list, ew_session.model.resourceMap.vpcs, "id");
         ew_model.updateVpcs(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -346,10 +354,9 @@ var ew_controller = {
             var state = getNodeValueByName(items.snapshotItem(i), "state");
             var availableIp = getNodeValueByName(items.snapshotItem(i), "availableIpAddressCount");
             var availabilityZone = getNodeValueByName(items.snapshotItem(i), "availabilityZone");
-            list.push(new Subnet(id, vpcId, cidrBlock, state, availableIp, availabilityZone));
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new Subnet(id, vpcId, cidrBlock, state, availableIp, availabilityZone, tags));
         }
-
-        this.addResourceTags(list, ew_session.model.resourceMap.subnets, "id");
         ew_model.updateSubnets(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -407,10 +414,9 @@ var ew_controller = {
                 }
                 options.push(key + " = " + values.join(","))
             }
-            list.push(new DhcpOptions(id, options.join("; ")));
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new DhcpOptions(id, options.join("; "), tags));
         }
-
-        this.addResourceTags(list, ew_session.model.resourceMap.dhcpOptions, "id");
         ew_model.updateDhcpOptions(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -598,8 +604,6 @@ var ew_controller = {
             }
             list.push(new VpnGateway(id, availabilityZone, state, type, attachments));
         }
-
-        this.addResourceTags(list, ew_session.model.resourceMap.vpnGateways, "id");
         ew_model.updateVpnGateways(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -640,10 +644,9 @@ var ew_controller = {
             var state = getNodeValueByName(items.snapshotItem(i), "state");
             var ipAddress = getNodeValueByName(items.snapshotItem(i), "ipAddress");
             var bgpAsn = getNodeValueByName(items.snapshotItem(i), "bgpAsn");
-            list.push(new CustomerGateway(id, ipAddress, bgpAsn, state, type));
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new CustomerGateway(id, ipAddress, bgpAsn, state, type, tags));
         }
-
-        this.addResourceTags(list, ew_session.model.resourceMap.customerGateways, "id");
         ew_model.updateCustomerGateways(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -686,16 +689,9 @@ var ew_controller = {
             for ( var j = 0; j < etags.length; j++) {
                 vpcId = getNodeValueByName(etags[j], "vpcId");
             }
-            etags = items.snapshotItem(i).getElementsByTagName("tagSet")[0].getElementsByTagName("item");
-            for ( var j = 0; j < etags.length; j++) {
-                var key = getNodeValueByName(etags[j], "key");
-                var val = getNodeValueByName(etags[j], "value");
-                tags.push(new Tag(key, value))
-            }
+            var tags = this.getTags(items.snapshotItem(i));
             list.push(new InternetGateway(id, vpcId, tags));
         }
-
-        this.addResourceTags(list, ew_session.model.resourceMap.internetGateways, "id");
         ew_model.updateInternetGateways(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -772,11 +768,9 @@ var ew_controller = {
             }
 
             var bgpAsn = getNodeValueByName(items.snapshotItem(i), "bgpAsn");
-
-            list.push(new VpnConnection(id, vgwId, cgwId, type, state, config));
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new VpnConnection(id, vgwId, cgwId, type, state, config, tags));
         }
-
-        this.addResourceTags(list, ew_session.model.resourceMap.vpnConnections, "id");
         ew_model.updateVpnConnections(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -852,8 +846,8 @@ var ew_controller = {
             var name = getNodeValueByName(item, "name");
             var description = getNodeValueByName(item, "description");
             var snapshotId = getNodeValueByName(item, "snapshotId");
-
-            ami = new AMI(imageId, imageLocation, imageState, owner, (isPublic == 'true' ? 'public' : 'private'), platform, aki, ari, rdt, ownerAlias, name, description, snapshotId);
+            var tags = this.getTags(item);
+            ami = new AMI(imageId, imageLocation, imageState, owner, (isPublic == 'true' ? 'public' : 'private'), platform, aki, ari, rdt, ownerAlias, name, description, snapshotId, tags);
         }
 
         ew_model.addToAmiManifestMap(ami);
@@ -886,7 +880,6 @@ var ew_controller = {
         var xmlDoc = objResponse.xmlDoc;
 
         var list = new Array();
-        var tags = new Object();
         var img = null;
         var items = xmlDoc.evaluate("/ec2:DescribeImagesResponse/ec2:imagesSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
@@ -907,12 +900,11 @@ var ew_controller = {
             var platform = getNodeValueByName(items.snapshotItem(i), "platform");
             var aki = getNodeValueByName(items.snapshotItem(i), "kernelId");
             var ari = getNodeValueByName(items.snapshotItem(i), "ramdiskId");
+            var tags = this.getTags(items.snapshotItem(i));
 
-            list.push(new AMI(imageId, imageLocation, imageState, owner, (isPublic == 'true' ? 'public' : 'private'), arch, platform, aki, ari, rdt, ownerAlias, name, description, snapshotId));
-            this.walkTagSet(items.snapshotItem(i), "imageId", tags);
+            list.push(new AMI(imageId, imageLocation, imageState, owner, (isPublic == 'true' ? 'public' : 'private'), arch, platform, aki, ari, rdt, ownerAlias, name, description, snapshotId, tags));
         }
 
-        this.addEC2Tag(list, "id", tags);
         ew_model.updateImages(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -1099,8 +1091,9 @@ var ew_controller = {
                 var ramdiskId = getNodeValueByName(instanceItems[j], "ramdiskId");
             }
             var rdt = getNodeValueByName(instanceItems[j], "rootDeviceType");
+            var tags = this.getTags(instanceItems[j]);
 
-            list.push(new Instance(resId, ownerId, groups, instanceId, imageId, kernelId || "", ramdiskId || "", stateName, dnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, null, vpcId, subnetId, rdt));
+            list.push(new Instance(resId, ownerId, groups, instanceId, imageId, kernelId || "", ramdiskId || "", stateName, dnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, vpcId, subnetId, rdt, tags));
         }
 
         return list;
@@ -1173,12 +1166,8 @@ var ew_controller = {
 
             var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
             var instanceItems = instancesSet.childNodes;
-
             if (instanceItems) {
-                var resList = this.unpackInstances(resId, ownerId, groups, instanceItems);
-                for ( var j = 0; j < resList.length; j++) {
-                    list.push(resList[j]);
-                }
+                list = this.unpackInstances(resId, ownerId, groups, instanceItems);
             }
         }
 
@@ -1284,7 +1273,6 @@ var ew_controller = {
         var xmlDoc = objResponse.xmlDoc;
 
         var list = new Array();
-        var tags = new Object();
         var items = xmlDoc.evaluate("/ec2:DescribeInstancesResponse/ec2:reservationSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
             var resId = getNodeValueByName(items.snapshotItem(i), "reservationId");
@@ -1296,90 +1284,13 @@ var ew_controller = {
             }
             var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
             var instanceItems = instancesSet.childNodes;
-
             if (instanceItems) {
-                var resList = this.unpackInstances(resId, ownerId, groups, instanceItems);
-                list = list.concat(resList);
-
-                for ( var j = 0; j < instanceItems.length; j++) {
-                    var instanceItem = instanceItems[j];
-                    if (instanceItem.nodeName == '#text') {
-                        continue;
-                    }
-                    this.walkTagSet(instanceItem, "instanceId", tags);
-                }
+                list = this.unpackInstances(resId, ownerId, groups, instanceItems);
             }
         }
 
-        this.addEC2Tag(list, "id", tags);
         ew_model.updateInstances(list);
         if (objResponse.callback) objResponse.callback(list);
-    },
-
-    walkTagSet : function(item, idName, tags)
-    {
-        var instanceId = getNodeValueByName(item, idName);
-        var tagSet = item.getElementsByTagName("tagSet")[0];
-
-        if (tagSet) {
-            var tagSetItems = tagSet.getElementsByTagName("item");
-            var tagArray = new Array();
-            var nameTag = null;
-
-            for ( var i = 0; i < tagSetItems.length; i++) {
-                var tagSetItem = tagSetItems[i];
-                var tagSetItemKey = getNodeValueByName(tagSetItem, "key");
-                var tagSetItemValue = getNodeValueByName(tagSetItem, "value");
-
-                if (/[,"]/.test(tagSetItemValue)) {
-                    tagSetItemValue = tagSetItemValue.replace(/"/g, '""');
-                    tagSetItemValue = '"' + tagSetItemValue + '"';
-                }
-                var keyValue = tagSetItemKey + ":" + tagSetItemValue;
-                if (tagSetItemKey == "Name") {
-                    nameTag = keyValue;
-                } else {
-                    tagArray.push(keyValue);
-                }
-            }
-            tagArray.sort();
-            if (nameTag) {
-                tagArray.unshift(nameTag);
-            }
-            tags[instanceId] = tagArray.join(", ");
-        }
-    },
-
-    addResourceTags : function(list, resourceType, attribute)
-    {
-        if (!list || list.length == 0) return;
-
-        var tags = ew_session.getResourceTags(resourceType);
-        if (!tags) return;
-        var new_tags = ew_prefs.getEmptyWrappedMap();
-        for ( var i in list) {
-            var res = list[i];
-            var tag = tags.get(res[attribute]);
-            if (tag && tag.length) {
-                res.tag = unescape(tag);
-                new_tags.put(res[attribute], escape(res.tag));
-            }
-        }
-        // Now that we've built the new set of instance tags, persist them
-        ew_session.setResourceTags(resourceType, new_tags);
-    },
-
-    addEC2Tag : function(list, attribute, tags)
-    {
-        if (!list || list.length == 0 || !tags) return;
-        for ( var i in list) {
-            var res = list[i];
-            var tag = tags[res[attribute]];
-            if (tag && tag.length) {
-                res.tag = tag
-                __addNameTagToModel__(tag, res);
-            }
-        }
     },
 
     retrieveBundleTaskFromResponse : function(item)
@@ -2036,7 +1947,8 @@ var ew_controller = {
                     associations.push(new RouteAssociation(aid, table, subnet));
                 }
             }
-            list.push(new RouteTable(id, vpcId, routes, associations));
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new RouteTable(id, vpcId, routes, associations, tags));
         }
         ew_model.updateRouteTables(list);
         if (objResponse.callback) objResponse.callback(list);
@@ -2229,16 +2141,6 @@ var ew_controller = {
                 }
             }
 
-            etags = items.snapshotItem(i).getElementsByTagName("tagSet")[0].getElementsByTagName("item");
-            for ( var j = 0; j < etags.length; j++) {
-                var key = getNodeValueByName(etags[j], "key");
-                var value = getNodeValueByName(etags[j], "value");
-                tags.push(new Tag(key, value))
-                if (descr == "" && key == "Name") {
-                    descr = value;
-                }
-            }
-
             var aitem = items.snapshotItem(i).getElementsByTagName("attachment")[0];
             if (aitem) {
                 var aid = getNodeValueByName(aitem, "attachmentId");
@@ -2260,8 +2162,8 @@ var ew_controller = {
                 var attId = getNodeValueByName(aitem, "attachmentID");
                 association = new NetworkInterfaceAssociation(aid, pubip, owner, instId, attId);
             }
-
-            list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, azone, mac, ip, check, groups, attachment, association));
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, azone, mac, ip, check, groups, attachment, association, tags));
         }
 
         ew_model.updateNetworkInterfaces(list);
@@ -2324,8 +2226,8 @@ var ew_controller = {
             var ipPermissionsList = this.parsePermissions('Ingress', [], ipPermissions.childNodes);
             ipPermissions = items.snapshotItem(i).getElementsByTagName("ipPermissionsEgress")[0];
             ipPermissionsList = this.parsePermissions('Egress', ipPermissionsList, ipPermissions.childNodes);
-
-            list.push(new SecurityGroup(groupId, ownerId, groupName, groupDescription, vpcId, ipPermissionsList));
+            var tags = this.getTags(items.snapshotItem(i));
+            list.push(new SecurityGroup(groupId, ownerId, groupName, groupDescription, vpcId, ipPermissionsList, tags));
         }
 
         ew_model.updateSecurityGroups(list);
@@ -2495,10 +2397,9 @@ var ew_controller = {
             var allocId = getNodeValueByName(items[i], "allocationId");
             var assocId = getNodeValueByName(items[i], "associationId");
             var domain = getNodeValueByName(items[i], "domain");
-            list.push(new EIP(publicIp, instanceid, allocId, assocId, domain));
+            var tags = this.getTags(items[i]);
+            list.push(new EIP(publicIp, instanceid, allocId, assocId, domain, tags));
         }
-
-        this.addResourceTags(list, ew_session.model.resourceMap.eips, "address");
         ew_model.updateAddresses(list);
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -2979,9 +2880,7 @@ var ew_controller = {
             tags.push([ resid, key, value ]);
         }
 
-        if (objResponse.callback) {
-            objResponse.callback(tags);
-        }
+        if (objResponse.callback) objResponse.callback(tags);
     },
 
     describeInstanceAttribute : function(instanceId, attribute, callback)

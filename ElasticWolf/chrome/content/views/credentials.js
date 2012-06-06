@@ -5,6 +5,12 @@ var ew_CredentialsTreeView = {
         this.display(ew_session.getCredentials());
     },
 
+    deactivate: function() {
+        if (ew_session.getActiveCredentials() == null) {
+            this.switchCredentials();
+        }
+    },
+
     deleteCredentials : function() {
         var cred = this.getSelected();
         if (!cred) return;

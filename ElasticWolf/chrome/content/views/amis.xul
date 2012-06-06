@@ -76,7 +76,7 @@
                             <splitter class="tree-splitter" />
                             <treecol id="ami.name" label="&ew.images.name.label;" flex="1" persist="width ordinal hidden sortDirection" />
                             <splitter class="tree-splitter" />
-                            <treecol id="ami.tag" label="Tag" flex="2" persist="width ordinal hidden sortDirection" />
+                            <treecol id="ami.tags" label="Tag" flex="2" persist="width ordinal hidden sortDirection" />
                             <splitter class="tree-splitter" />
                         </treecols>
                         <treechildren context="ew.images.contextmenu" />

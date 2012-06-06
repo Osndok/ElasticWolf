@@ -26,7 +26,7 @@
         var vpcs = this.ew_session.model.getVpcs();
         var selectvpc = 0;
         for (var i in vpcs) {
-            vpcMenu.appendItem(vpcs[i].id + " (" + vpcs[i].cidr + ") " + (vpcs[i].tag == null ? '' : " [" + vpcs[i].tag + "]"), vpcs[i].id);
+            vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);
             if (vpcs[i].id == this.retVal.vpcid)
                 selectvpc = i;
         }
@@ -36,7 +36,7 @@
         availZoneMenu.appendItem("&lt;any&gt;", null);
         var availZones = this.ew_session.model.getAvailabilityZones();
         for (var i in availZones) {
-            availZoneMenu.appendItem(availZones[i].name + " (" + availZones[i].state + ")", availZones[i].name);
+            availZoneMenu.appendItem(availZones[i].toString(), availZones[i].name);
         }
         availZoneMenu.selectedIndex = 0;
     }

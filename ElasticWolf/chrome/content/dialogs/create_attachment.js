@@ -60,18 +60,9 @@ var ew_VolumeAttacher = {
     document.getElementById("ew.newattachment.volumeId").value = this.volumeId;
     // instances
     var instanceIdMenu = document.getElementById("ew.newattachment.instanceId");
-    var instances = this.ew_session.model.getInstances();
+    var instances = this.ew_session.model.getInstances('state', 'running', 'AvailabilityZone', this.zone);
     for (var i in instances) {
-        var zone = instances[i].availabilityZone;
-        if (this.zone == instances[i].availabilityZone &&
-            instances[i].state == "running") {
-            var label = instances[i].id;
-            var name = __tagToName__(instances[i].tag);
-            if (name && name.length) {
-                label = label + ":" +  name;
-            }
-            instanceIdMenu.appendItem(label);
-        }
+        instanceIdMenu.appendItem(instances[i].toString(), instances[i].id);
     }
     instanceIdMenu.selectedIndex = 0;
 

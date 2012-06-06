@@ -25,7 +25,7 @@ var ew_VpnConnectionCreator = {
         var selectvgw = 0;
         for (var i in vgws) {
             if (vgws[i].state != "available") continue;
-            vgwMenu.appendItem(vgws[i].id + (vgws[i].tag == null ? '' : " [" + vgws[i].tag + "]"), vgws[i].id);
+            vgwMenu.appendItem(vgws[i].toString(), vgws[i].id);
             if (vgws[i].id == this.retVal.vgwid)
                 selectvgw = i;
         }
@@ -36,7 +36,7 @@ var ew_VpnConnectionCreator = {
         var selectcgw = 0;
         for (var i in cgws) {
             if (cgws[i].state != "available") continue;
-            cgwMenu.appendItem(cgws[i].id + " (" + cgws[i].ipAddress + ")" + (cgws[i].tag == null ? '' : " [" + cgws[i].tag + "]"), cgws[i].id);
+            cgwMenu.appendItem(cgws[i].toString(), cgws[i].id);
             if (cgws[i].id == this.retVal.cgwid)
                 selectcgw = i;
         }

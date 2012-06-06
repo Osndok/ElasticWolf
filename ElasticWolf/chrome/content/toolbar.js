@@ -7,7 +7,10 @@ var ew_toolbar = {
 
             { tab: "ew.tabs.endpoint",      views: [ { id: "ew.endpoints.view", view: ew_EndpointsTreeView } ] },
 
-            { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView } ], },
+            { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: true }] } ], },
+
+            { tab: "ew.tabs.vpcinstance",   views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: false }] } ],
+              id: "ew.tabs.instance"  },
 
             { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
 
@@ -139,10 +142,10 @@ var ew_toolbar = {
     update: function() {
         var tree = $('ew.toolbar')
         var cred = ew_session.getActiveCredentials();
-        tree.view.setCellText(2, tree.columns.getFirstColumn(), cred ? 'Account: ' + cred.name : "Manage Credentials");
+        tree.view.setCellText(3, tree.columns.getFirstColumn(), cred ? 'Account: ' + cred.name : "Manage Credentials");
 
         var endpoint = ew_session.getActiveEndpoint();
-        tree.view.setCellText(3, tree.columns.getFirstColumn(), endpoint ? 'Endpoint: ' + endpoint.name : "Manage Endpoints");
+        tree.view.setCellText(4, tree.columns.getFirstColumn(), endpoint ? 'Endpoint: ' + endpoint.name : "Manage Endpoints");
     },
 
 };

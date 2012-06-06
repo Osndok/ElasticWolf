@@ -222,17 +222,6 @@ var ew_session = {
         this.savePassword('Cred:' + cred.name, cred.toString())
     },
 
-    manageCredentials : function()
-    {
-        if (this.locked || this.client.disabled) return;
-        window.openDialog("chrome://ew/content/dialogs/manage_credentials.xul", null, "chrome,centerscreen, modal, resizable", ew_session);
-        this.loadCredentials();
-        // Switch to the first account on first use
-        if (!this.getActiveCredentials() && this.credentials.length) {
-            this.switchCredentials(this.credentials[0]);
-        }
-    },
-
     loadCredentials : function()
     {
         this.credentials = this.getCredentials();
@@ -301,7 +290,6 @@ var ew_session = {
             this.prefs.setLastUsedEndpoint(endpoint.name);
             this.prefs.setServiceURL(endpoint.url);
             this.client.setEndpoint(endpoint);
-
             ew_toolbar.update();
             return true;
         }
@@ -331,17 +319,7 @@ var ew_session = {
             // Set the active tab to the last tab we were viewing
             this.selectTab(this.prefs.getCurrentTab());
         } else {
-            // There are no endpoints in the system, let's ask the user to enter them
-            var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
-            var text = "Would you like to provide an EC2 Endpoint?";
-            // if the user says no, the return value will not be 0 in this case, just fall out.
-            if (promptService.confirmEx(window, "EC2 Endpoint Needed", text, promptService.STD_YES_NO_BUTTONS | promptService.BUTTON_POS_0_DEFAULT, "", "", "", null, {})) {
-                // Reset the endpoint stored in the client and prefs
-                this.client.setEndpoint(new Endpoint());
-                this.prefs.setServiceURL("");
-            } else {
-                this.manageEndpoints();
-            }
+            alert('Endpoint ' + name + ' does not exists?')
         }
     },
 
@@ -368,221 +346,6 @@ var ew_session = {
         this.vpnTags = this.prefs.getVpnConnectionTags();
         this.cgwTags = this.prefs.getCustomerGatewayTags();
         this.vgwTags = this.prefs.getVpnGatewayTags();
-    },
-
-    setResourceTag : function(id, tag)
-    {
-        if (!tag || tag.length == 0) return;
-
-        tag = escape(tag);
-        if (id.match(ew_InstancesTreeView.instanceIdRegex)) {
-            this.instanceTags.put(id, tag, "setInstanceTags");
-        } else
-        if (id.match(ew_AMIsTreeView.imageIdRegex)) {
-            this.imageTags.put(id, tag, "setImageTags");
-        } else
-        if (id.match(ew_VolumeTreeView.imageIdRegex)) {
-            this.volumeTags.put(id, tag, "setVolumeTags");
-        } else
-        if (id.match(ew_SnapshotTreeView.imageIdRegex)) {
-            this.snapshotTags.put(id, tag, "setSnapshotTags");
-        } else
-        if (id.match(ew_ElasticIPTreeView.imageIdRegex)) {
-            this.eipTags.put(id, tag, "setEIPTags");
-        } else
-        if (id.match(ew_VpcTreeView.imageIdRegex)) {
-            this.vpcTags.put(id, tag, "setVpcTags");
-        } else
-        if (id.match(ew_SubnetsTreeView.imageIdRegex)) {
-            this.subnetTags.put(id, tag, "setSubnetTags");
-        } else
-        if (id.match(ew_DhcpoptsTreeView.imageIdRegex)) {
-            this.dhcpOptionsTags.put(id, tag, "setDhcpOptionsTags");
-        } else
-        if (id.match(ew_VpnConnectionTreeView.imageIdRegex)) {
-            this.vpnTags.put(id, tag, "setVpnConnectionTags");
-        } else
-        if (id.match(ew_VpnGatewayTreeView.imageIdRegex)) {
-            this.vgwTags.put(id, tag, "setVpnGatewayTags");
-        } else
-        if (id.match(ew_CustomerGatewayTreeView.imageIdRegex)) {
-            this.cgwTags.put(id, tag, "setCustomerGatewayTags");
-        }
-    },
-
-    getResourceTag : function(id)
-    {
-        var tag = "";
-        if (id.match(ew_InstancesTreeView.instanceIdRegex)) {
-            tag = this.instanceTags.get(id);
-        } else
-        if (id.match(ew_VolumeTreeView.imageIdRegex)) {
-            tag = this.volumeTags.get(id);
-        } else
-        if (id.match(ew_SnapshotTreeView.imageIdRegex)) {
-            tag = this.snapshotTags.get(id);
-        } else
-        if (id.match(regExs["ami"])) {
-            tag = this.imageTags.get(id);
-        } else
-        if (id.match(ew_ElasticIPTreeView.imageIdRegex)) {
-            tag = this.eipTags.get(id);
-        } else
-        if (id.match(ew_VpcTreeView.imageIdRegex)) {
-            tag = this.vpcTags.get(id);
-        } else
-        if (id.match(ew_SubnetsTreeView.imageIdRegex)) {
-            tag = this.subnetTags.get(id);
-        } else
-        if (id.match(ew_DhcpoptsTreeView.imageIdRegex)) {
-            tag = this.dhcpOptionsTags.get(id);
-        } else
-        if (id.match(ew_VpnConnectionTreeView.imageIdRegex)) {
-            tag = this.vpnTags.get(id);
-        } else
-        if (id.match(ew_VpnGatewayTreeView.imageIdRegex)) {
-            tag = this.vgwTags.get(id);
-        } else
-        if (id.match(ew_CustomerGatewayTreeView.imageIdRegex)) {
-            tag = this.cgwTags.get(id);
-        }
-
-        if (tag) return unescape(tag);
-        return "";
-    },
-
-    getResourceTags : function(resourceType)
-    {
-        switch (resourceType) {
-        case this.model.resourceMap.instances:
-            return this.instanceTags;
-        case this.model.resourceMap.volumes:
-            return this.volumeTags;
-        case this.model.resourceMap.snapshots:
-            return this.snapshotTags;
-        case this.model.resourceMap.images:
-            return this.imageTags;
-        case this.model.resourceMap.eips:
-            return this.eipTags;
-        case this.model.resourceMap.vpcs:
-            return this.vpcTags;
-        case this.model.resourceMap.subnets:
-            return this.subnetTags;
-        case this.model.resourceMap.dhcpOptions:
-            return this.dhcpOptionsTags;
-        case this.model.resourceMap.vpnConnections:
-            return this.vpnTags;
-        case this.model.resourceMap.vpnGateways:
-            return this.vgwTags;
-        case this.model.resourceMap.customerGateways:
-            return this.cgwTags;
-        default:
-            return null;
-        }
-    },
-
-    setResourceTags : function(resourceType, tags)
-    {
-        switch (resourceType) {
-        case this.model.resourceMap.instances:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setInstanceTags(tags);
-
-            this.instanceTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.instanceTags = this.prefs.getInstanceTags();
-            break;
-
-        case this.model.resourceMap.volumes:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setVolumeTags(tags);
-
-            this.volumeTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.volumeTags = this.prefs.getVolumeTags();
-            break;
-
-        case this.model.resourceMap.snapshots:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setSnapshotTags(tags);
-
-            this.snapshotTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.snapshotTags = this.prefs.getSnapshotTags();
-            break;
-
-        case this.model.resourceMap.images:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setImageTags(tags);
-
-            this.imageTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.imageTags = this.prefs.getImageTags();
-            break;
-
-        case this.model.resourceMap.eips:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setEIPTags(tags);
-
-            this.eipTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.eipTags = this.prefs.getEIPTags();
-            break;
-
-        case this.model.resourceMap.vpcs:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setVpcTags(tags);
-
-            this.vpcTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.vpcTags = this.prefs.getVpcTags();
-            break;
-
-        case this.model.resourceMap.subnets:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setSubnetTags(tags);
-
-            this.subnetTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.subnetTags = this.prefs.getSubnetTags();
-            break;
-
-        case this.model.resourceMap.dhcpOptions:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setDhcpOptionsTags(tags);
-
-            this.dhcpOptionsTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.dhcpOptionsTags = this.prefs.getDhcpOptionsTags();
-            break;
-
-        case this.model.resourceMap.vpnConnections:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setVpnConnectionTags(tags);
-
-            this.vpnTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.vpnTags = this.prefs.getVpnConnectionTags();
-            break;
-
-        case this.model.resourceMap.vpnGateways:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setVpnGatewayTags(tags);
-
-            this.vgwTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.vgwTags = this.prefs.getVpnGatewayTags();
-            break;
-
-        case this.model.resourceMap.customerGateways:
-            // The Tags must first be persisted to the prefs store
-            this.prefs.setCustomerGatewayTags(tags);
-
-            this.cgwTags = null;
-            // Retrieve the appropriate data structure from the store
-            this.cgwTags = this.prefs.getCustomerGatewayTags();
-            break;
-        }
     },
 
     lookupAccountId : function(id)
@@ -848,54 +611,42 @@ var ew_session = {
     tagResource: function(obj, attr, callback)
     {
         if (!attr) attr = "id";
-        var tag = this.promptForTag(obj.tag);
+        var tag = this.promptForTag(obj.tags);
         if (tag == null) return;
 
-        obj.tag = tag;
-        __addNameTagToModel__(obj.tag, obj);
-        this.setResourceTag(obj[attr], obj.tag);
-        this.setTags([ obj[attr] ], obj.tag, callback);
+        obj.tags = this.parseTags(tag);
+        ew_model.processTags(obj);
+        this.setTags([ obj[attr] ], obj.tags, callback);
     },
 
-    tagMultipleResources: function(list, attr)
+    parseTags: function(tag)
     {
-        if (!list) return;
-        if (!attr) attr = "id";
-
-        var tag = this.promptForTag(list[0].tag);
-        if (!tag) return;
-
-        var res = null;
-        var resIds = new Array();
-        for ( var i = 0; i < list.length; ++i) {
-            res = list[i];
-            res.tag = __concatTags__(res.tag, tag);
-            __addNameTagToModel__(res.tag, res);
-            this.setResourceTag(res[attr], res.tag);
-            resIds.push(res[attr]);
+        var list = [];
+        if (tag) {
+            tag += ',';
+            var pairs = (tag.match(/\s*[^,":]+\s*:\s*("(?:[^"]|"")*"|[^,]*)\s*,\s*/g) || []);
+            for (var i = 0; i < pairs.length; i++) {
+                var pair = pairs[i].split(/\s*:\s*/, 2);
+                var key = (pair[0] || "").trim();
+                var value = (pair[1] || "").trim();
+                value = value.replace(/,\s*$/, '').trim();
+                value = value.replace(/^"/, '').replace(/"$/, '').replace(/""/, '"');
+                if (key.length == 0 || value.length == 0) continue;
+                list.push([ key, value ]);
+            }
         }
-        this.setTags(resIds, tag, true);
+        return list;
     },
 
-    setTags: function(resIds, tagString, callback)
+    setTags: function(resIds, tags, callback)
     {
         var me = this;
         var multiIds = new Array();
         var multiTags = new Array();
 
         try {
-            var tags = new Array();
-            tagString += ',';
-            var keyValues = (tagString.match(/\s*[^,":]+\s*:\s*("(?:[^"]|"")*"|[^,]*)\s*,\s*/g) || []);
-
-            for ( var i = 0; i < keyValues.length; i++) {
-                var kv = keyValues[i].split(/\s*:\s*/, 2);
-                var key = (kv[0] || "").trim();
-                var value = (kv[1] || "").trim();
-                value = value.replace(/,\s*$/, '').trim();
-                value = value.replace(/^"/, '').replace(/"$/, '').replace(/""/, '"');
-                if (key.length == 0 || value.length == 0) continue;
-                tags.push([ key, value ]);
+            if (typeof tags == "string") {
+                tags = this.parseTags(tags);
             }
 
             for ( var i = 0; i < resIds.length; i++) {

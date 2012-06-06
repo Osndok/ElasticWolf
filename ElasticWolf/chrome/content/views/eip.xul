@@ -38,7 +38,7 @@
                     <splitter class="tree-splitter" />
                     <treecol id="eip.domain" label="Domain" flex="1" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
-                    <treecol id="eip.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
+                    <treecol id="eip.tags" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                 </treecols>
                 <treechildren id="ew.addresses.children" context="ew.addresses.contextmenu" />

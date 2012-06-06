@@ -28,7 +28,7 @@
             if (vpcs[i].id == this.retVal.vpcId)
                 selvpc = i;
 
-            vpcMenu.appendItem(vpcs[i].id + " (" + vpcs[i].cidr + ")" + (vpcs[i].tag == null ? '' : " [" + vpcs[i].tag + "]"), vpcs[i].id);
+            vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);
         }
         vpcMenu.selectedIndex = selvpc;
 
@@ -37,7 +37,7 @@
         dhcpMenu.appendItem("Default Options Set", 'default');
         var dhcpopts = this.ew_session.model.getDhcpOptions();
         for (var i in dhcpopts) {
-            dhcpMenu.appendItem(dhcpopts[i].id + (dhcpopts[i].tag == null ? '' : " [" + dhcpopts[i].tag + "]"), dhcpopts[i].id);
+            dhcpMenu.appendItem(dhcpopts[i].toString(), dhcpopts[i].id);
         }
         dhcpMenu.selectedIndex = 0;
     }

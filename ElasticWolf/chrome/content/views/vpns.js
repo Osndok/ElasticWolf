@@ -1,5 +1,5 @@
 var ew_VpnConnectionTreeView = {
-    COLNAMES: ['vpnConnection.id', 'vpnConnection.vgwId', 'vpnConnection.cgwId', 'vpnConnection.type', 'vpnConnection.state', 'vpnConnection.tag'],
+    COLNAMES: ['vpnConnection.id', 'vpnConnection.vgwId', 'vpnConnection.cgwId', 'vpnConnection.type', 'vpnConnection.state', 'vpnConnection.tags'],
     model: ['vpnConnections','customerGateways','vpnGateways','vpcs'],
     searchElement: 'ew.vpnconnections.search',
 
@@ -63,7 +63,7 @@ var ew_VpnConnectionTreeView = {
         var vpn = this.getSelected();
         if (vpn == null) return;
 
-        var confirmed = confirm("Delete " + vpn.id + (vpn.tag == null ? '' :" [" + vpn.tag + "]") + "?");
+        var confirmed = confirm("Delete " + vpn.toString() + "?");
         if (!confirmed) return;
 
         var me = this;
@@ -75,7 +75,7 @@ ew_VpnConnectionTreeView.__proto__ = TreeView;
 ew_VpnConnectionTreeView.register();
 
 var ew_CustomerGatewayTreeView = {
-    COLNAMES: ['customerGateway.id', 'customerGateway.ipAddress', 'customerGateway.bgpAsn', 'customerGateway.state', 'customerGateway.type', 'customerGateway.tag'],
+    COLNAMES: ['customerGateway.id', 'customerGateway.ipAddress', 'customerGateway.bgpAsn', 'customerGateway.state', 'customerGateway.type', 'customerGateway.tags'],
     model: 'customerGateways',
     searchElement: 'ew.customergateways.search',
 
@@ -97,7 +97,7 @@ var ew_CustomerGatewayTreeView = {
         var cgw = this.getSelected();
         if (cgw == null) return;
 
-        var confirmed = confirm("Delete " + cgw.id + " (" + cgw.ipAddress + ")" + (cgw.tag == null ? '' : " [" + cgw.tag + "]") + "?");
+        var confirmed = confirm("Delete " + cgw.toString() + "?");
         if (!confirmed) return;
 
         var me = this;
@@ -117,7 +117,7 @@ ew_CustomerGatewayTreeView.__proto__ = TreeView;
 ew_CustomerGatewayTreeView.register();
 
 var ew_VpnGatewayTreeView = {
-    COLNAMES: ['vpnGateway.id', 'vpnGateway.availabilityZone', 'vpnGateway.state', 'vpnGateway.type', 'vpnGateway.tag'],
+    COLNAMES: ['vpnGateway.id', 'vpnGateway.availabilityZone', 'vpnGateway.state', 'vpnGateway.type', 'vpnGateway.tags'],
     model: ['vpnGateways', 'vpcs'],
     searchElement: 'ew.vpngateways.search',
 
@@ -146,7 +146,7 @@ var ew_VpnGatewayTreeView = {
         var vgw = this.getSelected();
         if (vgw == null) return;
 
-        var confirmed = confirm("Delete " + vgw.id + (vgw.tag == null ? '' : " [" + vgw.tag + "]") + "?");
+        var confirmed = confirm("Delete " + vgw.toString() + "?");
         if (!confirmed) return;
 
         var me = this;

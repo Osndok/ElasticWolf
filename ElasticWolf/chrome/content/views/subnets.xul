@@ -43,7 +43,7 @@
                         <splitter class="tree-splitter" />
                         <treecol id="subnet.vpcId" label="VPC" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
-                        <treecol id="subnet.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
+                        <treecol id="subnet.tags" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                         <treecol id="subnet.tableId" label="Routes" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />

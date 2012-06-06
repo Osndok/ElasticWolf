@@ -1,5 +1,5 @@
 var ew_AMIsTreeView = {
-    COLNAMES : [ 'ami.id', 'ami.location', 'ami.state', 'ami.owner', 'ami.ownerAlias', 'ami.isPublic', 'ami.arch', 'ami.platform', 'ami.rootDeviceType', 'ami.name', 'ami.description', 'ami.tag' ],
+    COLNAMES : [ 'ami.id', 'ami.location', 'ami.state', 'ami.owner', 'ami.ownerAlias', 'ami.isPublic', 'ami.arch', 'ami.platform', 'ami.rootDeviceType', 'ami.name', 'ami.description', 'ami.tags' ],
     model : ['images','securityGroups','instances'],
     searchElement: "ew.images.search",
 
@@ -131,41 +131,29 @@ var ew_AMIsTreeView = {
         TreeView.searchChanged.call(this, event);
     },
 
-    newInstanceCallback : function(list)
-    {
-        var tag = ew_AMIsTreeView.newInstanceTag;
-        // Reset the saved tag
-        ew_AMIsTreeView.newInstance = "";
-        if (tag && tag.length > 0) {
-            var inst = null;
-            for (var i in list) {
-                inst = list[i];
-                inst.tag = tag;
-                ew_session.setResourceTag(inst.id, tag);
-                ew_session.setTags([ inst.id ], tag);
-            }
-        }
-        ew_InstancesTreeView.refresh();
-        ew_InstancesTreeView.selectByInstanceIds(list);
-        ew_session.selectTab('ew.tabs.instance');
-    },
-
     launchNewInstances : function()
     {
         var image = this.getSelected();
         if (image == null) return;
-        var retVal = { ok : null };
-        this.newInstanceTag = null;
+        var retVal = { ok : null, tag: "" };
 
         window.openDialog("chrome://ew/content/dialogs/create_instances.xul", null, "chrome,centerscreen,modal,resizable", image, ew_session, retVal);
-
         if (retVal.ok) {
-            this.newInstanceTag = retVal.tag || "";
             if (retVal.name) {
-                this.newInstanceTag += "Name:" + retVal.name;
+                retVal.tag += "Name:" + retVal.name;
             }
             ew_session.controller.runInstances(retVal.imageId, retVal.kernelId, retVal.ramdiskId, retVal.minCount, retVal.maxCount, retVal.keyName, retVal.securityGroups,
-                    retVal.userData, retVal.properties, retVal.instanceType, retVal.placement, retVal.subnetId, retVal.ipAddress, this.newInstanceCallback);
+                                               retVal.userData, retVal.properties, retVal.instanceType, retVal.placement, retVal.subnetId, retVal.ipAddress, function(list) {
+                if (retVal.tag != "") {
+                    for (var i in list) {
+                        list[i].tags = ew_session.parseTags(retVal.tag);
+                        ew_session.setTags([ list[i].id ], list[i].tags);
+                    }
+                }
+                ew_InstancesTreeView.refresh();
+                ew_InstancesTreeView.selectByInstanceIds(list);
+                ew_session.selectTab('ew.tabs.instance');
+            });
         }
     },
 

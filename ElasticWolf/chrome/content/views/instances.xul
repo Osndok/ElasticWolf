@@ -126,7 +126,7 @@
           <splitter class="tree-splitter" />
           <treecol id="instance.rootDeviceType" label="&ew.instances.rootDeviceType.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="instance.tag" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
+          <treecol id="instance.tags" label="Tag" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="instance.platform" label="&ew.platform.label;" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />

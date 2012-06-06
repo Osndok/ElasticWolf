@@ -1,5 +1,5 @@
 var ew_VpcTreeView = {
-    COLNAMES : [ 'vpc.id', 'vpc.cidr', 'vpc.state', 'vpc.dhcpoptions', 'vpc.tag' ],
+    COLNAMES : [ 'vpc.id', 'vpc.cidr', 'vpc.state', 'vpc.dhcpoptions', 'vpc.tags' ],
     model: [ "vpcs", "instances", "internetGateways" ],
     searchElement: 'ew.vpcs.search',
 
@@ -88,7 +88,7 @@ ew_VpcTreeView.__proto__ = TreeView;
 ew_VpcTreeView.register();
 
 var ew_DhcpoptsTreeView = {
-    COLNAMES: ['dhcpoption.id', 'dhcpoption.options', 'dhcpoption.tag'],
+    COLNAMES: ['dhcpoption.id', 'dhcpoption.options', 'dhcpoption.tags'],
     model: "dhcpOptions",
     searchElement: 'ew.dhcpopts.search',
 
@@ -100,7 +100,7 @@ var ew_DhcpoptsTreeView = {
     deleteDhcpOptions : function() {
         var opts = this.getSelected();
         if (opts == null) return;
-        if (!confirm("Delete " + opts.id + (opts.tag == null ? '' : " [" + opts.tag + "]") + "?")) return;
+        if (!confirm("Delete " + opts.toString() + "?")) return;
         var me = this;
         ew_session.controller.deleteDhcpOptions(opts.id, function() { me.refresh(); });
     },

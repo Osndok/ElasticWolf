@@ -65,7 +65,7 @@ function Tag(name, value)
     this.name = name || "";
     this.value = value || "";
     this.toString = function() {
-        return this.name + ":" + this.value;
+        return this.name + ":" + (this.value.match(/[,:]+/) ? '"' + this.value + '"' : this.value);
     }
 }
 
@@ -78,7 +78,7 @@ function Group(id, name)
     }
 }
 
-function NetworkInterface(id, status, descr, subnetId, vpcId, availabilityZone, macAddress, privateIpAddress, sourceDestCheck, groups, attachment, association)
+function NetworkInterface(id, status, descr, subnetId, vpcId, availabilityZone, macAddress, privateIpAddress, sourceDestCheck, groups, attachment, association, tags)
 {
     this.id = id
     this.status = status
@@ -92,6 +92,9 @@ function NetworkInterface(id, status, descr, subnetId, vpcId, availabilityZone, 
     this.groups = groups || [];
     this.attachment = attachment
     this.association = association
+    this.tags = tags
+    ew_model.processTags(this, "descr")
+
     this.toString = function() {
         return this.privateIpAddress + ew_model.separator + this.status + ew_model.separator + this.id + ew_model.separator +  this.descr +
                " (" + ew_model.modelValue("subnetId", this.subnetId) + ")";
@@ -192,7 +195,7 @@ function Endpoint(name, url)
     return this;
 }
 
-function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, rootDeviceType, ownerAlias, name, description, snapshotId, tag)
+function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, rootDeviceType, ownerAlias, name, description, snapshotId, tags)
 {
     this.id = id;
     this.location = location;
@@ -201,7 +204,7 @@ function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, roo
     this.isPublic = isPublic;
     this.arch = arch;
     this.platform = platform;
-    this.tag = tag || "";
+    this.tags = tags;
     this.aki = aki;
     this.ari = ari;
     this.rootDeviceType = rootDeviceType;
@@ -209,12 +212,14 @@ function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, roo
     this.name = name;
     this.description = description;
     this.snapshotId = snapshotId;
+    ew_model.processTags(this)
+
     this.toString = function() {
         return this.id;
     }
 }
 
-function Snapshot(id, volumeId, status, startTime, progress, volumeSize, description, owner, ownerAlias, tag)
+function Snapshot(id, volumeId, status, startTime, progress, volumeSize, description, owner, ownerAlias, tags)
 {
     this.id = id;
     this.volumeId = volumeId;
@@ -225,18 +230,15 @@ function Snapshot(id, volumeId, status, startTime, progress, volumeSize, descrip
     this.volumeSize = volumeSize;
     this.owner = owner;
     this.ownerAlias = ownerAlias;
-
-    if (tag) {
-        this.tag = tag;
-        __addNameTagToModel__(tag, this);
-    }
+    this.tags = tags;
+    ew_model.processTags(this);
 
     this.toString = function() {
         return this.description + ew_model.separator + this.id + ew_model.separator + this.status + "/" + this.progress;
     }
 }
 
-function Volume(id, size, snapshotId, zone, status, createTime, instanceId, device, attachStatus, attachTime, tag)
+function Volume(id, size, snapshotId, zone, status, createTime, instanceId, device, attachStatus, attachTime, tags)
 {
     this.id = id;
     this.size = size;
@@ -250,17 +252,16 @@ function Volume(id, size, snapshotId, zone, status, createTime, instanceId, devi
     if (attachStatus != "") {
         this.attachTime = attachTime.strftime('%Y-%m-%d %H:%M:%S');
     }
-    if (tag) {
-        this.tag = tag;
-        __addNameTagToModel__(tag, this);
-    }
+    this.tags = tags;
+    ew_model.processTags(this);
+
     this.toString = function() {
         return (this.name ? this.name + ew_model.separator : "") + this.id + ew_model.separator + this.device + ew_model.separator + this.status +
                (this.instanceId ? " (" + ew_model.modelValue("instanceId", this.instanceId) + ")" : "");
     }
 }
 
-function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, tag, vpcId, subnetId, rootDeviceType)
+function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, vpcId, subnetId, rootDeviceType, tags)
 {
     this.resId = resId;
     this.ownerId = ownerId;
@@ -284,11 +285,9 @@ function Instance(resId, ownerId, groups, instanceId, imageId, kernelId, ramdisk
     this.platform = platform;
     this.vpcId = vpcId;
     this.subnetId = subnetId;
+    this.tags = tags;
+    ew_model.processTags(this);
 
-    if (tag) {
-        this.tag = tag;
-        __addNameTagToModel__(tag, this);
-    }
     this.rootDeviceType = rootDeviceType;
 
     this.toString = function() {
@@ -325,7 +324,7 @@ function AccessKey(name, status, secret, current)
     }
 }
 
-function SecurityGroup(id, ownerId, name, description, vpcId, permissions)
+function SecurityGroup(id, ownerId, name, description, vpcId, permissions, tags)
 {
     this.id = id
     this.ownerId = ownerId;
@@ -333,6 +332,8 @@ function SecurityGroup(id, ownerId, name, description, vpcId, permissions)
     this.description = description;
     this.vpcId = vpcId;
     this.permissions = permissions;
+    this.tags = tags
+    ew_model.processTags(this)
     this.toString = function() {
         return this.name + ew_model.separator + this.id + (this.vpcId ? " (" + ew_model.modelValue("vpcId", this.vpcId) + ")" : "");
     }
@@ -380,12 +381,15 @@ function RouteAssociation(id, tableId, subnetId)
     }
 }
 
-function RouteTable(id, vpcId, routes, associations)
+function RouteTable(id, vpcId, routes, associations, tags)
 {
     this.id = id
     this.vpcId = vpcId
     this.routes = routes
     this.associations = associations
+    this.tags = tags
+    ew_model.processTags(this);
+
     this.toString = function() {
         var str = this.id
         if (this.routes && this.routes.length > 0) {
@@ -403,19 +407,21 @@ function AvailabilityZone(name, state)
 {
     this.name = name;
     this.state = state;
+
     this.toString = function() {
-        return this.name;
+        return this.name + ew_model.separator + this.state;
     }
 }
 
-function EIP(publicIp, instanceid, allocId, assocId, domain, tag)
+function EIP(publicIp, instanceid, allocId, assocId, domain, tags)
 {
     this.publicIp = publicIp;
     this.instanceId = instanceid;
     this.allocationId = allocId || "";
     this.associationId = assocId || "";
     this.domain = domain || "";
-    this.tag = tag || "";
+    this.tags = tags;
+    ew_model.processTags(this)
 
     this.toString = function() {
         return this.publicIp + (this.instanceId ?  " (" + ew_model.modelValue('instanceId', this.instanceId) + ")" : "");
@@ -432,6 +438,10 @@ function BundleTask(id, instanceId, state, startTime, updateTime, s3bucket, s3pr
     this.s3bucket = s3bucket;
     this.s3prefix = s3prefix;
     this.errorMsg = errorMsg;
+
+    this.toString = function() {
+        return this.id
+    }
 }
 
 function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc, offering, tenancy)
@@ -445,6 +455,10 @@ function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc, offering, t
     this.description = desc;
     this.offering = offering;
     this.tenancy = tenancy;
+
+    this.toString = function() {
+        return this.id
+    }
 }
 
 function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state, tenancy)
@@ -461,22 +475,27 @@ function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, 
     this.description = desc;
     this.state = state;
     this.tenancy = tenancy
+
+    this.toString = function() {
+        return this.id
+    }
 }
 
-function Vpc(id, cidr, state, dhcpOptionsId, tag)
+function Vpc(id, cidr, state, dhcpOptionsId, tags)
 {
     this.id = id;
     this.cidr = cidr;
     this.state = state;
     this.dhcpOptionsId = dhcpOptionsId;
-    this.tag = tag || "";
+    this.tags = tags;
+    ew_model.processTags(this)
 
     this.toString = function() {
         return this.cidr + ew_model.separator + this.id;
     }
 }
 
-function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tag)
+function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tags)
 {
     this.id = id;
     this.vpcId = vpcId;
@@ -484,24 +503,27 @@ function Subnet(id, vpcId, cidr, state, availableIp, availabilityZone, tag)
     this.state = state;
     this.availableIp = availableIp;
     this.availabilityZone = availabilityZone;
-    this.tag = tag || "";
+    this.tags = tags;
+    ew_model.processTags(this)
 
     this.toString = function() {
         return this.cidr + ew_model.separator + this.id + ew_model.separator + this.availableIp + ew_model.separator + this.availabilityZone;
     }
 }
 
-function DhcpOptions(id, options, tag)
+function DhcpOptions(id, options, tags)
 {
     this.id = id;
     this.options = options;
-    this.tag = tag || "";
+    this.tags = tags;
+    ew_model.processTags(this)
+
     this.toString = function() {
         return this.id + ew_model.separator + this.options;
     }
 }
 
-function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tag)
+function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tags)
 {
     this.id = id;
     this.vgwId = vgwId;
@@ -510,7 +532,8 @@ function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tag)
     this.state = state;
     this.config = config;
     this.attachments = attachments;
-    this.tag = tag || "";
+    this.tags = tags;
+    ew_model.processTags(this)
 
     this.toString = function() {
         return this.id + ew_model.separator + this.state + " (" + ew_model.modelValue("vgwId", this.vgwId) + ")";
@@ -521,21 +544,23 @@ function InternetGateway(id, vpcId, tags)
 {
     this.id = id
     this.vpcId = vpcId;
-    this.tags = tags || []
+    this.tags = tags
+    ew_model.processTags(this)
 
     this.toString = function() {
         return this.id + ew_model.separator + ew_model.modelValue("vpcId", this.vpcId);
     }
 }
 
-function VpnGateway(id, availabilityZone, state, type, attachments, tag)
+function VpnGateway(id, availabilityZone, state, type, attachments, tags)
 {
     this.id = id;
     this.availabilityZone = availabilityZone;
     this.state = state;
     this.type = type;
     this.attachments = attachments || [];
-    this.tag = tag || "";
+    this.tags = tags;
+    ew_model.processTags(this)
 
     this.toString = function() {
         var text = this.id + ew_model.separator + this.state
@@ -556,14 +581,15 @@ function VpnGatewayAttachment(vpcId, vgwId, state)
     }
 }
 
-function CustomerGateway(id, ipAddress, bgpAsn, state, type, tag)
+function CustomerGateway(id, ipAddress, bgpAsn, state, type, tags)
 {
     this.id = id;
     this.ipAddress = ipAddress;
     this.bgpAsn = bgpAsn;
     this.state = state;
     this.type = type;
-    this.tag = tag || "";
+    this.tags = tags;
+    ew_model.processTags(this)
 
     this.toString = function() {
         return this.ipAddress + ew_model.separator + this.bgpAsn;
@@ -666,26 +692,6 @@ var ew_model = {
     networkAcls: null,
     networkInterfaces: null,
     s3buckets: null,
-
-    resourceMap : {
-        instances : 0,
-        volumes : 1,
-        snapshots : 2,
-        images : 3,
-        eips : 4,
-        vpcs : 5,
-        subnets : 6,
-        dhcpOptions : 7,
-        vpnConnections : 8,
-        vpnGateways : 9,
-        customerGateways : 10,
-        internetGateways : 11,
-        routeTables: 12,
-        networkAcls: 13,
-        networkInterfaces: 14,
-        s3buckets: 15,
-        users: 16
-    },
 
     amiIdManifestMap : {},
 
@@ -903,6 +909,18 @@ var ew_model = {
             }
         }
         return value;
+    },
+
+    processTags: function(obj, name)
+    {
+        if (!obj || !obj.tags) return;
+        for (var i in obj.tags) {
+            switch (obj.tags[i].name) {
+            case "Name":
+                obj[name || "name"] = obj.tags[i].value;
+                return;
+            }
+        }
     },
 
     getObjectById: function(list, id)

@@ -42,7 +42,7 @@ var ew_SecGroupCreator = {
         vpcMenu.appendItem("None", "");
         var vpcs = this.ew_session.model.getVpcs();
         for (var i in vpcs) {
-            vpcMenu.appendItem(vpcs[i].cidr + (vpcs[i].tag == null ? '' : " [" + vpcs[i].tag + "]") + " - " + vpcs[i].id, vpcs[i].id);
+            vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);
         }
         vpcMenu.selectedIndex = 0;
     }

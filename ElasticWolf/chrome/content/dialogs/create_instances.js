@@ -175,7 +175,7 @@ var ew_InstanceLauncher = {
             var subnets = this.ew_session.model.getSubnets();
             for ( var i in subnets) {
                 if (subnets[i].vpcId == sel.value && (az == "" || az == subnets[i].availabilityZone)) {
-                    this.subnetMenu.appendItem(subnets[i].cidr + (subnets[i].tag == null ? " (" : " [" + subnets[i].tag + "] (") + subnets[i].availableIp + " IPs available) - " + subnets[i].id, subnets[i].id)
+                    this.subnetMenu.appendItem(subnets[i].toString(), subnets[i].id)
                 }
             }
             this.subnetMenu.selectedIndex = 0;
@@ -334,7 +334,7 @@ var ew_InstanceLauncher = {
         var vpcs = this.ew_session.model.getVpcs();
         this.vpcMenu.appendItem("", "");
         for (var i in vpcs) {
-            this.vpcMenu.appendItem(vpcs[i].cidr + (vpcs[i].tag == null ? '' : " [" + vpcs[i].tag + "]") + " - " + vpcs[i].id, vpcs[i].id);
+            this.vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);
         }
         this.vpcMenu.selectedIndex = 0;
         this.vpcIdSelected();

@@ -48,26 +48,12 @@ var ew_EBSVolumeAttacher = {
 
         // volume ids
         var volMenu = document.getElementById("ew.attachebsvolume.volumeId");
-        var volumes = this.ew_session.model.getVolumes();
-        var vol = null;
-        var label = null;
-        var name = null;
+        // A volume can be attached to this instance only if:
+        // 1. It is in the same zone as this instance
+        // 2. It is not attached to another instance
+        var volumes = this.ew_session.model.getVolumes('availabilityZone', zone, 'instanceId', '');
         for(var i in volumes) {
-            vol = volumes[i];
-            // A volume can be attached to this instance only if:
-            // 1. It is in the same zone as this instance
-            // 2. It is not attached to another instance
-            if (zone == vol.availabilityZone &&
-                vol.instanceId.length == 0) {
-                this.volList.push(vol);
-                label = vol.id;
-                name = __tagToName__(vol.tag);
-
-                if (name && name.length) {
-                    label = label + ":" + name;
-                }
-                volMenu.appendItem(label);
-            }
+            volMenu.appendItem(volumes[i].toString(), volumes[i].id);
         }
         volMenu.selectedIndex = 0;
 

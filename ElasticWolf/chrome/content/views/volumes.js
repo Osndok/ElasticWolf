@@ -1,6 +1,6 @@
 var ew_VolumeTreeView = {
     COLNAMES:
-    ['vol.id','vol.size','vol.snapshotId','vol.availabilityZone','vol.status','vol.createTime', 'vol.instanceId', 'vol.instanceName', 'vol.device', 'vol.attachStatus','vol.attachTime', 'vol.tag'],
+    ['vol.id','vol.size','vol.snapshotId','vol.availabilityZone','vol.status','vol.createTime', 'vol.instanceId', 'vol.instanceName', 'vol.device', 'vol.attachStatus','vol.attachTime', 'vol.tags'],
     model: ['volumes','azones','instances','snapshots'],
     searchElement: 'ew.volumes.search',
 
@@ -42,28 +42,19 @@ var ew_VolumeTreeView = {
         var image = this.getSelected();
         if (image == null) return;
         var me = this;
-        var wrap = function(snapId) {
-            // Replicate the volume tag for this snapshot
-            if (image.tag && image.tag.length > 0) {
-                ew_session.setResourceTag(snapId, iage.tag);
-            }
-            // We need to refresh so that the tag is applied to the snapshot
-            ew_SnapshotTreeView.refresh();
-        }
-        ew_session.controller.createSnapshot(image.id, wrap);
+        ew_session.controller.createSnapshot(image.id, function(snapId) { ew_SnapshotTreeView.refresh(); });
     },
 
     createVolume : function (snap) {
-        var retVal = {ok:null};
+        var retVal = { ok: false, tag: '' };
         if (!snap) snap = null;
         window.openDialog("chrome://ew/content/dialogs/create_volume.xul",null,"chrome,centerscreen,modal,resizable",snap,ew_session,retVal);
         if (retVal.ok) {
             var me = this;
             var wrap = function(id) {
                 $(me.searchElement).value = '';
-                if (retVal.tag && retVal.tag != '') {
-                    ew_session.setResourceTag(id, retVal.tag);
-                    ew_session.setTags([id], retVal.tag);
+                if (retVal.tag != '') {
+                    ew_session.setTags([id], retVal.tag, function() { me.refresh() });
                 } else {
                     me.refresh();
                 }
