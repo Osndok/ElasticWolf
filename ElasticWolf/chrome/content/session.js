@@ -541,11 +541,18 @@ var ew_session = {
         }, 10);
     },
 
-    promptForTag: function(tag)
+    promptForTag: function(tags)
     {
-        var rc = { accepted : false, result : null };
-        openDialog('chrome://ew/content/dialogs/tag.xul', null, 'chrome,centerscreen,modal,width=400,height=250', tag, rc);
-        return rc.accepted ? (rc.result || '').trim() : null;
+        var rc = { ok: false, text: String(tags), title: "Tag (ex: Key:Value, Key:Value...) " };
+        openDialog('chrome://ew/content/dialogs/text.xul', null, 'chrome,centerscreen,modal,width=400,height=250', rc);
+        return rc.ok ? (rc.text || '').replace(/(\n|\r)+/g, ' ').trim() : null;
+    },
+
+    promptForText: function(title, text, width, height)
+    {
+        var rc = { ok: false, text: text, title: title };
+        openDialog('chrome://ew/content/dialogs/text.xul', null, 'chrome,centerscreen,modal,width=' + (widht || 400) + ',height=' + (height || 240), rc);
+        return rc.ok ? rc.text : null;
     },
 
     savePassword : function(key, secret)

@@ -1174,11 +1174,11 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(list);
     },
 
-    terminateInstances : function(instanceIds, callback)
+    terminateInstances : function(instances, callback)
     {
         var params = []
-        for ( var i in instanceIds) {
-            params.push([ "InstanceId." + (i + 1), instanceIds[i] ]);
+        for ( var i in instances) {
+            params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
         ew_client.queryEC2("TerminateInstances", params, this, true, "onCompleteTerminateInstances", callback);
     },
@@ -1203,11 +1203,11 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(list);
     },
 
-    stopInstances : function(instanceIds, force, callback)
+    stopInstances : function(instances, force, callback)
     {
         var params = []
-        for ( var i in instanceIds) {
-            params.push([ "InstanceId." + (i + 1), instanceIds[i] ]);
+        for ( var i in instances) {
+            params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
         if (force == true) {
             params.push([ "Force", "true" ]);
@@ -1235,11 +1235,11 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(list);
     },
 
-    startInstances : function(instanceIds, callback)
+    startInstances : function(instances, callback)
     {
         var params = []
-        for ( var i in instanceIds) {
-            params.push([ "InstanceId." + (i + 1), instanceIds[i] ]);
+        for ( var i in instances) {
+            params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
         ew_client.queryEC2("StartInstances", params, this, true, "onCompleteStartInstances", callback);
     },
@@ -2323,11 +2323,11 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    rebootInstances : function(instanceIds, callback)
+    rebootInstances : function(instances, callback)
     {
         var params = []
-        for ( var i in instanceIds) {
-            params.push([ "InstanceId." + (i + 1), instanceIds[i] ]);
+        for ( var i in instances) {
+            params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
         ew_client.queryEC2("RebootInstances", params, this, true, "onCompleteRebootInstances", callback);
     },

@@ -151,7 +151,7 @@ var ew_AMIsTreeView = {
                     }
                 }
                 ew_InstancesTreeView.refresh();
-                ew_InstancesTreeView.selectByInstanceIds(list);
+                ew_InstancesTreeView.selectAll(list);
                 ew_session.selectTab('ew.tabs.instance');
             });
         }

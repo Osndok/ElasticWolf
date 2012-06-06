@@ -149,7 +149,7 @@ var TreeView = {
     },
     getSelectedAll: function() {
         var list = new Array();
-        for(var i in this.treeList) {
+        for (var i in this.treeList) {
             if (this.selection.isSelected(i)) {
                 list.push(this.treeList[i]);
             }
@@ -238,6 +238,19 @@ var TreeView = {
             return true;
         }
         return false;
+    },
+    selectAll: function(list) {
+        if (!list) return;
+        this.selection.selectEventsSuppressed = true;
+        this.selection.clearSelection();
+        for (var i in list) {
+            var idx = this.find(list[i]);
+            if (idx >= 0) {
+                this.selection.toggleSelect(idx);
+                this.treeBox.ensureRowIsVisible(idx);
+            }
+        }
+        this.selection.selectEventsSuppressed = false;
     },
     refresh : function(force) {
         ew_model.refreshModel(this.getModelName(this.model));
@@ -448,7 +461,7 @@ var ew_ListBox = {
             if (this.columns && this.columns.indexOf("__class__") >= 0) {
                 item = className(obj)
             }
-            if (!this.columns && obj.toString) {
+            if (!this.columns && obj.hasOwnProperty('toString')) {
                 item = obj.toString()
             } else {
                 for (p in obj) {
@@ -1272,6 +1285,20 @@ var regExs = {
     "win" : new RegExp(/^Win/i),
     "mac" : new RegExp(/^Mac/),
 };
+
+var instanceTypes = [
+    { name: "t1.micro", value: "t1.micro" },
+    { name: "m1.small (32-bit only)", value: "m1.small" },
+    { name: "c1.medium (32-bit only)", value: "c1.medium" },
+    { name: "m1.large (64-bit only)", value: "m1.large" },
+    { name: "m1.xlarge (64-bit only)", value: "m1.xlarge" },
+    { name: "m2.xlarge (64-bit only)", value: "m2.xlarge" },
+    { name: "m2.2xlarge (64-bit only)", value: "m2.2xlarge" },
+    { name: "m2.4xlarge (64-bit only)", value: "m2.4xlarge" },
+    { name: "c1.xlarge (64-bit only)", value: "c1.xlarge" },
+    { name: "cc1.4xlarge (64-bit only)", value: "cc1.4xlarge" },
+    { name: "cg1.4xlarge (64-bit only)", value: "cg1.4xlarge" },
+];
 
 function getProperty(key)
 {

@@ -4,14 +4,23 @@
 
 <dialog id="ew.dialog.instance.console"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  buttons="accept" ondialogaccept="return true;"
-  onload="ew_InstanceConsole.init();"
+  buttons="accept"
+  ondialogaccept="return true;"
+  onload="init();"
   title="Instance Console Output">
 
-  <script type="application/x-javascript"
-    src="chrome://ew/content/dialogs/console_output.js" />
-  <script type="application/x-javascript"
-    src="chrome://ew/content/model.js" />
+  <script type="application/x-javascript">
+    function init()
+    {
+        document.getElementById("ew.console.instanceid").value = window.arguments[0];
+        document.getElementById("ew.console.timestamp").value = window.arguments[1];
+        var output = "<no output available>";
+        if (window.arguments[2] != null) {
+            output = window.arguments[2];
+        }
+        document.getElementById("ew.console.output").value = output;
+    }
+  </script>
 
   <vbox flex="1">
     <grid flex="1">
