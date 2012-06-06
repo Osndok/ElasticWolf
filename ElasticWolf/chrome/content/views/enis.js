@@ -8,7 +8,7 @@ var ew_NetworkInterfacesTreeView = {
         if (eni == null) return
     },
 
-    viewDetails : function(event)
+    edit : function(event)
     {
         var eni = this.getSelected();
         if (eni == null) return;

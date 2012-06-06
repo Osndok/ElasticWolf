@@ -9,6 +9,7 @@
                 <popupset>
                     <menupopup id="ew.enis.contextmenu">
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.viewDetails();" label="View Details" />
+                        <menuitem oncommand="ew_NetworkInterfacesTreeView.edit();" label="Edit ENI" />
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.createInterface();" label="Create ENI" />
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.deleteInterface();" label="Delete ENI" />
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.attachInterface();" label="Attach to instance" />
@@ -21,7 +22,7 @@
                     <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.deleteInterface();" tooltiptext="Delete ENI" />
                     <toolbarbutton image="images/attach.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.attachInterface();" tooltiptext="Attach to instance" />
                     <toolbarbutton image="images/revoke.png" style="-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.detachInterface();" tooltiptext="Detach from instance" />
-                    <toolbarbutton image="images/details.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.viewDetails()" tooltiptext="View Details" />
+                    <toolbarbutton image="images/edit.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_NetworkInterfacesTreeView.edit()" tooltiptext="Edit ENI" />
                 </toolbar>
                 <tree id="ew.enis.view" seltype="single" enableColumnDrag="true" flex="1">
                     <treecols>
