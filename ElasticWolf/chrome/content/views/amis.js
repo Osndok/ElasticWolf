@@ -142,8 +142,7 @@ var ew_AMIsTreeView = {
             if (retVal.name) {
                 retVal.tag += "Name:" + retVal.name;
             }
-            ew_session.controller.runInstances(retVal.imageId, retVal.kernelId, retVal.ramdiskId, retVal.minCount, retVal.maxCount, retVal.keyName, retVal.securityGroups,
-                                               retVal.userData, retVal.properties, retVal.instanceType, retVal.placement, retVal.subnetId, retVal.ipAddress, function(list) {
+            ew_session.controller.runInstances(retVal.imageId, retVal.kernelId, retVal.ramdiskId, retVal.minCount, retVal.maxCount, retVal.keyName, retVal.securityGroups, retVal.userData, retVal.properties, retVal.instanceType, retVal.placement, retVal.subnetId, retVal.ipAddress, function(list) {
                 if (retVal.tag != "") {
                     for (var i in list) {
                         list[i].tags = ew_session.parseTags(retVal.tag);

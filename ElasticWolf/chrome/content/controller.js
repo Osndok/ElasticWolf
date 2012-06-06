@@ -1099,6 +1099,14 @@ var ew_controller = {
         return list;
     },
 
+    runMoreInstances: function(instance, count, callback) {
+        ew_session.controller.describeInstanceAttribute(instance.id, "userData", function(userData) {
+            var placement = { availabilityZone: instance.availabilityZone, tenancy: instance.tenancy };
+            this.runInstances(instance.imageId, instance.kernelId, instance.ramdiskId, count, count, instance.keyName, instance.groups,
+                              userData, null, instance.instanceType, placement, instance.subnetId, null, callback);
+        });
+    },
+
     runInstances : function(imageId, kernelId, ramdiskId, minCount, maxCount, keyName, securityGroups, userData, properties, instanceType, placement, subnetId, ipAddress, callback)
     {
         var params = []
@@ -1132,11 +1140,13 @@ var ew_controller = {
         if (properties != null) {
             params.push([ "AdditionalInfo", properties ]);
         }
-        if (placement.availabilityZone != null && placement.availabilityZone != "") {
-            params.push([ "Placement.AvailabilityZone", placement.availabilityZone ]);
-        }
-        if (placement.tenancy != null && placement.tenancy != "") {
-            params.push([ "Placement.Tenancy", placement.tenancy ]);
+        if (placement) {
+            if (placement.availabilityZone != null && placement.availabilityZone != "") {
+                params.push([ "Placement.AvailabilityZone", placement.availabilityZone ]);
+            }
+            if (placement.tenancy != null && placement.tenancy != "") {
+                params.push([ "Placement.Tenancy", placement.tenancy ]);
+            }
         }
         if (subnetId != null) {
             params.push([ "SubnetId", subnetId ]);

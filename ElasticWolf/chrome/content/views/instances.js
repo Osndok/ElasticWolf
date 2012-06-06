@@ -562,7 +562,7 @@ var ew_InstancesTreeView = {
 
         var me = this;
         count = count.trim();
-        ew_session.controller.runInstances(instance.imageId, instance.kernelId, instance.ramdiskId, count, count, instance.keyName, instance.groups, null, null, instance.instanceType, instance.availabilityZone, instance.subnetId, null, function() { me.refresh()});
+        ew_session.controller.runMoreInstances(instance, count, function() { me.refresh()});
     },
 
     terminateInstance : function() {
