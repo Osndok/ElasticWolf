@@ -170,13 +170,27 @@ var ew_AMIsTreeView = {
     registerNewImage : function()
     {
         var me = this;
-        var retVal = {  ok : null, manifestPath : null };
-        window.openDialog("chrome://ew/content/dialogs/register_image.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
-
-        if (retVal.ok) {
-            var s3bucket = retVal.manifestPath.split('/')[0];
+        var value = prompt('AMI Manifest Path:');
+        if (value) {
+            var oldextre = new RegExp("\\.manifest$");
+            var newextre = new RegExp("\\.manifest\\.xml$");
+            if (value.match(oldextre) == null && value.match(newextre) == null) {
+                alert("Manifest files should end in .manifest or .manifest.xml");
+                return false;
+            }
+            var s3bucket = value.split('/')[0];
+            if (s3bucket.match(new RegExp("[A-Z]"))) {
+                alert("The S3 bucket must be all lower case");
+                return false;
+            }
+            var httppre = new RegExp("^http", "i");
+            if (value.match(httppre) != null) {
+                alert("Just specify the bucket and manifest path name, not the entire S3 URL.");
+                return false;
+            }
+            var s3bucket = value.split('/')[0];
             var bucketReg = ew_session.controller.getS3BucketLocation(s3bucket, function(bucket, region) {
-                me.callRegisterImageInRegion(retVal.manifestPath, region);
+                me.callRegisterImageInRegion(value, region);
             });
         }
     },

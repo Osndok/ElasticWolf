@@ -45,7 +45,6 @@
                 <column />
             </columns>
             <rows>
-                <!-- VPC -->
                 <row>
                     <label control="ew.attachvpngateway.vpcid" value="Virtual Private Cloud: " />
                     <hbox>
@@ -53,7 +52,6 @@
                     </hbox>
                 </row>
 
-                <!-- VPN GW -->
                 <row>
                     <label control="ew.attachvpngateway.vgwid" value="VPN Gateway: " />
                     <hbox>

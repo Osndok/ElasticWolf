@@ -18,12 +18,10 @@ var ew_VpcTreeView = {
 
     createVpc : function()
     {
-        var retVal = { ok : null, cidr : null, dhcpOptionsId : null }
-        window.openDialog("chrome://ew/content/dialogs/create_vpc.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
-
-        if (retVal.ok) {
+        var cidr = prompt('CIDR block:');
+        if (cidr) {
             var me = this;
-            ew_session.controller.createVpc(retVal.cidr, function() { me.refresh();});
+            ew_session.controller.createVpc(cidr, function() { me.refresh();});
         }
     },
 

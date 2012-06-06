@@ -27,8 +27,7 @@
         var selectvpc = 0;
         for (var i in vpcs) {
             vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);
-            if (vpcs[i].id == this.retVal.vpcid)
-                selectvpc = i;
+            if (vpcs[i].id == this.retVal.vpcid) selectvpc = i;
         }
         vpcMenu.selectedIndex = selectvpc;
 
@@ -49,28 +48,22 @@
                 <column />
             </columns>
             <rows>
-                <!-- Vpc -->
                 <row>
-                    <label control="ew.newsubnet.vpcid"
-                           value="Virtual Private Cloud: "/>
+                    <label control="ew.newsubnet.vpcid" value="Virtual Private Cloud: "/>
                     <hbox>
                         <menulist id="ew.newsubnet.vpcid"/>
                     </hbox>
                 </row>
 
                 <row>
-                    <label control="ew.newsubnet.cidr"
-                        value="Subnet CIDR Block:" />
+                    <label control="ew.newsubnet.cidr" value="Subnet CIDR Block:" />
                     <hbox>
-                        <textbox id="ew.newsubnet.cidr" size="20"
-                            value="" />
+                        <textbox id="ew.newsubnet.cidr" size="20" value="" />
                     </hbox>
                 </row>
 
-                <!-- Availability Zone -->
                 <row>
-                    <label control="ew.newsubnetaz"
-                        value="Availability Zone: "/>
+                    <label control="ew.newsubnetaz" value="Availability Zone: "/>
                     <hbox>
                         <menulist id="ew.newsubnet.az"/>
                     </hbox>

@@ -34,31 +34,22 @@
                 <column />
             </columns>
             <rows>
-                <!-- type -->
                 <row>
-                    <label control="ew.newcustomergateway.type"
-                           value="Type: "/>
-                    <hbox><textbox id="ew.newcustomergateway.type" size="20"
-                                   value=""/>
+                    <label control="ew.newcustomergateway.type" value="Type: "/>
+                    <hbox><textbox id="ew.newcustomergateway.type" size="20" value=""/>
                     </hbox>
                 </row>
 
-                <!-- bgp asn -->
                 <row>
-                    <label control="ew.newcustomergateway.bgpasn"
-                           value="BGP ASN: "/>
-                    <hbox><textbox id="ew.newcustomergateway.bgpasn" size="20"
-                                   value=""/>
+                    <label control="ew.newcustomergateway.bgpasn" value="BGP ASN: "/>
+                    <hbox><textbox id="ew.newcustomergateway.bgpasn" size="20" value=""/>
                     </hbox>
                 </row>
 
-                <!-- ip address -->
                 <row>
-                    <label control="ew.newcustomergateway.ipaddress"
-                           value="IP Address:" />
+                    <label control="ew.newcustomergateway.ipaddress" value="IP Address:" />
                     <hbox>
-                        <textbox id="ew.newcustomergateway.ipaddress" size="20"
-                            value="" />
+                        <textbox id="ew.newcustomergateway.ipaddress" size="20" value="" />
                     </hbox>
                 </row>
             </rows>

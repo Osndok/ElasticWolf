@@ -25,14 +25,11 @@
           <textbox id="ew.bundleInstance.instanceid" readonly="true" />
         </row>
         <row>
-          <label control="ew.bundleInstance.bucketName"
-            value="S3 Bucket Name:" />
-          <textbox type="autocomplete" autocompletesearch="form-history"
-            id="ew.bundleInstance.bucketName" size="30" value="" />
+          <label control="ew.bundleInstance.bucketName" value="S3 Bucket Name:" />
+          <textbox type="autocomplete" autocompletesearch="form-history" id="ew.bundleInstance.bucketName" size="30" value="" />
         </row>
         <row>
-          <label control="ew.bundleInstance.prefix"
-            value="Image Name:" />
+          <label control="ew.bundleInstance.prefix" value="Image Name:" />
           <textbox id="ew.bundleInstance.prefix" size="30" value="" />
         </row>
       </rows>
