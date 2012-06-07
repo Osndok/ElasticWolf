@@ -13,8 +13,8 @@
           <menuitem id="bundleTasks.context.register" oncommand="ew_BundleTasksTreeView.registerNewImage();" label="&ew.images.contextmenu.register.label;" />
           <menuitem id="bundleTasks.context.cancel" oncommand="ew_BundleTasksTreeView.cancelBundleTask();" label="&ew.bundleTasks.contextmenu.cancel.label;" />
           <menuseparator />
-          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipBoard('id');" label="&ew.bundleTasks.contextmenu.copybunid.label;" />
-          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipBoard('instanceId');" label="&ew.instances.contextmenu.copyid.label;" />
+          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipboard('id');" label="&ew.bundleTasks.contextmenu.copybunid.label;" />
+          <menuitem oncommand="ew_BundleTasksTreeView.copyToClipboard('instanceId');" label="&ew.instances.contextmenu.copyid.label;" />
         </menupopup>
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">

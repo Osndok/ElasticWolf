@@ -13,7 +13,7 @@
                         <menuitem oncommand="ew_CustomerGatewayTreeView.createVpnConnection();" label="&ew.customergateway.contextmenu.createvpnconnection.label;" />
                         <menuitem oncommand="ew_CustomerGatewayTreeView.deleteCustomerGateway();" label="&ew.customergateway.contextmenu.delete.label;" />
                         <menuseparator />
-                        <menuitem oncommand="ew_CustomerGatewayTreeView.copyToClipBoard('id');" label="&ew.customergateway.contextmenu.copycgwid.label;" />
+                        <menuitem oncommand="ew_CustomerGatewayTreeView.copyToClipboard('id');" label="&ew.customergateway.contextmenu.copycgwid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">

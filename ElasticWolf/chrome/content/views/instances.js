@@ -393,7 +393,7 @@ var ew_InstancesTreeView = {
                 // Display the admin password to the user
                 if ((password != null) && (password.length > 0)) {
                     this.instPassword = password;
-                    copyToClipboard(password);
+                    ew_session.copyToClipboard(password);
                     if (!fSilent) {
                         alert ("Instance Administrator Password [" + password + "] has been saved to clipboard");
                     }

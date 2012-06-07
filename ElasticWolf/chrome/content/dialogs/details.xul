@@ -14,39 +14,43 @@
     <script>
     <![CDATA[
         function done() {
-            this.session.winDetails = null;
+            this.rc.session.winDetails = null;
             return true;
         }
         function init() {
             window.setup = setup;
+            this.rc = window.arguments[0]
             this.msg = document.getElementById("msg");
             this.list = document.getElementById('list');
-            setup(window.arguments[0], window.arguments[1], window.arguments[2])
+            setup(this.rc)
         }
-        function setup(session, item, label) {
-            this.session = session;
-            this.item = item;
-            document.title = this.msg.value = label;
+        function setup(rc) {
+            document.title = this.msg.value = rc.title;
             for (var i = list.itemCount - 1; i >= 0; i--) list.removeItemAt(i);
-            for (var p in item) {
-                if (typeof item[p] == "function") continue;
-                var val = session.model.modelValue(p, item[p]);
+            for (var p in rc.item) {
+                if (typeof rc.item[p] == "function") continue;
+                var val = rc.session.model.modelValue(p, rc.item[p]);
                 var row = document.createElement('listitem');
                 var cell = document.createElement('listcell');
                 cell.setAttribute('label', p);
+                cell.setAttribute('style', 'font-weight:bold');
                 row.appendChild(cell);
                 cell = document.createElement('listcell');
                 cell.setAttribute('label', val);
+                row.setAttribute('value', val);
                 row.appendChild(cell);
                 this.list.appendChild(row);
             }
+        }
+        function clicked() {
+            this.rc.session.copyToClipboard(list.selectedItem.value);
         }
     ]]>
     </script>
 
     <vbox flex="1">
       <label id="msg" value="" />
-      <listbox id="list" flex="1" rows="30" width="500">
+      <listbox id="list" flex="1" rows="30" width="500" onclick="clicked()">
       <listhead>
         <listheader label="Name" />
         <listheader label="Value" />

@@ -12,7 +12,7 @@
                         <menuseparator />
                         <menuitem oncommand="ew_SubnetsTreeView.deleteSubnet();" label="&ew.subnet.contextmenu.delete.label;" />
                         <menuseparator />
-                        <menuitem oncommand="ew_SubnetsTreeView.copyToClipBoard('id');" label="&ew.subnet.contextmenu.copysubnetid.label;" />
+                        <menuitem oncommand="ew_SubnetsTreeView.copyToClipboard('id');" label="&ew.subnet.contextmenu.copysubnetid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">

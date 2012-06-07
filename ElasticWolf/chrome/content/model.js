@@ -509,7 +509,7 @@ function DhcpOptions(id, options, tags)
     }
 }
 
-function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tags)
+function VpnConnection(id, vgwId, cgwId, type, state, config, tags)
 {
     this.id = id;
     this.vgwId = vgwId;
@@ -517,7 +517,6 @@ function VpnConnection(id, vgwId, cgwId, type, state, config, attachments, tags)
     this.type = type;
     this.state = state;
     this.config = config;
-    this.attachments = attachments;
     this.tags = tags;
     ew_model.processTags(this)
 

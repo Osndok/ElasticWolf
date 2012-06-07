@@ -16,7 +16,7 @@
                         <menuitem oncommand="ew_SnapshotTreeView.createVolume();" label="&ew.snapshot.contextmenu.createvol.label;" />
                         <menuitem oncommand="ew_SnapshotTreeView.deleteSnapshot();" label="&ew.snapshot.contextmenu.delete.label;" />
                         <menuseparator />
-                        <menuitem oncommand="ew_SnapshotTreeView.copyToClipBoard('id');" label="&ew.snapshot.contextmenu.copysnapid.label;" />
+                        <menuitem oncommand="ew_SnapshotTreeView.copyToClipboard('id');" label="&ew.snapshot.contextmenu.copysnapid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">

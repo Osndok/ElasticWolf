@@ -39,13 +39,13 @@
           <menuseparator />
           <menu label="Copy to clipboard">
             <menupopup>
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipBoard('name');" label="&ew.instances.contextmenu.copyname.label;" />
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipBoard('id');" label="&ew.instances.contextmenu.copyid.label;" />
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipBoard('publicDnsName');" label="Public DNS Name" />
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipBoard('publicIpAddress');" label="Public IP Address" />
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipBoard('privateDnsName');" label="Private DNS Name" />
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipBoard('privateIpAddress');" label="Private IP Address" />
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipBoard('eip');" label="Elastic IP Address" />
+              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('name');" label="&ew.instances.contextmenu.copyname.label;" />
+              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('id');" label="&ew.instances.contextmenu.copyid.label;" />
+              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('publicDnsName');" label="Public DNS Name" />
+              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('publicIpAddress');" label="Public IP Address" />
+              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('privateDnsName');" label="Private DNS Name" />
+              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('privateIpAddress');" label="Private IP Address" />
+              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('eip');" label="Elastic IP Address" />
             </menupopup>
           </menu>
           <menuseparator />

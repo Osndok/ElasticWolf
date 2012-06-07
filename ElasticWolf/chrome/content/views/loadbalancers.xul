@@ -9,7 +9,7 @@
        <popupset >
           <menupopup id="loadbalancer.tree.contextmenu"  onpopupshowing="ew_LoadbalancerTreeView.enableOrDisableItems(event);">
               <menuitem oncommand="ew_LoadbalancerTreeView.viewDetails(event);" label="&ew.loadbalancer.contextmenu.viewdetails.label;" />
-              <menuitem oncommand="ew_LoadbalancerTreeView.copyToClipBoard('DNSName');" label="&ew.loadbalancer.contextmenu.copydns.label;" />
+              <menuitem oncommand="ew_LoadbalancerTreeView.copyToClipboard('DNSName');" label="&ew.loadbalancer.contextmenu.copydns.label;" />
               <menuseparator/>
               <menuitem oncommand="ew_LoadbalancerTreeView.registerinstances(event);" label="&ew.loadbalancer.contextmenu.registerinstance.label;" />
               <menuitem id="loadbalancer.context.instances" oncommand="ew_LoadbalancerTreeView.deregisterinstances(event);" label="&ew.loadbalancer.contextmenu.deregisterinstance.label;" />

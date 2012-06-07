@@ -14,7 +14,7 @@
                         <menuitem oncommand="ew_VpnGatewayTreeView.attachToVpc();" label="&ew.vpngateway.contextmenu.attachvpc.label;" />
                         <menuitem oncommand="ew_VpnGatewayTreeView.deleteVpnGateway();" label="&ew.vpngateway.contextmenu.delete.label;" />
                         <menuseparator />
-                        <menuitem oncommand="ew_VpnGatewayTreeView.copyToClipBoard('id');" label="&ew.vpngateway.contextmenu.copyvgwid.label;" />
+                        <menuitem oncommand="ew_VpnGatewayTreeView.copyToClipboard('id');" label="&ew.vpngateway.contextmenu.copyvgwid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">

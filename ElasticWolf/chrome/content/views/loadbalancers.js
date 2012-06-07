@@ -123,12 +123,6 @@ var ew_LoadbalancerTreeView = {
         }
     },
 
-    copyToClipBoard : function(fieldName) {
-        var elb = this.getSelected();
-        if (elb == null) return;
-        copyToClipboard(elb[fieldName]);
-    },
-
     disablestickness :function(){
         var elb = this.getSelected();
         if (elb == null) return;
@@ -229,3 +223,10 @@ var ew_InstanceHealthTreeView = {
     COLNAMES : ['InstanceHealth.Description','InstanceHealth.State','InstanceHealth.InstanceId','InstanceHealth.ReasonCode'],
 };
 ew_InstanceHealthTreeView.__proto__ = TreeView;
+
+var ew_AvailZoneTreeView = {
+    COLNAMES : ['azone.name','azone.state'],
+    model: 'azones',
+};
+ew_AvailZoneTreeView.__proto__ = TreeView;
+ew_AvailZoneTreeView.register();

@@ -193,15 +193,56 @@ var TreeView = {
     },
     cycleHeader : function(col) {
         var item = this.getSelected();
-        cycleHeader(col, document, this.COLNAMES, this.treeList);
+        var csd = col.element.getAttribute("sortDirection");
+        var sortDirection = (csd == "ascending" || csd == "natural") ? "descending" : "ascending";
+        for ( var i = 0; i < col.columns.count; i++) {
+            col.columns.getColumnAt(i).element.setAttribute("sortDirection", "natural");
+        }
+        col.element.setAttribute("sortDirection", sortDirection);
+        this.sortView(document, this.COLNAMES, this.treeList);
         this.treeBox.invalidate();
         if (item) this.select(item);
     },
     sort : function() {
         var item = this.getSelected();
         this.treeBox.invalidate();
-        sortView(document, this.COLNAMES, this.treeList);
+        this.sortView(document, this.COLNAMES, this.treeList);
         if (item) this.select(item);
+    },
+    sortView: function(document, cols, list)
+    {
+        var sortField = null;
+        var ascending = null;
+        for (var i in cols) {
+            var col = cols[i];
+            if ($(col) != null) {
+                var direction = document.getElementById(col).getAttribute("sortDirection");
+            }
+            if (direction && direction != "natural") {
+                ascending = (direction == "ascending");
+                sortField = col.slice(col.indexOf(".") + 1);
+                break;
+            }
+        }
+
+        if (sortField != null) {
+            var sortFunc = function(a, b) {
+                var aVal = eval("a." + sortField) || "";
+                var bVal = eval("b." + sortField) || "";
+                var aF = parseFloat(aVal);
+                if (!isNaN(aF) && aF.toString() == aVal) {
+                    aVal = aF;
+                    bVal = parseFloat(bVal);
+                } else {
+                    aVal = aVal.toString().toLowerCase();
+                    bVal = bVal.toString().toLowerCase();
+                }
+                if (aVal < bVal) return ascending ? -1 : 1;
+                if (aVal > bVal) return ascending ? 1 : -1;
+                return 0;
+            };
+            list.sort(sortFunc);
+        }
     },
     register : function() {
         if (!this.registered) {
@@ -361,10 +402,10 @@ var TreeView = {
             ew_session.tagResource(item, this.tagId);
         }
     },
-    copyToClipBoard : function(name) {
+    copyToClipboard : function(name) {
         var item = this.getSelected();
         if (item) {
-            copyToClipboard(item[name]);
+            ew_session.copyToClipboard(item[name]);
         }
     },
     clicked: function(event) {
@@ -376,10 +417,11 @@ var TreeView = {
         var item = this.getSelected();
         if (item == null) return;
         var me = this;
+        var rc = { session: ew_session, item: item, title: className(item), }
         if (!ew_session.winDetails) {
-            ew_session.winDetails = window.openDialog("chrome://ew/content/dialogs/details.xul", null, "chrome,centerscreen,modeless,resizable", ew_session, item, className(item));
+            ew_session.winDetails = window.openDialog("chrome://ew/content/dialogs/details.xul", null, "chrome,centerscreen,modeless,resizable", rc);
         } else {
-            ew_session.winDetails.setup.call(ew_session.winDetails, ew_session, item, className(item));
+            ew_session.winDetails.setup.call(ew_session.winDetails, rc);
         }
     },
     restorePreferences: function()
@@ -849,62 +891,6 @@ var DirIO = {
      },
 }
 
-function sortView(document, cols, list)
-{
-    // cols is a list of column ids. The portion after the first. must
-    // be the name of the corresponding attribute of the objects in +list.
-    var sortField = null;
-    var ascending = null;
-    for ( var i in cols) {
-        var col = cols[i];
-        if (document.getElementById(col) != null) {
-            var direction = document.getElementById(col).getAttribute("sortDirection");
-        }
-
-        if (direction && direction != "natural") {
-            ascending = (direction == "ascending");
-            sortField = col.slice(col.indexOf(".") + 1);
-            break;
-        }
-    }
-
-    if (sortField != null) {
-        var sortFunc = function(a, b)
-        {
-            var aVal = eval("a." + sortField) || "";
-            var bVal = eval("b." + sortField) || "";
-            var aF = parseFloat(aVal);
-            // Check that:
-            // 1. aF is a number
-            // 2. aVal isn't a string that starts with a number
-            // eg. 123ABCD
-            if (!isNaN(aF) && aF.toString() == aVal) {
-                // These are numbers
-                aVal = aF;
-                bVal = parseFloat(bVal);
-            } else {
-                aVal = aVal.toString().toLowerCase();
-                bVal = bVal.toString().toLowerCase();
-            }
-            if (aVal < bVal) return ascending ? -1 : 1;
-            if (aVal > bVal) return ascending ? 1 : -1;
-            return 0;
-        };
-        list.sort(sortFunc);
-    }
-}
-
-function cycleHeader(col, document, columnIdList, list)
-{
-    var csd = col.element.getAttribute("sortDirection");
-    var sortDirection = (csd == "ascending" || csd == "natural") ? "descending" : "ascending";
-    for ( var i = 0; i < col.columns.count; i++) {
-        col.columns.getColumnAt(i).element.setAttribute("sortDirection", "natural");
-    }
-    col.element.setAttribute("sortDirection", sortDirection);
-    sortView(document, columnIdList, list);
-}
-
 function getNodeValueByName(parent, nodeName)
 {
     var node = parent ? parent.getElementsByTagName(nodeName)[0] : null;
@@ -1018,31 +1004,6 @@ function debug(msg)
     catch (e) {
         alert("debug:" + e)
     }
-}
-
-function copyToClipboard(text)
-{
-    this.str = null;
-    this.trans = null;
-    this.clip = null;
-
-    if (this.str == null) {
-        this.str = Components.classes["@mozilla.org/supports-string;1"].createInstance(Components.interfaces.nsISupportsString);
-    }
-    this.str.data = text;
-
-    if (this.trans == null) {
-        this.trans = Components.classes["@mozilla.org/widget/transferable;1"].createInstance(Components.interfaces.nsITransferable);
-    }
-    this.trans.addDataFlavor("text/unicode");
-    this.trans.setTransferData("text/unicode", this.str, text.length * 2);
-
-    var clipid = Components.interfaces.nsIClipboard;
-
-    if (this.clip == null) {
-        this.clip = Components.classes["@mozilla.org/widget/clipboard;1"].getService(clipid);
-    }
-    clip.setData(this.trans, null, clipid.kGlobalClipboard);
 }
 
 // With thanks to http://delete.me.uk/2005/03/iso8601.html

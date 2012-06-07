@@ -13,7 +13,7 @@
                         <menuitem oncommand="ew_VpnConnectionTreeView.deleteVpnConnection();" label="&ew.vpnconnection.contextmenu.delete.label;" />
                         <menuitem oncommand="ew_VpnConnectionTreeView.getCustomerConfig();" label="&ew.vpnconnection.contextmenu.config.label;" />
                         <menuseparator />
-                        <menuitem oncommand="ew_VpnConnectionTreeView.copyToClipBoard('id');" label="&ew.vpnconnection.contextmenu.copyvpnconnectionsid.label;" />
+                        <menuitem oncommand="ew_VpnConnectionTreeView.copyToClipboard('id');" label="&ew.vpnconnection.contextmenu.copyvpnconnectionsid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">

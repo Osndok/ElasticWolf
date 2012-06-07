@@ -12,7 +12,7 @@
                         <menuseparator />
                         <menuitem oncommand="ew_LeaseOfferingsTreeView.purchaseOffering();" label="Purchase Reserved Instances Offering" />
                         <menuseparator />
-                        <menuitem oncommand="ew_LeaseOfferingsTreeView.copyToClipBoard('id');" label="&ew.contextmenu.copyid.label;" />
+                        <menuitem oncommand="ew_LeaseOfferingsTreeView.copyToClipboard('id');" label="&ew.contextmenu.copyid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">

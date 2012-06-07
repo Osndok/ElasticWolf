@@ -105,7 +105,7 @@ var ew_ElasticIPTreeView = {
 
         var instance = ew_model.getInstanceById(eip.instanceId);
         if (instance) {
-            copyToClipboard(instance.publicDnsName);
+            ew_session.copyToClipboard(instance.publicDnsName);
         }
     }
 

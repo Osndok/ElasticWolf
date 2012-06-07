@@ -16,7 +16,7 @@
                         <menuitem oncommand="ew_VpcTreeView.setDhcpOptions();" label="&ew.vpc.contextmenu.setdhcpoptions.label;" />
                         <menuitem oncommand="ew_VpcTreeView.deleteVpc();" label="&ew.vpc.contextmenu.delete.label;" />
                         <menuseparator />
-                        <menuitem oncommand="ew_VpcTreeView.copyToClipBoard('id');" label="&ew.vpc.contextmenu.copyvpcid.label;" />
+                        <menuitem oncommand="ew_VpcTreeView.copyToClipboard('id');" label="&ew.vpc.contextmenu.copyvpcid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
@@ -55,7 +55,7 @@
                         <menuseparator />
                         <menuitem oncommand="ew_DhcpoptsTreeView.deleteDhcpOptions();" label="&ew.dhcpopts.contextmenu.delete.label;" />
                         <menuseparator />
-                        <menuitem oncommand="ew_DhcpoptsTreeView.copyToClipBoard('id');" label="&ew.dhcpopts.contextmenu.copydhcpoptsid.label;" />
+                        <menuitem oncommand="ew_DhcpoptsTreeView.copyToClipboard('id');" label="&ew.dhcpopts.contextmenu.copydhcpoptsid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">

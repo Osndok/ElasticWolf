@@ -41,7 +41,7 @@ var ew_LaunchPermissions = {
         var name = this.getSelectedLaunchPermission();
         if (name == null) return;
 
-        copyToClipboard(name);
+        ew_session.copyToClipboard(name);
     },
 
     refreshLaunchPermissions : function()

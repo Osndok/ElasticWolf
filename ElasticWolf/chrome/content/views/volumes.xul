@@ -20,7 +20,7 @@
                         <menuitem oncommand="ew_VolumeTreeView.createVolume();" label="&ew.volume.contextmenu.create.label;" />
                         <menuitem oncommand="ew_VolumeTreeView.deleteVolume();" label="&ew.volume.contextmenu.delete.label;" />
                         <menuseparator />
-                        <menuitem oncommand="ew_VolumeTreeView.copyToClipBoard('id');" label="&ew.volume.contextmenu.copyvolid.label;" />
+                        <menuitem oncommand="ew_VolumeTreeView.copyToClipboard('id');" label="&ew.volume.contextmenu.copyvolid.label;" />
                     </menupopup>
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">

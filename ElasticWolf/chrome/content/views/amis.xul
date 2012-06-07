@@ -21,8 +21,8 @@
                             <menuseparator />
                             <menuitem id="amis.context.launch" oncommand="ew_AMIsTreeView.launchNewInstances();" label="Launch instance(s) of this AMI" />
                             <menuseparator />
-                            <menuitem oncommand="ew_AMIsTreeView.copyToClipBoard('id');" label="&ew.contextmenu.copyid.label;" />
-                            <menuitem oncommand="ew_AMIsTreeView.copyToClipBoard('name');" label="&ew.contextmenu.copyname.label;" />
+                            <menuitem oncommand="ew_AMIsTreeView.copyToClipboard('id');" label="&ew.contextmenu.copyid.label;" />
+                            <menuitem oncommand="ew_AMIsTreeView.copyToClipboard('name');" label="&ew.contextmenu.copyname.label;" />
                             <menuitem id="amis.context.fadd" oncommand="ew_AMIsTreeView.manageFavorites();" label="Add AMI to favorites" />
                             <menuitem id="amis.context.fdelete" oncommand="ew_AMIsTreeView.manageFavorites(true);" label="Delete AMI from favorites" />
                         </menupopup>

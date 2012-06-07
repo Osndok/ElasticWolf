@@ -12,7 +12,7 @@
                     <menuitem oncommand="ew_ElasticIPTreeView.releaseAddress();" label="Release EIP" />
                     <menuseparator />
                     <menuitem oncommand="ew_ElasticIPTreeView.tag();" label="Add Tag" />
-                    <menuitem oncommand="ew_ElasticIPTreeView.copyToClipBoard('address');" label="Copy Elastic IP to Clipboard" />
+                    <menuitem oncommand="ew_ElasticIPTreeView.copyToClipboard('address');" label="Copy Elastic IP to Clipboard" />
                     <menuitem oncommand="ew_ElasticIPTreeView.copyPublicDnsToClipBoard('address');" label="Copy Public DNS Name to Clipboard" />
                 </menupopup>
             </popupset>
