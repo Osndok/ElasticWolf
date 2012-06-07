@@ -78,6 +78,15 @@ function Group(id, name)
     }
 }
 
+function ProductCode(code, type)
+{
+    this.productCode = code
+    this.type = type
+    this.toString = function() {
+        return this.productCode + ew_model.separator + this.type;
+    }
+}
+
 function NetworkInterface(id, status, descr, subnetId, vpcId, availabilityZone, macAddress, privateIpAddress, sourceDestCheck, groups, attachment, association, tags)
 {
     this.id = id
@@ -246,35 +255,20 @@ function Volume(id, size, snapshotId, zone, status, createTime, instanceId, devi
     }
 }
 
-function Instance(reservationId, ownerId, groups, instanceId, imageId, kernelId, ramdiskId, state, publicDnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, vpcId, subnetId, rootDeviceType, tags)
+function Instance(reservationId, ownerId, groups, properties)
 {
     this.reservationId = reservationId;
     this.ownerId = ownerId;
     this.groups = groups;
-    this.id = instanceId;
-    this.imageId = imageId;
-    this.kernelId = kernelId;
-    this.ramdiskId = ramdiskId;
-    this.state = state;
-    this.publicDnsName = publicDnsName;
-    this.privateDnsName = privateDnsName;
-    this.privateIpAddress = privateIpAddress;
-    this.keyName = keyName;
-    this.reason = reason;
-    this.amiLaunchIdx = amiLaunchIdx;
-    this.instanceType = instanceType;
-    this.launchTime = launchTime;
-    this.availabilityZone = availabilityZone
-    this.tenancy = tenancy
-    this.platform = platform;
-    this.vpcId = vpcId;
-    this.subnetId = subnetId;
-    this.tags = tags;
     this.publicIpAddress = '';
+    this.publicDnsName = '';
     this.elasticIp = '';
+    if (properties) {
+        for (var p in properties) {
+            this[p] = properties[p];
+        }
+    }
     ew_model.processTags(this);
-
-    this.rootDeviceType = rootDeviceType;
 
     this.toString = function() {
         return (this.name ? this.name + ew_model.separator : "") + this.id + ew_model.separator + this.state;
@@ -1323,7 +1317,6 @@ var ew_model = {
     getInstances: function() {
         if (this.instances == null) {
             ew_session.controller.describeInstances();
-            return null;
         }
         return this.getObjects(this.instances, arguments);
     },

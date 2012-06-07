@@ -1060,42 +1060,94 @@ var ew_controller = {
 
         for ( var j = 0; j < instanceItems.length; j++) {
             if (instanceItems[j].nodeName == '#text') continue;
+            var obj = {};
+            obj.instanceId = getNodeValueByName(instanceItems[j], "instanceId");
+            obj.imageId = getNodeValueByName(instanceItems[j], "imageId");
+            var element = instanceItems[j].getElementsByTagName("instanceState")[0];
+            obj.stateName = getNodeValueByName(element, "name");
 
-            var instanceId = getNodeValueByName(instanceItems[j], "instanceId");
-            var imageId = getNodeValueByName(instanceItems[j], "imageId");
-
-            var instanceState = instanceItems[j].getElementsByTagName("instanceState")[0];
-            var stateName = getNodeValueByName(instanceState, "name");
-
-            var dnsName = getNodeValueByName(instanceItems[j], "dnsName");
-            var privateDnsName = getNodeValueByName(instanceItems[j], "privateDnsName");
-            var privateIpAddress = getNodeValueByName(instanceItems[j], "privateIpAddress");
-            var vpcId = getNodeValueByName(instanceItems[j], "vpcId");
-            var subnetId = getNodeValueByName(instanceItems[j], "subnetId");
-            var keyName = getNodeValueByName(instanceItems[j], "keyName");
-            var reason = getNodeValueByName(instanceItems[j], "reason");
-            var amiLaunchIdx = getNodeValueByName(instanceItems[j], "amiLaunchIndex");
-            var instanceType = getNodeValueByName(instanceItems[j], "instanceType");
-            var launchTime = new Date();
-            launchTime.setISO8601(getNodeValueByName(instanceItems[j], "launchTime"));
-
-            var placementElem = instanceItems[j].getElementsByTagName("placement")[0];
-            var availabilityZone = getNodeValueByName(placementElem, "availabilityZone");
-            var tenancy = getNodeValueByName(placementElem, "tenancy");
-
-            // This value might not exist, but getNodeValueByName returns "" in case the element is not defined.
-            var platform = getNodeValueByName(instanceItems[j], "platform");
-            if (!isWindows(platform)) {
-                var kernelId = getNodeValueByName(instanceItems[j], "kernelId");
-                var ramdiskId = getNodeValueByName(instanceItems[j], "ramdiskId");
+            obj.productCodes = [];
+            var element = instanceItems[j].getElementsByTagName("productCodes")[0];
+            if (element) {
+                var items = element.getElementsByTagName("item");
+                for (var i = 0; 0 < items.length; i++) {
+                    var code = getNodeValueByName(items[i], "productCode");
+                    var type = getNodeValueByName(items[i], "type");
+                    obj.productCodes.push(new ProductCode(code, type));
+                }
             }
-            var rdt = getNodeValueByName(instanceItems[j], "rootDeviceType");
-            var tags = this.getTags(instanceItems[j]);
+            var element = instanceItems[j].getElementsByTagName("groupSet")[0];
+            if (element) {
+                var groupIds = element.getElementsByTagName("groupId");
+                for (var i = 0; i < groupIds.length; i++) {
+                    groups.push(groupIds[i].firstChild.nodeValue);
+                }
+            }
 
-            list.push(new Instance(reservationId, ownerId, groups, instanceId, imageId, kernelId || "", ramdiskId || "", stateName, dnsName, privateDnsName, privateIpAddress, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, platform, vpcId, subnetId, rdt, tags));
+            obj.dnsName = getNodeValueByName(instanceItems[j], "dnsName");
+            obj.privateDnsName = getNodeValueByName(instanceItems[j], "privateDnsName");
+            obj.privateIpAddress = getNodeValueByName(instanceItems[j], "privateIpAddress");
+            obj.vpcId = getNodeValueByName(instanceItems[j], "vpcId");
+            obj.subnetId = getNodeValueByName(instanceItems[j], "subnetId");
+            obj.keyName = getNodeValueByName(instanceItems[j], "keyName");
+            obj.reason = getNodeValueByName(instanceItems[j], "reason");
+            obj.amiLaunchIdx = getNodeValueByName(instanceItems[j], "amiLaunchIndex");
+            obj.instanceType = getNodeValueByName(instanceItems[j], "instanceType");
+            obj.launchTime = new Date();
+            obj.launchTime.setISO8601(getNodeValueByName(instanceItems[j], "launchTime"));
+
+            element = instanceItems[j].getElementsByTagName("placement")[0];
+            obj.availabilityZone = getNodeValueByName(element, "availabilityZone");
+            obj.tenancy = getNodeValueByName(element, "tenancy");
+
+            var element = instanceItems[j].getElementsByTagName("monitoring")[0];
+            obj.monitoringStatus = getNodeValueByName(element, "status");
+
+            var element = instanceItems[j].getElementsByTagName("stateReason")[0];
+            obj.stateReason = getNodeValueByName(element, "code");
+
+            obj.platform = getNodeValueByName(instanceItems[j], "platform");
+            obj.kernelId = getNodeValueByName(instanceItems[j], "kernelId");
+            obj.ramdiskId = getNodeValueByName(instanceItems[j], "ramdiskId");
+            obj.rootDeviceType = getNodeValueByName(instanceItems[j], "rootDeviceType");
+            obj.rootDeviceName = getNodeValueByName(instanceItems[j], "rootDeviceName");
+            obj.tags = this.getTags(instanceItems[j]);
+
+            var instance = new Instance(reservationId, ownerId, groups, obj);
+            list.push(instance);
+        }
+        debug('instances', list.length)
+        return list;
+    },
+
+    describeInstances : function(callback)
+    {
+        ew_client.queryEC2("DescribeInstances", [], this, true, "onCompleteDescribeInstances", callback);
+    },
+
+    onCompleteDescribeInstances : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.evaluate("/ec2:DescribeInstancesResponse/ec2:reservationSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        for ( var i = 0; i < items.snapshotLength; i++) {
+            var reservationId = getNodeValueByName(items.snapshotItem(i), "reservationId");
+            var ownerId = getNodeValueByName(items.snapshotItem(i), "ownerId");
+            var groups = new Array();
+            var groupIds = items.snapshotItem(i).getElementsByTagName("groupId");
+            for (var j = 0; j < groupIds.length; j++) {
+                groups.push(groupIds[j].firstChild.nodeValue);
+            }
+            var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
+            var instanceItems = instancesSet.getElementsByTagName("item");
+            if (instanceItems) {
+                list = this.unpackInstances(reservationId, ownerId, groups, instanceItems);
+            }
         }
 
-        return list;
+        ew_model.updateInstances(list);
+        if (objResponse.callback) objResponse.callback(list);
     },
 
     runMoreInstances: function(instance, count, callback) {
@@ -1202,9 +1254,7 @@ var ew_controller = {
             var instanceItems = instancesSet.getElementsByTagName("item");
             for ( var j = 0; j < instanceItems.length; j++) {
                 var instanceId = getNodeValueByName(instanceItems[j], "instanceId");
-                list.push({
-                    id : instanceId
-                });
+                list.push({ id : instanceId });
             }
         }
 
@@ -1234,9 +1284,7 @@ var ew_controller = {
             var instanceItems = instancesSet.getElementsByTagName("item");
             for ( var j = 0; j < instanceItems.length; j++) {
                 var instanceId = getNodeValueByName(instanceItems[j], "instanceId");
-                list.push({
-                    id : instanceId
-                });
+                list.push({ id : instanceId });
             }
         }
 
@@ -1268,36 +1316,6 @@ var ew_controller = {
             }
         }
 
-        if (objResponse.callback) objResponse.callback(list);
-    },
-
-    describeInstances : function(callback)
-    {
-        ew_client.queryEC2("DescribeInstances", [], this, true, "onCompleteDescribeInstances", callback);
-    },
-
-    onCompleteDescribeInstances : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var list = new Array();
-        var items = xmlDoc.evaluate("/ec2:DescribeInstancesResponse/ec2:reservationSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        for ( var i = 0; i < items.snapshotLength; i++) {
-            var reservationId = getNodeValueByName(items.snapshotItem(i), "reservationId");
-            var ownerId = getNodeValueByName(items.snapshotItem(i), "ownerId");
-            var groups = new Array();
-            var groupIds = items.snapshotItem(i).getElementsByTagName("groupId");
-            for ( var j = 0; j < groupIds.length; j++) {
-                groups.push(groupIds[j].firstChild.nodeValue);
-            }
-            var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
-            var instanceItems = instancesSet.childNodes;
-            if (instanceItems) {
-                list = this.unpackInstances(reservationId, ownerId, groups, instanceItems);
-            }
-        }
-
-        ew_model.updateInstances(list);
         if (objResponse.callback) objResponse.callback(list);
     },
 
