@@ -60,12 +60,12 @@ function S3BucketKey(bucket, name, type, size, mtime, owner, etag)
     }
 }
 
-function Tag(name, value)
+function Tag(key, value)
 {
-    this.name = name || "";
+    this.key = key || "";
     this.value = value || "";
     this.toString = function() {
-        return this.name + ":" + (this.value.match(/[,:]+/) ? '"' + this.value + '"' : this.value);
+        return this.key + ":" + (this.value.match(/[,:]+/) ? '"' + this.value + '"' : this.value);
     }
 }
 
@@ -255,19 +255,13 @@ function Volume(id, size, snapshotId, zone, status, createTime, instanceId, devi
     }
 }
 
-function Instance(reservationId, ownerId, groups, properties)
+function Instance(reservationId, ownerId)
 {
     this.reservationId = reservationId;
     this.ownerId = ownerId;
-    this.groups = groups;
     this.publicIpAddress = '';
     this.publicDnsName = '';
     this.elasticIp = '';
-    if (properties) {
-        for (var p in properties) {
-            this[p] = properties[p];
-        }
-    }
     ew_model.processTags(this);
 
     this.toString = function() {

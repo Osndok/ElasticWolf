@@ -23,19 +23,96 @@ var ew_controller = {
         eval("this." + responseObject.requestType + "(responseObject)");
     },
 
-    getTags : function(item, idName)
+    getItems : function(item, parentNode, itemsNode, columns)
     {
-        var tags = [];
-        var tagSet = item.getElementsByTagName("tagSet")[0];
+        var list = [];
+        var tagSet = item.getElementsByTagName(parentNode)[0];
         if (tagSet) {
-            var items = tagSet.getElementsByTagName("item");
+            var items = tagSet.getElementsByTagName(itemsNode);
             for (var i = 0; i < items.length; i++) {
-                var key = getNodeValueByName(items[i], "key");
-                var value = getNodeValueByName(items[i], "value");
-                tags.push(new Tag(key, value));
+                if (columns) {
+                    var obj = {};
+                    for (var j in columns) {
+                        obj[columns[j]] = getNodeValueByName(items[i], columns[j]);
+                    }
+                    list.push(obj)
+                } else {
+                    list.push(items[i]);
+                }
             }
         }
-        return tags;
+        return list;
+    },
+
+    getTags : function(item)
+    {
+        var list = [];
+        var items = this.getItems(item, "tagSet", "item", ["key", "value"]);
+        for (var i = 0; i < items.length; i++) {
+            list.push(new Tag(items[i].key, items[i].value));
+        }
+        return list;
+    },
+
+    getGroups : function(item)
+    {
+        var list = [];
+        var items = this.getItems(item, "groupSet", "item", ["groupId", "groupName"]);
+        for (var i = 0; i < items.length; i++) {
+            list.push(new Group(items[i].groupId, items[i].groupName));
+        }
+        return list;
+    },
+
+    getNodeValue: function(item, nodeName, childName)
+    {
+        if (childName) {
+            return getNodeValueByName(item.getElementsByTagName(nodeName)[0], childName);
+        } else {
+            return getNodeValueByName(item, nodeName);
+        }
+    },
+
+    unpackInstances : function(reservationId, ownerId, groups, instanceItems)
+    {
+        var list = new Array();
+        for ( var j = 0; j < instanceItems.length; j++) {
+            if (instanceItems[j].nodeName == '#text') continue;
+            var obj = new Instance(reservationId, ownerId);
+            obj.instanceId = getNodeValueByName(instanceItems[j], "instanceId");
+            obj.imageId = getNodeValueByName(instanceItems[j], "imageId");
+            obj.stateName = this.getNodeValue(instanceItems[j], "instanceState", "name");
+            obj.productCodes = [];
+            var items = this.getItems(instanceItems[j], "productCodes", "item", ["productCode", "type"]);
+            for (var i = 0; i < items.length; i++) {
+                list.push(new Group(items[i].productCode, items[i].type));
+            }
+            obj.groups = groups.concat(this.getGroups(instanceItems[j]));
+            obj.dnsName = getNodeValueByName(instanceItems[j], "dnsName");
+            obj.privateDnsName = getNodeValueByName(instanceItems[j], "privateDnsName");
+            obj.privateIpAddress = getNodeValueByName(instanceItems[j], "privateIpAddress");
+            obj.vpcId = getNodeValueByName(instanceItems[j], "vpcId");
+            obj.subnetId = getNodeValueByName(instanceItems[j], "subnetId");
+            obj.keyName = getNodeValueByName(instanceItems[j], "keyName");
+            obj.reason = getNodeValueByName(instanceItems[j], "reason");
+            obj.amiLaunchIdx = getNodeValueByName(instanceItems[j], "amiLaunchIndex");
+            obj.instanceType = getNodeValueByName(instanceItems[j], "instanceType");
+            obj.launchTime = new Date();
+            obj.launchTime.setISO8601(getNodeValueByName(instanceItems[j], "launchTime"));
+            obj.availabilityZone = this.getNodeValue(instanceItems[j], "placement", "availabilityZone");
+            obj.tenancy = this.getNodeValue(instanceItems[j], "placement", "tenancy");
+            obj.monitoringStatus = this.getNodeValue(instanceItems[j], "monitoring", "status");
+            obj.stateReason = this.getNodeValue(instanceItems[j], "stateReason", "code");
+            obj.platform = getNodeValueByName(instanceItems[j], "platform");
+            obj.kernelId = getNodeValueByName(instanceItems[j], "kernelId");
+            obj.ramdiskId = getNodeValueByName(instanceItems[j], "ramdiskId");
+            obj.rootDeviceType = getNodeValueByName(instanceItems[j], "rootDeviceType");
+            obj.rootDeviceName = getNodeValueByName(instanceItems[j], "rootDeviceName");
+            obj.tags = this.getTags(instanceItems[j]);
+            ew_model.processTags(obj);
+            list.push(obj);
+        }
+        return list;
     },
 
     registerImageInRegion : function(manifestPath, region, callback)
@@ -1054,72 +1131,6 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback();
     },
 
-    unpackInstances : function(reservationId, ownerId, groups, instanceItems)
-    {
-        var list = new Array();
-
-        for ( var j = 0; j < instanceItems.length; j++) {
-            if (instanceItems[j].nodeName == '#text') continue;
-            var obj = {};
-            obj.instanceId = getNodeValueByName(instanceItems[j], "instanceId");
-            obj.imageId = getNodeValueByName(instanceItems[j], "imageId");
-            var element = instanceItems[j].getElementsByTagName("instanceState")[0];
-            obj.stateName = getNodeValueByName(element, "name");
-
-            obj.productCodes = [];
-            var element = instanceItems[j].getElementsByTagName("productCodes")[0];
-            if (element) {
-                var items = element.getElementsByTagName("item");
-                for (var i = 0; 0 < items.length; i++) {
-                    var code = getNodeValueByName(items[i], "productCode");
-                    var type = getNodeValueByName(items[i], "type");
-                    obj.productCodes.push(new ProductCode(code, type));
-                }
-            }
-            var element = instanceItems[j].getElementsByTagName("groupSet")[0];
-            if (element) {
-                var groupIds = element.getElementsByTagName("groupId");
-                for (var i = 0; i < groupIds.length; i++) {
-                    groups.push(groupIds[i].firstChild.nodeValue);
-                }
-            }
-
-            obj.dnsName = getNodeValueByName(instanceItems[j], "dnsName");
-            obj.privateDnsName = getNodeValueByName(instanceItems[j], "privateDnsName");
-            obj.privateIpAddress = getNodeValueByName(instanceItems[j], "privateIpAddress");
-            obj.vpcId = getNodeValueByName(instanceItems[j], "vpcId");
-            obj.subnetId = getNodeValueByName(instanceItems[j], "subnetId");
-            obj.keyName = getNodeValueByName(instanceItems[j], "keyName");
-            obj.reason = getNodeValueByName(instanceItems[j], "reason");
-            obj.amiLaunchIdx = getNodeValueByName(instanceItems[j], "amiLaunchIndex");
-            obj.instanceType = getNodeValueByName(instanceItems[j], "instanceType");
-            obj.launchTime = new Date();
-            obj.launchTime.setISO8601(getNodeValueByName(instanceItems[j], "launchTime"));
-
-            element = instanceItems[j].getElementsByTagName("placement")[0];
-            obj.availabilityZone = getNodeValueByName(element, "availabilityZone");
-            obj.tenancy = getNodeValueByName(element, "tenancy");
-
-            var element = instanceItems[j].getElementsByTagName("monitoring")[0];
-            obj.monitoringStatus = getNodeValueByName(element, "status");
-
-            var element = instanceItems[j].getElementsByTagName("stateReason")[0];
-            obj.stateReason = getNodeValueByName(element, "code");
-
-            obj.platform = getNodeValueByName(instanceItems[j], "platform");
-            obj.kernelId = getNodeValueByName(instanceItems[j], "kernelId");
-            obj.ramdiskId = getNodeValueByName(instanceItems[j], "ramdiskId");
-            obj.rootDeviceType = getNodeValueByName(instanceItems[j], "rootDeviceType");
-            obj.rootDeviceName = getNodeValueByName(instanceItems[j], "rootDeviceName");
-            obj.tags = this.getTags(instanceItems[j]);
-
-            var instance = new Instance(reservationId, ownerId, groups, obj);
-            list.push(instance);
-        }
-        debug('instances', list.length)
-        return list;
-    },
-
     describeInstances : function(callback)
     {
         ew_client.queryEC2("DescribeInstances", [], this, true, "onCompleteDescribeInstances", callback);
@@ -1140,7 +1151,7 @@ var ew_controller = {
                 groups.push(groupIds[j].firstChild.nodeValue);
             }
             var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
-            var instanceItems = instancesSet.getElementsByTagName("item");
+            var instanceItems = instancesSet.childNodes;
             if (instanceItems) {
                 list = this.unpackInstances(reservationId, ownerId, groups, instanceItems);
             }
@@ -2152,20 +2163,8 @@ var ew_controller = {
             var check = getNodeValueByName(items.snapshotItem(i), "sourceDestCheck");
             var azone = getNodeValueByName(items.snapshotItem(i), "availabilityZone");
             var tags = [];
-            var groups = [];
             var attachment = null;
             var association = null;
-
-            var groupSet = items.snapshotItem(i).getElementsByTagName("groupSet")[0];
-            var groupItems = groupSet.childNodes;
-            if (groupItems) {
-                for ( var j = 0; j < groupItems.length; j++) {
-                    if (groupItems.item(j).nodeName == '#text') continue;
-                    var gid = getNodeValueByName(groupItems.item(j), "groupId");
-                    var gname = getNodeValueByName(groupItems.item(j), "groupName");
-                    groups.push(new Group(gid, gname));
-                }
-            }
 
             var aitem = items.snapshotItem(i).getElementsByTagName("attachment")[0];
             if (aitem) {
@@ -2188,6 +2187,7 @@ var ew_controller = {
                 var attId = getNodeValueByName(aitem, "attachmentID");
                 association = new NetworkInterfaceAssociation(aid, pubip, owner, instId, attId);
             }
+            var groups = this.getGroups(items.snapshotItem(i));
             var tags = this.getTags(items.snapshotItem(i));
             list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, azone, mac, ip, check, groups, attachment, association, tags));
         }

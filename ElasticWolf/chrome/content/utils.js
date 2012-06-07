@@ -1306,15 +1306,11 @@ function log(msg)
     }
 }
 
-function debug()
+function debug(msg)
 {
     try {
         if (this.consoleService == null) {
             this.consoleService = Components.classes["@mozilla.org/consoleservice;1"].getService(Components.interfaces.nsIConsoleService);
-        }
-        var msg = "";
-        for (var i = 0; i < arguments.length; i++) {
-            msg += String(arguments[i]) + " "
         }
         this.consoleService.logStringMessage("[ ew ] [" + (new Date()).strftime("%Y-%m-%d %H:%M:%S") + "] " + msg);
     }
