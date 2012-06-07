@@ -215,7 +215,7 @@ var ew_client = {
 
     queryEC2Impl : function (action, params, objActions, isSync, reqType, callback, apiURL, apiVersion, sigVersion) {
         var curTime = new Date();
-        var formattedTime = formatDate(curTime, "yyyy-MM-ddThh:mm:ssZ");
+        var formattedTime = curTime.strftime("%Y-%m-%dT%H:%M:%SZ", true);
 
         var url = apiURL ? apiURL : this.serviceURL
         var sigValues = new Array();

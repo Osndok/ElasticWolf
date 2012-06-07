@@ -34,6 +34,7 @@
   persist="width height screenX screenY sizemode" onload="ew_session.initialize()">
 
   <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/crypto.js" />
   <script type="application/x-javascript" src="chrome://ew/content/model.js" />
   <script type="application/x-javascript" src="chrome://ew/content/client.js" />
   <script type="application/x-javascript" src="chrome://ew/content/controller.js" />
@@ -71,6 +72,7 @@
   <menubar id="ew.menubar">
     <menu label="File">
       <menupopup>
+       <menuitem label="New Window" image="images/add.png" class="menuitem-iconic" oncommand="newWindow();"/>
        <menuitem label="Exit" image="images/reboot.png" class="menuitem-iconic" oncommand="ew_session.quit();"/>
       </menupopup>
     </menu>

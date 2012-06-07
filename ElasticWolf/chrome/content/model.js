@@ -279,6 +279,14 @@ function Instance(reservationId, ownerId, groups, instanceId, imageId, kernelId,
     this.toString = function() {
         return (this.name ? this.name + ew_model.separator : "") + this.id + ew_model.separator + this.state;
     }
+
+    this.getPublicIp = function() {
+        if (this.publicDnsName) {
+            var parts = this.publicDnsName.split('-');
+            return parts[1] + "." + parts[2] + "." + parts[3] + "." + parseInt(parts[4]);
+        }
+        return "";
+    }
 }
 
 function Certificate(name, body)
@@ -803,7 +811,7 @@ var ew_model = {
             ew_session.controller.listAccessKeys();
             break;
         case "certs":
-            ew_session.controller.listsigningCertificates();
+            ew_session.controller.listSigningCertificates();
             break;
         case "azones":
             ew_session.controller.describeAvailabilityZones();

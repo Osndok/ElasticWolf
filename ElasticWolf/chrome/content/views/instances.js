@@ -287,21 +287,12 @@ var ew_InstancesTreeView = {
         if (fSuccess) {
             startIdx += passStart.length;
             var password = output.substr(startIdx, endIdx - startIdx);
-            // log("Base64 Encoded Password: " + password);
-
             // Decode the password
             password = Base64.decode(password);
-            // log("Decoded Password: " + password);
-
             // Convert the string to a byte array
             var passwordBytes = toByteArray(password);
-            // log("Password Bytes: " + passwordBytes);
-
-            // Convert the byte array into a hex array that can be processed
-            // by the RSADecrypt function.
+            // Convert the byte array into a hex array that can be processed by the RSADecrypt function.
             var passwordHex = bin2hex(passwordBytes);
-            // log("Password Hex: " + passwordHex);
-
             return passwordHex;
         }
 
@@ -439,7 +430,7 @@ var ew_InstancesTreeView = {
         var instance = this.getSelected();
         if (instance == null) return;
         if (instance.publicIpAddress == '') {
-            instance.publicIpAddress = getIPFromHostname(instance);
+            instance.publicIpAddress = instance.getPublicIp();
         }
         if (instance.elasticIp == '') {
             var eip = ew_session.model.getAddressByInstanceId(instance.id);
@@ -523,7 +514,7 @@ var ew_InstancesTreeView = {
 
         var returnValue = {accepted:false , result:null};
         ew_session.controller.describeInstanceAttribute(instance.id, "userData", function(value) {
-            var text = ew_session.propmtForText('Instance User Data:', (value ? Base64.decode(value) : ''));
+            var text = ew_session.promptForText('Instance User Data:', (value ? Base64.decode(value) : ''));
             if (text == null) return;
 
             ew_session.controller.modifyInstanceAttribute(instance.id, 'UserData', Base64.encode(text));
@@ -762,7 +753,7 @@ var ew_InstancesTreeView = {
         var cmd = ew_prefs.getSSHCommand();
 
         var hostname = !ipType ? instance.privateIpAddress :
-                       ipType == 1 || ipType == 3 ? getIPFromHostname(instance) :
+                       ipType == 1 || ipType == 3 ? instance.getPublicIp() :
                        ipType == 4 ? instance.publicDnsName :
                        ipType == 2 ? instance.elasticIP : "";
         if (hostname == "" && ipType == 3) {
