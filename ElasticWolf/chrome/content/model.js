@@ -69,10 +69,12 @@ function Tag(key, value)
     }
 }
 
-function Group(id, name)
+function Group(id, name, path, arn)
 {
     this.id = id
     this.name = name
+    this.path = path
+    this.arn = arn
     this.toString = function() {
         return this.name + ew_model.separator + this.id;
     }
@@ -746,10 +748,14 @@ var ew_model = {
     networkInterfaces: null,
     s3buckets: null,
     regions: null,
+    users: null,
+    groups: null,
 
     invalidate : function()
     {
         // reset all lists, these will notify their associated views
+        this.updateUsers(null);
+        this.updateGroups(null);
         this.updateImages(null);
         this.updateInstances(null);
         this.updateKeypairs(null);
@@ -775,7 +781,6 @@ var ew_model = {
         this.updateNetworkAcls(null);
         this.updateNetworkInterfaces(null);
         this.updateS3Buckets(null);
-        this.updateUsers(null);
     },
 
     getModel : function(name)
@@ -835,6 +840,8 @@ var ew_model = {
             return this.s3buckets;
         case "users":
             return this.users;
+        case "groups":
+            return this.groups;
         }
         return []
     },
@@ -929,6 +936,9 @@ var ew_model = {
             break;
         case "users":
             ew_session.controller.listUsers();
+            break;
+        case "groups":
+            ew_session.controller.listGroups();
             break;
         }
         return []
@@ -1086,6 +1096,20 @@ var ew_model = {
             ew_session.controller.listUsers();
         }
         return this.users;
+    },
+
+    updateGroups : function(list)
+    {
+        this.groups = list;
+        this.notifyComponents("groups");
+    },
+
+    getGroups : function()
+    {
+        if (this.groups == null) {
+            ew_session.controller.listGroups();
+        }
+        return this.groups;
     },
 
     updateS3Buckets : function(list)

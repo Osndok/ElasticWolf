@@ -19,6 +19,10 @@ var ew_toolbar = {
 
             { tab: "ew.tabs.keypair",       views: [ { id: "ew.keypairs.view", view: ew_KeypairTreeView, } ] },
 
+            { tab: "ew.tabs.users",       views: [ { id: "ew.users.view", view: ew_UsersTreeView, }, ] },
+
+            { tab: "ew.tabs.groups",       views: [ { id: "ew.groups.view", view: ew_GroupsTreeView, }, ] },
+
             { tab: "ew.tabs.securitygroup", views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: true }] },
                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }], },
 

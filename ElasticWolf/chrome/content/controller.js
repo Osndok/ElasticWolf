@@ -1828,6 +1828,29 @@ var ew_controller = {
         if (objResponse.callback) objResponse.callback(list);
     },
 
+    listGroups : function(callback)
+    {
+        ew_client.queryIAM("ListGroups", [], this, true, "onCompleteListGroups", callback);
+    },
+
+    onCompleteListGroups : function(objResponse)
+    {
+        var xmlDoc = objResponse.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("member");
+        for ( var i = 0; i < items.length; i++) {
+            var path = getNodeValueByName(items[i], "Path");
+            var name = getNodeValueByName(items[i], "GroupName");
+            var id = getNodeValueByName(items[i], "GroupId");
+            var arn = getNodeValueByName(items[i], "Arn");
+            list.push(new Group(id, name, path, arn));
+        }
+
+        ew_model.updateGroups(list);
+        if (objResponse.callback) objResponse.callback(list);
+    },
+
     importKeypair : function(name, keyMaterial, callback)
     {
         ew_client.queryEC2("ImportKeyPair", [ [ "KeyName", name ], [ "PublicKeyMaterial", keyMaterial ] ], this, true, "onCompleteImportKeyPair", callback);

@@ -28,6 +28,8 @@
 <?xul-overlay href="chrome://ew/content/views/credentials.xul"?>
 <?xul-overlay href="chrome://ew/content/views/endpoints.xul"?>
 <?xul-overlay href="chrome://ew/content/views/prefs.xul"?>
+<?xul-overlay href="chrome://ew/content/views/users.xul"?>
+<?xul-overlay href="chrome://ew/content/views/groups.xul"?>
 
 <window id="ew-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
   xmlns:html="http://www.w3.org/1999/xhtml" title="" orient="vertical"
@@ -41,6 +43,7 @@
   <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
   <script type="application/x-javascript" src="chrome://ew/content/session.js" />
 
+  <script type="application/x-javascript" src="chrome://ew/content/views/iam.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/access.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/certs.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/instances.js" />
@@ -103,13 +106,15 @@
 
       <treeitem container="true" open="true">
        <treerow>
-         <treecell label="Access" src="images/iam.png" />
+         <treecell label="Access Management" src="images/iam.png" />
        </treerow>
        <treechildren>
          <treeitem><treerow><treecell label="Credentials" value="ew.tabs.credential" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Endpoints" value="ew.tabs.endpoint" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.access.label;" value="ew.tabs.access" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="&ew.tabs.keypair.label;" value="ew.tabs.keypair" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="My Access Keys" value="ew.tabs.access" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="My Keypairs" value="ew.tabs.keypair" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Users" value="ew.tabs.users" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Groups" value="ew.tabs.groups" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
@@ -180,6 +185,8 @@
       <tabpanel id="ew.tabs.image"/>
       <tabpanel id="ew.tabs.access"/>
       <tabpanel id="ew.tabs.keypair"/>
+      <tabpanel id="ew.tabs.users"/>
+      <tabpanel id="ew.tabs.groups"/>
       <tabpanel id="ew.tabs.securitygroup"/>
       <tabpanel id="ew.tabs.eip"/>
       <tabpanel id="ew.tabs.volume"/>
