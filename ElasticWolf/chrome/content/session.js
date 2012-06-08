@@ -15,7 +15,7 @@ var ew_session = {
     initialize : function()
     {
         ew_prefs.init();
-        ew_toolbar.init();
+        ew_menu.init();
 
         this.controller = ew_controller;
         this.model = ew_model;
@@ -101,7 +101,7 @@ var ew_session = {
     selectTab: function(name) {
         if (this.client.disabled) return;
 
-        if (ew_toolbar.select(name)) {
+        if (ew_menu.select(name)) {
             this.prefs.setCurrentTab(name);
         }
     },
@@ -174,7 +174,7 @@ var ew_session = {
                 var endpoint = new Endpoint("", cred.endPoint)
                 this.selectEndpoint(endpoint);
             }
-            ew_toolbar.update();
+            ew_menu.update();
             return true;
         }
         return false;
@@ -209,7 +209,7 @@ var ew_session = {
             this.prefs.setLastUsedEndpoint(endpoint.name);
             this.prefs.setServiceURL(endpoint.url);
             this.client.setEndpoint(endpoint);
-            ew_toolbar.update();
+            ew_menu.update();
             return true;
         }
         return false;
@@ -227,7 +227,7 @@ var ew_session = {
                 debug('disable credentials when switching to/from GovCloud')
                 this.client.setCredentials("", "");
                 this.prefs.setLastUsedAccount("");
-                ew_toolbar.update();
+                ew_menu.update();
             }
             // Since we are switching creds, ensure that all the views are redrawn
             this.model.invalidate();

@@ -9,8 +9,6 @@
   onload="init()"
   title="ENI Details">
 
-  <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
-
   <script type="application/x-javascript">
   <![CDATA[
 

@@ -1061,7 +1061,7 @@ var ew_model = {
     {
         var comps = this.componentInterests[interest] || [];
         for (var i in comps) {
-            if (ew_toolbar.isViewVisible(comps[i])) {
+            if (ew_menu.isViewVisible(comps[i])) {
                 comps[i].notifyModelChanged(interest);
             } else {
                 comps[i].display([]);

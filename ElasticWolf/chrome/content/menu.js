@@ -1,4 +1,4 @@
-var ew_toolbar = {
+var ew_menu = {
     // Order of te tabs should match order of tabpanels
     tabs: [
             { tab: "ew.tabs.prefs",         views: [ { view: ew_PrefsView } ] },
@@ -203,3 +203,4 @@ var ew_toolbar = {
     },
 
 };
+

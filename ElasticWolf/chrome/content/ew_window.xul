@@ -38,6 +38,7 @@
 
   <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
   <script type="application/x-javascript" src="chrome://ew/content/crypto.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/interfaces.js" />
   <script type="application/x-javascript" src="chrome://ew/content/model.js" />
   <script type="application/x-javascript" src="chrome://ew/content/client.js" />
   <script type="application/x-javascript" src="chrome://ew/content/controller.js" />
@@ -66,7 +67,7 @@
   <script type="application/x-javascript" src="chrome://ew/content/views/s3.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/credentials.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/prefs.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/toolbar.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/menu.js" />
 
   <stringbundleset>
     <stringbundle id="ew.properties.bundle" src="chrome://ew/locale/ew.properties" />
@@ -90,7 +91,7 @@
    </toolbox>
 
   <hbox flex="1">
-    <tree id="ew.menu" seltype="single" style="min-width:180px;" onclick="ew_toolbar.selectionChanged()" hidecolumnpicker="true" flex="1">
+    <tree id="ew.menu" seltype="single" style="min-width:180px;" onclick="ew_menu.selectionChanged()" hidecolumnpicker="true" flex="1">
     <treecols>
       <treecol id="name" label="Navigation" primary="true" flex="1" persist="width ordinal hidden" />
     </treecols>
