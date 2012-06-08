@@ -4,6 +4,7 @@ var ew_InstancesTreeView = {
                 'instance.availabilityZone','instance.tenancy','instance.platform','instance.tags','instance.vpcId','instance.subnetId','instance.rootDeviceType' ],
     model: ['instances', 'images', 'addresses'],
     searchElement: 'ew.instances.search',
+    properties: [ 'state' ],
 
     filterChanged: function()
     {
@@ -99,12 +100,12 @@ var ew_InstancesTreeView = {
     isInstanceReadyToUse : function(instance) {
         var ret = false;
         if (isWindows(instance.platform)) {
-            var consoleRsp = ew_session.controller.getConsoleOutput(instance.id);
-            // Parse the response to determine whether the instance is ready to use
-            var output = ew_session.controller.onCompleteGetConsoleOutput(consoleRsp);
-            if (output.indexOf("Windows is Ready to use") >= 0) {
-                ret = true;
-            }
+            ew_session.controller.getConsoleOutput(instance.id, true, function(instanceId, timestamp, output) {
+                // Parse the response to determine whether the instance is ready to use
+                if (output.indexOf("Windows is Ready to use") >= 0) {
+                    ret = true;
+                }
+            });
         } else {
             ret = true;
         }
@@ -143,7 +144,7 @@ var ew_InstancesTreeView = {
             }
         }
 
-        var retVal = {ok:null, volumeId:null, device:null};
+        var retVal = {ok:null, volumeId:null, device:null, windows: isWindows(instance.platform) };
         window.openDialog("chrome://ew/content/dialogs/attach_ebs_volume.xul",null, "chrome,centerscreen,modal,resizable", ew_session, instance, retVal);
         if (retVal.ok) {
             ew_VolumeTreeView.attachEBSVolume(retVal.volumeId,instance.id,retVal.device);
@@ -577,7 +578,7 @@ var ew_InstancesTreeView = {
         if (wrap == null) {
             wrap = function(id, timestamp, output) { me.showConsoleOutput(id, timestamp, output); }
         }
-        ew_session.controller.getConsoleOutput(instance.id, wrap);
+        ew_session.controller.getConsoleOutput(instance.id, false, wrap);
     },
 
     showConsoleOutput : function(id, timestamp, output) {

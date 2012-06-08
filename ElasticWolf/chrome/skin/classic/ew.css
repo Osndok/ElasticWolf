@@ -1,60 +1,64 @@
-treechildren::-moz-tree-cell(instance_pending) {
+treechildren::-moz-tree-cell(instances_pending) {
     background-color: #FFFFCC;
 }
 
-treechildren::-moz-tree-cell(instance_running) {
+treechildren::-moz-tree-cell(instances_running) {
     background-color: #C3DDC3;
 }
 
-treechildren::-moz-tree-cell(instance_shutting_down) {
+treechildren::-moz-tree-cell(instances_shutting_down) {
     background-color: #FFCC99;
 }
 
-treechildren::-moz-tree-cell(instance_deleting) {
+treechildren::-moz-tree-cell(instances_deleting) {
     background-color: #FFCC99;
 }
 
-treechildren::-moz-tree-cell(instance_terminated) {
+treechildren::-moz-tree-cell(instances_terminated) {
     background-color: #FFCCCC;
 }
 
-treechildren::-moz-tree-cell(instance_deleted) {
+treechildren::-moz-tree-cell(instances_deleted) {
     background-color: #FFCCCC;
 }
 
-treechildren::-moz-tree-cell(instance_detached) {
+treechildren::-moz-tree-cell(instances_detached) {
     background-color: #FFCCCC;
 }
 
-treechildren::-moz-tree-cell(instance_stopping) {
+treechildren::-moz-tree-cell(instances_stopping) {
     background-color: #DDA0DD;
 }
 
-treechildren::-moz-tree-cell(instance_stopped) {
+treechildren::-moz-tree-cell(instances_stopped) {
     background-color: #BA55D3;
 }
 
-treechildren::-moz-tree-cell(image_available) {
+treechildren::-moz-tree-cell(volumes_available) {
     background-color: #C3DDC3;
 }
 
-treechildren::-moz-tree-cell(image_deregistered) {
+treechildren::-moz-tree-cell(images_available) {
+    background-color: #C3DDC3;
+}
+
+treechildren::-moz-tree-cell(images_deregistered) {
     background-color: #EEEEEE;
 }
 
-treechildren::-moz-tree-cell(image_public) {
+treechildren::-moz-tree-cell(images_public) {
     background-color: #FFFF99;
 }
 
-treechildren::-moz-tree-cell(image_private) {
+treechildren::-moz-tree-cell(images_private) {
     background-color: transparent;
 }
 
-treechildren::-moz-tree-cell(image_amazon) {
+treechildren::-moz-tree-cell(images_amazon) {
     background-color: #FFFF99;
 }
 
-treechildren::-moz-tree-cell(image_amazon) {
+treechildren::-moz-tree-cell(images_amazon) {
     background-color: #FFFF99;
 }
 

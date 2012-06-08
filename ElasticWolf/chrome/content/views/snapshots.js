@@ -129,7 +129,7 @@ var ew_SnapshotTreeView = {
         var image = this.getSelected();
         if (image == null) return;
         var retVal = {ok:null,amiName:null,amiDescription:null};
-        window.openDialog("chrome://ew/content/dialogs/register_image_from_snapshot.xul", null, "chrome,centerscreen,modal,resizable", image.id, ew_session, retVal);
+        window.openDialog("chrome://ew/content/dialogs/create_snapshot_ami.xul", null, "chrome,centerscreen,modal,resizable", image.id, ew_session, retVal);
         if (retVal.ok) {
             var wrap = function(id) {
                 alert("A new AMI is registered.\n\nThe AMI ID is: "+id);

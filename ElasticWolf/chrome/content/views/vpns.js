@@ -27,10 +27,10 @@ var ew_VpnConnectionTreeView = {
         var opts = ew_client.queryVpnConnectionStylesheets(null);
         var formats = opts.xmlDoc.evaluate("/CustomerGatewayConfigFormats/Format", opts.xmlDoc, ew_client.getNsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for (var i = 0; i < formats.snapshotLength; i++) {
-            var platform = getNodeValueByName(formats.snapshotItem(i), "Platform");
-            var filename = getNodeValueByName(formats.snapshotItem(i), "Filename");
-            var vendor = getNodeValueByName(formats.snapshotItem(i), "Vendor");
-            var software = getNodeValueByName(formats.snapshotItem(i), "Software");
+            var platform = getNodeValue(formats.snapshotItem(i), "Platform");
+            var filename = getNodeValue(formats.snapshotItem(i), "Filename");
+            var vendor = getNodeValue(formats.snapshotItem(i), "Vendor");
+            var software = getNodeValue(formats.snapshotItem(i), "Software");
             devices.push({ title: vendor + " " + platform + " [" + software + "]", filename: filename });
         }
 
@@ -42,7 +42,7 @@ var ew_VpnConnectionTreeView = {
                 var proc = new XSLTProcessor;
                 proc.importStylesheet(xsl.xmlDoc);
                 var resultXml = proc.transformToDocument(configXml);
-                var result = getNodeValueByName(resultXml, "transformiix:result");
+                var result = getNodeValue(resultXml, "transformiix:result");
                 this.saveConnectionConfiguration(vpn.id, result);
             } catch (e) {
                 alert("Exception while processing XSLT: "+e)

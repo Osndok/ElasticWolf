@@ -259,7 +259,6 @@ var ew_client = {
             log("Could not create xmlhttp object");
             return null;
         }
-        isSync = false;
         xmlhttp.open("POST", url, !isSync);
         xmlhttp.setRequestHeader("User-Agent", this.getUserAgent());
         xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -343,7 +342,6 @@ var ew_client = {
             log("Could not create xmlhttp object");
             return null;
         }
-        isSync = false;
         xmlhttp.open(req.method, req.url, !isSync);
 
         for (var p in req.headers) {
@@ -508,9 +506,9 @@ var ew_client = {
             }
         }
         if (xmlDoc) {
-            faultCode = getNodeValueByName(xmlDoc, "Code");
-            faultString = getNodeValueByName(xmlDoc, "Message");
-            requestId = getNodeValueByName(xmlDoc, "RequestID");
+            faultCode = getNodeValue(xmlDoc, "Code");
+            faultString = getNodeValue(xmlDoc, "Message");
+            requestId = getNodeValue(xmlDoc, "RequestID");
         }
         return this.createResponse(xmlhttp, reqType, callback, true, faultCode, faultString, requestId, data);
     },

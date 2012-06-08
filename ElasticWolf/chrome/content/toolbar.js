@@ -54,8 +54,9 @@ var ew_toolbar = {
             { tab: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
                                                      { id: "ew.rsvdInst.view", view: ew_ReservedInstancesTreeView } ], },
 
-            { tab: "ew.tabs.vpc",           views: [ { id: "ew.vpcs.view", view: ew_VpcTreeView },
-                                                     { id: "ew.dhcpoptions.view", view: ew_DhcpoptsTreeView } ], },
+            { tab: "ew.tabs.vpc",           views: [ { id: "ew.vpcs.view", view: ew_VpcTreeView }, ] },
+
+            { tab: "ew.tabs.dhcp",          views: [ { id: "ew.dhcpoptions.view", view: ew_DhcpoptsTreeView } ], },
 
             { tab: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
                                                      { id: "ew.rsvdInstances.view", view: ew_ReservedInstancesTreeView } ], },

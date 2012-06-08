@@ -3,6 +3,7 @@ var ew_AMIsTreeView = {
     model : ['images','securityGroups','instances'],
     searchElement: "ew.images.search",
     favorites: "ew.images.favorites",
+    properties: ['ownerAlias', 'isPublic', 'state'],
 
     enableOrDisableItems : function(event)
     {

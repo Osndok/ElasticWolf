@@ -22,6 +22,7 @@
 <!ENTITY ew.tabs.lease.label "Reserved Instances">
 <!ENTITY ew.tabs.loadbalancer.label "Load Balancer">
 <!ENTITY ew.tabs.vpc.label "VPCs">
+<!ENTITY ew.tabs.dhcp.label "DHCP Options">
 <!ENTITY ew.tabs.subnet.label "Subnets">
 <!ENTITY ew.tabs.routing.label "Routing Tables">
 <!ENTITY ew.tabs.igw.label "Internet Gateways">

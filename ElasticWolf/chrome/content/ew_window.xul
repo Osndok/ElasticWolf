@@ -17,6 +17,7 @@
 <?xul-overlay href="chrome://ew/content/views/vpcs.xul"?>
 <?xul-overlay href="chrome://ew/content/views/subnets.xul"?>
 <?xul-overlay href="chrome://ew/content/views/vpns.xul"?>
+<?xul-overlay href="chrome://ew/content/views/dhcp.xul"?>
 <?xul-overlay href="chrome://ew/content/views/loadbalancers.xul"?>
 <?xul-overlay href="chrome://ew/content/views/routing.xul"?>
 <?xul-overlay href="chrome://ew/content/views/igw.xul"?>
@@ -89,7 +90,7 @@
    </toolbox>
 
   <hbox flex="1">
-    <tree id="ew.toolbar" seltype="single" style="min-width:150px;" onclick="ew_toolbar.selectionChanged()" hidecolumnpicker="true" currentIndex="3" flex="1">
+    <tree id="ew.toolbar" seltype="single" style="min-width:180px;" onclick="ew_toolbar.selectionChanged()" hidecolumnpicker="true" currentIndex="3" flex="1">
     <treecols>
       <treecol id="name" label="Navigation" primary="true" flex="1" persist="width ordinal hidden" />
     </treecols>
@@ -154,6 +155,7 @@
          <treeitem><treerow><treecell label="&ew.tabs.instance.label;" value="ew.tabs.vpcinstance" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.securitygroup.label;" value="ew.tabs.vpcgroup" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.acl.label;" value="ew.tabs.acl" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="&ew.tabs.dhcp.label;" value="ew.tabs.dhcp" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.routing.label;" value="ew.tabs.routing" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.igw.label;" value="ew.tabs.igw" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.eip.label;" value="ew.tabs.vpceip" /></treerow></treeitem>
@@ -195,6 +197,7 @@
       <tabpanel id="ew.tabs.bundletask"/>
       <tabpanel id="ew.tabs.lease"/>
       <tabpanel id="ew.tabs.vpc"/>
+      <tabpanel id="ew.tabs.dhcp"/>
       <tabpanel id="ew.tabs.subnet"/>
       <tabpanel id="ew.tabs.routing"/>
       <tabpanel id="ew.tabs.igw"/>

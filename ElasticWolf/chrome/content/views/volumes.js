@@ -3,6 +3,7 @@ var ew_VolumeTreeView = {
     ['vol.id','vol.size','vol.snapshotId','vol.availabilityZone','vol.status','vol.createTime', 'vol.instanceId', 'vol.instanceName', 'vol.device', 'vol.attachStatus','vol.attachTime', 'vol.tags'],
     model: ['volumes','azones','instances','snapshots'],
     searchElement: 'ew.volumes.search',
+    properties: ['status'],
 
     filter : function(list) {
         if (!list) return list;

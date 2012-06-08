@@ -1,6 +1,6 @@
 var ew_VpcTreeView = {
-    COLNAMES : [ 'vpc.id', 'vpc.cidr', 'vpc.state', 'vpc.dhcpoptions', 'vpc.tags' ],
-    model: [ "vpcs", "instances", "internetGateways" ],
+    COLNAMES : [ 'vpc.id', 'vpc.cidr', 'vpc.state', 'vpc.dhcpOptionsId', 'vpc.tags' ],
+    model: [ "vpcs", "instances", "internetGateways", 'dhcpOptions' ],
     searchElement: 'ew.vpcs.search',
 
     enableOrDisableItems : function()

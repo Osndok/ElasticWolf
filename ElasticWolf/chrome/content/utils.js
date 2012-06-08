@@ -288,18 +288,18 @@ var TreeView = {
     performAction : function(action) {
         debug('action ' + action);
     },
-    performActionOnCell : function(action, index, column) {
+    performActionOnCell : function(action, idx, column) {
     },
     getRowProperties : function(idx, column, prop) {
     },
     getCellProperties : function(idx, column, prop) {
         var name = column.id.split(".").pop();
         if (this.properties.indexOf(name) == -1) return;
-        var value = this.treeList[row][name].replace(/[ -.:]+/g,'_').toLowerCase();
+        var value = this.treeList[idx][name].replace(/[ -.:]+/g,'_').toLowerCase();
         if (!this.atomService) {
             this.atomService = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
         }
-        prop.AppendElement(this.atomService.getAtom(this.model + "_" + value));
+        prop.AppendElement(this.atomService.getAtom(this.getModelName() + "_" + value));
     },
     getColumnProperties : function(column, element, prop) {
     },
@@ -1207,10 +1207,17 @@ function className(o) {
     return "Object";
 }
 
-function getNodeValueByName(parent, nodeName)
+function getNodeValue(item, nodeName, childName)
 {
-    var node = parent ? parent.getElementsByTagName(nodeName)[0] : null;
-    return node && node.firstChild ? node.firstChild.nodeValue : "";
+    function _getNodeValue(parent, nodeName) {
+        var node = parent ? parent.getElementsByTagName(nodeName)[0] : null;
+        return node && node.firstChild ? node.firstChild.nodeValue : "";
+    }
+    if (childName) {
+        return _getNodeValue(item.getElementsByTagName(nodeName)[0], childName);
+    } else {
+        return _getNodeValue(item, nodeName);
+    }
 }
 
 function plainList(list, id)

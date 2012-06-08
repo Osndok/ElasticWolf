@@ -22,6 +22,17 @@ function User(id, name, path, arn)
     }
 }
 
+function UserGroup(id, name, path, arn)
+{
+    this.id = id
+    this.name = name
+    this.path = path
+    this.arn = arn
+    this.toString = function() {
+        return this.name + ew_model.separator + this.id;
+    }
+}
+
 function S3Bucket(name, mtime, owner)
 {
     this.name = name
@@ -69,12 +80,10 @@ function Tag(key, value)
     }
 }
 
-function Group(id, name, path, arn)
+function Group(id, name)
 {
     this.id = id
     this.name = name
-    this.path = path
-    this.arn = arn
     this.toString = function() {
         return this.name + ew_model.separator + this.id;
     }
@@ -602,7 +611,7 @@ function DhcpOptions(id, options, tags)
     ew_model.processTags(this)
 
     this.toString = function() {
-        return this.id + ew_model.separator + this.options;
+        return this.options + ew_model.separator + this.id;
     }
 }
 
@@ -955,6 +964,7 @@ var ew_model = {
                       cgwId: this.customerGateways,
                       vgwId: this.vpnGateways,
                       igwId: this.internetGateways,
+                      dhcpOptionsId: this.dhcpOptions,
                       networkInterfaceId: this.networkInterfaces,
                       groups: this.securityGroups,
                       subnets: this.subnets };

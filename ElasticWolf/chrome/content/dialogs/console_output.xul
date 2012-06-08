@@ -10,6 +10,8 @@
   title="Instance Console Output">
 
   <script type="application/x-javascript">
+  <![CDATA[
+
     function init()
     {
         document.getElementById("ew.console.instanceid").value = window.arguments[0];
@@ -20,6 +22,8 @@
         }
         document.getElementById("ew.console.output").value = output;
     }
+
+  ]]>
   </script>
 
   <vbox flex="1">

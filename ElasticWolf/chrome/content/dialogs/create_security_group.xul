@@ -1,16 +1,57 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://ew/skin/ew.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
 <dialog id="ew.dialog.registerimage"
     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
     buttons="accept,cancel"
-    ondialogaccept="return ew_SecGroupCreator.createGroup();"
-    ondialogcancel="return true;" onload="ew_SecGroupCreator.init();"
-    title="Create a new security group" buttonlabelaccept="Create Group">
+    ondialogaccept="return createGroup();"
+    ondialogcancel="return true;"
+    onload="init();"
+    title="Create a new security group"
+    buttonlabelaccept="Create Group">
 
-    <script type="application/x-javascript" src="chrome://ew/content/dialogs/create_security_group.js" />
-    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
+    <script type="application/x-javascript">
+    <![CDATA[
+
+    function createGroup() {
+        var name = document.getElementById("ew.newsecgroup.name");
+        if (name.value.trim().length == 0) {
+            alert("Please provide a group name");
+            name.select();
+            return false;
+        }
+        var descr = document.getElementById("ew.newsecgroup.description");
+        if (descr.value.trim().length == 0) {
+            alert("Please provide a description");
+            descr.select();
+            return false;
+        }
+        this.retVal.name = name.value.trim();
+        this.retVal.description = descr.value.trim();
+        this.retVal.enableProtocolsFor = document.getElementById("ew.newsecgroup.enableprot").selectedItem.value;
+        this.retVal.vpcId = document.getElementById("ew.newsecgroup.vpcId").value;
+        this.retVal.ok = true;
+        return true;
+    }
+
+    function init() {
+        this.ew_session = window.arguments[0];
+        this.retVal = window.arguments[1];
+
+        var vpcMenu = document.getElementById("ew.newsecgroup.vpcId");
+        vpcMenu.removeAllItems();
+        vpcMenu.appendItem("None", "");
+        var vpcs = this.ew_session.model.getVpcs();
+        for (var i in vpcs) {
+            vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);
+        }
+        vpcMenu.selectedIndex = 0;
+    }
+
+    ]]>
+    </script>
 
     <vbox flex="1">
         <grid flex="1">
