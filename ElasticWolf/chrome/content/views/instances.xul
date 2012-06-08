@@ -84,7 +84,7 @@
         <treecols>
           <treecol id="instance.name" label="Name" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="instance.resId" label="&ew.instances.resid.label;" flex="2" persist="width ordinal hidden sortDirection" />
+          <treecol id="instance.reservationId" label="&ew.instances.resid.label;" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="instance.ownerId" label="&ew.instances.owner.label;" flex="2" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />

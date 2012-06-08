@@ -31,11 +31,16 @@ var ew_controller = {
             var items = tagSet.getElementsByTagName(itemsNode);
             for (var i = 0; i < items.length; i++) {
                 if (columns) {
-                    var obj = {};
-                    for (var j in columns) {
-                        obj[columns[j]] = getNodeValueByName(items[i], columns[j]);
+                    // Return object or just plain list if columns is a string
+                    if (columns instanceof Array) {
+                        var obj = {};
+                        for (var j in columns) {
+                            obj[columns[j]] = getNodeValueByName(items[i], columns[j]);
+                        }
+                        list.push(obj)
+                    } else {
+                        list.push(getNodeValueByName(items[i], columns));
                     }
-                    list.push(obj)
                 } else {
                     list.push(items[i]);
                 }
@@ -71,48 +76,6 @@ var ew_controller = {
         } else {
             return getNodeValueByName(item, nodeName);
         }
-    },
-
-    unpackInstances : function(reservationId, ownerId, groups, instanceItems)
-    {
-        var list = new Array();
-        for ( var j = 0; j < instanceItems.length; j++) {
-            if (instanceItems[j].nodeName == '#text') continue;
-            var obj = new Instance(reservationId, ownerId);
-            obj.instanceId = getNodeValueByName(instanceItems[j], "instanceId");
-            obj.imageId = getNodeValueByName(instanceItems[j], "imageId");
-            obj.stateName = this.getNodeValue(instanceItems[j], "instanceState", "name");
-            obj.productCodes = [];
-            var items = this.getItems(instanceItems[j], "productCodes", "item", ["productCode", "type"]);
-            for (var i = 0; i < items.length; i++) {
-                list.push(new Group(items[i].productCode, items[i].type));
-            }
-            obj.groups = groups.concat(this.getGroups(instanceItems[j]));
-            obj.dnsName = getNodeValueByName(instanceItems[j], "dnsName");
-            obj.privateDnsName = getNodeValueByName(instanceItems[j], "privateDnsName");
-            obj.privateIpAddress = getNodeValueByName(instanceItems[j], "privateIpAddress");
-            obj.vpcId = getNodeValueByName(instanceItems[j], "vpcId");
-            obj.subnetId = getNodeValueByName(instanceItems[j], "subnetId");
-            obj.keyName = getNodeValueByName(instanceItems[j], "keyName");
-            obj.reason = getNodeValueByName(instanceItems[j], "reason");
-            obj.amiLaunchIdx = getNodeValueByName(instanceItems[j], "amiLaunchIndex");
-            obj.instanceType = getNodeValueByName(instanceItems[j], "instanceType");
-            obj.launchTime = new Date();
-            obj.launchTime.setISO8601(getNodeValueByName(instanceItems[j], "launchTime"));
-            obj.availabilityZone = this.getNodeValue(instanceItems[j], "placement", "availabilityZone");
-            obj.tenancy = this.getNodeValue(instanceItems[j], "placement", "tenancy");
-            obj.monitoringStatus = this.getNodeValue(instanceItems[j], "monitoring", "status");
-            obj.stateReason = this.getNodeValue(instanceItems[j], "stateReason", "code");
-            obj.platform = getNodeValueByName(instanceItems[j], "platform");
-            obj.kernelId = getNodeValueByName(instanceItems[j], "kernelId");
-            obj.ramdiskId = getNodeValueByName(instanceItems[j], "ramdiskId");
-            obj.rootDeviceType = getNodeValueByName(instanceItems[j], "rootDeviceType");
-            obj.rootDeviceName = getNodeValueByName(instanceItems[j], "rootDeviceName");
-            obj.tags = this.getTags(instanceItems[j]);
-            ew_model.processTags(obj);
-            list.push(obj);
-        }
-        return list;
     },
 
     registerImageInRegion : function(manifestPath, region, callback)
@@ -1142,18 +1105,90 @@ var ew_controller = {
 
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeInstancesResponse/ec2:reservationSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        for ( var i = 0; i < items.snapshotLength; i++) {
-            var reservationId = getNodeValueByName(items.snapshotItem(i), "reservationId");
-            var ownerId = getNodeValueByName(items.snapshotItem(i), "ownerId");
-            var groups = new Array();
-            var groupIds = items.snapshotItem(i).getElementsByTagName("groupId");
-            for (var j = 0; j < groupIds.length; j++) {
-                groups.push(groupIds[j].firstChild.nodeValue);
+        for (var k = 0; k < items.snapshotLength; k++) {
+            var reservationId = getNodeValueByName(items.snapshotItem(k), "reservationId");
+            var ownerId = getNodeValueByName(items.snapshotItem(k), "ownerId");
+            var requesterId = getNodeValueByName(items.snapshotItem(k), "requesterId");
+            var groups = [];
+            var objs = this.getItems(items.snapshotItem(k), "groupSet", "item", ["groupId", "groupName"]);
+            for (var j = 0; j < objs.length; j++) {
+                groups.push(new Group(objs[j].groupId, objs[j].groupName));
             }
-            var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
+            var instancesSet = items.snapshotItem(k).getElementsByTagName("instancesSet")[0];
             var instanceItems = instancesSet.childNodes;
             if (instanceItems) {
-                list = this.unpackInstances(reservationId, ownerId, groups, instanceItems);
+                for (var j = 0; j < instanceItems.length; j++) {
+                    if (instanceItems[j].nodeName == '#text') continue;
+                    var instance = instanceItems[j];
+                    var instanceId = getNodeValueByName(instance, "instanceId");
+                    var imageId = getNodeValueByName(instance, "imageId");
+                    var state = this.getNodeValue(instance, "instanceState", "name");
+                    var productCodes = [];
+                    var objs = this.getItems(instance, "productCodes", "item", ["productCode", "type"]);
+                    for (var i = 0; i < objs.length; i++) {
+                        list.push(new Group(objs[i].productCode, objs[i].type));
+                    }
+                    var allGroups = groups.concat(this.getGroups(instance));
+                    var dnsName = getNodeValueByName(instance, "dnsName");
+                    var privateDnsName = getNodeValueByName(instance, "privateDnsName");
+                    var privateIpAddress = getNodeValueByName(instance, "privateIpAddress");
+                    var vpcId = getNodeValueByName(instance, "vpcId");
+                    var subnetId = getNodeValueByName(instance, "subnetId");
+                    var keyName = getNodeValueByName(instance, "keyName");
+                    var reason = getNodeValueByName(instance, "reason");
+                    var amiLaunchIdx = getNodeValueByName(instance, "amiLaunchIndex");
+                    var instanceType = getNodeValueByName(instance, "instanceType");
+                    var launchTime = new Date();
+                    launchTime.setISO8601(getNodeValueByName(instance, "launchTime"));
+                    var availabilityZone = this.getNodeValue(instance, "placement", "availabilityZone");
+                    var tenancy = this.getNodeValue(instance, "placement", "tenancy");
+                    var monitoringStatus = this.getNodeValue(instance, "monitoring", "status");
+                    var stateReason = this.getNodeValue(instance, "stateReason", "code");
+                    var platform = getNodeValueByName(instance, "platform");
+                    var kernelId = getNodeValueByName(instance, "kernelId");
+                    var ramdiskId = getNodeValueByName(instance, "ramdiskId");
+                    var rootDeviceType = getNodeValueByName(instance, "rootDeviceType");
+                    var rootDeviceName = getNodeValueByName(instance, "rootDeviceName");
+                    var virtType = getNodeValueByName(instance, 'virtualizationType');
+                    var hypervisor = getNodeValueByName(instance, 'hypervisor');
+                    var ip = getNodeValueByName(instance, "ipAddress");
+                    var srcDstCheck = getNodeValueByName(instance, 'sourceDestCheck');
+                    var architecture = getNodeValueByName(instance, "architecture");
+                    var instanceLifecycle = getNodeValueByName(instance, "instanceLifecycle")
+                    var clientToken = getNodeValueByName(instance, "clientToken")
+                    var volumes = [];
+                    var objs = this.getItems(instance, "blockDeviceMapping", "item");
+                    for (var i = 0; i < objs.length; i++) {
+                        var vdevice = getNodeValueByName(objs[i], "deviceName");
+                        var vid = this.getNodeValue(objs[i], "ebs", "volumeId");
+                        var vstatus = this.getNodeValue(objs[i], "ebs", "status");
+                        var vtime = this.getNodeValue(objs[i], "ebs", "attachTime");
+                        var vdel = this.getNodeValue(objs[i], "ebs", "deleteOnTermination");
+                        volumes.push(new InstanceVolumeAttachment(vid, vdevice, vstatus, vtime, vdel));
+                    }
+                    var enis = [];
+                    var objs = this.getItems(instance, "networkInterfaceSet", "item");
+                    for (var i = 0; i < objs.length; i++) {
+                        var eid = getNodeValueByName(objs[i], "networkInterfaceId");
+                        var estatus = getNodeValueByName(objs[i], "status");
+                        var edescr = getNodeValueByName(objs[i], "description");
+                        var esubnetId = getNodeValueByName(objs[i], "subnetId");
+                        var evpcId = getNodeValueByName(objs[i], "vpcId");
+                        var eownerId = getNodeValueByName(objs[i], "ownerId");
+                        var eprivateIp = getNodeValueByName(objs[i], "privateIpAddress");
+                        var epublicIp = getNodeValueByName(objs[i], "publicIp");
+                        var ednsName = getNodeValueByName(objs[i], "privateDnsName");
+                        var esrcDstCheck = getNodeValueByName(objs[i], "sourceDestCheck");
+                        enis.push(new InstanceNetworkInterface(eid, estatus, edescr, esubnetId, evpcId, eownerId, eprivateIp, epublicIp, ednsName, esrcDstCheck));
+                    }
+
+                    var tags = this.getTags(instance);
+
+                    list.push(new Instance(reservationId, ownerId, requesterId, instanceId, imageId, state, productCodes, allGroups, dnsName, privateDnsName, privateIpAddress,
+                                           vpcId, subnetId, keyName, reason, amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, monitoringStatus, stateReason,
+                                           platform, kernelId, ramdiskId, rootDeviceType, rootDeviceName, virtType, hypervisor, ip, srcDstCheck, architecture, instanceLifecycle,
+                                           clientToken, volumes, enis, tags));
+                }
             }
         }
 
@@ -1223,24 +1258,7 @@ var ew_controller = {
     onCompleteRunInstances : function(objResponse)
     {
         var xmlDoc = objResponse.xmlDoc;
-
-        var list = new Array();
-        var items = xmlDoc.evaluate("/", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        for ( var i = 0; i < items.snapshotLength; i++) {
-            var resId = getNodeValueByName(items.snapshotItem(i), "reservationId");
-            var ownerId = getNodeValueByName(items.snapshotItem(i), "ownerId");
-            var groups = new Array();
-            var groupIds = items.snapshotItem(i).getElementsByTagName("groupId");
-            for ( var j = 0; j < groupIds.length; j++) {
-                groups.push(groupIds[j].firstChild.nodeValue);
-            }
-
-            var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
-            var instanceItems = instancesSet.childNodes;
-            if (instanceItems) {
-                list = this.unpackInstances(resId, ownerId, groups, instanceItems);
-            }
-        }
+        var list = this.getItems(xmlDoc, "instancesSet", "item", "instanceId");
 
         if (objResponse.callback) objResponse.callback(list);
     },
@@ -1251,25 +1269,7 @@ var ew_controller = {
         for ( var i in instances) {
             params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
-        ew_client.queryEC2("TerminateInstances", params, this, true, "onCompleteTerminateInstances", callback);
-    },
-
-    onCompleteTerminateInstances : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var list = new Array();
-        var items = xmlDoc.evaluate("/", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        for ( var i = 0; i < items.snapshotLength; i++) {
-            var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
-            var instanceItems = instancesSet.getElementsByTagName("item");
-            for ( var j = 0; j < instanceItems.length; j++) {
-                var instanceId = getNodeValueByName(instanceItems[j], "instanceId");
-                list.push({ id : instanceId });
-            }
-        }
-
-        if (objResponse.callback) objResponse.callback(list);
+        ew_client.queryEC2("TerminateInstances", params, this, true, "onCompleteRunInstances", callback);
     },
 
     stopInstances : function(instances, force, callback)
@@ -1281,25 +1281,7 @@ var ew_controller = {
         if (force == true) {
             params.push([ "Force", "true" ]);
         }
-        ew_client.queryEC2("StopInstances", params, this, true, "onCompleteStopInstances", callback);
-    },
-
-    onCompleteStopInstances : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var list = new Array();
-        var items = xmlDoc.evaluate("/", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        for ( var i = 0; i < items.snapshotLength; i++) {
-            var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
-            var instanceItems = instancesSet.getElementsByTagName("item");
-            for ( var j = 0; j < instanceItems.length; j++) {
-                var instanceId = getNodeValueByName(instanceItems[j], "instanceId");
-                list.push({ id : instanceId });
-            }
-        }
-
-        if (objResponse.callback) objResponse.callback(list);
+        ew_client.queryEC2("StopInstances", params, this, true, "onCompleteRunInstances", callback);
     },
 
     startInstances : function(instances, callback)
@@ -1308,29 +1290,60 @@ var ew_controller = {
         for ( var i in instances) {
             params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
-        ew_client.queryEC2("StartInstances", params, this, true, "onCompleteStartInstances", callback);
+        ew_client.queryEC2("StartInstances", params, this, true, "onCompleteRunInstances", callback);
     },
 
-    onCompleteStartInstances : function(objResponse)
+    bundleInstance : function(instanceId, bucket, prefix, activeCred, callback)
+    {
+        // Generate the S3 policy string using the bucket and prefix
+        var s3policy = generateS3Policy(bucket, prefix);
+        log("S3 Policy[" + s3policy + "]");
+
+        var s3polb64 = Base64.encode(s3policy);
+        log("S3 Policy B64[" + s3polb64 + "]");
+
+        // Sign the generated policy with the secret key
+        var policySig = b64_hmac_sha1(activeCred.secretKey, s3polb64);
+        log("S3 Policy Sig[" + policySig + "]");
+
+        var params = []
+        params.push([ "InstanceId", instanceId ]);
+        params.push([ "Storage.S3.Bucket", bucket ]);
+        params.push([ "Storage.S3.Prefix", prefix ]);
+        params.push([ "Storage.S3.AWSAccessKeyId", activeCred.accessKey ]);
+        params.push([ "Storage.S3.UploadPolicy", s3polb64 ]);
+        params.push([ "Storage.S3.UploadPolicySignature", policySig ]);
+
+        ew_client.queryEC2("BundleInstance", params, this, true, "onCompleteBundleInstance", callback);
+    },
+
+    onCompleteBundleInstance : function(objResponse)
     {
         var xmlDoc = objResponse.xmlDoc;
-
-        log("onCompleteStartInstances invoked");
         var list = new Array();
-        var items = xmlDoc.evaluate("/", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        for ( var i = 0; i < items.snapshotLength; i++) {
-            var instancesSet = items.snapshotItem(i).getElementsByTagName("instancesSet")[0];
-            var instanceItems = instancesSet.getElementsByTagName("item");
-            for ( var j = 0; j < instanceItems.length; j++) {
-                var instanceId = getNodeValueByName(instanceItems[j], "instanceId");
-                list.push({ id : instanceId });
-            }
+
+        var items = xmlDoc.getElementsByTagName("bundleInstanceTask");
+        for ( var i = 0; i < items.length; ++i) {
+            list.push(this.unpackBundleTask(items[i]));
         }
 
         if (objResponse.callback) objResponse.callback(list);
     },
 
-    retrieveBundleTaskFromResponse : function(item)
+    cancelBundleTask : function(id, callback)
+    {
+        var params = []
+        params.push([ "BundleId", id ]);
+
+        ew_client.queryEC2("CancelBundleTask", params, this, true, "onCompleteCancelBundleTask", callback);
+    },
+
+    onCompleteCancelBundleTask : function(objResponse)
+    {
+        if (objResponse.callback) objResponse.callback();
+    },
+
+    unpackBundleTask : function(item)
     {
         var instanceId = getNodeValueByName(item, "instanceId");
         var id = getNodeValueByName(item, "bundleId");
@@ -1358,30 +1371,6 @@ var ew_controller = {
         return new BundleTask(id, instanceId, state, startTime, updateTime, s3bucket, s3prefix, errorMsg);
     },
 
-    parseBundleInstanceResponse : function(xmlDoc)
-    {
-        var list = new Array();
-
-        var items = xmlDoc.getElementsByTagName("bundleInstanceTask");
-        for ( var i = 0; i < items.length; ++i) {
-            list.push(this.retrieveBundleTaskFromResponse(items[i]));
-        }
-
-        return list;
-    },
-
-    parseDescribeBundleTasksResponse : function(xmlDoc)
-    {
-        var list = new Array();
-
-        var items = xmlDoc.evaluate("/ec2:DescribeBundleTasksResponse/ec2:bundleInstanceTasksSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-        for ( var i = 0; i < items.snapshotLength; ++i) {
-            list.push(this.retrieveBundleTaskFromResponse(items.snapshotItem(i)));
-        }
-
-        return list;
-    },
-
     describeBundleTasks : function(callback)
     {
         ew_client.queryEC2("DescribeBundleTasks", [], this, true, "onCompleteDescribeBundleTasks", callback);
@@ -1389,7 +1378,12 @@ var ew_controller = {
 
     onCompleteDescribeBundleTasks : function(objResponse)
     {
-        var list = this.parseDescribeBundleTasksResponse(objResponse.xmlDoc);
+        var xmldoc = objResponse.xmlDoc;
+        var list = new Array();
+        var items = xmlDoc.evaluate("/ec2:DescribeBundleTasksResponse/ec2:bundleInstanceTasksSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        for ( var i = 0; i < items.snapshotLength; ++i) {
+            list.push(this.unpackBundleTask(items.snapshotItem(i)));
+        }
 
         ew_model.updateBundleTasks(list);
         if (objResponse.callback) objResponse.callback(list);
@@ -1712,58 +1706,6 @@ var ew_controller = {
         var bucket = objResponse.data[0];
 
         if (objResponse.callback) objResponse.callback(bucket);
-    },
-
-    bundleInstance : function(instanceId, bucket, prefix, activeCred, callback)
-    {
-        // Generate the S3 policy string using the bucket and prefix
-        var s3policy = generateS3Policy(bucket, prefix);
-        log("S3 Policy[" + s3policy + "]");
-
-        var s3polb64 = Base64.encode(s3policy);
-        log("S3 Policy B64[" + s3polb64 + "]");
-
-        // Sign the generated policy with the secret key
-        var policySig = b64_hmac_sha1(activeCred.secretKey, s3polb64);
-        log("S3 Policy Sig[" + policySig + "]");
-
-        var params = []
-        params.push([ "InstanceId", instanceId ]);
-        params.push([ "Storage.S3.Bucket", bucket ]);
-        params.push([ "Storage.S3.Prefix", prefix ]);
-        params.push([ "Storage.S3.AWSAccessKeyId", activeCred.accessKey ]);
-        params.push([ "Storage.S3.UploadPolicy", s3polb64 ]);
-        params.push([ "Storage.S3.UploadPolicySignature", policySig ]);
-
-        ew_client.queryEC2("BundleInstance", params, this, true, "onCompleteBundleInstance", callback);
-    },
-
-    onCompleteBundleInstance : function(objResponse)
-    {
-        // Parse the XML Response
-        var list = this.parseBundleInstanceResponse(objResponse.xmlDoc);
-
-        // Ensure that the UI knows to update its view
-        if (objResponse.callback) {
-            objResponse.callback(list);
-        }
-    },
-
-    cancelBundleTask : function(id, callback)
-    {
-        var params = []
-        params.push([ "BundleId", id ]);
-
-        ew_client.queryEC2("CancelBundleTask", params, this, true, "onCompleteCancelBundleTask", callback);
-    },
-
-    onCompleteCancelBundleTask : function(objResponse)
-    {
-        // No need to parse the response since we only
-        // need to refresh the list of bundle tasks.
-        if (objResponse.callback) {
-            objResponse.callback();
-        }
     },
 
     describeKeypairs : function(callback)

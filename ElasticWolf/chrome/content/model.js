@@ -255,13 +255,98 @@ function Volume(id, size, snapshotId, zone, status, createTime, instanceId, devi
     }
 }
 
-function Instance(reservationId, ownerId)
+function VolumeStatusEvent(volumeId, availabilityZone, eventId, eventType, description, startTime, endTime)
 {
+    this.volumeId = volumeId;
+    this.availabilityZone = availabilityZone;
+    this.eventId = eventId;
+    this.eventType = eventType;
+    this.description = description;
+    this.startTime = startTime;
+    this.endTime = endTime;
+
+    this.toString = function() {
+        return this.volumeId + ew_model.separator + this.description;
+    }
+}
+
+function InstanceVolumeAttachment(volumeId, deviceName, status, attachTime, deleteOnTermination)
+{
+    this.volumeId = volumeId;
+    this.deviceName = deviceName;
+    this.status = status;
+    this.attachTime = attachTime;
+    this.deleteOnTermination = deleteOnTermination;
+
+    this.toString = function() {
+        return this.deviceName + ew_model.separator + this.status + ew_model.separator + this.volumeId + ew_model.separator + (this.deleteOnTermination ? "DeleteOnTermination" : "Keep");
+    }
+}
+
+function InstanceNetworkInterface(id, status, descr, subnetId, vpcId, ownerId, privateIp, publicIp, dnsName, srcDstCheck)
+{
+    this.id = id
+    this.status = status
+    this.descr = descr || "";
+    this.subnetId = subnetId
+    this.vpcId = vpcId
+    this.ownerId = ownerId
+    this.privateIp = privateIp
+    this.publicIp = publicIp
+    this.sourceDestCheck = srcDstCheck
+    this.dnsName = dnsName
+
+    this.toString = function() {
+        return this.privateIp + ew_model.separator + this.publicIp + ew_model.separator + this.status + ew_model.separator + this.id + ew_model.separator +  this.descr +
+               " (" + ew_model.modelValue("subnetId", this.subnetId) + ")";
+    }
+}
+
+function Instance(reservationId, ownerId, requesterId, instanceId, imageId, state, productCodes, groups, dnsName, privateDnsName, privateIpAddress, vpcId, subnetId, keyName, reason,
+                  amiLaunchIdx, instanceType, launchTime, availabilityZone, tenancy, monitoringStatus, stateReason, platform, kernelId, ramdiskId, rootDeviceType, rootDeviceName,
+                  virtualizationType, hypervisor, ipAddress, sourceDestCheck, architecture, instanceLifecycle, clientToken, volumes, enis, tags)
+{
+    this.id = instanceId;
     this.reservationId = reservationId;
     this.ownerId = ownerId;
+    this.requesterId = requesterId;
     this.publicIpAddress = '';
     this.publicDnsName = '';
     this.elasticIp = '';
+    this.imageId = imageId;
+    this.state = state;
+    this.productCodes = productCodes;
+    this.groups = uniqueList(groups, 'id');
+    this.dnsName = dnsName;
+    this.privateDnsName = privateDnsName;
+    this.privateIpAddress = privateIpAddress;
+    this.vpcId = vpcId;
+    this.subnetId = subnetId;
+    this.keyName = keyName;
+    this.reason = reason;
+    this.amiLaunchIdx = amiLaunchIdx;
+    this.instanceType = instanceType;
+    this.launchTime = launchTime;
+    this.availabilityZone = availabilityZone;
+    this.tenancy = tenancy;
+    this.monitoringStatus = monitoringStatus;
+    this.stateReason = stateReason;
+    this.platform = platform;
+    this.kernelId = kernelId;
+    this.ramdiskId = ramdiskId;
+    this.rootDeviceType = rootDeviceType;
+    this.rootDeviceName = rootDeviceName;
+    this.virtualizationType = virtualizationType;
+    this.hypervisor = hypervisor;
+    this.ipAddress = ipAddress;
+    this.sourceDestCheck = sourceDestCheck;
+    this.architecture = architecture;
+    this.instanceLifecycle = instanceLifecycle;
+    this.clientToken = clientToken;
+    this.volumes = volumes;
+    this.enis = enis;
+    this.tags = tags;
+    this.name = '';
     ew_model.processTags(this);
 
     this.toString = function() {
@@ -274,6 +359,20 @@ function Instance(reservationId, ownerId)
             return parts[1] + "." + parts[2] + "." + parts[3] + "." + parseInt(parts[4]);
         }
         return "";
+    }
+}
+
+function InstanceStatusEvent(instanceId, availabilityZone, code, description, startTime, endTime)
+{
+    this.instanceId = instanceId;
+    this.availabilityZone = availabilityZone;
+    this.code = code;
+    this.description = description;
+    this.startTime = startTime;
+    this.endTime = endTime;
+
+    this.toString = function() {
+        return this.instanceId + ew_model.separator + this.description;
     }
 }
 
@@ -616,33 +715,6 @@ function InstanceHealth(Description, State, InstanceId, ReasonCode)
     }
 }
 
-function InstanceStatusEvent(instanceId, availabilityZone, code, description, startTime, endTime) {
-    this.instanceId = instanceId;
-    this.availabilityZone = availabilityZone;
-    this.code = code;
-    this.description = description;
-    this.startTime = startTime;
-    this.endTime = endTime;
-
-    this.toString = function() {
-        return this.instanceId + ew_model.separator + this.description;
-    }
-}
-
-function VolumeStatusEvent(volumeId, availabilityZone, eventId, eventType, description, startTime, endTime) {
-    this.volumeId = volumeId;
-    this.availabilityZone = availabilityZone;
-    this.eventId = eventId;
-    this.eventType = eventType;
-    this.description = description;
-    this.startTime = startTime;
-    this.endTime = endTime;
-
-    this.toString = function() {
-        return this.volumeId + ew_model.separator + this.description;
-    }
-}
-
 var ew_model = {
     components : new Array(),
     componentInterests : new Object(),
@@ -927,7 +999,7 @@ var ew_model = {
     {
         if (!obj || !obj.tags) return;
         for (var i in obj.tags) {
-            switch (obj.tags[i].name) {
+            switch (obj.tags[i].key) {
             case "Name":
                 obj[name || "name"] = obj.tags[i].value;
                 return;

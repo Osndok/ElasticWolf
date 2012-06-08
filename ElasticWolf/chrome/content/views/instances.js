@@ -1,30 +1,7 @@
 var ew_InstancesTreeView = {
-    COLNAMES : [
-       'instance.name',
-       'instance.resId',
-       'instance.ownerId',
-       'instance.id',
-       'instance.imageId',
-       'instance.kernelId',
-       'instance.ramdiskId',
-       'instance.state',
-       'instance.publicDnsName',
-       'instance.privateDnsName',
-       'instance.privateIpAddress',
-       'instance.keyName',
-       'instance.groups',
-       'instance.reason',
-       'instance.amiLaunchIdx',
-       'instance.instanceType',
-       'instance.launchTimeDisp',
-       'instance.availabilityZone',
-       'instance.tenancy',
-       'instance.platform',
-       'instance.tags',
-       'instance.vpcId',
-       'instance.subnetId',
-       'instance.rootDeviceType'
-    ],
+    COLNAMES : ['instance.name','instance.reservationId','instance.ownerId','instance.id','instance.imageId','instance.kernelId','instance.ramdiskId','instance.state','instance.publicDnsName',
+                'instance.privateDnsName','instance.privateIpAddress','instance.keyName','instance.groups','instance.reason','instance.amiLaunchIdx','instance.instanceType','instance.launchTime',
+                'instance.availabilityZone','instance.tenancy','instance.platform','instance.tags','instance.vpcId','instance.subnetId','instance.rootDeviceType' ],
     model: ['instances', 'images', 'addresses'],
     searchElement: 'ew.instances.search',
 
@@ -40,11 +17,10 @@ var ew_InstancesTreeView = {
 
         var nlist = new Array();
         for(var i in list) {
-            var inst = list[i];
-            if (filterTerm && inst.state == "terminated") {
+            if (filterTerm && list[i].state == "terminated") {
                 continue;
             }
-            if (filterStop && inst.state == "stopped") {
+            if (filterStop && list[i].state == "stopped") {
                 continue;
             }
             nlist.push(list[i])

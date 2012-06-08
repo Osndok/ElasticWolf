@@ -1,6 +1,6 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /*
-//@line 38 "e:\builds\moz2_slave\rel-191-xr-w32-bld\build\toolkit\mozapps\extensions\src\nsAddonRepository.js"
+//@line 38 "e:\builds\moz2_slave\rel-m-192-xr-w32-bld\build\toolkit\mozapps\extensions\src\nsAddonRepository.js"
 */
 
 const Cc = Components.classes;
@@ -175,17 +175,19 @@ AddonRepository.prototype = {
               getService(Ci.nsIXULAppInfo).
               QueryInterface(Ci.nsIXULRuntime);
 
-    var guid = element.getElementsByTagName("guid");
-    if (guid.length != 1)
+    var guidList = element.getElementsByTagName("guid");
+    if (guidList.length != 1)
       return;
+
+    var guid = guidList[0].textContent.trim();
 
     // Ignore add-ons already seen in the results
     for (var i = 0; i < this._addons.length; i++)
-      if (this._addons[i].id == guid[0].textContent)
+      if (this._addons[i].id == guid)
         return;
 
     // Ignore installed add-ons
-    if (em.getItemForID(guid[0].textContent) != null)
+    if (em.getItemForID(guid) != null)
       return;
 
     // Ignore sandboxed add-ons
@@ -195,14 +197,15 @@ AddonRepository.prototype = {
       return;
 
     // Ignore add-ons not compatible with this OS
-    var os = element.getElementsByTagName("compatible_os");
+    var osList = element.getElementsByTagName("compatible_os");
     // Only the version 0 schema included compatible_os if it isn't there then
     // we will see os compatibility on the install elements.
-    if (os.length > 0) {
+    if (osList.length > 0) {
       var compatible = false;
       var i = 0;
-      while (i < os.length && !compatible) {
-        if (os[i].textContent == "ALL" || os[i].textContent == app.OS) {
+      while (i < osList.length && !compatible) {
+        var os = osList[i].textContent.trim();
+        if (os == "ALL" || os == app.OS) {
           compatible = true;
           break;
         }
@@ -222,9 +225,10 @@ AddonRepository.prototype = {
     var apps = tags[0].getElementsByTagName("appID");
     var i = 0;
     while (i < apps.length) {
-      if (apps[i].textContent == app.ID) {
-        var minversion = apps[i].parentNode.getElementsByTagName("min_version")[0].textContent;
-        var maxversion = apps[i].parentNode.getElementsByTagName("max_version")[0].textContent;
+      if (apps[i].textContent.trim() == app.ID) {
+        var parent = apps[i].parentNode;
+        var minversion = parent.getElementsByTagName("min_version")[0].textContent.trim();
+        var maxversion = parent.getElementsByTagName("max_version")[0].textContent.trim();
         if ((vc.compare(minversion, app.version) > 0) ||
             (vc.compare(app.version, maxversion) > 0))
           return;
@@ -237,7 +241,7 @@ AddonRepository.prototype = {
       return;
 
     var addon = new AddonSearchResult();
-    addon.id = guid[0].textContent;
+    addon.id = guid;
     addon.rating = -1;
     var node = element.firstChild;
     while (node) {
@@ -248,7 +252,7 @@ AddonRepository.prototype = {
           case "summary":
           case "description":
           case "eula":
-            addon[node.localName] = node.textContent;
+            addon[node.localName] = node.textContent.trim();
             break;
           case "rating":
             if (node.textContent.length > 0) {
@@ -258,13 +262,13 @@ AddonRepository.prototype = {
             }
             break;
           case "thumbnail":
-            addon.thumbnailURL = node.textContent;
+            addon.thumbnailURL = node.textContent.trim();
             break;
           case "icon":
-            addon.iconURL = node.textContent;
+            addon.iconURL = node.textContent.trim();
             break;
           case "learnmore":
-            addon.homepageURL = node.textContent;
+            addon.homepageURL = node.textContent.trim();
             break;
           case "type":
             // The type element has an id attribute that is the id from AMO's
@@ -282,7 +286,7 @@ AddonRepository.prototype = {
               if (os != "all" && os != app.OS.toLowerCase())
                 break;
             }
-            addon.xpiURL = node.textContent;
+            addon.xpiURL = node.textContent.trim();
             if (node.hasAttribute("hash"))
               addon.xpiHash = node.getAttribute("hash");
             break;

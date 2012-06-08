@@ -53,6 +53,9 @@ var ew_toolbar = {
             { tab: "ew.tabs.vpc",           views: [ { id: "ew.vpcs.view", view: ew_VpcTreeView },
                                                      { id: "ew.dhcpoptions.view", view: ew_DhcpoptsTreeView } ], },
 
+            { tab: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
+                                                     { id: "ew.rsvdInstances.view", view: ew_ReservedInstancesTreeView } ], },
+
             { tab: "ew.tabs.subnet",        views: [ { id: "ew.subnets.view", view: ew_SubnetsTreeView },
                                                      { id: "ew.subnetroutes.view", view: ew_SubnetRoutesTreeView },
                                                      { id: "ew.subnetacls.view", view: ew_SubnetAclRulesTreeView } ], },

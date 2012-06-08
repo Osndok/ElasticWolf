@@ -535,7 +535,8 @@ var TreeView = {
         var rc = { session: ew_session, item: item, title: className(item), }
         if (!ew_session.winDetails) {
             ew_session.winDetails = window.openDialog("chrome://ew/content/dialogs/details.xul", null, "chrome,centerscreen,modeless,resizable", rc);
-        } else {
+        } else
+        if (ew_session.winDetails.setup) {
             ew_session.winDetails.setup.call(ew_session.winDetails, rc);
         }
     },
@@ -1210,6 +1211,31 @@ function getNodeValueByName(parent, nodeName)
 {
     var node = parent ? parent.getElementsByTagName(nodeName)[0] : null;
     return node && node.firstChild ? node.firstChild.nodeValue : "";
+}
+
+function plainList(list, id)
+{
+    var nlist = [];
+    for (var i in list) {
+        nlist.push(list[i][id]);
+    }
+    return nlist;
+}
+
+function uniqueList(list, id)
+{
+    var nlist = new Array();
+    o:for (var i in list) {
+        for (var j = 0; j < nlist.length; j++) {
+            if (id) {
+                if (nlist[j][id] == list[i][id]) continue o;
+            } else {
+                if (nlist[j] == list[i]) continue o;
+            }
+        }
+        nlist.push(list[i]);
+    }
+    return nlist;
 }
 
 function parseQuery(str)
