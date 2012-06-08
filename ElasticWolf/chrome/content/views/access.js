@@ -1,5 +1,4 @@
 var ew_KeypairTreeView = {
-    COLNAMES : ['keypair.name','keypair.fingerprint'],
     model: "keypairs",
 
     runShell: function() {
@@ -90,7 +89,6 @@ ew_KeypairTreeView.__proto__ = TreeView;
 ew_KeypairTreeView.register();
 
 var ew_AccessKeyTreeView = {
-    COLNAMES : ['accesskey.name',"accesskey.status", "accesskey.current"],
     model: "accesskeys",
 
     createAccessKey : function () {
@@ -160,7 +158,6 @@ ew_AccessKeyTreeView.__proto__ = TreeView;
 ew_AccessKeyTreeView.register();
 
 var ew_CertTreeView = {
-    COLNAMES : ['certs.name'],
     model: 'certs',
 
     createCert : function () {

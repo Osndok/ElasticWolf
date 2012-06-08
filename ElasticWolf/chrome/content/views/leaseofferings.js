@@ -1,5 +1,4 @@
 var ew_ReservedInstancesTreeView = {
-    COLNAMES: ['rsvdInst.id','rsvdInst.instanceType','rsvdInst.tenancy','rsvdInst.azone','rsvdInst.start','rsvdInst.duration','rsvdInst.fixedPrice','rsvdInst.usagePrice','rsvdInst.count','rsvdInst.description','rsvdInst.state'],
     model: 'reservedInstances',
     searchElement: 'ew.rsvdInst.search',
 
@@ -15,7 +14,6 @@ ew_ReservedInstancesTreeView.__proto__ = TreeView;
 ew_ReservedInstancesTreeView.register();
 
 var ew_LeaseOfferingsTreeView = {
-    COLNAMES: [ 'offering.id', 'offering.instanceType', 'offering.azone', 'offering.duration', 'offering.fixedPrice', 'offering.usagePrice', 'offering.offering', 'offering.tenancy', 'offering.description' ],
     model: 'offerings',
     searchElement: 'ew.offerings.search',
 

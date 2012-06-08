@@ -90,7 +90,7 @@
    </toolbox>
 
   <hbox flex="1">
-    <tree id="ew.toolbar" seltype="single" style="min-width:180px;" onclick="ew_toolbar.selectionChanged()" hidecolumnpicker="true" currentIndex="3" flex="1">
+    <tree id="ew.menu" seltype="single" style="min-width:180px;" onclick="ew_toolbar.selectionChanged()" hidecolumnpicker="true" flex="1">
     <treecols>
       <treecol id="name" label="Navigation" primary="true" flex="1" persist="width ordinal hidden" />
     </treecols>

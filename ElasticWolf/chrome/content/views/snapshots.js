@@ -1,5 +1,4 @@
 var ew_SnapshotTreeView = {
-    COLNAMES: ['snap.id', 'snap.volumeId', 'snap.status', 'snap.startTime', 'snap.progress', 'snap.volumeSize', 'snap.description', 'snap.amiId', 'snap.amiName', 'snap.owner', 'snap.ownerAlias', 'snap.tags'],
     model: ['snapshots', 'securityGroups'],
     searchElement: 'ew.snapshots.search',
 

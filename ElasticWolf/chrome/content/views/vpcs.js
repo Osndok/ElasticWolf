@@ -1,5 +1,4 @@
 var ew_VpcTreeView = {
-    COLNAMES : [ 'vpc.id', 'vpc.cidr', 'vpc.state', 'vpc.dhcpOptionsId', 'vpc.tags' ],
     model: [ "vpcs", "instances", "internetGateways", 'dhcpOptions' ],
     searchElement: 'ew.vpcs.search',
 
@@ -86,7 +85,6 @@ ew_VpcTreeView.__proto__ = TreeView;
 ew_VpcTreeView.register();
 
 var ew_DhcpoptsTreeView = {
-    COLNAMES: ['dhcpoption.id', 'dhcpoption.options', 'dhcpoption.tags'],
     model: "dhcpOptions",
     searchElement: 'ew.dhcpopts.search',
 

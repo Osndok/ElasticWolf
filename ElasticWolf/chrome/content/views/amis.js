@@ -1,5 +1,4 @@
 var ew_AMIsTreeView = {
-    COLNAMES : [ 'ami.id', 'ami.location', 'ami.state', 'ami.owner', 'ami.ownerAlias', 'ami.isPublic', 'ami.arch', 'ami.platform', 'ami.rootDeviceType', 'ami.name', 'ami.description', 'ami.tags' ],
     model : ['images','securityGroups','instances'],
     searchElement: "ew.images.search",
     favorites: "ew.images.favorites",

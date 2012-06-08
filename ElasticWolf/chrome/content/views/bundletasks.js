@@ -1,5 +1,4 @@
 var ew_BundleTasksTreeView = {
-    COLNAMES: ['bun.id','bun.instanceId','bun.state','bun.startTime','bun.updateTime','bun.s3bucket','bun.s3prefix','bun.errorMsg' ],
     model: 'bundleTasks',
     searchElement: 'ew.bundleTasks.search',
 

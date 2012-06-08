@@ -1,5 +1,4 @@
 var ew_S3BucketsTreeView = {
-    COLNAMES : [ 's3.label', 's3.mtime', "s3.type", "s3.size", "s3.etag" ],
     model : "s3buckets",
     path: [],
     folder: '',

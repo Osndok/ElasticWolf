@@ -1,5 +1,4 @@
 var ew_NetworkAclsTreeView = {
-    COLNAMES : [ 'acl.id', 'acl.vpcId' ],
     model : [ "networkAcls", "subnets", "vpcs" ],
 
     selectionChanged: function(event)
@@ -65,13 +64,11 @@ ew_NetworkAclsTreeView.__proto__ = TreeView;
 ew_NetworkAclsTreeView.register();
 
 var ew_NetworkAclAssociationsTreeView = {
-   COLNAMES : [ "assoc.id", "assoc.subnetId", "assoc.cidr" ],
 
 };
 ew_NetworkAclAssociationsTreeView.__proto__ = TreeView;
 
 var ew_NetworkAclRulesTreeView = {
-    COLNAMES : [ "rule.num", "rule.proto", "rule.action", "rule.egress", "rule.cidr", "rule.ports", "rule.icmp" ],
 
     createRule : function()
     {

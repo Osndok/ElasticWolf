@@ -1,6 +1,4 @@
 var ew_CredentialsTreeView = {
-    COLNAMES: ['credential.name','credential.accessKey', 'credential.endPoint'],
-
     activate : function() {
         this.display(ew_session.getCredentials());
     },
@@ -39,8 +37,6 @@ var ew_CredentialsTreeView = {
 ew_CredentialsTreeView.__proto__ = TreeView;
 
 var ew_EndpointsTreeView = {
-   COLNAMES: ['endpoint.name','endpoint.url'],
-
    activate : function() {
        this.refresh();
        var name = ew_prefs.getLastUsedEndpoint();

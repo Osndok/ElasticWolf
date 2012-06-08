@@ -1,10 +1,4 @@
 var ew_LoadbalancerTreeView = {
-    COLNAMES : ['loadbalancer.LoadBalancerName','loadbalancer.CreatedTime','loadbalancer.DNSName','loadbalancer.Instances',
-                'loadbalancer.Protocol','loadbalancer.LoadBalancerPort','loadbalancer.InstancePort',
-                'loadbalancer.Interval','loadbalancer.Timeout','loadbalancer.HealthyThreshold','loadbalancer.UnhealthyThreshold',
-                'loadbalancer.Target','loadbalancer.zones','loadbalancer.CookieName','loadbalancer.APolicyName',
-                'loadbalancer.CookieExpirationPeriod','loadbalancer.CPolicyName',
-                'loadbalancer.vpcId','loadbalancer.subnets','loadbalancer.groups'],
     model: ["loadBalancers", "azones", "instances" ],
 
     display: function(list)
@@ -220,12 +214,10 @@ ew_LoadbalancerTreeView.__proto__ = TreeView;
 ew_LoadbalancerTreeView.register();
 
 var ew_InstanceHealthTreeView = {
-    COLNAMES : ['InstanceHealth.Description','InstanceHealth.State','InstanceHealth.InstanceId','InstanceHealth.ReasonCode'],
 };
 ew_InstanceHealthTreeView.__proto__ = TreeView;
 
 var ew_AvailZoneTreeView = {
-    COLNAMES : ['azone.name','azone.state'],
     model: 'azones',
 };
 ew_AvailZoneTreeView.__proto__ = TreeView;

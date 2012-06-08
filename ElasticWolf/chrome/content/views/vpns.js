@@ -1,5 +1,4 @@
 var ew_VpnConnectionTreeView = {
-    COLNAMES: ['vpnConnection.id', 'vpnConnection.vgwId', 'vpnConnection.cgwId', 'vpnConnection.type', 'vpnConnection.state', 'vpnConnection.tags'],
     model: ['vpnConnections','customerGateways','vpnGateways','vpcs'],
     searchElement: 'ew.vpnconnections.search',
 
@@ -75,7 +74,6 @@ ew_VpnConnectionTreeView.__proto__ = TreeView;
 ew_VpnConnectionTreeView.register();
 
 var ew_CustomerGatewayTreeView = {
-    COLNAMES: ['customerGateway.id', 'customerGateway.ipAddress', 'customerGateway.bgpAsn', 'customerGateway.state', 'customerGateway.type', 'customerGateway.tags'],
     model: 'customerGateways',
     searchElement: 'ew.customergateways.search',
 
@@ -117,7 +115,6 @@ ew_CustomerGatewayTreeView.__proto__ = TreeView;
 ew_CustomerGatewayTreeView.register();
 
 var ew_VpnGatewayTreeView = {
-    COLNAMES: ['vpnGateway.id', 'vpnGateway.availabilityZone', 'vpnGateway.state', 'vpnGateway.type', 'vpnGateway.tags'],
     model: ['vpnGateways', 'vpcs'],
     searchElement: 'ew.vpngateways.search',
 
@@ -172,7 +169,6 @@ ew_VpnGatewayTreeView.__proto__ = TreeView;
 ew_VpnGatewayTreeView.register();
 
 var ew_VpnAttachmentTreeView = {
-    COLNAMES : [ 'vpnAttachment.vgwId', 'vpnAttachment.vpcId', 'vpnAttachment.state' ],
 
     enableOrDisableItems : function()
     {

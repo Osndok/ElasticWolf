@@ -8,7 +8,6 @@ var ew_session = {
     model : null,
     client : null,
     credentials : null,
-    tabMenu: null,
     cmdline: null,
     tabs: {},
     endpoints: null,
@@ -18,12 +17,10 @@ var ew_session = {
         ew_prefs.init();
         ew_toolbar.init();
 
-        this.tabs = ew_toolbar.tabs;
         this.controller = ew_controller;
         this.model = ew_model;
         this.client = ew_client;
         this.prefs = ew_prefs;
-        this.tabMenu = $("ew.tabs");
 
         this.loadCredentials();
         this.getEndpoints();
@@ -104,47 +101,9 @@ var ew_session = {
     selectTab: function(name) {
         if (this.client.disabled) return;
 
-        var tab = ew_toolbar.get(name);
-        if (!tab) return;
-
-        // Deactivate current tab
-        var curtab = ew_toolbar.getCurrent();
-        if (curtab) {
-            for (var i in curtab.views) {
-                if (curtab.views[i].view.deactivate) {
-                    curtab.views[i].view.deactivate();
-                }
-            }
+        if (ew_toolbar.select(name)) {
+            this.prefs.setCurrentTab(name);
         }
-
-        // Activate new tab
-        ew_toolbar.select(name);
-        this.tabMenu.selectedPanel = $(tab.id || name);
-        this.prefs.setCurrentTab(name);
-
-        // Activate and refresh if no records yet
-        for (var i in tab.views) {
-            if (tab.views[i].view.activate) {
-                tab.views[i].view.activate();
-            }
-            // Assign new filter list and refresh contents
-            tab.views[i].view.filterList = tab.views[i].filterList;
-            if (tab.views[i].view.rowCount == 0) {
-                tab.views[i].view.refresh();
-            } else {
-                tab.views[i].view.invalidate();
-            }
-        }
-    },
-
-    isViewVisible: function(view)
-    {
-        for (var i in this.tabs) {
-            for (var j in this.tabs[i].views) {
-                if (this.tabs[i].views[j].view == view) return true
-            }
-        }
-        return false;
     },
 
     getCredentials : function () {

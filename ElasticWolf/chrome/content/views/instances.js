@@ -1,7 +1,4 @@
 var ew_InstancesTreeView = {
-    COLNAMES : ['instance.name','instance.reservationId','instance.ownerId','instance.id','instance.imageId','instance.kernelId','instance.ramdiskId','instance.state','instance.publicDnsName',
-                'instance.privateDnsName','instance.privateIpAddress','instance.keyName','instance.groups','instance.reason','instance.amiLaunchIdx','instance.instanceType','instance.launchTime',
-                'instance.availabilityZone','instance.tenancy','instance.platform','instance.tags','instance.vpcId','instance.subnetId','instance.rootDeviceType' ],
     model: ['instances', 'images', 'addresses'],
     searchElement: 'ew.instances.search',
     properties: [ 'state' ],
@@ -13,17 +10,13 @@ var ew_InstancesTreeView = {
 
     filter: function(list)
     {
-        var filterTerm = $("ew.instances.noterminated").checked;
-        var filterStop = $("ew.instances.nostopped").checked;
+        if (!list) return list;
+        var noTerm = $("ew.instances.noterminated").checked;
+        var noStop = $("ew.instances.nostopped").checked;
 
         var nlist = new Array();
         for(var i in list) {
-            if (filterTerm && list[i].state == "terminated") {
-                continue;
-            }
-            if (filterStop && list[i].state == "stopped") {
-                continue;
-            }
+            if ((noTerm && list[i].state == "terminated") || (noStop && list[i].state == "stopped")) continue;
             nlist.push(list[i])
         }
         return TreeView.filter.call(this, nlist);
@@ -413,6 +406,7 @@ var ew_InstancesTreeView = {
             var eip = ew_session.model.getAddressByInstanceId(instance.id);
             instance.elasticIp = eip ? eip.publicIp : '';
         }
+        TreeView.selectionChanged.call(this, event);
     },
 
     enableOrDisableItems  : function(event) {

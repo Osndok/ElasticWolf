@@ -1,5 +1,4 @@
 var ew_RouteTablesTreeView = {
-    COLNAMES : [ 'routeTable.id', 'routeTable.vpcId', ],
     model : [ "routeTables", "vpcs", "subnets" ],
 
     selectionChanged : function()
@@ -40,7 +39,6 @@ ew_RouteTablesTreeView.__proto__ = TreeView;
 ew_RouteTablesTreeView.register();
 
 var ew_RoutesTreeView = {
-    COLNAMES : [ "route.cidr", "route.state", "route.gatewayId", "route.instanceId", "route.networkInterfaceId",  ],
 
     createRoute : function()
     {
@@ -67,7 +65,6 @@ var ew_RoutesTreeView = {
 ew_RoutesTreeView.__proto__ = TreeView;
 
 var ew_RouteAssociationsTreeView = {
-    COLNAMES : [ "assoc.id", "assoc.subnetId", ],
 
     createAssociation : function()
     {
@@ -98,7 +95,6 @@ var ew_RouteAssociationsTreeView = {
 ew_RouteAssociationsTreeView.__proto__ = TreeView;
 
 var ew_InternetGatewayTreeView = {
-    COLNAMES : [ 'igw.id', "igw.vpcId", "igw.tags" ],
     model : ["internetGateways", "vpcs"],
 
     create : function()

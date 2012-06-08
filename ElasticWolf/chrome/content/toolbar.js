@@ -10,7 +10,7 @@ var ew_toolbar = {
             { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: true }] } ], },
 
             { tab: "ew.tabs.vpcinstance",   views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: false }] } ],
-              id: "ew.tabs.instance"  },
+              owner: "ew.tabs.instance"  },
 
             { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
 
@@ -19,22 +19,22 @@ var ew_toolbar = {
 
             { tab: "ew.tabs.keypair",       views: [ { id: "ew.keypairs.view", view: ew_KeypairTreeView, } ] },
 
-            { tab: "ew.tabs.users",       views: [ { id: "ew.users.view", view: ew_UsersTreeView, }, ] },
+            { tab: "ew.tabs.users",         views: [ { id: "ew.users.view", view: ew_UsersTreeView, }, ] },
 
-            { tab: "ew.tabs.groups",       views: [ { id: "ew.groups.view", view: ew_GroupsTreeView, }, ] },
+            { tab: "ew.tabs.groups",        views: [ { id: "ew.groups.view", view: ew_GroupsTreeView, }, ] },
 
             { tab: "ew.tabs.securitygroup", views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: true }] },
                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }], },
 
             { tab: "ew.tabs.vpcgroup",      views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: false }] },
                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }],
-              id: "ew.tabs.securitygroup"
+              owner: "ew.tabs.securitygroup"
             },
 
             { tab: "ew.tabs.eip",           views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView, filterList: [ { name: "domain", value: "standard" }] }], },
 
             { tab: "ew.tabs.vpceip",        views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView, filterList: [ { name: "domain", value: "vpc" }] }],
-              id: "ew.tabs.eip"
+              owner: "ew.tabs.eip"
             },
 
             { tab: "ew.tabs.volume",        views: [ { id: "ew.volumes.view", view: ew_VolumeTreeView }], },
@@ -46,7 +46,7 @@ var ew_toolbar = {
 
             { tab: "ew.tabs.vpcelb",        views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView, filterList: [ { name: "vpcId", empty: false }] },
                                                      { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }],
-              id: "ew.tabs.loadbalancer"
+              owner: "ew.tabs.loadbalancer"
             },
 
             { tab: "ew.tabs.bundletask",    views: [ { id: "ew.bundleTasks.view", view: ew_BundleTasksTreeView } ], },
@@ -90,20 +90,14 @@ var ew_toolbar = {
     ],
 
     init: function() {
+        this.tree = $('ew.menu')
         for (var i in this.tabs) {
+            // Because owner refers to the real panel need to skip it
+            if (this.tabs[i].owner) continue;
             for (var v in this.tabs[i].views) {
                 var tree = $(this.tabs[i].views[v].id);
                 if (tree) {
-                    var view = this.tabs[i].views[v].view;
-                    tree.view = view;
-                    // Assign tab name
-                    view.tab = this.tabs[i].tab;
-                    // Wrapping handlers to preserve correct context for 'this'
-                    if (!this.tabs[i].id) {
-                        (function(v) { var me = v; tree.addEventListener('dblclick', function(e) { e.stopPropagation();me.viewDetails(e); }, false); }(view));
-                        (function(v) { var me = v; tree.addEventListener('select', function(e) { e.stopPropagation();me.selectionChanged(e); }, false); }(view));
-                        (function(v) { var me = v; tree.addEventListener('click', function(e) { e.stopPropagation();me.clicked(e); }, false); }(view));
-                    }
+                    this.tabs[i].views[v].view.init(tree, this.tabs[i]);
                 }
             }
         }
@@ -116,39 +110,78 @@ var ew_toolbar = {
         return null;
     },
 
-    select: function(id)
-    {
-        var tree = $('ew.toolbar');
-        for (var i = 0; i < tree.view.rowCount; i++) {
-            var val = tree.view.getCellValue(i, tree.columns.getFirstColumn());
-            if (val == id) {
-                tree.currentIndex = i;
-                tree.view.selection.select(i);
-                this.current = id;
-                debug('toolbar selected ' + id)
-                break;
-            }
-        }
-    },
-
     getCurrent: function() {
         return this.get(this.current);
     },
 
+    select: function(name)
+    {
+        var tab = this.get(name);
+        if (!tab) return false;
+
+        // Deactivate current tab
+        var curtab = this.getCurrent();
+        if (curtab) {
+            for (var i in curtab.views) {
+                curtab.views[i].view.deactivate();
+            }
+        }
+
+        // Activate new tab
+        var idx = this.getMenu(name);
+        if (idx == -1) {
+            debug('menu not found ' + name)
+            return false;
+        }
+        this.tree.currentIndex = idx;
+        this.tree.view.selection.select(idx);
+        this.current = name;
+        $("ew.tabs").selectedPanel = $(tab.owner || name);
+
+        // Activate and refresh if no records yet
+        for (var i in tab.views) {
+            tab.views[i].view.activate();
+            // Assign new filter list and refresh contents
+            tab.views[i].view.filterList = tab.views[i].filterList;
+            if (tab.views[i].view.rowCount == 0) {
+                tab.views[i].view.refresh();
+            } else {
+                tab.views[i].view.invalidate();
+            }
+        }
+        return true;
+    },
+
+    isViewVisible: function(view)
+    {
+        for (var i in this.tabs) {
+            for (var j in this.tabs[i].views) {
+                if (this.tabs[i].views[j].view == view) return true
+            }
+        }
+        return false;
+    },
+
     getSelected: function()
     {
-        var tree = $('ew.toolbar');
-        return tree.currentIndex >= 0 ? this.get(tree.view.getCellValue(tree.currentIndex, tree.columns.getFirstColumn())) : null;
+        return this.tree.currentIndex >= 0 ? this.get(this.tree.view.getCellValue(this.tree.currentIndex, this.tree.columns.getFirstColumn())) : null;
+    },
+
+    getMenu: function(id)
+    {
+        for (var i = 0; i < this.tree.view.rowCount; i++) {
+            var val = this.tree.view.getCellValue(i, this.tree.columns.getFirstColumn());
+            if (val == id) return i;
+        }
+        return -1;
     },
 
     selectionChanged: function()
     {
-        var tree = $('ew.toolbar');
-        var id = tree.view.getCellValue(tree.currentIndex, tree.columns.getFirstColumn());
-
+        var id = this.tree.view.getCellValue(this.tree.currentIndex, this.tree.columns.getFirstColumn());
         switch (id) {
         case "":
-            tree.view.toggleOpenState(tree.currentIndex);
+            this.tree.view.toggleOpenState(tree.currentIndex);
             break;
 
         default:
@@ -157,12 +190,16 @@ var ew_toolbar = {
     },
 
     update: function() {
-        var tree = $('ew.toolbar')
-        var cred = ew_session.getActiveCredentials();
-        tree.view.setCellText(3, tree.columns.getFirstColumn(), cred ? 'Account: ' + cred.name : "Manage Credentials");
-
-        var endpoint = ew_session.getActiveEndpoint();
-        tree.view.setCellText(4, tree.columns.getFirstColumn(), endpoint ? 'Endpoint: ' + endpoint.name : "Manage Endpoints");
+        var idx = this.getMenu("ew.tabs.credential")
+        if (idx > 0) {
+            var cred = ew_session.getActiveCredentials();
+            this.tree.view.setCellText(idx, this.tree.columns.getFirstColumn(), cred ? 'Account: ' + cred.name : "Manage Credentials");
+        }
+        idx = this.getMenu("ew.tabs.endpoint")
+        if (idx > 0) {
+            var endpoint = ew_session.getActiveEndpoint();
+            this.tree.view.setCellText(idx, this.tree.columns.getFirstColumn(), endpoint ? 'Endpoint: ' + endpoint.name : "Manage Endpoints");
+        }
     },
 
 };

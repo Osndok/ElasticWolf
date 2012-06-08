@@ -1,5 +1,4 @@
 var ew_SecurityGroupsTreeView = {
-    COLNAMES : ['securityGroup.id', 'securitygroup.ownerId','securitygroup.name','securitygroup.vpcId','securitygroup.description'],
     model: [ "securityGroups", "vpcs" ],
 
     selectionChanged : function() {
@@ -78,7 +77,6 @@ ew_SecurityGroupsTreeView.__proto__ = TreeView;
 ew_SecurityGroupsTreeView.register();
 
 var ew_PermissionsTreeView = {
-    COLNAMES : ['permission.type','permission.protocol','permission.fromPort','permission.toPort','permission.cidrIp','permission.srcGroup'],
 
     grantPermission : function(type) {
         var group = ew_SecurityGroupsTreeView.getSelected();

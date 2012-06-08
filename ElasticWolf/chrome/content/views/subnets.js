@@ -1,5 +1,4 @@
 var ew_SubnetsTreeView = {
-    COLNAMES : [ 'subnet.id', 'subnet.vpcId', 'subnet.cidr', 'subnet.state', 'subnet.availableIp', 'subnet.availabilityZone', 'subnet.tags', 'subnet.routeId', 'subnet.aclId' ],
     model: [ "subnets", "vpcs", "routeTables", "networkAcls", "azones" ],
     searchElement: 'ew.subnets.search',
 
@@ -135,11 +134,9 @@ ew_SubnetsTreeView.__proto__ = TreeView;
 ew_SubnetsTreeView.register();
 
 var ew_SubnetRoutesTreeView = {
-   COLNAMES : [ "route.cidr", "route.gatewayId", "route.instanceId", "route.networkInterfaceId", "route.state" ],
 };
 ew_SubnetRoutesTreeView.__proto__ = TreeView;
 
 var ew_SubnetAclRulesTreeView = {
-   COLNAMES : [ "rule.num", "rule.proto", "rule.action", "rule.egress", "rule.cidr", "rule.ports", "rule.icmp" ],
 };
 ew_SubnetAclRulesTreeView.__proto__ = TreeView;

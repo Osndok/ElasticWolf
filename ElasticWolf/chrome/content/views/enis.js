@@ -1,5 +1,4 @@
 var ew_NetworkInterfacesTreeView = {
-    COLNAMES : [ 'eni.id', 'eni.status', 'eni.descr', 'eni.subnetId', 'eni.vpcId', 'eni.macAddress', 'eni.privateIpAddress', 'eni.sourceDestCheck', 'eni.groups', 'eni.attachment', 'eni.association' ],
     model : [ "networkInterfaces", "vpcs", "subnets", "securityGroups", "instances" ],
 
     selectionChanged: function(event)

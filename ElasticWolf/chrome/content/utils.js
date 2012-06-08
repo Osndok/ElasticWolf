@@ -181,7 +181,8 @@ Date.prototype.toISO8601String = function(format, offset)
 
 // Generic tree container
 var TreeView = {
-    COLNAMES : [ 'name' ],
+    columns : [],
+    tree: null,
     treeBox : null,
     treeList : new Array(),
     selection : null,
@@ -192,7 +193,6 @@ var TreeView = {
     properties: [],
     refreshTimeout: 10000,
     refreshTimer: null,
-    search: "",
     searchElement: null,
     searchTimer: null,
     filterList: null,
@@ -314,14 +314,14 @@ var TreeView = {
             col.columns.getColumnAt(i).element.setAttribute("sortDirection", "natural");
         }
         col.element.setAttribute("sortDirection", sortDirection);
-        this.sortView(document, this.COLNAMES, this.treeList);
+        this.sortView(document, this.columns, this.treeList);
         this.treeBox.invalidate();
         if (item) this.select(item);
     },
     sort : function() {
         var item = this.getSelected();
         this.treeBox.invalidate();
-        this.sortView(document, this.COLNAMES, this.treeList);
+        this.sortView(document, this.columns, this.treeList);
         if (item) this.select(item);
     },
     sortView: function(document, cols, list)
@@ -435,9 +435,9 @@ var TreeView = {
         this.display(this.filter(this.getList()));
     },
     filter : function(list) {
-        if (this.search) {
+        if (this.searchElement) {
             var nlist = new Array();
-            var rx = new RegExp(this.search, "i");
+            var rx = new RegExp($(this.searchElement).value, "i");
             for (var i in list) {
                 for (var j in list[i]) {
                     if (String(list[i][j]).match(rx)) {
@@ -540,26 +540,69 @@ var TreeView = {
             ew_session.winDetails.setup.call(ew_session.winDetails, rc);
         }
     },
+    getInputItems: function()
+    {
+        if (!this.tab) return [];
+        var panel = $(this.tab.tab);
+        if (!panel) return [];
+        var toolbars = panel.getElementsByTagName('toolbar');
+        var types = ['textbox' ,'checkbox', 'menulist', 'listbox'];
+        var items = [];
+        for (var t = 0; t < toolbars.length; t++) {
+            for (var i in types) {
+                var list = toolbars[t].getElementsByTagName(types[i]);
+                for (var j = 0; j < list.length; j++) {
+                    items.push({ id: list[j].id, type: types[i], value: list[j].value, checked: list[j].checked })
+                }
+            }
+        }
+        return items;
+    },
     restorePreferences: function()
     {
-        // Restore saved filters
-        if (!this.tab) return;
-        var tab = $(this.tab);
-        if (!tab) return;
-        var toolbar = tab.getElementsByTagName('toolbar');
-        if (!toolbar.length) return;
-        toolbar = toolbar[0];
-        for (var type in ['textbox' ,'checkbox', 'menulist', 'listbox']) {
-            var items = toolbar.getElementsByTagName(type);
-            for (var i = 0; i < items.length; i++) {
-                items[i].value = ew_prefs.getStringPreference(items[i].id);
-                debug(items[i].id + " " + items[i].value);
+        var items = this.getInputItems();
+        for (var i in items) {
+            switch (items[i].type) {
+            case "checkbox":
+                $(items[i].id).checked = ew_prefs.getBoolPreference(items[i].id, false);
+                break;
+
+            default:
+                $(items[i].id).value = ew_prefs.getStringPreference(items[i].id);
             }
         }
     },
     savePreferences: function()
     {
+        var items = this.getInputItems();
+        for (var i in items) {
+            switch (items[i].type) {
+            case "checkbox":
+                ew_prefs.setBoolPreference(items[i].id, items[i].checked);
+                break;
 
+            default:
+                ew_prefs.setStringPreference(items[i].id, items[i].value);
+            }
+        }
+    },
+    init: function(tree, tab)
+    {
+        // Tree owner and tab object, tab with owner field refers to the primary tab object
+        tree.view = this;
+        this.tree = tree;
+        this.tab = tab;
+        // Collect columns into array
+        for (var j = 0; j < tree.columns.length; j++) {
+            var col = tree.columns.getColumnAt(j);
+            this.columns.push(col.id);
+        }
+        // Wrapping handlers to preserve correct context for 'this'
+        if (!tab.owner) {
+            (function(v) { var me = v; tree.addEventListener('dblclick', function(e) { e.stopPropagation();me.viewDetails(e); }, false); }(this));
+            (function(v) { var me = v; tree.addEventListener('select', function(e) { e.stopPropagation();me.selectionChanged(e); }, false); }(this));
+            (function(v) { var me = v; tree.addEventListener('click', function(e) { e.stopPropagation();me.clicked(e); }, false); }(this));
+        }
     },
 };
 

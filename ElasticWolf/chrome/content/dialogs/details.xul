@@ -43,7 +43,7 @@
             }
         }
         function clicked() {
-            this.rc.session.copyToClipboard(list.selectedItem.value);
+            this.rc.session.copyToClipboard(list.value);
         }
     ]]>
     </script>

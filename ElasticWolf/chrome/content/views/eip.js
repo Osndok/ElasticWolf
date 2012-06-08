@@ -1,5 +1,4 @@
 var ew_ElasticIPTreeView = {
-    COLNAMES : ['eip.publicIp','eip.instanceId','eip.allocationId','eip.associationId','eip.domain','eip.tags'],
     model: [ "addresses", "instances", "networkInterfaces" ],
     tagId: "publicIp",
 
