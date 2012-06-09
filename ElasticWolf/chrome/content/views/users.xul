@@ -7,6 +7,11 @@
             <caption label="IAM Users" />
             <popupset>
                 <menupopup id="ew.users.contextmenu" onpopupshowing="ew_UsersTreeView.enableOrDisableItems();">
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addUser();" label="Add user" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deleteUser();" label="Delete user" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addPassword();" label="Add Password" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.changePassword();" label="Change Password" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deletePassword();" label="Delete Password" />
                 </menupopup>
             </popupset>
 

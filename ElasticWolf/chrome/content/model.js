@@ -1,4 +1,33 @@
-// "Classes" representing objects like AMIs, Instances etc.
+function Certificate(id, body)
+{
+    this.id = id
+    this.body = body
+    this.toString = function() {
+        return this.id;
+    }
+}
+
+function KeyPair(name, fingerprint)
+{
+    this.name = name;
+    this.fingerprint = fingerprint;
+    this.toString = function() {
+        return this.name;
+    }
+}
+
+function AccessKey(id, status, user, secret, isCurrent)
+{
+    this.id = id;
+    this.status = status;
+    this.userName = user
+    this.secret = secret || "";
+    this.isCurrent = isCurrent
+    this.toString = function() {
+        return this.id + (this.isCurrent ? ew_model.separator + "Current" : "");
+    }
+}
+
 function Credential(name, accessKey, secretKey, endPoint)
 {
     this.name = name;
@@ -384,35 +413,6 @@ function InstanceStatusEvent(instanceId, availabilityZone, code, description, st
 
     this.toString = function() {
         return this.instanceId + ew_model.separator + this.description;
-    }
-}
-
-function Certificate(name, body)
-{
-    this.name = name
-    this.body = body
-    this.toString = function() {
-        return this.name;;
-    }
-}
-
-function KeyPair(name, fingerprint)
-{
-    this.name = name;
-    this.fingerprint = fingerprint;
-    this.toString = function() {
-        return this.name;
-    }
-}
-
-function AccessKey(name, status, secret, current)
-{
-    this.name = name;
-    this.status = status;
-    this.secret = secret
-    this.current = current
-    this.toString = function() {
-        return this.name + (this.current ? ew_model.separator + "Current" : "");
     }
 }
 

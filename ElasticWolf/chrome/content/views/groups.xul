@@ -3,17 +3,20 @@
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
     <tabpanel id="ew.tabs.groups" flex="1">
+      <vbox flex="1">
         <groupbox orient="vertical" flex="1" id="eip.tree.holder">
             <caption label="IAM Groups" />
             <popupset>
                 <menupopup id="ew.groups.contextmenu" onpopupshowing="ew_groupsTreeView.enableOrDisableItems();">
+                <menuitem id="ew.groups.contextmenu" oncommand="ew_GroupsTreeView.addGroup();" label="Add group" />
+                <menuitem id="ew.groups.contextmenu" oncommand="ew_GroupsTreeView.deleteGroup();" label="Delete group" />
                 </menupopup>
             </popupset>
 
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
                 <toolbarbutton image="images/refresh.png" oncommand="ew_GroupsTreeView.refresh();" tooltiptext="&ew.refresh.tip;" />
-                <toolbarbutton image="images/add.png" tooltiptext="Add User;" oncommand="ew_GroupsTreeView.addUser();" />
-                <toolbarbutton image="images/delete.png" tooltiptext="Delete User" oncommand="ew_GroupsTreeView.deleteUser();" />
+                <toolbarbutton image="images/add.png" tooltiptext="Add User;" oncommand="ew_GroupsTreeView.addGroup();" />
+                <toolbarbutton image="images/delete.png" tooltiptext="Delete User" oncommand="ew_GroupsTreeView.deleteGroup();" />
             </toolbar>
 
             <tree enableColumnDrag="true" seltype="single" id="ew.groups.view" flex="1">
@@ -28,5 +31,30 @@
                 <treechildren id="ew.groups.children" context="ew.groups.contextmenu" />
             </tree>
         </groupbox>
+
+        <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
+            <grippy />
+        </splitter>
+
+        <groupbox orient="vertical" flex="1" id="eip.tree.holder">
+            <caption label="Users" />
+            <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                <toolbarbutton image="images/add.png" tooltiptext="Add User to group" oncommand="ew_GroupsTreeView.addUser();" />
+                <toolbarbutton image="images/delete.png" tooltiptext="Delete User from group" oncommand="ew_GroupsTreeView.deleteUser();" />
+            </toolbar>
+
+            <tree enableColumnDrag="true" seltype="single" id="ew.groupUsers.view" flex="1">
+                <treecols>
+                    <treecol id="user.name" label="Name" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.path" label="Path" flex="2" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.arn" label="ARN" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                </treecols>
+                <treechildren id="ew.users.children" context="ew.users.contextmenu" />
+            </tree>
+        </groupbox>
+      </vbox>
     </tabpanel>
 </overlay>

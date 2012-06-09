@@ -12,15 +12,20 @@ var ew_controller = {
         this.errorHandlers[reqType] = true;
     },
 
-    onResponseComplete : function(responseObject)
+    onResponseComplete : function(responseObj)
     {
         // In sync mode handle errors in the caller
-        if (responseObject.isSync && responseObject.hasErrors) {
+        if (responseObj.isSync && responseObj.hasErrors) {
             // Some handlers can manage errors in the callback
-            if (!this.errorHandlers[responseObject.requestType]) return;
+            if (!this.errorHandlers[responseObj.requestType]) return;
         }
         // In async mode callback must be called
-        eval("this." + responseObject.requestType + "(responseObject)");
+        eval("this." + responseObj.requestType + "(responseObj)");
+    },
+
+    onComplete : function(responseObj)
+    {
+        if (responseObj.callback) responseObj.callback(responseObj);
     },
 
     getItems : function(item, parentNode, itemsNode, columns)
@@ -79,13 +84,13 @@ var ew_controller = {
             // The image's region is the same as the active region
             this.registerImage(manifestPath, callback);
         } else {
-            ew_client.queryEC2InRegion(region, "RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onCompleteRegisterImage", callback);
+            ew_client.queryEC2InRegion(region, "RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onComplete", callback);
         }
     },
 
     registerImage : function(manifestPath, callback)
     {
-        ew_client.queryEC2("RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onCompleteRegisterImage", callback);
+        ew_client.queryEC2("RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onComplete", callback);
     },
 
     registerImageFromSnapshot : function(snapshotId, amiName, amiDescription, architecture, kernelId, ramdiskId, deviceName, deleteOnTermination, callback)
@@ -102,38 +107,17 @@ var ew_controller = {
         params.push([ 'BlockDeviceMapping.1.Ebs.SnapshotId', snapshotId ]);
         params.push([ 'BlockDeviceMapping.1.Ebs.DeleteOnTermination', deleteOnTermination ]);
 
-        ew_client.queryEC2("RegisterImage", params, this, false, "onCompleteRegisterImage", callback);
-    },
-
-    onCompleteRegisterImage : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var imageId = getNodeValue(xmlDoc, "imageId");
-
-        if (objResponse.callback) objResponse.callback(imageId);
+        ew_client.queryEC2("RegisterImage", params, this, false, "onComplete", callback);
     },
 
     deregisterImage : function(imageId, callback)
     {
-        ew_client.queryEC2("DeregisterImage", [ [ "ImageId", imageId ] ], this, false, "onCompleteDeregisterImage", callback);
-    },
-
-    onCompleteDeregisterImage : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeregisterImage", [ [ "ImageId", imageId ] ], this, false, "onComplete", callback);
     },
 
     createSnapshot : function(volumeId, callback)
     {
-        ew_client.queryEC2("CreateSnapshot", [ [ "VolumeId", volumeId ] ], this, false, "onCompleteCreateSnapshot", callback);
-    },
-
-    onCompleteCreateSnapshot : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var id = getNodeValue(xmlDoc, "snapshotId");
-
-        if (objResponse.callback) objResponse.callback(id);
+        ew_client.queryEC2("CreateSnapshot", [ [ "VolumeId", volumeId ] ], this, false, "onComplete", callback);
     },
 
     attachVolume : function(volumeId, instanceId, device, callback)
@@ -142,12 +126,7 @@ var ew_controller = {
         if (volumeId != null) params.push([ "VolumeId", volumeId ]);
         if (instanceId != null) params.push([ "InstanceId", instanceId ]);
         if (device != null) params.push([ "Device", device ]);
-        ew_client.queryEC2("AttachVolume", params, this, false, "onCompleteAttachVolume", callback);
-    },
-
-    onCompleteAttachVolume : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("AttachVolume", params, this, false, "onComplete", callback);
     },
 
     createVolume : function(size, snapshotId, zone, callback)
@@ -156,50 +135,27 @@ var ew_controller = {
         if (size != null) params.push([ "Size", size ]);
         if (snapshotId != null) params.push([ "SnapshotId", snapshotId ]);
         if (zone != null) params.push([ "AvailabilityZone", zone ]);
-        ew_client.queryEC2("CreateVolume", params, this, false, "onCompleteCreateVolume", callback);
-    },
-
-    onCompleteCreateVolume : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var id = getNodeValue(xmlDoc, "volumeId");
-        if (objResponse.callback) objResponse.callback(id);
+        ew_client.queryEC2("CreateVolume", params, this, false, "onComplete", callback);
     },
 
     deleteSnapshot : function(snapshotId, callback)
     {
-        ew_client.queryEC2("DeleteSnapshot", [ [ "SnapshotId", snapshotId ] ], this, false, "onCompleteDeleteSnapshot", callback);
-    },
-
-    onCompleteDeleteSnapshot : function(objResponse)
-    {
-        ew_SnapshotTreeView.refresh();
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteSnapshot", [ [ "SnapshotId", snapshotId ] ], this, false, "onComplete", callback);
     },
 
     deleteVolume : function(volumeId, callback)
     {
-        ew_client.queryEC2("DeleteVolume", [ [ "VolumeId", volumeId ] ], this, false, "onCompleteDeleteVolume", callback);
-    },
-
-    onCompleteDeleteVolume : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteVolume", [ [ "VolumeId", volumeId ] ], this, false, "onComplete", callback);
     },
 
     detachVolume : function(volumeId, callback)
     {
-        ew_client.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ] ], this, false, "onCompleteDetachVolume", callback);
+        ew_client.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ] ], this, false, "onComplete", callback);
     },
 
     forceDetachVolume : function(volumeId, callback)
     {
-        ew_client.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ], [ "Force", true ] ], this, false, "onCompleteDetachVolume", callback);
-    },
-
-    onCompleteDetachVolume : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ], [ "Force", true ] ], this, false, "onComplete", callback);
     },
 
     describeVolumes : function(callback)
@@ -207,9 +163,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeVolumes", [], this, false, "onCompleteDescribeVolumes", callback);
     },
 
-    onCompleteDescribeVolumes : function(objResponse)
+    onCompleteDescribeVolumes : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeVolumesResponse/ec2:volumeSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -243,7 +199,7 @@ var ew_controller = {
         }
 
         ew_model.updateVolumes(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     describeSnapshots : function(callback)
@@ -251,9 +207,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeSnapshots", [], this, false, "onCompleteDescribeSnapshots", callback);
     },
 
-    onCompleteDescribeSnapshots : function(objResponse)
+    onCompleteDescribeSnapshots : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeSnapshotsResponse/ec2:snapshotSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -273,16 +229,16 @@ var ew_controller = {
         }
 
         ew_model.updateSnapshots(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     describeSnapshotAttribute: function(id, callback) {
         ew_client.queryEC2("DescribeSnapshotAttribute", [ ["SnapshotId", id], ["Attribute", "createVolumePermission"] ], this, false, "onCompleteDescribeSnapshotAttribute", callback);
     },
 
-    onCompleteDescribeSnapshotAttribute : function(objResponse)
+    onCompleteDescribeSnapshotAttribute : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = [];
         var id = getNodeValue(xmlDoc, "snapshotId");
 
@@ -298,7 +254,7 @@ var ew_controller = {
             }
         }
 
-        if (objResponse.callback) objResponse.callback(id, list);
+        if (responseObj.callback) responseObj.callback(id, list);
     },
 
     modifySnapshotAttribute: function(id, add, remove, callback) {
@@ -315,13 +271,7 @@ var ew_controller = {
                 params.push(["CreateVolumePermission.Remove." + (i + 1) + "." + remove[i][0], remove[i][1] ])
             }
         }
-        ew_client.queryEC2("ModifySnapshotAttribute", params, this, false, "onCompleteModifySnapshotAttribute", callback);
-    },
-
-    onCompleteModifySnapshotAttribute : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("ModifySnapshotAttribute", params, this, false, "onComplete", callback);
     },
 
     describeVpcs : function(callback)
@@ -329,9 +279,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeVpcs", [], this, false, "onCompleteDescribeVpcs", callback);
     },
 
-    onCompleteDescribeVpcs : function(objResponse)
+    onCompleteDescribeVpcs : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeVpcsResponse/ec2:vpcSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
@@ -343,29 +293,17 @@ var ew_controller = {
             list.push(new Vpc(id, cidr, state, dhcpopts, tags));
         }
         ew_model.updateVpcs(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createVpc : function(cidr, callback)
     {
-        ew_client.queryEC2("CreateVpc", [ [ "CidrBlock", cidr ] ], this, false, "onCompleteCreateVpc", callback);
-    },
-
-    onCompleteCreateVpc : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var id = getNodeValue(xmlDoc, "vpcId");
-        if (objResponse.callback) objResponse.callback(id);
+        ew_client.queryEC2("CreateVpc", [ [ "CidrBlock", cidr ] ], this, false, "onComplete", callback);
     },
 
     deleteVpc : function(id, callback)
     {
-        ew_client.queryEC2("DeleteVpc", [ [ "VpcId", id ] ], this, false, "onCompleteDeleteVpc", callback);
-    },
-
-    onCompleteDeleteVpc : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteVpc", [ [ "VpcId", id ] ], this, false, "onComplete", callback);
     },
 
     describeSubnets : function(callback)
@@ -373,9 +311,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeSubnets", [], this, false, "onCompleteDescribeSubnets", callback);
     },
 
-    onCompleteDescribeSubnets : function(objResponse)
+    onCompleteDescribeSubnets : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeSubnetsResponse/ec2:subnetSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
@@ -389,27 +327,17 @@ var ew_controller = {
             list.push(new Subnet(id, vpcId, cidrBlock, state, availableIp, availabilityZone, tags));
         }
         ew_model.updateSubnets(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createSubnet : function(vpcId, cidr, az, callback)
     {
-        ew_client.queryEC2("CreateSubnet", [ [ "CidrBlock", cidr ], [ "VpcId", vpcId ], [ "AvailabilityZone", az ] ], this, false, "onCompleteCreateSubnet", callback);
-    },
-
-    onCompleteCreateSubnet : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateSubnet", [ [ "CidrBlock", cidr ], [ "VpcId", vpcId ], [ "AvailabilityZone", az ] ], this, false, "onComplete", callback);
     },
 
     deleteSubnet : function(id, callback)
     {
-        ew_client.queryEC2("DeleteSubnet", [ [ "SubnetId", id ] ], this, false, "onCompleteDeleteSubnet", callback);
-    },
-
-    onCompleteDeleteSubnet : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteSubnet", [ [ "SubnetId", id ] ], this, false, "onComplete", callback);
     },
 
     describeDhcpOptions : function(callback)
@@ -417,9 +345,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeDhcpOptions", [], this, false, "onCompleteDescribeDhcpOptions", callback);
     },
 
-    onCompleteDescribeDhcpOptions : function(objResponse)
+    onCompleteDescribeDhcpOptions : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeDhcpOptionsResponse/ec2:dhcpOptionsSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
@@ -449,17 +377,12 @@ var ew_controller = {
             list.push(new DhcpOptions(id, options.join("; "), tags));
         }
         ew_model.updateDhcpOptions(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     associateDhcpOptions : function(dhcpOptionsId, vpcId, callback)
     {
-        ew_client.queryEC2("AssociateDhcpOptions", [ [ "DhcpOptionsId", dhcpOptionsId ], [ "VpcId", vpcId ] ], this, false, "onCompleteAssociateDhcpOptions", callback);
-    },
-
-    onCompleteAssociateDhcpOptions : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("AssociateDhcpOptions", [ [ "DhcpOptionsId", dhcpOptionsId ], [ "VpcId", vpcId ] ], this, false, "onComplete", callback);
     },
 
     createDhcpOptions : function(opts, callback)
@@ -475,22 +398,12 @@ var ew_controller = {
             }
         }
 
-        ew_client.queryEC2("CreateDhcpOptions", params, this, false, "onCompleteCreateDhcpOptions", callback);
-    },
-
-    onCompleteCreateDhcpOptions : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateDhcpOptions", params, this, false, "onComplete", callback);
     },
 
     deleteDhcpOptions : function(id, callback)
     {
-        ew_client.queryEC2("DeleteDhcpOptions", [ [ "DhcpOptionsId", id ] ], this, false, "onCompleteDeleteDhcpOptions", callback);
-    },
-
-    onCompleteDeleteDhcpOptions : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteDhcpOptions", [ [ "DhcpOptionsId", id ] ], this, false, "onComplete", callback);
     },
 
     createNetworkAclEntry : function(aclId, num, proto, action, egress, cidr, var1, var2, callback)
@@ -507,52 +420,27 @@ var ew_controller = {
             params.push(["PortRange.To", var2])
             break;
         }
-        ew_client.queryEC2("CreateNetworkAclEntry", params, this, false, "onCompleteCreateNetworkAclEntry", callback);
-    },
-
-    onCompleteCreateNetworkAclEntry : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateNetworkAclEntry", params, this, false, "onComplete", callback);
     },
 
     deleteNetworkAclEntry : function(aclId, num, egress, callback)
     {
-        ew_client.queryEC2("DeleteNetworkAclEntry", [ [ "NetworkAclId", aclId ], ["RuleNumber", num], ["Egress", egress] ], this, false, "onCompleteDeleteNetworkAclEntry", callback);
-    },
-
-    onCompleteDeleteNetworkAclEntry : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteNetworkAclEntry", [ [ "NetworkAclId", aclId ], ["RuleNumber", num], ["Egress", egress] ], this, false, "onComplete", callback);
     },
 
     ReplaceNetworkAclAssociation: function(assocId, aclId, callback)
     {
-        ew_client.queryEC2("ReplaceNetworkAclAssociation", [ [ "AssociationId", assocId ], ["NetworkAclId", aclId] ], this, false, "onCompleteReplaceNetworkAclAssociation", callback);
-    },
-
-    onCompleteReplaceNetworkAclAssociation : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("ReplaceNetworkAclAssociation", [ [ "AssociationId", assocId ], ["NetworkAclId", aclId] ], this, false, "onComplete", callback);
     },
 
     createNetworkAcl : function(vpcId, callback)
     {
-        ew_client.queryEC2("CreateNetworkAcl", [ [ "VpcId", vpcId ] ], this, false, "onCompleteCreateNetworkAcl", callback);
-    },
-
-    onCompleteCreateNetworkAcl : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateNetworkAcl", [ [ "VpcId", vpcId ] ], this, false, "onComplete", callback);
     },
 
     deleteNetworkAcl : function(id, callback)
     {
-        ew_client.queryEC2("DeleteNetworkAcl", [ [ "NetworkAclId", id ] ], this, false, "onCompleteDeleteNetworkAcl", callback);
-    },
-
-    onCompleteDeleteNetworkAcl : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteNetworkAcl", [ [ "NetworkAclId", id ] ], this, false, "onComplete", callback);
     },
 
     describeNetworkAcls : function(callback)
@@ -560,9 +448,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeNetworkAcls", [], this, false, "onCompleteDescribeNetworkAcls", callback);
     },
 
-    onCompleteDescribeNetworkAcls : function(objResponse)
+    onCompleteDescribeNetworkAcls : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeNetworkAclsResponse/ec2:networkAclSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -606,7 +494,7 @@ var ew_controller = {
         }
 
         ew_model.updateNetworkAcls(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     describeVpnGateways : function(callback)
@@ -614,9 +502,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeVpnGateways", [], this, false, "onCompleteDescribeVpnGateways", callback);
     },
 
-    onCompleteDescribeVpnGateways : function(objResponse)
+    onCompleteDescribeVpnGateways : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeVpnGatewaysResponse/ec2:vpnGatewaySet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
@@ -636,27 +524,17 @@ var ew_controller = {
             list.push(new VpnGateway(id, availabilityZone, state, type, attachments));
         }
         ew_model.updateVpnGateways(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createVpnGateway : function(type, az, callback)
     {
-        ew_client.queryEC2("CreateVpnGateway", [ [ "Type", type ], [ "AvailabilityZone", az ] ], this, false, "onCompleteCreateVpnGateway", callback);
-    },
-
-    onCompleteCreateVpnGateway : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateVpnGateway", [ [ "Type", type ], [ "AvailabilityZone", az ] ], this, false, "onComplete", callback);
     },
 
     deleteVpnGateway : function(id, callback)
     {
-        ew_client.queryEC2("DeleteVpnGateway", [ [ "VpnGatewayId", id ] ], this, false, "onCompleteDeleteVpnGateway", callback);
-    },
-
-    onCompleteDeleteVpnGateway : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteVpnGateway", [ [ "VpnGatewayId", id ] ], this, false, "onComplete", callback);
     },
 
     describeCustomerGateways : function(callback)
@@ -664,9 +542,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeCustomerGateways", [], this, false, "onCompleteDescribeCustomerGateways", callback);
     },
 
-    onCompleteDescribeCustomerGateways : function(objResponse)
+    onCompleteDescribeCustomerGateways : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeCustomerGatewaysResponse/ec2:customerGatewaySet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
@@ -679,27 +557,17 @@ var ew_controller = {
             list.push(new CustomerGateway(id, ipAddress, bgpAsn, state, type, tags));
         }
         ew_model.updateCustomerGateways(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createCustomerGateway : function(type, ip, asn, callback)
     {
-        ew_client.queryEC2("CreateCustomerGateway", [ [ "Type", type ], [ "IpAddress", ip ], [ "BgpAsn", asn ] ], this, false, "onCompleteCreateCustomerGateway", callback);
-    },
-
-    onCompleteCreateCustomerGateway : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateCustomerGateway", [ [ "Type", type ], [ "IpAddress", ip ], [ "BgpAsn", asn ] ], this, false, "onComplete", callback);
     },
 
     deleteCustomerGateway : function(id, callback)
     {
-        ew_client.queryEC2("DeleteCustomerGateway", [ [ "CustomerGatewayId", id ] ], this, false, "onCompleteDeleteCustomerGateway", callback);
-    },
-
-    onCompleteDeleteCustomerGateway : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteCustomerGateway", [ [ "CustomerGatewayId", id ] ], this, false, "onComplete", callback);
     },
 
     describeInternetGateways : function(callback)
@@ -707,9 +575,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeInternetGateways", [], this, false, "onCompleteDescribeInternetGateways", callback);
     },
 
-    onCompleteDescribeInternetGateways : function(objResponse)
+    onCompleteDescribeInternetGateways : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeInternetGatewaysResponse/ec2:internetGatewaySet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; i++) {
@@ -724,49 +592,27 @@ var ew_controller = {
             list.push(new InternetGateway(id, vpcId, tags));
         }
         ew_model.updateInternetGateways(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createInternetGateway : function(callback)
     {
-        ew_client.queryEC2("CreateInternetGateway", [], this, false, "onCompleteCreateInternetGateway", callback);
-    },
-
-    onCompleteCreateInternetGateway : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var id = getNodeValue(xmlDoc, "internetGatewayId");
-        if (objResponse.callback) objResponse.callback(id);
+        ew_client.queryEC2("CreateInternetGateway", [], this, false, "onComplete", callback);
     },
 
     deleteInternetGateway : function(id, callback)
     {
-        ew_client.queryEC2("DeleteInternetGateway", [ [ "InternetGatewayId", id ] ], this, false, "onCompleteDeleteInternetGateway", callback);
-    },
-
-    onCompleteDeleteInternetGateway : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteInternetGateway", [ [ "InternetGatewayId", id ] ], this, false, "onComplete", callback);
     },
 
     attachInternetGateway : function(igwid, vpcid, callback)
     {
-        ew_client.queryEC2("AttachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, false, "onCompleteAttachInternetGateway", callback);
-    },
-
-    onCompleteAttachInternetGateway : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("AttachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, false, "onComplete", callback);
     },
 
     detachInternetGateway : function(igwid, vpcid, callback)
     {
-        ew_client.queryEC2("DetachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, false, "onCompleteDetachInternetGateway", callback);
-    },
-
-    onCompleteDetachInternetGateway : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DetachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, false, "onComplete", callback);
     },
 
     describeVpnConnections : function(callback)
@@ -774,9 +620,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeVpnConnections", [], this, false, "onCompleteDescribeVpnConnections", callback);
     },
 
-    onCompleteDescribeVpnConnections : function(objResponse)
+    onCompleteDescribeVpnConnections : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         // required due to the size of the customer gateway config
         // being very close to or in excess of 4096 bytes
@@ -803,47 +649,27 @@ var ew_controller = {
             list.push(new VpnConnection(id, vgwId, cgwId, type, state, config, tags));
         }
         ew_model.updateVpnConnections(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createVpnConnection : function(type, cgwid, vgwid, callback)
     {
-        ew_client.queryEC2("CreateVpnConnection", [ [ "Type", type ], [ "CustomerGatewayId", cgwid ], [ "VpnGatewayId", vgwid ] ], this, false, "onCompleteCreateVpnConnection", callback);
-    },
-
-    onCompleteCreateVpnConnection : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateVpnConnection", [ [ "Type", type ], [ "CustomerGatewayId", cgwid ], [ "VpnGatewayId", vgwid ] ], this, false, "onComplete", callback);
     },
 
     deleteVpnConnection : function(id, callback)
     {
-        ew_client.queryEC2("DeleteVpnConnection", [ [ "VpnConnectionId", id ] ], this, false, "onCompleteDeleteVpnConnection", callback);
-    },
-
-    onCompleteDeleteVpnConnection : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteVpnConnection", [ [ "VpnConnectionId", id ] ], this, false, "onComplete", callback);
     },
 
     attachVpnGatewayToVpc : function(vgwid, vpcid, callback)
     {
-        ew_client.queryEC2("AttachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, false, "onCompleteAttachVpnGatewayToVpc", callback);
-    },
-
-    onCompleteAttachVpnGatewayToVpc : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("AttachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, false, "onComplete", callback);
     },
 
     detachVpnGatewayFromVpc : function(vgwid, vpcid, callback)
     {
-        ew_client.queryEC2("DetachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, false, "onCompleteDetachVpnGatewayFromVpc", callback);
-    },
-
-    onCompleteDetachVpnGatewayFromVpc : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DetachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, false, "onComplete", callback);
     },
 
     describeImage : function(imageId, callback)
@@ -851,9 +677,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeImages", [ [ "ImageId", imageId ] ], this, false, "onCompleteDescribeImage", callback);
     },
 
-    onCompleteDescribeImage : function(objResponse)
+    onCompleteDescribeImage : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var items = xmlDoc.evaluate("/ec2:DescribeImagesResponse/ec2:imagesSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         var item = items.snapshotItem(0);
@@ -881,7 +707,7 @@ var ew_controller = {
             ami = new AMI(imageId, imageLocation, imageState, owner, (isPublic == 'true' ? 'public' : 'private'), platform, aki, ari, rdt, ownerAlias, name, description, snapshotId, tags);
         }
 
-        if (objResponse.callback && ami) objResponse.callback(ami);
+        if (responseObj.callback && ami) responseObj.callback(ami);
     },
 
     createImage : function(instanceId, amiName, amiDescription, noReboot, callback)
@@ -889,15 +715,7 @@ var ew_controller = {
         var noRebootVal = "false";
         if (noReboot == true) noRebootVal = "true";
 
-        ew_client.queryEC2("CreateImage", [ [ "InstanceId", instanceId ], [ "Name", amiName ], [ "Description", amiDescription ], [ "NoReboot", noRebootVal ] ], this, false, "onCompleteCreateImage", callback);
-    },
-
-    onCompleteCreateImage : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var id = getNodeValue(xmlDoc, "imageId");
-
-        if (objResponse.callback) objResponse.callback(id);
+        ew_client.queryEC2("CreateImage", [ [ "InstanceId", instanceId ], [ "Name", amiName ], [ "Description", amiDescription ], [ "NoReboot", noRebootVal ] ], this, false, "onComplete", callback);
     },
 
     describeImages : function( callback)
@@ -905,9 +723,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeImages", [], this, false, "onCompleteDescribeImages", callback);
     },
 
-    onCompleteDescribeImages : function(objResponse)
+    onCompleteDescribeImages : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var img = null;
@@ -936,7 +754,7 @@ var ew_controller = {
         }
 
         ew_model.updateImages(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     describeLeaseOfferings : function(callback)
@@ -944,9 +762,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeReservedInstancesOfferings", [], this, false, "onCompleteDescribeLeaseOfferings", callback);
     },
 
-    onCompleteDescribeLeaseOfferings : function(objResponse)
+    onCompleteDescribeLeaseOfferings : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var img = null;
@@ -966,7 +784,7 @@ var ew_controller = {
         }
 
         ew_model.updateLeaseOfferings(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     describeReservedInstances : function(callback)
@@ -974,9 +792,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeReservedInstances", [], this, false, "onCompleteDescribeReservedInstances", callback);
     },
 
-    onCompleteDescribeReservedInstances : function(objResponse)
+    onCompleteDescribeReservedInstances : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var img = null;
@@ -1000,20 +818,12 @@ var ew_controller = {
         }
 
         ew_model.updateReservedInstances(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     purchaseOffering : function(id, count, callback)
     {
-        ew_client.queryEC2("PurchaseReservedInstancesOffering", [ [ "ReservedInstancesOfferingId", id ], [ "InstanceCount", count ] ], this, false, "onCompletePurchaseOffering", callback);
-    },
-
-    onCompletePurchaseOffering : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var id = getNodeValue(xmlDoc, "reservedInstancesId");
-
-        if (objResponse.callback) objResponse.callback(id);
+        ew_client.queryEC2("PurchaseReservedInstancesOffering", [ [ "ReservedInstancesOfferingId", id ], [ "InstanceCount", count ] ], this, false, "onComplete", callback);
     },
 
     describeLaunchPermissions : function(imageId, callback)
@@ -1021,9 +831,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeImageAttribute", [ [ "ImageId", imageId ], [ "Attribute", "launchPermission" ] ], this, false, "onCompleteDescribeLaunchPermissions", callback);
     },
 
-    onCompleteDescribeLaunchPermissions : function(objResponse)
+    onCompleteDescribeLaunchPermissions : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("item");
@@ -1036,7 +846,7 @@ var ew_controller = {
             }
         }
 
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     addLaunchPermission : function(imageId, name, callback)
@@ -1050,7 +860,7 @@ var ew_controller = {
         } else {
             params.push([ "UserId.1", name ]);
         }
-        ew_client.queryEC2("ModifyImageAttribute", params, this, false, "onCompleteModifyImageAttribute", callback);
+        ew_client.queryEC2("ModifyImageAttribute", params, this, false, "onComplete", callback);
     },
 
     revokeLaunchPermission : function(imageId, name, callback)
@@ -1064,12 +874,7 @@ var ew_controller = {
         } else {
             params.push([ "UserId.1", name ]);
         }
-        ew_client.queryEC2("ModifyImageAttribute", params, this, false, "onCompleteModifyImageAttribute", callback);
-    },
-
-    onCompleteModifyImageAttribute : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("ModifyImageAttribute", params, this, false, "onComplete", callback);
     },
 
     resetLaunchPermissions : function(imageId, callback)
@@ -1077,12 +882,7 @@ var ew_controller = {
         var params = []
         params.push([ "ImageId", imageId ]);
         params.push([ "Attribute", "launchPermission" ]);
-        ew_client.queryEC2("ResetImageAttribute", params, this, false, "onCompleteResetImageAttribute", callback);
-    },
-
-    onCompleteResetImageAttribute : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("ResetImageAttribute", params, this, false, "onComplete", callback);
     },
 
     describeInstances : function(callback)
@@ -1090,9 +890,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeInstances", [], this, false, "onCompleteDescribeInstances", callback);
     },
 
-    onCompleteDescribeInstances : function(objResponse)
+    onCompleteDescribeInstances : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeInstancesResponse/ec2:reservationSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -1184,7 +984,7 @@ var ew_controller = {
         }
 
         ew_model.updateInstances(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     runMoreInstances: function(instance, count, callback) {
@@ -1246,12 +1046,12 @@ var ew_controller = {
         ew_client.queryEC2("RunInstances", params, this, false, "onCompleteRunInstances", callback);
     },
 
-    onCompleteRunInstances : function(objResponse)
+    onCompleteRunInstances : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = this.getItems(xmlDoc, "instancesSet", "item", "instanceId");
 
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     terminateInstances : function(instances, callback)
@@ -1308,9 +1108,9 @@ var ew_controller = {
         ew_client.queryEC2("BundleInstance", params, this, false, "onCompleteBundleInstance", callback);
     },
 
-    onCompleteBundleInstance : function(objResponse)
+    onCompleteBundleInstance : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
 
         var items = xmlDoc.getElementsByTagName("bundleInstanceTask");
@@ -1318,7 +1118,7 @@ var ew_controller = {
             list.push(this.unpackBundleTask(items[i]));
         }
 
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     cancelBundleTask : function(id, callback)
@@ -1326,12 +1126,7 @@ var ew_controller = {
         var params = []
         params.push([ "BundleId", id ]);
 
-        ew_client.queryEC2("CancelBundleTask", params, this, false, "onCompleteCancelBundleTask", callback);
-    },
-
-    onCompleteCancelBundleTask : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CancelBundleTask", params, this, false, "onComplete", callback);
     },
 
     unpackBundleTask : function(item)
@@ -1367,9 +1162,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeBundleTasks", [], this, false, "onCompleteDescribeBundleTasks", callback);
     },
 
-    onCompleteDescribeBundleTasks : function(objResponse)
+    onCompleteDescribeBundleTasks : function(responseObj)
     {
-        var xmldoc = objResponse.xmlDoc;
+        var xmldoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeBundleTasksResponse/ec2:bundleInstanceTasksSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; ++i) {
@@ -1377,7 +1172,7 @@ var ew_controller = {
         }
 
         ew_model.updateBundleTasks(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createS3Bucket : function(bucket, region, params, callback)
@@ -1385,12 +1180,7 @@ var ew_controller = {
         if (region) {
             content = "<CreateBucketConstraint><LocationConstraint>" + region + "</LocationConstraint></CreateBucketConstraint>";
         }
-        ew_client.queryS3("PUT", bucket, "", "", params, content, this, false, "onCompleteCreateS3Bucket", callback);
-    },
-
-    onCompleteCreateS3Bucket : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryS3("PUT", bucket, "", "", params, content, this, false, "onComplete", callback);
     },
 
     listS3Buckets : function(callback)
@@ -1398,9 +1188,9 @@ var ew_controller = {
         ew_client.queryS3("GET", "", "", "", {}, content, this, false, "onCompleteListS3Buckets", callback);
     },
 
-    onCompleteListS3Buckets : function(objResponse)
+    onCompleteListS3Buckets : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var owner = getNodeValue(xmlDoc, "ID")
@@ -1412,7 +1202,7 @@ var ew_controller = {
         }
         ew_model.updateS3Buckets(list);
 
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     getS3BucketAcl : function(bucket, callback)
@@ -1420,10 +1210,10 @@ var ew_controller = {
         ew_client.queryS3("GET", bucket, "", "?acl", {}, content, this, false, "onCompleteGetS3BucketAcl", callback);
     },
 
-    onCompleteGetS3BucketAcl : function(objResponse)
+    onCompleteGetS3BucketAcl : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
-        var bucket = objResponse.data[0];
+        var xmlDoc = responseObj.xmlDoc;
+        var bucket = responseObj.data[0];
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("Grant");
@@ -1450,7 +1240,7 @@ var ew_controller = {
         var obj = ew_model.getS3Bucket(bucket)
         if (obj) obj.acls = list;
 
-        if (objResponse.callback) objResponse.callback(bucket, list);
+        if (responseObj.callback) responseObj.callback(bucket, list);
     },
 
     setS3BucketAcl : function(bucket, content, callback)
@@ -1458,14 +1248,14 @@ var ew_controller = {
         ew_client.queryS3("PUT", bucket, "", "?acl", {}, content, this, false, "onCompleteSetS3BucketAcl", callback);
     },
 
-    onCompleteSetS3BucketAcl : function(objResponse)
+    onCompleteSetS3BucketAcl : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
-        var bucket = objResponse.data[0];
+        var xmlDoc = responseObj.xmlDoc;
+        var bucket = responseObj.data[0];
         var obj = ew_model.getS3Bucket(bucket)
         if (obj) obj.acls = null;
 
-        if (objResponse.callback) objResponse.callback(bucket);
+        if (responseObj.callback) responseObj.callback(bucket);
     },
 
     getS3BucketLocation : function(bucket, callback)
@@ -1473,16 +1263,16 @@ var ew_controller = {
         ew_client.queryS3("GET", bucket, "", "?location", {}, null, this, false, "onCompleteGetS3BucketLocation", callback);
     },
 
-    onCompleteGetS3BucketLocation : function(objResponse)
+    onCompleteGetS3BucketLocation : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
-        var bucket = objResponse.data[0];
+        var xmlDoc = responseObj.xmlDoc;
+        var bucket = responseObj.data[0];
 
         var region = getNodeValue(xmlDoc, "LocationConstraint");
         var obj = ew_model.getS3Bucket(bucket)
         if (obj) obj.region = region;
 
-        if (objResponse.callback) objResponse.callback(bucket, region);
+        if (responseObj.callback) responseObj.callback(bucket, region);
     },
 
     listS3BucketKeys : function(bucket, params, callback)
@@ -1490,9 +1280,9 @@ var ew_controller = {
         ew_client.queryS3("GET", bucket, "", "", {}, null, this, false, "onCompleteListS3BucketKeys", callback);
     },
 
-    onCompleteListS3BucketKeys : function(objResponse)
+    onCompleteListS3BucketKeys : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var bucket = getNodeValue(xmlDoc, "Name");
@@ -1509,37 +1299,22 @@ var ew_controller = {
         var obj = ew_model.getS3Bucket(bucket)
         if (obj) obj.keys = list;
 
-        if (objResponse.callback) objResponse.callback(bucket, list);
+        if (responseObj.callback) responseObj.callback(bucket, list);
     },
 
     deleteS3Bucket : function(bucket, params, callback)
     {
-        ew_client.queryS3("DELETE", bucket, "", "", params, null, this, false, "onCompleteDeleteS3Bucket", callback);
-    },
-
-    onCompleteDeleteS3Bucket : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryS3("DELETE", bucket, "", "", params, null, this, false, "onComplete", callback);
     },
 
     createS3BucketKey : function(bucket, key, params, data, callback)
     {
-        ew_client.queryS3("PUT", bucket, key, "", params, data, this, false, "onCompleteCreateS3BucketKey", callback);
-    },
-
-    onCompleteCreateS3BucketKey : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryS3("PUT", bucket, key, "", params, data, this, false, "onComplete", callback);
     },
 
     deleteS3BucketKey : function(bucket, key, params, callback)
     {
-        ew_client.queryS3("DELETE", bucket, key, "", params, null, this, false, "onCompleteDeleteS3BucketKey", callback);
-    },
-
-    onCompleteDeleteS3BucketKey : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryS3("DELETE", bucket, key, "", params, null, this, false, "onComplete", callback);
     },
 
     getS3BucketKey : function(bucket, key, path, params, file, callback, progresscb)
@@ -1552,19 +1327,14 @@ var ew_controller = {
         ew_client.queryS3("GET", bucket, key, path, {}, null, this, false, "onCompleteReadS3BucketKey", callback);
     },
 
-    onCompleteReadS3BucketKey : function(objResponse)
+    onCompleteReadS3BucketKey : function(responseObj)
     {
-        if (objResponse.callback) objResponse.callback(objResponse.xmlhttp.responseText);
+        if (responseObj.callback) responseObj.callback(responseObj.xmlhttp.responseText);
     },
 
     putS3BucketKey : function(bucket, key, path, params, text, callback)
     {
-        ew_client.queryS3("PUT", bucket, key, path, params, text, this, false, "onCompletePutS3BucketKey", callback);
-    },
-
-    onCompletePutS3BucketKey : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryS3("PUT", bucket, key, path, params, text, this, false, "onComplete", callback);
     },
 
     initS3BucketKeyUpload : function(bucket, key, params, callback)
@@ -1572,11 +1342,11 @@ var ew_controller = {
         ew_client.queryS3("POST", bucket, key, "?uploads", params, null, this, false, "onCompleteInitS3BucketKeyUpload", callback);
     },
 
-    onCompleteInitS3BucketKeyUpload : function(objResponse)
+    onCompleteInitS3BucketKeyUpload : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
-        var bucket = getNodeValue(xmlDoc, "UploadId");
-        if (objResponse.callback) objResponse.callback(id);
+        var xmlDoc = responseObj.xmlDoc;
+        var id = getNodeValue(xmlDoc, "UploadId");
+        if (responseObj.callback) responseObj.callback(id);
     },
 
     uploadS3BucketFile : function(bucket, key, path, params, file, callback, progresscb)
@@ -1589,11 +1359,11 @@ var ew_controller = {
         ew_client.queryS3("GET", bucket, key, "?acl", {}, null, this, false, "onCompleteGetS3BucketKeyAcl", callback);
     },
 
-    onCompleteGetS3BucketKeyAcl : function(objResponse)
+    onCompleteGetS3BucketKeyAcl : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
-        var bucket = objResponse.data[0];
-        var key = objResponse.data[1];
+        var xmlDoc = responseObj.xmlDoc;
+        var bucket = responseObj.data[0];
+        var key = responseObj.data[1];
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("Grant");
@@ -1620,7 +1390,7 @@ var ew_controller = {
         var obj = ew_model.getS3BucketKey(bucket, key)
         if (obj) obj.acls = list;
 
-        if (objResponse.callback) objResponse.callback(bucket, list);
+        if (responseObj.callback) responseObj.callback(bucket, list);
     },
 
     setS3BucketKeyAcl : function(bucket, key, content, callback)
@@ -1628,16 +1398,16 @@ var ew_controller = {
         ew_client.queryS3("PUT", bucket, key, "?acl", {}, content, this, false, "onCompleteSetS3BucketKeyAcl", callback);
     },
 
-    onCompleteSetS3BucketKeyAcl : function(objResponse)
+    onCompleteSetS3BucketKeyAcl : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
-        var bucket = objResponse.data[0];
-        var key = objResponse.data[1];
+        var xmlDoc = responseObj.xmlDoc;
+        var bucket = responseObj.data[0];
+        var key = responseObj.data[1];
 
         var obj = ew_model.getS3BucketKey(bucket, key)
         if (obj) obj.acls = null;
 
-        if (objResponse.callback) objResponse.callback(bucket, key);
+        if (responseObj.callback) responseObj.callback(bucket, key);
     },
 
     getS3BucketWebsite : function(bucket, callback)
@@ -1646,22 +1416,22 @@ var ew_controller = {
         ew_client.queryS3("GET", bucket, "", "?website", {}, null, this, false, "onCompleteGetS3BucketWebsite", callback);
     },
 
-    onCompleteGetS3BucketWebsite : function(objResponse)
+    onCompleteGetS3BucketWebsite : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
-        var bucket = objResponse.data[0];
+        var xmlDoc = responseObj.xmlDoc;
+        var bucket = responseObj.data[0];
 
-        if (objResponse.hasErrors) {
+        if (responseObj.hasErrors) {
             // Ignore no website error
-            if (objResponse.faultCode == "NoSuchWebsiteConfiguration") {
-                objResponse.hasErrors = false;
+            if (responseObj.faultCode == "NoSuchWebsiteConfiguration") {
+                responseObj.hasErrors = false;
             }
         } else {
             var doc = xmlDoc.getElementsByTagName("IndexDocument");
             var index = getNodeValue(doc[0], "Suffix");
             var doc = xmlDoc.getElementsByTagName("ErrorDocument");
             var error = getNodeValue(doc[0], "Key");
-            if (objResponse.callback) objResponse.callback(bucket, index, error);
+            if (responseObj.callback) responseObj.callback(bucket, index, error);
         }
     },
 
@@ -1678,12 +1448,12 @@ var ew_controller = {
         ew_client.queryS3("PUT", bucket, "", "?website", {}, content, this, false, "onCompleteSetS3BucketWebsite", callback);
     },
 
-    onCompleteSetS3BucketWebsite : function(objResponse)
+    onCompleteSetS3BucketWebsite : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
-        var bucket = objResponse.data[0];
+        var xmlDoc = responseObj.xmlDoc;
+        var bucket = responseObj.data[0];
 
-        if (objResponse.callback) objResponse.callback(bucket);
+        if (responseObj.callback) responseObj.callback(bucket);
     },
 
     deleteS3BucketWebsite : function(bucket, callback)
@@ -1691,12 +1461,12 @@ var ew_controller = {
         ew_client.queryS3("DELETE", bucket, "", "?website", {}, content, this, false, "onCompleteDeleteS3BucketWebsite", callback);
     },
 
-    onCompleteDeleteS3BucketKeyAcl : function(objResponse)
+    onCompleteDeleteS3BucketKeyAcl : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
-        var bucket = objResponse.data[0];
+        var xmlDoc = responseObj.xmlDoc;
+        var bucket = responseObj.data[0];
 
-        if (objResponse.callback) objResponse.callback(bucket);
+        if (responseObj.callback) responseObj.callback(bucket);
     },
 
     describeKeypairs : function(callback)
@@ -1704,9 +1474,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeKeyPairs", [], this, false, "onCompleteDescribeKeypairs", callback);
     },
 
-    onCompleteDescribeKeypairs : function(objResponse)
+    onCompleteDescribeKeypairs : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("item");
@@ -1717,7 +1487,7 @@ var ew_controller = {
         }
 
         ew_model.updateKeypairs(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createKeypair : function(name, callback)
@@ -1725,9 +1495,9 @@ var ew_controller = {
         ew_client.queryEC2("CreateKeyPair", [ [ "KeyName", name ] ], this, false, "onCompleteCreateKeyPair", callback);
     },
 
-    onCompleteCreateKeyPair : function(objResponse)
+    onCompleteCreateKeyPair : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var name = getNodeValue(xmlDoc, "keyName");
         var fp = getNodeValue(xmlDoc, "keyFingerprint");
@@ -1736,170 +1506,12 @@ var ew_controller = {
         // I'm lazy, so for now the caller will just have to call describeKeypairs again to see
         // the new keypair.
 
-        if (objResponse.callback) objResponse.callback(name, keyMaterial);
+        if (responseObj.callback) responseObj.callback(name, keyMaterial);
     },
 
     deleteKeypair : function(name, callback)
     {
-        ew_client.queryEC2("DeleteKeyPair", [ [ "KeyName", name ] ], this, false, "onCompleteDeleteKeyPair", callback);
-    },
-
-    onCompleteDeleteKeyPair : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
-    },
-
-    createAccessKey : function(callback)
-    {
-        ew_client.queryIAM("CreateAccessKey", [], this, false, "onCompleteCreateAccessKey", callback);
-    },
-
-    onCompleteCreateAccessKey : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var key = getNodeValue(xmlDoc, "AccessKeyId");
-        var secret = getNodeValue(xmlDoc, "SecretAccessKey");
-        log("Access key = " + key + ", secret = " + secret)
-
-        if (objResponse.callback) objResponse.callback(key, secret);
-    },
-
-    deleteAccessKey : function(name, callback)
-    {
-        ew_client.queryIAM("DeleteAccessKey", [ [ "AccessKeyId", name ] ], this, false, "onCompleteDeleteAccessKey", callback);
-    },
-
-    onCompleteDeleteAccessKey : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
-    },
-
-    listAccessKeys : function(callback)
-    {
-        ew_client.queryIAM("ListAccessKeys", [], this, false, "onCompleteListAccessKeys", callback);
-    },
-
-    onCompleteListAccessKeys : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var list = new Array();
-        var items = xmlDoc.getElementsByTagName("member");
-        for ( var i = 0; i < items.length; i++) {
-            var name = getNodeValue(items[i], "AccessKeyId");
-            var status = getNodeValue(items[i], "Status");
-            list.push(new AccessKey(name, status, "", ew_client.accessCode == name));
-        }
-
-        ew_model.updateAccessKeys(list);
-        if (objResponse.callback) objResponse.callback(list);
-    },
-
-    listUsers : function(callback)
-    {
-        ew_client.queryIAM("ListUsers", [], this, false, "onCompleteListUsers", callback);
-    },
-
-    onCompleteListUsers : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var list = new Array();
-        var items = xmlDoc.getElementsByTagName("member");
-        for ( var i = 0; i < items.length; i++) {
-            var path = getNodeValue(items[i], "Path");
-            var name = getNodeValue(items[i], "UserName");
-            var id = getNodeValue(items[i], "UserId");
-            var arn = getNodeValue(items[i], "Arn");
-            list.push(new User(id, name, path, arn));
-        }
-
-        ew_model.updateUsers(list);
-        if (objResponse.callback) objResponse.callback(list);
-    },
-
-    listGroups : function(callback)
-    {
-        ew_client.queryIAM("ListGroups", [], this, false, "onCompleteListGroups", callback);
-    },
-
-    onCompleteListGroups : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var list = new Array();
-        var items = xmlDoc.getElementsByTagName("member");
-        for ( var i = 0; i < items.length; i++) {
-            var path = getNodeValue(items[i], "Path");
-            var name = getNodeValue(items[i], "GroupName");
-            var id = getNodeValue(items[i], "GroupId");
-            var arn = getNodeValue(items[i], "Arn");
-            list.push(new UserGroup(id, name, path, arn));
-        }
-
-        ew_model.updateGroups(list);
-        if (objResponse.callback) objResponse.callback(list);
-    },
-
-    importKeypair : function(name, keyMaterial, callback)
-    {
-        ew_client.queryEC2("ImportKeyPair", [ [ "KeyName", name ], [ "PublicKeyMaterial", keyMaterial ] ], this, false, "onCompleteImportKeyPair", callback);
-    },
-
-    onCompleteImportKeyPair : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var name = getNodeValue(xmlDoc, "keyName");
-        var fp = getNodeValue(xmlDoc, "keyFingerprint");
-
-        if (objResponse.callback) objResponse.callback(name);
-    },
-
-    listSigningCertificates : function(callback)
-    {
-        ew_client.queryIAM("ListSigningCertificates", [], this, false, "onCompleteListSigningCertificates", callback);
-    },
-
-    onCompleteListSigningCertificates : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var list = new Array();
-        var items = xmlDoc.getElementsByTagName("member");
-        for ( var i = 0; i < items.length; i++) {
-            var name = getNodeValue(items[i], "CertificateId");
-            var body = getNodeValue(items[i], "CertificateBody");
-            list.push(new Certificate(name, body));
-        }
-
-        ew_model.updateCerts(list);
-        if (objResponse.callback) objResponse.callback(list);
-    },
-
-    uploadSigningCertificate : function(body, callback)
-    {
-        ew_client.queryIAM("UploadSigningCertificate", [ [ "CertificateBody", body ] ], this, false, "onCompleteUploadSigningCertificate", callback);
-    },
-
-    onCompleteUploadSigningCertificate : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var id = getNodeValue(xmlDoc, "CertificateId");
-
-        if (objResponse.callback) objResponse.callback(id);
-    },
-
-    deleteSigningCertificate : function(cert, callback)
-    {
-        ew_client.queryIAM("DeleteSigningCertificate", [ [ "CertificateId", cert ] ], this, false, "onCompleteDeleteSigningCertificate", callback);
-    },
-
-    onCompleteDeleteSigningCertificate : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteKeyPair", [ [ "KeyName", name ] ], this, false, "onComplete", callback);
     },
 
     describeRouteTables : function(callback)
@@ -1907,9 +1519,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeRouteTables", [], this, false, "onCompleteDescribeRouteTables", callback);
     },
 
-    onCompleteDescribeRouteTables : function(objResponse)
+    onCompleteDescribeRouteTables : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeRouteTablesResponse/ec2:routeTableSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -1944,27 +1556,17 @@ var ew_controller = {
             list.push(new RouteTable(id, vpcId, routes, associations, tags));
         }
         ew_model.updateRouteTables(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createRouteTable : function(vpcId, callback)
     {
-        ew_client.queryEC2("CreateRouteTable", [["VpcId", vpcId]], this, false, "onCompleteCreateRouteTable", callback);
-    },
-
-    onCompleteCreateRouteTable : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateRouteTable", [["VpcId", vpcId]], this, false, "onComplete", callback);
     },
 
     deleteRouteTable : function(tableId, callback)
     {
-        ew_client.queryEC2("DeleteRouteTable", [["RouteTableId", tableId]], this, false, "onCompleteDeleteRouteTable", callback);
-    },
-
-    onCompleteDeleteRouteTable : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteRouteTable", [["RouteTableId", tableId]], this, false, "onComplete", callback);
     },
 
     createRoute : function(tableId, cidr, gatewayId, instanceId, networkInterfaceId, callback)
@@ -1981,42 +1583,22 @@ var ew_controller = {
         if (networkInterfaceId) {
             params.push(["NetworkInterfaceId", networkInterfaceId]);
         }
-        ew_client.queryEC2("CreateRoute", params, this, false, "onCompleteCreateRoute", callback);
-    },
-
-    onCompleteCreateRoute : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateRoute", params, this, false, "onComplete", callback);
     },
 
     deleteRoute : function(tableId, cidr, callback)
     {
-        ew_client.queryEC2("DeleteRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr]], this, false, "onCompleteDeleteRoute", callback);
-    },
-
-    onCompleteDeleteRoute : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr]], this, false, "onComplete", callback);
     },
 
     associateRouteTable : function(tableId, subnetId, callback)
     {
-        ew_client.queryEC2("AssociateRouteTable", [["RouteTableId", tableId], ["SubnetId", subnetId]], this, false, "onCompleteAssociateRouteTable", callback);
-    },
-
-    onCompleteAssociateRouteTable : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("AssociateRouteTable", [["RouteTableId", tableId], ["SubnetId", subnetId]], this, false, "onComplete", callback);
     },
 
     disassociateRouteTable : function(assocId, callback)
     {
-        ew_client.queryEC2("DisassociateRouteTable", [["AssociationId", assocId]], this, false, "onCompleteDisassociateRouteTable", callback);
-    },
-
-    onCompleteDisassociateRouteTable : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DisassociateRouteTable", [["AssociationId", assocId]], this, false, "onComplete", callback);
     },
 
     createNetworkInterface : function(subnetId, ip, descr, groups, callback)
@@ -2033,27 +1615,17 @@ var ew_controller = {
                 params.push(["SecurityGroupId."+(i+1), groups[i]]);
             }
         }
-        ew_client.queryEC2("CreateNetworkInterface", params, this, false, "onCompleteCreateNetworkInterface", callback);
-    },
-
-    onCompleteCreateNetworkInterface : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("CreateNetworkInterface", params, this, false, "onComplete", callback);
     },
 
     deleteNetworkInterface : function(id, callback)
     {
-        ew_client.queryEC2("DeleteNetworkInterface", [["NetworkInterfaceId", id]], this, false, "onCompleteDeleteNetworkInterface", callback);
-    },
-
-    onCompleteDeleteNetworkInterface : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteNetworkInterface", [["NetworkInterfaceId", id]], this, false, "onComplete", callback);
     },
 
     modifyNetworkInterfaceAttribute : function (id, name, value, callback)
     {
-        ew_client.queryEC2("ModifyNetworkInterfaceAttribute", [ ["NetworkInterfaceId", id], [name + ".Value", value] ], this, false, "onCompleteModifyNetworkInterfaceAttributes", callback);
+        ew_client.queryEC2("ModifyNetworkInterfaceAttribute", [ ["NetworkInterfaceId", id], [name + ".Value", value] ], this, false, "onComplete", callback);
     },
 
     modifyNetworkInterfaceAttributes : function (id, attributes, callback)
@@ -2063,22 +1635,12 @@ var ew_controller = {
             params.push(attributes[i]);
         }
 
-        ew_client.queryEC2("ModifyNetworkInterfaceAttribute", params, this, false, "onCompleteModifyNetworkInterfaceAttributes", callback);
-    },
-
-    onCompleteModifyNetworkInterfaceAttributes : function (objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("ModifyNetworkInterfaceAttribute", params, this, false, "onComplete", callback);
     },
 
     attachNetworkInterface : function (id, instanceId, deviceIndex, callback)
     {
-        ew_client.queryEC2("AttachNetworkInterface", [["NetworkInterfaceId", id], ["InstanceId", instanceId], ["DeviceIndex", deviceIndex]], this, false, "onCompleteAttachNetworkInterface", callback);
-    },
-
-    onCompleteAttachNetworkInterface : function (objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("AttachNetworkInterface", [["NetworkInterfaceId", id], ["InstanceId", instanceId], ["DeviceIndex", deviceIndex]], this, false, "onComplete", callback);
     },
 
     detachNetworkInterface : function (attachmentId, force, callback)
@@ -2089,12 +1651,7 @@ var ew_controller = {
             params.push(['Force', force]);
         }
 
-        ew_client.queryEC2("DetachNetworkInterface", params, this, false, "onCompleteDetachNetworkInterface", callback);
-    },
-
-    onCompleteDetachNetworkInterface : function (objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DetachNetworkInterface", params, this, false, "onComplete", callback);
     },
 
     describeNetworkInterfaces : function(callback)
@@ -2102,9 +1659,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeNetworkInterfaces", [], this, false, "onCompleteDescribeNetworkInterfaces", callback);
     },
 
-    onCompleteDescribeNetworkInterfaces : function(objResponse)
+    onCompleteDescribeNetworkInterfaces : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeNetworkInterfacesResponse/ec2:networkInterfaceSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -2149,7 +1706,7 @@ var ew_controller = {
         }
 
         ew_model.updateNetworkInterfaces(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     describeSecurityGroups : function(callback)
@@ -2190,9 +1747,9 @@ var ew_controller = {
         return list
     },
 
-    onCompleteDescribeSecurityGroups : function(objResponse)
+    onCompleteDescribeSecurityGroups : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeSecurityGroupsResponse/ec2:securityGroupInfo/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -2213,7 +1770,7 @@ var ew_controller = {
         }
 
         ew_model.updateSecurityGroups(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createSecurityGroup : function(name, desc, vpcId, callback)
@@ -2224,25 +1781,13 @@ var ew_controller = {
         if (vpcId && vpcId != "") {
             params.push([ "VpcId", vpcId ])
         }
-        ew_client.queryEC2("CreateSecurityGroup", params, this, false, "onCompleteCreateSecurityGroup", callback, null);
-    },
-
-    onCompleteCreateSecurityGroup : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var id = getNodeValue(xmlDoc, "groupId");
-        if (objResponse.callback) objResponse.callback(id);
+        ew_client.queryEC2("CreateSecurityGroup", params, this, false, "onComplete", callback, null);
     },
 
     deleteSecurityGroup : function(group, callback)
     {
         var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
-        ew_client.queryEC2("DeleteSecurityGroup", params, this, false, "onCompleteDeleteSecurityGroup", callback);
-    },
-
-    onCompleteDeleteSecurityGroup : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DeleteSecurityGroup", params, this, false, "onComplete", callback);
     },
 
     authorizeSourceCIDR : function(type, group, ipProtocol, fromPort, toPort, cidrIp, callback)
@@ -2252,7 +1797,7 @@ var ew_controller = {
         params.push([ "IpPermissions.1.FromPort", fromPort ]);
         params.push([ "IpPermissions.1.ToPort", toPort ]);
         params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
-        ew_client.queryEC2("AuthorizeSecurityGroup" + type, params, this, false, "onCompleteAuthorizeSecurityGroup", callback);
+        ew_client.queryEC2("AuthorizeSecurityGroup" + type, params, this, false, "onComplete", callback);
     },
 
     revokeSourceCIDR : function(type, group, ipProtocol, fromPort, toPort, cidrIp, callback)
@@ -2262,7 +1807,7 @@ var ew_controller = {
         params.push([ "IpPermissions.1.FromPort", fromPort ]);
         params.push([ "IpPermissions.1.ToPort", toPort ]);
         params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
-        ew_client.queryEC2("RevokeSecurityGroup" + type, params, this, false, "onCompleteRevokeSecurityGroup", callback);
+        ew_client.queryEC2("RevokeSecurityGroup" + type, params, this, false, "onComplete", callback);
     },
 
     authorizeSourceGroup : function(type, group, ipProtocol, fromPort, toPort, srcGroup, callback)
@@ -2277,12 +1822,7 @@ var ew_controller = {
             params.push([ "IpPermissions.1.Groups.1.GroupName", srcGroup.name ]);
             params.push([ "IpPermissions.1.Groups.1.UserId", srcGroup.ownerId ]);
         }
-        ew_client.queryEC2("AuthorizeSecurityGroup" + type, params, this, false, "onCompleteAuthorizeSecurityGroup", callback);
-    },
-
-    onCompleteAuthorizeSecurityGroup : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("AuthorizeSecurityGroup" + type, params, this, false, "onComplete", callback);
     },
 
     revokeSourceGroup : function(type, group, ipProtocol, fromPort, toPort, srcGroup, callback)
@@ -2297,12 +1837,7 @@ var ew_controller = {
             params.push([ "IpPermissions.1.Groups.1.GroupName", srcGroup.name ]);
             params.push([ "IpPermissions.1.Groups.1.UserId", srcGroup.ownerId ]);
         }
-        ew_client.queryEC2("RevokeSecurityGroup" + type, params, this, false, "onCompleteRevokeSecurityGroup", callback);
-    },
-
-    onCompleteRevokeSecurityGroup : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("RevokeSecurityGroup" + type, params, this, false, "onComplete", callback);
     },
 
     rebootInstances : function(instances, callback)
@@ -2311,12 +1846,7 @@ var ew_controller = {
         for ( var i in instances) {
             params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
-        ew_client.queryEC2("RebootInstances", params, this, false, "onCompleteRebootInstances", callback);
-    },
-
-    onCompleteRebootInstances : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("RebootInstances", params, this, false, "onComplete", callback);
     },
 
     getConsoleOutput : function(instanceId, isSync, callback)
@@ -2324,9 +1854,9 @@ var ew_controller = {
         return ew_client.queryEC2("GetConsoleOutput", [ [ "InstanceId", instanceId ] ], this, isSync, "onCompleteGetConsoleOutput", callback);
     },
 
-    onCompleteGetConsoleOutput : function(objResponse)
+    onCompleteGetConsoleOutput : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var instanceId = getNodeValue(xmlDoc, "instanceId");
         var timestamp = getNodeValue(xmlDoc, "timestamp");
         var output = xmlDoc.getElementsByTagName("output")[0];
@@ -2336,7 +1866,7 @@ var ew_controller = {
         } else {
             output = '';
         }
-        if (objResponse.callback) objResponse.callback(instanceId, timestamp, output);
+        if (responseObj.callback) responseObj.callback(instanceId, timestamp, output);
     },
 
     describeAvailabilityZones : function(callback)
@@ -2344,9 +1874,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeAvailabilityZones", [], this, false, "onCompleteDescribeAvailabilityZones", callback);
     },
 
-    onCompleteDescribeAvailabilityZones : function(objResponse)
+    onCompleteDescribeAvailabilityZones : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("item");
@@ -2357,7 +1887,7 @@ var ew_controller = {
         }
 
         ew_model.updateAvailabilityZones(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     describeAddresses : function(callback)
@@ -2365,9 +1895,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeAddresses", [], this, false, "onCompleteDescribeAddresses", callback);
     },
 
-    onCompleteDescribeAddresses : function(objResponse)
+    onCompleteDescribeAddresses : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("item");
@@ -2381,33 +1911,19 @@ var ew_controller = {
             list.push(new EIP(publicIp, instanceid, allocId, assocId, domain, tags));
         }
         ew_model.updateAddresses(list);
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     allocateAddress : function(vpc, callback)
     {
         var params = vpc ? [["Domain", "vpc"]] : []
-        ew_client.queryEC2("AllocateAddress", params, this, false, "onCompleteAllocateAddress", callback);
-    },
-
-    onCompleteAllocateAddress : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-
-        var address = getNodeValue(xmlDoc, "publicIp");
-
-        if (objResponse.callback) objResponse.callback(address);
+        ew_client.queryEC2("AllocateAddress", params, this, false, "onComplete", callback);
     },
 
     releaseAddress : function(eip, callback)
     {
         var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.publicIp ]]
-        ew_client.queryEC2("ReleaseAddress", params, this, false, "onCompleteReleaseAddress", callback);
-    },
-
-    onCompleteReleaseAddress : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("ReleaseAddress", params, this, false, "onComplete", callback);
     },
 
     associateAddress : function(eip, instanceId, networkInterfaceId, callback)
@@ -2419,23 +1935,13 @@ var ew_controller = {
         if (networkInterfaceId) {
             params.push([ 'NetworkInterfaceId', networkInterfaceId ])
         }
-        ew_client.queryEC2("AssociateAddress", params, this, false, "onCompleteAssociateAddress", callback);
-    },
-
-    onCompleteAssociateAddress : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("AssociateAddress", params, this, false, "onComplete", callback);
     },
 
     disassociateAddress : function(eip, callback)
     {
         var params = eip.associationId ? [["AssociationId", eip.associationId]] : [[ 'PublicIp', eip.publicIp ]]
-        ew_client.queryEC2("DisassociateAddress", params, this, false, "onCompleteDisassociateAddress", callback);
-    },
-
-    onCompleteDisassociateAddress : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("DisassociateAddress", params, this, false, "onComplete", callback);
     },
 
     describeRegions : function(callback)
@@ -2443,9 +1949,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeRegions", [], this, false, "onCompleteDescribeRegions", callback);
     },
 
-    onCompleteDescribeRegions : function(objResponse)
+    onCompleteDescribeRegions : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = [];
         var items = xmlDoc.evaluate("/ec2:DescribeRegionsResponse/ec2:regionInfo/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; ++i) {
@@ -2457,7 +1963,7 @@ var ew_controller = {
             list.push(new Endpoint(name, url));
         }
 
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     describeLoadBalancers : function(callback)
@@ -2465,9 +1971,9 @@ var ew_controller = {
         ew_client.queryELB("DescribeLoadBalancers", [], this, false, "onCompleteDescribeLoadBalancers", callback);
     },
 
-    onCompleteDescribeLoadBalancers : function(objResponse)
+    onCompleteDescribeLoadBalancers : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("member");
         for ( var i = 0; i < items.length; i++) {
@@ -2542,7 +2048,7 @@ var ew_controller = {
                 list.push(new LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, azones, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName, vpcId, subnetList, groupList));
             }
             ew_model.updateLoadBalancers(list);
-            if (objResponse.callback) objResponse.callback(list);
+            if (responseObj.callback) responseObj.callback(list);
         }
     },
 
@@ -2550,12 +2056,12 @@ var ew_controller = {
     {
         var params =[ [ "LoadBalancerName", LoadBalancerName ] ];
 
-        ew_client.queryELB("DescribeInstanceHealth", params, this, false, "onCompletedescribeInstanceHealth", callback);
+        ew_client.queryELB("DescribeInstanceHealth", params, this, false, "onCompleteDescribeInstanceHealth", callback);
     },
 
-    onCompletedescribeInstanceHealth : function(objResponse)
+    onCompleteDescribeInstanceHealth : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("member");
         for ( var i = 0; i < items.length; i++) {
@@ -2567,25 +2073,18 @@ var ew_controller = {
             list.push(new InstanceHealth(Description, State, InstanceId, ReasonCode));
         }
 
-        var elbs = ew_model.getLoadBalancers('LoadBalancerName', objResponse.data[0][1]);
+        var elbs = ew_model.getLoadBalancers('LoadBalancerName', responseObj.data[0][1]);
         if (elbs) elbs[0].InstanceHealth = list;
 
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     deleteLoadBalancer : function(LoadBalancerName, callback)
     {
-        params = []
+        var params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
-        ew_client.queryELB("DeleteLoadBalancer", params, this, false, "onCompleteDeleteLoadBalancer", callback);
-    },
-
-    onCompleteDeleteLoadBalancer : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("DeleteLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     createLoadBalancer : function(LoadBalancerName, Protocol, elbport, instanceport, Zone, subnet, groups, callback)
@@ -2605,14 +2104,7 @@ var ew_controller = {
         }
         params.push([ "Listeners.member.LoadBalancerPort", elbport ]);
         params.push([ "Listeners.member.InstancePort", instanceport ]);
-        ew_client.queryELB("CreateLoadBalancer", params, this, false, "onCompleteCreateLoadBalancer", callback);
-    },
-
-    onCompleteCreateLoadBalancer : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("CreateLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     configureHealthCheck : function(LoadBalancerName, Target, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, callback)
@@ -2625,14 +2117,7 @@ var ew_controller = {
         params.push([ "HealthCheck.HealthyThreshold", HealthyThreshold ]);
         params.push([ "HealthCheck.UnhealthyThreshold", UnhealthyThreshold ]);
 
-        ew_client.queryELB("ConfigureHealthCheck", params, this, false, "onCompleteConfigureHealthCheck", callback);
-    },
-
-    onCompleteConfigureHealthCheck : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "HealthCheck");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("ConfigureHealthCheck", params, this, false, "onComplete", callback);
     },
 
     registerInstancesWithLoadBalancer : function(LoadBalancerName, instances, callback)
@@ -2643,14 +2128,7 @@ var ew_controller = {
             params.push([ "Instances.member." + (i + 1) + ".InstanceId", instances[i] ]);
         }
         debug(params)
-        ew_client.queryELB("RegisterInstancesWithLoadBalancer", params, this, false, "onCompleteRegisterInstancesWithLoadBalancer", callback);
-    },
-
-    onCompleteRegisterInstancesWithLoadBalancer : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("RegisterInstancesWithLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     deregisterInstancesWithLoadBalancer : function(LoadBalancerName, instances, callback)
@@ -2660,14 +2138,7 @@ var ew_controller = {
         for (var i = 0; i < instances.length; i++) {
             params.push([ "Instances.member." + (i + 1) + ".InstanceId", instances[i] ]);
         }
-        ew_client.queryELB("DeregisterInstancesFromLoadBalancer", params, this, false, "onCompleteDeregisterInstancesWithLoadBalancer", callback);
-    },
-
-    onCompleteDeregisterInstancesWithLoadBalancer : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("DeregisterInstancesFromLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     enableAvailabilityZonesForLoadBalancer : function(LoadBalancerName, Zones, callback)
@@ -2677,31 +2148,17 @@ var ew_controller = {
         for (var i = 0; i < Zones.length; i++) {
             params.push([ "AvailabilityZones.member." + (i + 1), Zones[i] ]);
         }
-        ew_client.queryELB("EnableAvailabilityZonesForLoadBalancer", params, this, false, "onCompleteEnableZoneForLoadBalancer", callback);
-    },
-
-    onCompleteEnableZoneForLoadBalancer : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("EnableAvailabilityZonesForLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     disableAvailabilityZonesForLoadBalancer : function(LoadBalancerName, Zones, callback)
     {
-        params = []
+        var params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         for (var i = 0 ; i < Zones.length; i++) {
             params.push([ "AvailabilityZones.member." + (i + 1), Zones[i] ]);
         }
-        ew_client.queryELB("DisableAvailabilityZonesForLoadBalancer", params, this, false, "onCompletedisableZoneForLoadBalancer", callback);
-    },
-
-    onCompleteDisableZoneForLoadBalancer : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("DisableAvailabilityZonesForLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     createAppCookieStickinessPolicy : function(LoadBalancerName, CookieName, callback)
@@ -2714,14 +2171,7 @@ var ew_controller = {
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "CookieName", CookieName ]);
         params.push([ "PolicyName", PolicyName ]);
-        ew_client.queryELB("CreateAppCookieStickinessPolicy", params, this, false, "oncompleteCreateAppCookieSP", callback);
-    },
-
-    oncompleteCreateAppCookieSP : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("CreateAppCookieStickinessPolicy", params, this, false, "onComplete", callback);
     },
 
     createLBCookieStickinessPolicy : function(LoadBalancerName, CookieExpirationPeriod, callback)
@@ -2734,14 +2184,7 @@ var ew_controller = {
         params.push([ "CookieExpirationPeriod", CookieExpirationPeriod ]);
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "PolicyName", PolicyName ]);
-        ew_client.queryELB("CreateLBCookieStickinessPolicy", params, this, false, "oncompleteCreateLBCookieSP", callback);
-    },
-
-    oncompleteCreateLBCookieSP : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("CreateLBCookieStickinessPolicy", params, this, false, "onComplete", callback);
     },
 
     deleteLoadBalancerPolicy : function(LoadBalancerName, policy, callback)
@@ -2750,14 +2193,7 @@ var ew_controller = {
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
         params.push([ "PolicyName", policy ]);
-        ew_client.queryELB("DeleteLoadBalancerPolicy", params, this, false, "oncompleteDeleteLoadBalancerPolicy", callback);
-    },
-
-    oncompleteDeleteLoadBalancerPolicy : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "member");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryELB("DeleteLoadBalancerPolicy", params, this, false, "onComplete", callback);
     },
 
     applySecurityGroupsToLoadBalancer : function (loadBalancerName, groups, callback)
@@ -2767,11 +2203,7 @@ var ew_controller = {
             var group = groups[i];
             params.push(["SecurityGroups.member." + (i + 1), group]);
         }
-        ew_client.queryELB("ApplySecurityGroupsToLoadBalancer", params, this, false, "onCompleteApplySecurityGroupsToLoadBalancer", callback);
-    },
-
-    onCompleteApplySecurityGroupsToLoadBalancer : function (objResponse) {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryELB("ApplySecurityGroupsToLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     uploadServerCertificate : function(ServerCertificateName, CertificateBody, PrivateKey, Path, callback)
@@ -2781,14 +2213,7 @@ var ew_controller = {
         params.push([ "CertificateBody", CertificateBody ]);
         params.push([ "PrivateKey", PrivateKey ]);
         if (Path != null) params.push([ "Path", Path ]);
-        ew_client.queryIAM("UploadServerCertificate", params, this, false, "oncompleteUploadServerCertificate", callback);
-    },
-
-    oncompleteUploadServerCertificate : function(objResponse)
-    {
-        var xmlDoc = objResponse.xmlDoc;
-        var items = getNodeValue(xmlDoc, "ServerCertificateMetadata");
-        if (objResponse.callback) objResponse.callback(items);
+        ew_client.queryIAM("UploadServerCertificate", params, this, false, "onComplete", callback);
     },
 
     createTags : function(resIds, tags, callback)
@@ -2801,14 +2226,7 @@ var ew_controller = {
             params.push([ "Tag." + (i + 1) + ".Value", tags[i][1] ]);
         }
 
-        ew_client.queryEC2("CreateTags", params, this, false, "onCompleteCreateTags", callback);
-    },
-
-    onCompleteCreateTags : function(objResponse)
-    {
-        if (objResponse.callback) {
-            objResponse.callback();
-        }
+        ew_client.queryEC2("CreateTags", params, this, false, "onComplete", callback);
     },
 
     deleteTags : function(resIds, keys, callback)
@@ -2820,14 +2238,7 @@ var ew_controller = {
             params.push([ "Tag." + (i + 1) + ".Key", keys[i] ]);
         }
 
-        ew_client.queryEC2("DeleteTags", params, this, false, "onCompleteDeleteTags", callback);
-    },
-
-    onCompleteDeleteTags : function(objResponse)
-    {
-        if (objResponse.callback) {
-            objResponse.callback();
-        }
+        ew_client.queryEC2("DeleteTags", params, this, false, "onComplete", callback);
     },
 
     describeTags : function(resIds, callback)
@@ -2842,9 +2253,9 @@ var ew_controller = {
         ew_client.queryEC2("DescribeTags", params, this, false, "onCompleteDescribeTags", callback);
     },
 
-    onCompleteDescribeTags : function(objResponse)
+    onCompleteDescribeTags : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var items = xmlDoc.evaluate("/ec2:DescribeTagsResponse/ec2:tagSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
         var tags = new Array();
@@ -2856,7 +2267,7 @@ var ew_controller = {
             tags.push([ resid, key, value ]);
         }
 
-        if (objResponse.callback) objResponse.callback(tags);
+        if (responseObj.callback) responseObj.callback(tags);
     },
 
     describeInstanceAttribute : function(instanceId, attribute, callback)
@@ -2864,31 +2275,26 @@ var ew_controller = {
         ew_client.queryEC2("DescribeInstanceAttribute", [[ "InstanceId", instanceId ], [ "Attribute", attribute ]], this, false, "onCompleteDescribeInstanceAttribute", callback);
     },
 
-    onCompleteDescribeInstanceAttribute : function(objResponse)
+    onCompleteDescribeInstanceAttribute : function(responseObj)
     {
-        var xmlDoc = objResponse.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var items = xmlDoc.evaluate("/ec2:DescribeInstanceAttributeResponse/*", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         var value = getNodeValue(items.snapshotItem(2), "value");
 
-        if (objResponse.callback) objResponse.callback(value);
+        if (responseObj.callback) responseObj.callback(value);
     },
 
     modifyInstanceAttribute : function(instanceId, name, value, callback)
     {
-        ew_client.queryEC2("ModifyInstanceAttribute", [ [ "InstanceId", instanceId ], [ name + ".Value", value ] ], this, false, "onCompleteModifyInstanceAttribute", callback);
-    },
-
-    onCompleteModifyInstanceAttribute : function(objResponse)
-    {
-        if (objResponse.callback) objResponse.callback();
+        ew_client.queryEC2("ModifyInstanceAttribute", [ [ "InstanceId", instanceId ], [ name + ".Value", value ] ], this, false, "onComplete", callback);
     },
 
     describeInstanceStatus : function (callback) {
         ew_client.queryEC2("DescribeInstanceStatus", [], this, false, "onCompleteDescribeInstanceStatus", callback);
     },
 
-    onCompleteDescribeInstanceStatus : function (objResponse) {
-        var xmlDoc = objResponse.xmlDoc;
+    onCompleteDescribeInstanceStatus : function (responseObj) {
+        var xmlDoc = responseObj.xmlDoc;
         var items = xmlDoc.evaluate("/ec2:DescribeInstanceStatusResponse/ec2:instanceStatusSet/ec2:item",xmlDoc,this.getNsResolver(),XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
 
         for (var i = 0 ; i < items.snapshotLength; i++) {
@@ -2915,15 +2321,15 @@ var ew_controller = {
             }
         }
 
-        if (objResponse.callback) objResponse.callback();
+        if (responseObj.callback) responseObj.callback();
     },
 
     describeVolumeStatus : function (callback) {
         ew_client.queryEC2("DescribeVolumeStatus", [], this, false, "onCompleteDescribeVolumeStatus", callback);
     },
 
-    onCompleteDescribeVolumeStatus : function (objResponse) {
-        var xmlDoc = objResponse.xmlDoc;
+    onCompleteDescribeVolumeStatus : function (responseObj) {
+        var xmlDoc = responseObj.xmlDoc;
         var items = xmlDoc.evaluate("/ec2:DescribeVolumeStatus/ec2:volumeStatusSet/ec2:item",xmlDoc,this.getNsResolver(),XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
         var list = new Array();
 
@@ -2949,6 +2355,206 @@ var ew_controller = {
             }
         }
 
-        if (objResponse.callback) objResponse.callback(list);
+        if (responseObj.callback) responseObj.callback(list);
+    },
+
+    createAccessKey : function(name, callback)
+    {
+        var params = []
+
+        if (name) {
+            params.push([ "UserName", name ])
+        }
+        ew_client.queryIAM("CreateAccessKey", params, this, false, "onCompleteCreateAccessKey", callback);
+    },
+
+    onCompleteCreateAccessKey : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var user = getNodeValue(xmlDoc, "UserName");
+        var key = getNodeValue(xmlDoc, "AccessKeyId");
+        var secret = getNodeValue(xmlDoc, "SecretAccessKey");
+        log("Access key = " + key + ", secret = " + secret)
+
+        if (responseObj.callback) responseObj.callback(user, key, secret);
+    },
+
+    deleteAccessKey : function(name, callback)
+    {
+        ew_client.queryIAM("DeleteAccessKey", [ [ "AccessKeyId", name ] ], this, false, "onComplete", callback);
+    },
+
+    listAccessKeys : function(callback)
+    {
+        ew_client.queryIAM("ListAccessKeys", [], this, false, "onCompleteListAccessKeys", callback);
+    },
+
+    onCompleteListAccessKeys : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("member");
+        for (var i = 0; i < items.length; i++) {
+            var user = getNodeValue(items[i], "UserName");
+            var id = getNodeValue(items[i], "AccessKeyId");
+            var status = getNodeValue(items[i], "Status");
+            list.push(new AccessKey(id, status, user, "", ew_client.accessCode == id));
+        }
+
+        ew_model.updateAccessKeys(list);
+        if (responseObj.callback) responseObj.callback(list);
+    },
+
+    listUsers : function(callback)
+    {
+        ew_client.queryIAM("ListUsers", [], this, false, "onCompleteListUsers", callback);
+    },
+
+    onCompleteListUsers : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("member");
+        for ( var i = 0; i < items.length; i++) {
+            var id = getNodeValue(items[i], "UserId");
+            var name = getNodeValue(items[i], "UserName");
+            var path = getNodeValue(items[i], "Path");
+            var arn = getNodeValue(items[i], "Arn");
+            list.push(new User(id, name, path, arn));
+        }
+
+        ew_model.updateUsers(list);
+        if (responseObj.callback) responseObj.callback(list);
+    },
+
+    getUser : function(name, callback)
+    {
+        var params = [];
+        if (name) params.push(["UserName", user])
+        ew_client.queryIAM("GetUser", params, this, false, "onCompleteGetUser", callback);
+    },
+
+    onCompleteGetUser : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var id = getNodeValue(xmlDoc, "UserId");
+        var name = getNodeValue(xmlDoc, "UserName");
+        var path = getNodeValue(xmlDoc, "Path");
+        var arn = getNodeValue(xmlDoc, "Arn");
+
+        if (responseObj.callback) responseObj.callback(new User(id, name, path, arn));
+    },
+
+    listGroups : function(callback)
+    {
+        ew_client.queryIAM("ListGroups", [], this, false, "onCompleteListGroups", callback);
+    },
+
+    onCompleteListGroups : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("member");
+        for ( var i = 0; i < items.length; i++) {
+            var path = getNodeValue(items[i], "Path");
+            var name = getNodeValue(items[i], "GroupName");
+            var id = getNodeValue(items[i], "GroupId");
+            var arn = getNodeValue(items[i], "Arn");
+            list.push(new UserGroup(id, name, path, arn));
+        }
+
+        ew_model.updateGroups(list);
+        if (responseObj.callback) responseObj.callback(list);
+    },
+
+    createUser : function(name, path, callback)
+    {
+        ew_client.queryIAM("CreateUser", [ ["UserName", name], [ "Path", path] ], this, false, "onComplete", callback);
+    },
+
+    deleteUser : function(name, callback)
+    {
+        ew_client.queryIAM("DeleteUser", [ ["UserName", name] ], this, false, "onComplete", callback);
+    },
+
+    createLoginProfile : function(name, pwd, callback)
+    {
+        ew_client.queryIAM("CreateLoginProfile", [ ["UserName", name], [ "Password", pwd ] ], this, false, "onComplete", callback);
+    },
+
+    deleteLoginProfile : function(name, callback)
+    {
+        ew_client.queryIAM("DeleteLoginProfile", [ ["UserName", name] ], this, false, "onComplete", callback);
+    },
+
+    deleteUserPolicy : function(user, policy, callback)
+    {
+        ew_client.queryIAM("DeleteUserPolicy", [ ["UserName", name], [ "PolicyName", policy ] ], this, false, "onComplete", callback);
+    },
+
+    changePassword : function(oldPw, newPw, callback)
+    {
+        ew_client.queryIAM("ChangePassword", [ ["OldPassword", oldPw], [ "NewPassword", newPw ] ], this, false, "onComplete", callback);
+    },
+
+    addUserToGroup : function(user, group, callback)
+    {
+        ew_client.queryIAM("AddUserToGroup", [ ["UserName", user], [ "GroupName", group ] ], this, false, "onComplete", callback);
+    },
+
+    removeUserFromGroup : function(user, group, callback)
+    {
+        ew_client.queryIAM("RemoveUserFromGroup", [ ["UserName", user], [ "GroupName", group ] ], this, false, "onComplete", callback);
+    },
+
+    createGroup : function(name, path, callback)
+    {
+        ew_client.queryIAM("CreateGroup", [ ["GroupName", name], [ "Path", path] ], this, false, "onComplete", callback);
+    },
+
+    deleteGroup : function(name, callback)
+    {
+        ew_client.queryIAM("DeleteGroup", [ ["GroupName", name] ], this, false, "onComplete", callback);
+    },
+
+    importKeypair : function(name, keyMaterial, callback)
+    {
+        ew_client.queryEC2("ImportKeyPair", [ [ "KeyName", name ], [ "PublicKeyMaterial", keyMaterial ] ], this, false, "onComplete", callback);
+    },
+
+    listSigningCertificates : function(callback)
+    {
+        ew_client.queryIAM("ListSigningCertificates", [], this, false, "onCompleteListSigningCertificates", callback);
+    },
+
+    onCompleteListSigningCertificates : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("member");
+        for ( var i = 0; i < items.length; i++) {
+            var id = getNodeValue(items[i], "CertificateId");
+            var body = getNodeValue(items[i], "CertificateBody");
+            list.push(new Certificate(id, body));
+        }
+
+        ew_model.updateCerts(list);
+        if (responseObj.callback) responseObj.callback(list);
+    },
+
+    uploadSigningCertificate : function(body, callback)
+    {
+        ew_client.queryIAM("UploadSigningCertificate", [ [ "CertificateBody", body ] ], this, false, "onComplete", callback);
+    },
+
+    deleteSigningCertificate : function(cert, callback)
+    {
+        ew_client.queryIAM("DeleteSigningCertificate", [ [ "CertificateId", cert ] ], this, false, "onComplete", callback);
     },
 };

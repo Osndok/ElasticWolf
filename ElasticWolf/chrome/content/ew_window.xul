@@ -46,7 +46,6 @@
   <script type="application/x-javascript" src="chrome://ew/content/session.js" />
 
   <script type="application/x-javascript" src="chrome://ew/content/views/iam.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/views/access.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/certs.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/instances.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/securitygroups.js" />
@@ -113,8 +112,8 @@
        <treechildren>
          <treeitem><treerow><treecell label="Credentials" value="ew.tabs.credential" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Endpoints" value="ew.tabs.endpoint" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="My Access Keys" value="ew.tabs.access" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="My Keypairs" value="ew.tabs.keypair" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Access Keys" value="ew.tabs.access" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Keypairs" value="ew.tabs.keypair" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Users" value="ew.tabs.users" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Groups" value="ew.tabs.groups" /></treerow></treeitem>
        </treechildren>

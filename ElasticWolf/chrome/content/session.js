@@ -494,6 +494,14 @@ var ew_session = {
         }, 10);
     },
 
+    promptForPassword: function(title, text)
+    {
+        var promptService = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
+        var pw = { value: "" };
+        var rc = promptService.promptPassword(null, title, text, pw, null, {});
+        return rc ? pw.value : null;
+    },
+
     promptForTag: function(tags)
     {
         var rc = { ok: false, text: String(tags), title: "Tag (ex: Key:Value, Key:Value...) " };
