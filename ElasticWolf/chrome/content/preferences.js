@@ -141,7 +141,7 @@ var ew_prefs = {
     },
     getAppName : function()
     {
-        return ew_client.getAppName();
+        return ew_session.getAppName();
     },
     getAppPath : function()
     {

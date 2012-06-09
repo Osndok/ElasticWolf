@@ -10,7 +10,6 @@
     title="Manage AMI Launch Permissions"
     buttonlabelaccept="OK">
 
-    <script type="application/x-javascript" src="chrome://ew/content/client.js" />
     <script type="application/x-javascript" src="chrome://ew/content/dialogs/ami_permissions.js" />
 
     <groupbox flex="1">

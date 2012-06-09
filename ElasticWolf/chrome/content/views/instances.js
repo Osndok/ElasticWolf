@@ -595,11 +595,11 @@ var ew_InstancesTreeView = {
         var openCIDR = "0.0.0.0/0";
 
         // host CIDR
-        ew_session.client.queryCheckIP("", result);
+        ew_session.queryCheckIP("", result);
         var hostCIDR = result.ipAddress.trim() + "/32";
 
         // network CIDR
-        ew_session.client.queryCheckIP("block", result);
+        ew_session.queryCheckIP("block", result);
         var networkCIDR = result.ipAddress.trim();
 
         debug("Host: " + hostCIDR + ", net:" + networkCIDR)

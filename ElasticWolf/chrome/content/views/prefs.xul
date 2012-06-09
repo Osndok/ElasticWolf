@@ -188,7 +188,7 @@
                 </row>
                 <row>
                     <label control="ew.tools.debug" value="" />
-                    <button id="ew.tools.updates" label="Check for Updates" oncommand="session.client.checkForUpdates()" />
+                    <button id="ew.tools.updates" label="Check for Updates" oncommand="session.checkForUpdates()" />
                 </row>
             </rows>
         </grid>

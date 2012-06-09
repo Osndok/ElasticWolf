@@ -9,9 +9,11 @@
                 <menupopup id="ew.users.contextmenu" onpopupshowing="ew_UsersTreeView.enableOrDisableItems();">
                 <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addUser();" label="Add user" />
                 <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deleteUser();" label="Delete user" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addPassword();" label="Add Password" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.changePassword();" label="Change Password" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.setPassword();" label="Add Password" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.setPassword(true);" label="Change Password" />
                 <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deletePassword();" label="Delete Password" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addGroup();" label="Add to Group" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.renameUser();" label="Rename User" />
                 </menupopup>
             </popupset>
 
@@ -28,6 +30,10 @@
                     <treecol id="user.path" label="Path" flex="2" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                     <treecol id="user.arn" label="ARN" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.groups" label="Groups" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.policies" label="Policies" flex="1" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                 </treecols>
                 <treechildren id="ew.users.children" context="ew.users.contextmenu" />

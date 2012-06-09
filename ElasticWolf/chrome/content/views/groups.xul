@@ -10,13 +10,14 @@
                 <menupopup id="ew.groups.contextmenu" onpopupshowing="ew_groupsTreeView.enableOrDisableItems();">
                 <menuitem id="ew.groups.contextmenu" oncommand="ew_GroupsTreeView.addGroup();" label="Add group" />
                 <menuitem id="ew.groups.contextmenu" oncommand="ew_GroupsTreeView.deleteGroup();" label="Delete group" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_GroupsTreeView.renameGroup();" label="Rename group" />
                 </menupopup>
             </popupset>
 
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
                 <toolbarbutton image="images/refresh.png" oncommand="ew_GroupsTreeView.refresh();" tooltiptext="&ew.refresh.tip;" />
-                <toolbarbutton image="images/add.png" tooltiptext="Add User;" oncommand="ew_GroupsTreeView.addGroup();" />
-                <toolbarbutton image="images/delete.png" tooltiptext="Delete User" oncommand="ew_GroupsTreeView.deleteGroup();" />
+                <toolbarbutton image="images/add.png" tooltiptext="Add Group" oncommand="ew_GroupsTreeView.addGroup();" />
+                <toolbarbutton image="images/delete.png" tooltiptext="Delete Group" oncommand="ew_GroupsTreeView.deleteGroup();" />
             </toolbar>
 
             <tree enableColumnDrag="true" seltype="single" id="ew.groups.view" flex="1">
@@ -26,6 +27,8 @@
                     <treecol id="group.path" label="Path" flex="2" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                     <treecol id="group.arn" label="ARN" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="group.policies" label="Policies" flex="1" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                 </treecols>
                 <treechildren id="ew.groups.children" context="ew.groups.contextmenu" />

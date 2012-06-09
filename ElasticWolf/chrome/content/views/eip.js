@@ -17,7 +17,7 @@ var ew_ElasticIPTreeView = {
 
     allocateAddress : function() {
         var vpc = true
-        if (!ew_session.client.isGovCloud()) {
+        if (!ew_session.isGovCloud()) {
             vpc = ew_session.promptYesNo("Confirm", "Is this Elastic IP to be used for VPC?");
         }
         var me = this;

@@ -40,7 +40,6 @@
   <script type="application/x-javascript" src="chrome://ew/content/crypto.js" />
   <script type="application/x-javascript" src="chrome://ew/content/interfaces.js" />
   <script type="application/x-javascript" src="chrome://ew/content/model.js" />
-  <script type="application/x-javascript" src="chrome://ew/content/client.js" />
   <script type="application/x-javascript" src="chrome://ew/content/controller.js" />
   <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
   <script type="application/x-javascript" src="chrome://ew/content/session.js" />
@@ -178,7 +177,7 @@
         <grippy />
       </splitter>
 
-    <tabbox flex="2">
+    <tabbox flex="1">
     <tabpanels id="ew.tabs" flex="1" style="margin:5px;padding-top:0px;outline:0px;border:0px;">
       <tabpanel id="ew.tabs.prefs"/>
       <tabpanel id="ew.tabs.credential"/>

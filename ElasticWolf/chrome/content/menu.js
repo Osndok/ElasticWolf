@@ -182,7 +182,7 @@ var ew_menu = {
         var id = this.tree.view.getCellValue(this.tree.currentIndex, this.tree.columns.getFirstColumn());
         switch (id) {
         case "":
-            this.tree.view.toggleOpenState(tree.currentIndex);
+            this.tree.view.toggleOpenState(this.tree.currentIndex);
             break;
 
         default:

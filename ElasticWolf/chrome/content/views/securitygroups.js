@@ -27,11 +27,11 @@ var ew_SecurityGroupsTreeView = {
         // Determine the CIDR for the protocol authorization request
         switch (retVal.enableProtocolsFor) {
         case "host":
-            ew_session.client.queryCheckIP("", result);
+            ew_session.queryCheckIP("", result);
             cidr = result.ipAddress.trim() + "/32";
             break;
         case "network":
-            ew_session.client.queryCheckIP("block", result);
+            ew_session.queryCheckIP("block", result);
             cidr = result.ipAddress.trim();
             break;
         default:

@@ -3,10 +3,10 @@ var ew_PrefsView = {
 
    refresh: function() {
        this.rowCount++;
-       document.getElementById("ew.tools.version").value = ew_session.client.VERSION;
-       document.getElementById("ew.tools.ec2_version").value = ew_session.client.EC2_API_VERSION;
-       document.getElementById("ew.tools.iam_version").value = ew_session.client.IAM_API_VERSION;
-       document.getElementById("ew.tools.elb_version").value = ew_session.client.ELB_API_VERSION;
+       document.getElementById("ew.tools.version").value = ew_session.VERSION;
+       document.getElementById("ew.tools.ec2_version").value = ew_session.EC2_API_VERSION;
+       document.getElementById("ew.tools.iam_version").value = ew_session.IAM_API_VERSION;
+       document.getElementById("ew.tools.elb_version").value = ew_session.ELB_API_VERSION;
        document.getElementById("ew.tools.home").value = ew_prefs.getHome();
        document.getElementById("ew.tools.profile").value = ew_prefs.getProfileHome();
        document.getElementById("ew.tools.keyhome").value = ew_prefs.getKeyHome();

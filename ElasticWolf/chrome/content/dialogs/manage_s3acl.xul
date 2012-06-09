@@ -11,7 +11,6 @@
     title="Manage S3 ACLs" buttonlabelaccept="Apply">
 
     <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
-    <script type="application/x-javascript" src="chrome://ew/content/client.js" />
     <script type="application/x-javascript" src="chrome://ew/content/session.js" />
     <script type="application/x-javascript" src="chrome://ew/content/model.js" />
     <script type="application/x-javascript" src="chrome://ew/content/utils.js" />

@@ -23,8 +23,8 @@ var ew_VpnConnectionTreeView = {
         }
 
         var devices = [];
-        var opts = ew_client.queryVpnConnectionStylesheets(null);
-        var formats = opts.xmlDoc.evaluate("/CustomerGatewayConfigFormats/Format", opts.xmlDoc, ew_client.getNsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var opts = ew_session.queryVpnConnectionStylesheets(null);
+        var formats = opts.xmlDoc.evaluate("/CustomerGatewayConfigFormats/Format", opts.xmlDoc, ew_session.getNsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for (var i = 0; i < formats.snapshotLength; i++) {
             var platform = getNodeValue(formats.snapshotItem(i), "Platform");
             var filename = getNodeValue(formats.snapshotItem(i), "Filename");
@@ -36,7 +36,7 @@ var ew_VpnConnectionTreeView = {
         var idx = ew_session.promptList("Customer Gateway configuration", "Select device type:", devices, ['title']);
         if (idx >= 0) {
             configXml = new DOMParser().parseFromString(vpn.config, "text/xml");
-            var xsl = ew_client.queryVpnConnectionStylesheets(devices[idx].filename);
+            var xsl = ew_session.queryVpnConnectionStylesheets(devices[idx].filename);
             try {
                 var proc = new XSLTProcessor;
                 proc.importStylesheet(xsl.xmlDoc);

@@ -4,7 +4,7 @@ var ew_controller = {
 
     getNsResolver : function()
     {
-        return ew_client.getNsResolver();
+        return ew_session.getNsResolver();
     },
 
     handleErrors: function(reqType)
@@ -17,10 +17,10 @@ var ew_controller = {
         // In sync mode handle errors in the caller
         if (responseObj.isSync && responseObj.hasErrors) {
             // Some handlers can manage errors in the callback
-            if (!this.errorHandlers[responseObj.requestType]) return;
+            if (!this.errorHandlers[responseObj.method]) return;
         }
         // In async mode callback must be called
-        eval("this." + responseObj.requestType + "(responseObj)");
+        eval("this." + responseObj.method + "(responseObj)");
     },
 
     onComplete : function(responseObj)
@@ -84,13 +84,13 @@ var ew_controller = {
             // The image's region is the same as the active region
             this.registerImage(manifestPath, callback);
         } else {
-            ew_client.queryEC2InRegion(region, "RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onComplete", callback);
+            ew_session.queryEC2InRegion(region, "RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onComplete", callback);
         }
     },
 
     registerImage : function(manifestPath, callback)
     {
-        ew_client.queryEC2("RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onComplete", callback);
     },
 
     registerImageFromSnapshot : function(snapshotId, amiName, amiDescription, architecture, kernelId, ramdiskId, deviceName, deleteOnTermination, callback)
@@ -107,17 +107,17 @@ var ew_controller = {
         params.push([ 'BlockDeviceMapping.1.Ebs.SnapshotId', snapshotId ]);
         params.push([ 'BlockDeviceMapping.1.Ebs.DeleteOnTermination', deleteOnTermination ]);
 
-        ew_client.queryEC2("RegisterImage", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("RegisterImage", params, this, false, "onComplete", callback);
     },
 
     deregisterImage : function(imageId, callback)
     {
-        ew_client.queryEC2("DeregisterImage", [ [ "ImageId", imageId ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeregisterImage", [ [ "ImageId", imageId ] ], this, false, "onComplete", callback);
     },
 
     createSnapshot : function(volumeId, callback)
     {
-        ew_client.queryEC2("CreateSnapshot", [ [ "VolumeId", volumeId ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateSnapshot", [ [ "VolumeId", volumeId ] ], this, false, "onComplete", callback);
     },
 
     attachVolume : function(volumeId, instanceId, device, callback)
@@ -126,7 +126,7 @@ var ew_controller = {
         if (volumeId != null) params.push([ "VolumeId", volumeId ]);
         if (instanceId != null) params.push([ "InstanceId", instanceId ]);
         if (device != null) params.push([ "Device", device ]);
-        ew_client.queryEC2("AttachVolume", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("AttachVolume", params, this, false, "onComplete", callback);
     },
 
     createVolume : function(size, snapshotId, zone, callback)
@@ -135,32 +135,32 @@ var ew_controller = {
         if (size != null) params.push([ "Size", size ]);
         if (snapshotId != null) params.push([ "SnapshotId", snapshotId ]);
         if (zone != null) params.push([ "AvailabilityZone", zone ]);
-        ew_client.queryEC2("CreateVolume", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateVolume", params, this, false, "onComplete", callback);
     },
 
     deleteSnapshot : function(snapshotId, callback)
     {
-        ew_client.queryEC2("DeleteSnapshot", [ [ "SnapshotId", snapshotId ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteSnapshot", [ [ "SnapshotId", snapshotId ] ], this, false, "onComplete", callback);
     },
 
     deleteVolume : function(volumeId, callback)
     {
-        ew_client.queryEC2("DeleteVolume", [ [ "VolumeId", volumeId ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteVolume", [ [ "VolumeId", volumeId ] ], this, false, "onComplete", callback);
     },
 
     detachVolume : function(volumeId, callback)
     {
-        ew_client.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ] ], this, false, "onComplete", callback);
     },
 
     forceDetachVolume : function(volumeId, callback)
     {
-        ew_client.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ], [ "Force", true ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DetachVolume", [ [ "VolumeId", volumeId ], [ "Force", true ] ], this, false, "onComplete", callback);
     },
 
     describeVolumes : function(callback)
     {
-        ew_client.queryEC2("DescribeVolumes", [], this, false, "onCompleteDescribeVolumes", callback);
+        ew_session.queryEC2("DescribeVolumes", [], this, false, "onCompleteDescribeVolumes", callback);
     },
 
     onCompleteDescribeVolumes : function(responseObj)
@@ -204,7 +204,7 @@ var ew_controller = {
 
     describeSnapshots : function(callback)
     {
-        ew_client.queryEC2("DescribeSnapshots", [], this, false, "onCompleteDescribeSnapshots", callback);
+        ew_session.queryEC2("DescribeSnapshots", [], this, false, "onCompleteDescribeSnapshots", callback);
     },
 
     onCompleteDescribeSnapshots : function(responseObj)
@@ -233,7 +233,7 @@ var ew_controller = {
     },
 
     describeSnapshotAttribute: function(id, callback) {
-        ew_client.queryEC2("DescribeSnapshotAttribute", [ ["SnapshotId", id], ["Attribute", "createVolumePermission"] ], this, false, "onCompleteDescribeSnapshotAttribute", callback);
+        ew_session.queryEC2("DescribeSnapshotAttribute", [ ["SnapshotId", id], ["Attribute", "createVolumePermission"] ], this, false, "onCompleteDescribeSnapshotAttribute", callback);
     },
 
     onCompleteDescribeSnapshotAttribute : function(responseObj)
@@ -271,12 +271,12 @@ var ew_controller = {
                 params.push(["CreateVolumePermission.Remove." + (i + 1) + "." + remove[i][0], remove[i][1] ])
             }
         }
-        ew_client.queryEC2("ModifySnapshotAttribute", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("ModifySnapshotAttribute", params, this, false, "onComplete", callback);
     },
 
     describeVpcs : function(callback)
     {
-        ew_client.queryEC2("DescribeVpcs", [], this, false, "onCompleteDescribeVpcs", callback);
+        ew_session.queryEC2("DescribeVpcs", [], this, false, "onCompleteDescribeVpcs", callback);
     },
 
     onCompleteDescribeVpcs : function(responseObj)
@@ -298,17 +298,17 @@ var ew_controller = {
 
     createVpc : function(cidr, callback)
     {
-        ew_client.queryEC2("CreateVpc", [ [ "CidrBlock", cidr ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateVpc", [ [ "CidrBlock", cidr ] ], this, false, "onComplete", callback);
     },
 
     deleteVpc : function(id, callback)
     {
-        ew_client.queryEC2("DeleteVpc", [ [ "VpcId", id ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteVpc", [ [ "VpcId", id ] ], this, false, "onComplete", callback);
     },
 
     describeSubnets : function(callback)
     {
-        ew_client.queryEC2("DescribeSubnets", [], this, false, "onCompleteDescribeSubnets", callback);
+        ew_session.queryEC2("DescribeSubnets", [], this, false, "onCompleteDescribeSubnets", callback);
     },
 
     onCompleteDescribeSubnets : function(responseObj)
@@ -332,17 +332,17 @@ var ew_controller = {
 
     createSubnet : function(vpcId, cidr, az, callback)
     {
-        ew_client.queryEC2("CreateSubnet", [ [ "CidrBlock", cidr ], [ "VpcId", vpcId ], [ "AvailabilityZone", az ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateSubnet", [ [ "CidrBlock", cidr ], [ "VpcId", vpcId ], [ "AvailabilityZone", az ] ], this, false, "onComplete", callback);
     },
 
     deleteSubnet : function(id, callback)
     {
-        ew_client.queryEC2("DeleteSubnet", [ [ "SubnetId", id ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteSubnet", [ [ "SubnetId", id ] ], this, false, "onComplete", callback);
     },
 
     describeDhcpOptions : function(callback)
     {
-        ew_client.queryEC2("DescribeDhcpOptions", [], this, false, "onCompleteDescribeDhcpOptions", callback);
+        ew_session.queryEC2("DescribeDhcpOptions", [], this, false, "onCompleteDescribeDhcpOptions", callback);
     },
 
     onCompleteDescribeDhcpOptions : function(responseObj)
@@ -382,7 +382,7 @@ var ew_controller = {
 
     associateDhcpOptions : function(dhcpOptionsId, vpcId, callback)
     {
-        ew_client.queryEC2("AssociateDhcpOptions", [ [ "DhcpOptionsId", dhcpOptionsId ], [ "VpcId", vpcId ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("AssociateDhcpOptions", [ [ "DhcpOptionsId", dhcpOptionsId ], [ "VpcId", vpcId ] ], this, false, "onComplete", callback);
     },
 
     createDhcpOptions : function(opts, callback)
@@ -398,12 +398,12 @@ var ew_controller = {
             }
         }
 
-        ew_client.queryEC2("CreateDhcpOptions", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateDhcpOptions", params, this, false, "onComplete", callback);
     },
 
     deleteDhcpOptions : function(id, callback)
     {
-        ew_client.queryEC2("DeleteDhcpOptions", [ [ "DhcpOptionsId", id ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteDhcpOptions", [ [ "DhcpOptionsId", id ] ], this, false, "onComplete", callback);
     },
 
     createNetworkAclEntry : function(aclId, num, proto, action, egress, cidr, var1, var2, callback)
@@ -420,32 +420,32 @@ var ew_controller = {
             params.push(["PortRange.To", var2])
             break;
         }
-        ew_client.queryEC2("CreateNetworkAclEntry", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateNetworkAclEntry", params, this, false, "onComplete", callback);
     },
 
     deleteNetworkAclEntry : function(aclId, num, egress, callback)
     {
-        ew_client.queryEC2("DeleteNetworkAclEntry", [ [ "NetworkAclId", aclId ], ["RuleNumber", num], ["Egress", egress] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteNetworkAclEntry", [ [ "NetworkAclId", aclId ], ["RuleNumber", num], ["Egress", egress] ], this, false, "onComplete", callback);
     },
 
     ReplaceNetworkAclAssociation: function(assocId, aclId, callback)
     {
-        ew_client.queryEC2("ReplaceNetworkAclAssociation", [ [ "AssociationId", assocId ], ["NetworkAclId", aclId] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("ReplaceNetworkAclAssociation", [ [ "AssociationId", assocId ], ["NetworkAclId", aclId] ], this, false, "onComplete", callback);
     },
 
     createNetworkAcl : function(vpcId, callback)
     {
-        ew_client.queryEC2("CreateNetworkAcl", [ [ "VpcId", vpcId ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateNetworkAcl", [ [ "VpcId", vpcId ] ], this, false, "onComplete", callback);
     },
 
     deleteNetworkAcl : function(id, callback)
     {
-        ew_client.queryEC2("DeleteNetworkAcl", [ [ "NetworkAclId", id ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteNetworkAcl", [ [ "NetworkAclId", id ] ], this, false, "onComplete", callback);
     },
 
     describeNetworkAcls : function(callback)
     {
-        ew_client.queryEC2("DescribeNetworkAcls", [], this, false, "onCompleteDescribeNetworkAcls", callback);
+        ew_session.queryEC2("DescribeNetworkAcls", [], this, false, "onCompleteDescribeNetworkAcls", callback);
     },
 
     onCompleteDescribeNetworkAcls : function(responseObj)
@@ -499,7 +499,7 @@ var ew_controller = {
 
     describeVpnGateways : function(callback)
     {
-        ew_client.queryEC2("DescribeVpnGateways", [], this, false, "onCompleteDescribeVpnGateways", callback);
+        ew_session.queryEC2("DescribeVpnGateways", [], this, false, "onCompleteDescribeVpnGateways", callback);
     },
 
     onCompleteDescribeVpnGateways : function(responseObj)
@@ -529,17 +529,17 @@ var ew_controller = {
 
     createVpnGateway : function(type, az, callback)
     {
-        ew_client.queryEC2("CreateVpnGateway", [ [ "Type", type ], [ "AvailabilityZone", az ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateVpnGateway", [ [ "Type", type ], [ "AvailabilityZone", az ] ], this, false, "onComplete", callback);
     },
 
     deleteVpnGateway : function(id, callback)
     {
-        ew_client.queryEC2("DeleteVpnGateway", [ [ "VpnGatewayId", id ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteVpnGateway", [ [ "VpnGatewayId", id ] ], this, false, "onComplete", callback);
     },
 
     describeCustomerGateways : function(callback)
     {
-        ew_client.queryEC2("DescribeCustomerGateways", [], this, false, "onCompleteDescribeCustomerGateways", callback);
+        ew_session.queryEC2("DescribeCustomerGateways", [], this, false, "onCompleteDescribeCustomerGateways", callback);
     },
 
     onCompleteDescribeCustomerGateways : function(responseObj)
@@ -562,17 +562,17 @@ var ew_controller = {
 
     createCustomerGateway : function(type, ip, asn, callback)
     {
-        ew_client.queryEC2("CreateCustomerGateway", [ [ "Type", type ], [ "IpAddress", ip ], [ "BgpAsn", asn ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateCustomerGateway", [ [ "Type", type ], [ "IpAddress", ip ], [ "BgpAsn", asn ] ], this, false, "onComplete", callback);
     },
 
     deleteCustomerGateway : function(id, callback)
     {
-        ew_client.queryEC2("DeleteCustomerGateway", [ [ "CustomerGatewayId", id ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteCustomerGateway", [ [ "CustomerGatewayId", id ] ], this, false, "onComplete", callback);
     },
 
     describeInternetGateways : function(callback)
     {
-        ew_client.queryEC2("DescribeInternetGateways", [], this, false, "onCompleteDescribeInternetGateways", callback);
+        ew_session.queryEC2("DescribeInternetGateways", [], this, false, "onCompleteDescribeInternetGateways", callback);
     },
 
     onCompleteDescribeInternetGateways : function(responseObj)
@@ -597,27 +597,27 @@ var ew_controller = {
 
     createInternetGateway : function(callback)
     {
-        ew_client.queryEC2("CreateInternetGateway", [], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateInternetGateway", [], this, false, "onComplete", callback);
     },
 
     deleteInternetGateway : function(id, callback)
     {
-        ew_client.queryEC2("DeleteInternetGateway", [ [ "InternetGatewayId", id ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteInternetGateway", [ [ "InternetGatewayId", id ] ], this, false, "onComplete", callback);
     },
 
     attachInternetGateway : function(igwid, vpcid, callback)
     {
-        ew_client.queryEC2("AttachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, false, "onComplete", callback);
+        ew_session.queryEC2("AttachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, false, "onComplete", callback);
     },
 
     detachInternetGateway : function(igwid, vpcid, callback)
     {
-        ew_client.queryEC2("DetachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, false, "onComplete", callback);
+        ew_session.queryEC2("DetachInternetGateway", [["InternetGatewayId", igwid], ["VpcId", vpcid]], this, false, "onComplete", callback);
     },
 
     describeVpnConnections : function(callback)
     {
-        ew_client.queryEC2("DescribeVpnConnections", [], this, false, "onCompleteDescribeVpnConnections", callback);
+        ew_session.queryEC2("DescribeVpnConnections", [], this, false, "onCompleteDescribeVpnConnections", callback);
     },
 
     onCompleteDescribeVpnConnections : function(responseObj)
@@ -654,27 +654,27 @@ var ew_controller = {
 
     createVpnConnection : function(type, cgwid, vgwid, callback)
     {
-        ew_client.queryEC2("CreateVpnConnection", [ [ "Type", type ], [ "CustomerGatewayId", cgwid ], [ "VpnGatewayId", vgwid ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateVpnConnection", [ [ "Type", type ], [ "CustomerGatewayId", cgwid ], [ "VpnGatewayId", vgwid ] ], this, false, "onComplete", callback);
     },
 
     deleteVpnConnection : function(id, callback)
     {
-        ew_client.queryEC2("DeleteVpnConnection", [ [ "VpnConnectionId", id ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteVpnConnection", [ [ "VpnConnectionId", id ] ], this, false, "onComplete", callback);
     },
 
     attachVpnGatewayToVpc : function(vgwid, vpcid, callback)
     {
-        ew_client.queryEC2("AttachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("AttachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, false, "onComplete", callback);
     },
 
     detachVpnGatewayFromVpc : function(vgwid, vpcid, callback)
     {
-        ew_client.queryEC2("DetachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DetachVpnGateway", [ [ "VpnGatewayId", vgwid ], [ "VpcId", vpcid ] ], this, false, "onComplete", callback);
     },
 
     describeImage : function(imageId, callback)
     {
-        ew_client.queryEC2("DescribeImages", [ [ "ImageId", imageId ] ], this, false, "onCompleteDescribeImage", callback);
+        ew_session.queryEC2("DescribeImages", [ [ "ImageId", imageId ] ], this, false, "onCompleteDescribeImage", callback);
     },
 
     onCompleteDescribeImage : function(responseObj)
@@ -715,12 +715,12 @@ var ew_controller = {
         var noRebootVal = "false";
         if (noReboot == true) noRebootVal = "true";
 
-        ew_client.queryEC2("CreateImage", [ [ "InstanceId", instanceId ], [ "Name", amiName ], [ "Description", amiDescription ], [ "NoReboot", noRebootVal ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateImage", [ [ "InstanceId", instanceId ], [ "Name", amiName ], [ "Description", amiDescription ], [ "NoReboot", noRebootVal ] ], this, false, "onComplete", callback);
     },
 
     describeImages : function( callback)
     {
-        ew_client.queryEC2("DescribeImages", [], this, false, "onCompleteDescribeImages", callback);
+        ew_session.queryEC2("DescribeImages", [], this, false, "onCompleteDescribeImages", callback);
     },
 
     onCompleteDescribeImages : function(responseObj)
@@ -759,7 +759,7 @@ var ew_controller = {
 
     describeLeaseOfferings : function(callback)
     {
-        ew_client.queryEC2("DescribeReservedInstancesOfferings", [], this, false, "onCompleteDescribeLeaseOfferings", callback);
+        ew_session.queryEC2("DescribeReservedInstancesOfferings", [], this, false, "onCompleteDescribeLeaseOfferings", callback);
     },
 
     onCompleteDescribeLeaseOfferings : function(responseObj)
@@ -789,7 +789,7 @@ var ew_controller = {
 
     describeReservedInstances : function(callback)
     {
-        ew_client.queryEC2("DescribeReservedInstances", [], this, false, "onCompleteDescribeReservedInstances", callback);
+        ew_session.queryEC2("DescribeReservedInstances", [], this, false, "onCompleteDescribeReservedInstances", callback);
     },
 
     onCompleteDescribeReservedInstances : function(responseObj)
@@ -823,12 +823,12 @@ var ew_controller = {
 
     purchaseOffering : function(id, count, callback)
     {
-        ew_client.queryEC2("PurchaseReservedInstancesOffering", [ [ "ReservedInstancesOfferingId", id ], [ "InstanceCount", count ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("PurchaseReservedInstancesOffering", [ [ "ReservedInstancesOfferingId", id ], [ "InstanceCount", count ] ], this, false, "onComplete", callback);
     },
 
     describeLaunchPermissions : function(imageId, callback)
     {
-        ew_client.queryEC2("DescribeImageAttribute", [ [ "ImageId", imageId ], [ "Attribute", "launchPermission" ] ], this, false, "onCompleteDescribeLaunchPermissions", callback);
+        ew_session.queryEC2("DescribeImageAttribute", [ [ "ImageId", imageId ], [ "Attribute", "launchPermission" ] ], this, false, "onCompleteDescribeLaunchPermissions", callback);
     },
 
     onCompleteDescribeLaunchPermissions : function(responseObj)
@@ -860,7 +860,7 @@ var ew_controller = {
         } else {
             params.push([ "UserId.1", name ]);
         }
-        ew_client.queryEC2("ModifyImageAttribute", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("ModifyImageAttribute", params, this, false, "onComplete", callback);
     },
 
     revokeLaunchPermission : function(imageId, name, callback)
@@ -874,7 +874,7 @@ var ew_controller = {
         } else {
             params.push([ "UserId.1", name ]);
         }
-        ew_client.queryEC2("ModifyImageAttribute", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("ModifyImageAttribute", params, this, false, "onComplete", callback);
     },
 
     resetLaunchPermissions : function(imageId, callback)
@@ -882,12 +882,12 @@ var ew_controller = {
         var params = []
         params.push([ "ImageId", imageId ]);
         params.push([ "Attribute", "launchPermission" ]);
-        ew_client.queryEC2("ResetImageAttribute", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("ResetImageAttribute", params, this, false, "onComplete", callback);
     },
 
     describeInstances : function(callback)
     {
-        ew_client.queryEC2("DescribeInstances", [], this, false, "onCompleteDescribeInstances", callback);
+        ew_session.queryEC2("DescribeInstances", [], this, false, "onCompleteDescribeInstances", callback);
     },
 
     onCompleteDescribeInstances : function(responseObj)
@@ -1043,7 +1043,7 @@ var ew_controller = {
             }
         }
 
-        ew_client.queryEC2("RunInstances", params, this, false, "onCompleteRunInstances", callback);
+        ew_session.queryEC2("RunInstances", params, this, false, "onCompleteRunInstances", callback);
     },
 
     onCompleteRunInstances : function(responseObj)
@@ -1060,7 +1060,7 @@ var ew_controller = {
         for ( var i in instances) {
             params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
-        ew_client.queryEC2("TerminateInstances", params, this, false, "onCompleteRunInstances", callback);
+        ew_session.queryEC2("TerminateInstances", params, this, false, "onCompleteRunInstances", callback);
     },
 
     stopInstances : function(instances, force, callback)
@@ -1072,7 +1072,7 @@ var ew_controller = {
         if (force == true) {
             params.push([ "Force", "true" ]);
         }
-        ew_client.queryEC2("StopInstances", params, this, false, "onCompleteRunInstances", callback);
+        ew_session.queryEC2("StopInstances", params, this, false, "onCompleteRunInstances", callback);
     },
 
     startInstances : function(instances, callback)
@@ -1081,7 +1081,7 @@ var ew_controller = {
         for ( var i in instances) {
             params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
-        ew_client.queryEC2("StartInstances", params, this, false, "onCompleteRunInstances", callback);
+        ew_session.queryEC2("StartInstances", params, this, false, "onCompleteRunInstances", callback);
     },
 
     bundleInstance : function(instanceId, bucket, prefix, activeCred, callback)
@@ -1105,7 +1105,7 @@ var ew_controller = {
         params.push([ "Storage.S3.UploadPolicy", s3polb64 ]);
         params.push([ "Storage.S3.UploadPolicySignature", policySig ]);
 
-        ew_client.queryEC2("BundleInstance", params, this, false, "onCompleteBundleInstance", callback);
+        ew_session.queryEC2("BundleInstance", params, this, false, "onCompleteBundleInstance", callback);
     },
 
     onCompleteBundleInstance : function(responseObj)
@@ -1126,7 +1126,7 @@ var ew_controller = {
         var params = []
         params.push([ "BundleId", id ]);
 
-        ew_client.queryEC2("CancelBundleTask", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("CancelBundleTask", params, this, false, "onComplete", callback);
     },
 
     unpackBundleTask : function(item)
@@ -1159,7 +1159,7 @@ var ew_controller = {
 
     describeBundleTasks : function(callback)
     {
-        ew_client.queryEC2("DescribeBundleTasks", [], this, false, "onCompleteDescribeBundleTasks", callback);
+        ew_session.queryEC2("DescribeBundleTasks", [], this, false, "onCompleteDescribeBundleTasks", callback);
     },
 
     onCompleteDescribeBundleTasks : function(responseObj)
@@ -1180,12 +1180,12 @@ var ew_controller = {
         if (region) {
             content = "<CreateBucketConstraint><LocationConstraint>" + region + "</LocationConstraint></CreateBucketConstraint>";
         }
-        ew_client.queryS3("PUT", bucket, "", "", params, content, this, false, "onComplete", callback);
+        ew_session.queryS3("PUT", bucket, "", "", params, content, this, false, "onComplete", callback);
     },
 
     listS3Buckets : function(callback)
     {
-        ew_client.queryS3("GET", "", "", "", {}, content, this, false, "onCompleteListS3Buckets", callback);
+        ew_session.queryS3("GET", "", "", "", {}, content, this, false, "onCompleteListS3Buckets", callback);
     },
 
     onCompleteListS3Buckets : function(responseObj)
@@ -1207,7 +1207,7 @@ var ew_controller = {
 
     getS3BucketAcl : function(bucket, callback)
     {
-        ew_client.queryS3("GET", bucket, "", "?acl", {}, content, this, false, "onCompleteGetS3BucketAcl", callback);
+        ew_session.queryS3("GET", bucket, "", "?acl", {}, content, this, false, "onCompleteGetS3BucketAcl", callback);
     },
 
     onCompleteGetS3BucketAcl : function(responseObj)
@@ -1245,7 +1245,7 @@ var ew_controller = {
 
     setS3BucketAcl : function(bucket, content, callback)
     {
-        ew_client.queryS3("PUT", bucket, "", "?acl", {}, content, this, false, "onCompleteSetS3BucketAcl", callback);
+        ew_session.queryS3("PUT", bucket, "", "?acl", {}, content, this, false, "onCompleteSetS3BucketAcl", callback);
     },
 
     onCompleteSetS3BucketAcl : function(responseObj)
@@ -1260,7 +1260,7 @@ var ew_controller = {
 
     getS3BucketLocation : function(bucket, callback)
     {
-        ew_client.queryS3("GET", bucket, "", "?location", {}, null, this, false, "onCompleteGetS3BucketLocation", callback);
+        ew_session.queryS3("GET", bucket, "", "?location", {}, null, this, false, "onCompleteGetS3BucketLocation", callback);
     },
 
     onCompleteGetS3BucketLocation : function(responseObj)
@@ -1277,7 +1277,7 @@ var ew_controller = {
 
     listS3BucketKeys : function(bucket, params, callback)
     {
-        ew_client.queryS3("GET", bucket, "", "", {}, null, this, false, "onCompleteListS3BucketKeys", callback);
+        ew_session.queryS3("GET", bucket, "", "", {}, null, this, false, "onCompleteListS3BucketKeys", callback);
     },
 
     onCompleteListS3BucketKeys : function(responseObj)
@@ -1304,27 +1304,27 @@ var ew_controller = {
 
     deleteS3Bucket : function(bucket, params, callback)
     {
-        ew_client.queryS3("DELETE", bucket, "", "", params, null, this, false, "onComplete", callback);
+        ew_session.queryS3("DELETE", bucket, "", "", params, null, this, false, "onComplete", callback);
     },
 
     createS3BucketKey : function(bucket, key, params, data, callback)
     {
-        ew_client.queryS3("PUT", bucket, key, "", params, data, this, false, "onComplete", callback);
+        ew_session.queryS3("PUT", bucket, key, "", params, data, this, false, "onComplete", callback);
     },
 
     deleteS3BucketKey : function(bucket, key, params, callback)
     {
-        ew_client.queryS3("DELETE", bucket, key, "", params, null, this, false, "onComplete", callback);
+        ew_session.queryS3("DELETE", bucket, key, "", params, null, this, false, "onComplete", callback);
     },
 
     getS3BucketKey : function(bucket, key, path, params, file, callback, progresscb)
     {
-        ew_client.downloadS3("GET", bucket, key, path, params, file, callback, progresscb);
+        ew_session.downloadS3("GET", bucket, key, path, params, file, callback, progresscb);
     },
 
     readS3BucketKey : function(bucket, key, path, params, callback)
     {
-        ew_client.queryS3("GET", bucket, key, path, {}, null, this, false, "onCompleteReadS3BucketKey", callback);
+        ew_session.queryS3("GET", bucket, key, path, {}, null, this, false, "onCompleteReadS3BucketKey", callback);
     },
 
     onCompleteReadS3BucketKey : function(responseObj)
@@ -1334,12 +1334,12 @@ var ew_controller = {
 
     putS3BucketKey : function(bucket, key, path, params, text, callback)
     {
-        ew_client.queryS3("PUT", bucket, key, path, params, text, this, false, "onComplete", callback);
+        ew_session.queryS3("PUT", bucket, key, path, params, text, this, false, "onComplete", callback);
     },
 
     initS3BucketKeyUpload : function(bucket, key, params, callback)
     {
-        ew_client.queryS3("POST", bucket, key, "?uploads", params, null, this, false, "onCompleteInitS3BucketKeyUpload", callback);
+        ew_session.queryS3("POST", bucket, key, "?uploads", params, null, this, false, "onCompleteInitS3BucketKeyUpload", callback);
     },
 
     onCompleteInitS3BucketKeyUpload : function(responseObj)
@@ -1351,12 +1351,12 @@ var ew_controller = {
 
     uploadS3BucketFile : function(bucket, key, path, params, file, callback, progresscb)
     {
-        ew_client.uploadS3(bucket, key, path, params, file, callback, progresscb);
+        ew_session.uploadS3(bucket, key, path, params, file, callback, progresscb);
     },
 
     getS3BucketKeyAcl : function(bucket, key, callback)
     {
-        ew_client.queryS3("GET", bucket, key, "?acl", {}, null, this, false, "onCompleteGetS3BucketKeyAcl", callback);
+        ew_session.queryS3("GET", bucket, key, "?acl", {}, null, this, false, "onCompleteGetS3BucketKeyAcl", callback);
     },
 
     onCompleteGetS3BucketKeyAcl : function(responseObj)
@@ -1395,7 +1395,7 @@ var ew_controller = {
 
     setS3BucketKeyAcl : function(bucket, key, content, callback)
     {
-        ew_client.queryS3("PUT", bucket, key, "?acl", {}, content, this, false, "onCompleteSetS3BucketKeyAcl", callback);
+        ew_session.queryS3("PUT", bucket, key, "?acl", {}, content, this, false, "onCompleteSetS3BucketKeyAcl", callback);
     },
 
     onCompleteSetS3BucketKeyAcl : function(responseObj)
@@ -1413,7 +1413,7 @@ var ew_controller = {
     getS3BucketWebsite : function(bucket, callback)
     {
         this.handleErrors("onCompleteGetS3BucketWebsite");
-        ew_client.queryS3("GET", bucket, "", "?website", {}, null, this, false, "onCompleteGetS3BucketWebsite", callback);
+        ew_session.queryS3("GET", bucket, "", "?website", {}, null, this, false, "onCompleteGetS3BucketWebsite", callback);
     },
 
     onCompleteGetS3BucketWebsite : function(responseObj)
@@ -1445,7 +1445,7 @@ var ew_controller = {
             content += '<ErrorDocument><Key>' + error + '</Key></ErrorDocument>';
         }
         content += '</WebsiteConfiguration>';
-        ew_client.queryS3("PUT", bucket, "", "?website", {}, content, this, false, "onCompleteSetS3BucketWebsite", callback);
+        ew_session.queryS3("PUT", bucket, "", "?website", {}, content, this, false, "onCompleteSetS3BucketWebsite", callback);
     },
 
     onCompleteSetS3BucketWebsite : function(responseObj)
@@ -1458,7 +1458,7 @@ var ew_controller = {
 
     deleteS3BucketWebsite : function(bucket, callback)
     {
-        ew_client.queryS3("DELETE", bucket, "", "?website", {}, content, this, false, "onCompleteDeleteS3BucketWebsite", callback);
+        ew_session.queryS3("DELETE", bucket, "", "?website", {}, content, this, false, "onCompleteDeleteS3BucketWebsite", callback);
     },
 
     onCompleteDeleteS3BucketKeyAcl : function(responseObj)
@@ -1471,7 +1471,7 @@ var ew_controller = {
 
     describeKeypairs : function(callback)
     {
-        ew_client.queryEC2("DescribeKeyPairs", [], this, false, "onCompleteDescribeKeypairs", callback);
+        ew_session.queryEC2("DescribeKeyPairs", [], this, false, "onCompleteDescribeKeypairs", callback);
     },
 
     onCompleteDescribeKeypairs : function(responseObj)
@@ -1492,7 +1492,7 @@ var ew_controller = {
 
     createKeypair : function(name, callback)
     {
-        ew_client.queryEC2("CreateKeyPair", [ [ "KeyName", name ] ], this, false, "onCompleteCreateKeyPair", callback);
+        ew_session.queryEC2("CreateKeyPair", [ [ "KeyName", name ] ], this, false, "onCompleteCreateKeyPair", callback);
     },
 
     onCompleteCreateKeyPair : function(responseObj)
@@ -1511,12 +1511,12 @@ var ew_controller = {
 
     deleteKeypair : function(name, callback)
     {
-        ew_client.queryEC2("DeleteKeyPair", [ [ "KeyName", name ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteKeyPair", [ [ "KeyName", name ] ], this, false, "onComplete", callback);
     },
 
     describeRouteTables : function(callback)
     {
-        ew_client.queryEC2("DescribeRouteTables", [], this, false, "onCompleteDescribeRouteTables", callback);
+        ew_session.queryEC2("DescribeRouteTables", [], this, false, "onCompleteDescribeRouteTables", callback);
     },
 
     onCompleteDescribeRouteTables : function(responseObj)
@@ -1561,12 +1561,12 @@ var ew_controller = {
 
     createRouteTable : function(vpcId, callback)
     {
-        ew_client.queryEC2("CreateRouteTable", [["VpcId", vpcId]], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateRouteTable", [["VpcId", vpcId]], this, false, "onComplete", callback);
     },
 
     deleteRouteTable : function(tableId, callback)
     {
-        ew_client.queryEC2("DeleteRouteTable", [["RouteTableId", tableId]], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteRouteTable", [["RouteTableId", tableId]], this, false, "onComplete", callback);
     },
 
     createRoute : function(tableId, cidr, gatewayId, instanceId, networkInterfaceId, callback)
@@ -1583,22 +1583,22 @@ var ew_controller = {
         if (networkInterfaceId) {
             params.push(["NetworkInterfaceId", networkInterfaceId]);
         }
-        ew_client.queryEC2("CreateRoute", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateRoute", params, this, false, "onComplete", callback);
     },
 
     deleteRoute : function(tableId, cidr, callback)
     {
-        ew_client.queryEC2("DeleteRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr]], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteRoute", [["RouteTableId", tableId], ["DestinationCidrBlock", cidr]], this, false, "onComplete", callback);
     },
 
     associateRouteTable : function(tableId, subnetId, callback)
     {
-        ew_client.queryEC2("AssociateRouteTable", [["RouteTableId", tableId], ["SubnetId", subnetId]], this, false, "onComplete", callback);
+        ew_session.queryEC2("AssociateRouteTable", [["RouteTableId", tableId], ["SubnetId", subnetId]], this, false, "onComplete", callback);
     },
 
     disassociateRouteTable : function(assocId, callback)
     {
-        ew_client.queryEC2("DisassociateRouteTable", [["AssociationId", assocId]], this, false, "onComplete", callback);
+        ew_session.queryEC2("DisassociateRouteTable", [["AssociationId", assocId]], this, false, "onComplete", callback);
     },
 
     createNetworkInterface : function(subnetId, ip, descr, groups, callback)
@@ -1615,17 +1615,17 @@ var ew_controller = {
                 params.push(["SecurityGroupId."+(i+1), groups[i]]);
             }
         }
-        ew_client.queryEC2("CreateNetworkInterface", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateNetworkInterface", params, this, false, "onComplete", callback);
     },
 
     deleteNetworkInterface : function(id, callback)
     {
-        ew_client.queryEC2("DeleteNetworkInterface", [["NetworkInterfaceId", id]], this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteNetworkInterface", [["NetworkInterfaceId", id]], this, false, "onComplete", callback);
     },
 
     modifyNetworkInterfaceAttribute : function (id, name, value, callback)
     {
-        ew_client.queryEC2("ModifyNetworkInterfaceAttribute", [ ["NetworkInterfaceId", id], [name + ".Value", value] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("ModifyNetworkInterfaceAttribute", [ ["NetworkInterfaceId", id], [name + ".Value", value] ], this, false, "onComplete", callback);
     },
 
     modifyNetworkInterfaceAttributes : function (id, attributes, callback)
@@ -1635,12 +1635,12 @@ var ew_controller = {
             params.push(attributes[i]);
         }
 
-        ew_client.queryEC2("ModifyNetworkInterfaceAttribute", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("ModifyNetworkInterfaceAttribute", params, this, false, "onComplete", callback);
     },
 
     attachNetworkInterface : function (id, instanceId, deviceIndex, callback)
     {
-        ew_client.queryEC2("AttachNetworkInterface", [["NetworkInterfaceId", id], ["InstanceId", instanceId], ["DeviceIndex", deviceIndex]], this, false, "onComplete", callback);
+        ew_session.queryEC2("AttachNetworkInterface", [["NetworkInterfaceId", id], ["InstanceId", instanceId], ["DeviceIndex", deviceIndex]], this, false, "onComplete", callback);
     },
 
     detachNetworkInterface : function (attachmentId, force, callback)
@@ -1651,12 +1651,12 @@ var ew_controller = {
             params.push(['Force', force]);
         }
 
-        ew_client.queryEC2("DetachNetworkInterface", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("DetachNetworkInterface", params, this, false, "onComplete", callback);
     },
 
     describeNetworkInterfaces : function(callback)
     {
-        ew_client.queryEC2("DescribeNetworkInterfaces", [], this, false, "onCompleteDescribeNetworkInterfaces", callback);
+        ew_session.queryEC2("DescribeNetworkInterfaces", [], this, false, "onCompleteDescribeNetworkInterfaces", callback);
     },
 
     onCompleteDescribeNetworkInterfaces : function(responseObj)
@@ -1711,7 +1711,7 @@ var ew_controller = {
 
     describeSecurityGroups : function(callback)
     {
-        ew_client.queryEC2("DescribeSecurityGroups", [], this, false, "onCompleteDescribeSecurityGroups", callback);
+        ew_session.queryEC2("DescribeSecurityGroups", [], this, false, "onCompleteDescribeSecurityGroups", callback);
     },
 
     parsePermissions: function(type, list, items)
@@ -1781,13 +1781,13 @@ var ew_controller = {
         if (vpcId && vpcId != "") {
             params.push([ "VpcId", vpcId ])
         }
-        ew_client.queryEC2("CreateSecurityGroup", params, this, false, "onComplete", callback, null);
+        ew_session.queryEC2("CreateSecurityGroup", params, this, false, "onComplete", callback, null);
     },
 
     deleteSecurityGroup : function(group, callback)
     {
         var params = typeof group == "object" ? [ [ "GroupId", group.id ] ] : [ [ "GroupName", group ] ]
-        ew_client.queryEC2("DeleteSecurityGroup", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteSecurityGroup", params, this, false, "onComplete", callback);
     },
 
     authorizeSourceCIDR : function(type, group, ipProtocol, fromPort, toPort, cidrIp, callback)
@@ -1797,7 +1797,7 @@ var ew_controller = {
         params.push([ "IpPermissions.1.FromPort", fromPort ]);
         params.push([ "IpPermissions.1.ToPort", toPort ]);
         params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
-        ew_client.queryEC2("AuthorizeSecurityGroup" + type, params, this, false, "onComplete", callback);
+        ew_session.queryEC2("AuthorizeSecurityGroup" + type, params, this, false, "onComplete", callback);
     },
 
     revokeSourceCIDR : function(type, group, ipProtocol, fromPort, toPort, cidrIp, callback)
@@ -1807,7 +1807,7 @@ var ew_controller = {
         params.push([ "IpPermissions.1.FromPort", fromPort ]);
         params.push([ "IpPermissions.1.ToPort", toPort ]);
         params.push([ "IpPermissions.1.IpRanges.1.CidrIp", cidrIp ]);
-        ew_client.queryEC2("RevokeSecurityGroup" + type, params, this, false, "onComplete", callback);
+        ew_session.queryEC2("RevokeSecurityGroup" + type, params, this, false, "onComplete", callback);
     },
 
     authorizeSourceGroup : function(type, group, ipProtocol, fromPort, toPort, srcGroup, callback)
@@ -1822,7 +1822,7 @@ var ew_controller = {
             params.push([ "IpPermissions.1.Groups.1.GroupName", srcGroup.name ]);
             params.push([ "IpPermissions.1.Groups.1.UserId", srcGroup.ownerId ]);
         }
-        ew_client.queryEC2("AuthorizeSecurityGroup" + type, params, this, false, "onComplete", callback);
+        ew_session.queryEC2("AuthorizeSecurityGroup" + type, params, this, false, "onComplete", callback);
     },
 
     revokeSourceGroup : function(type, group, ipProtocol, fromPort, toPort, srcGroup, callback)
@@ -1837,7 +1837,7 @@ var ew_controller = {
             params.push([ "IpPermissions.1.Groups.1.GroupName", srcGroup.name ]);
             params.push([ "IpPermissions.1.Groups.1.UserId", srcGroup.ownerId ]);
         }
-        ew_client.queryEC2("RevokeSecurityGroup" + type, params, this, false, "onComplete", callback);
+        ew_session.queryEC2("RevokeSecurityGroup" + type, params, this, false, "onComplete", callback);
     },
 
     rebootInstances : function(instances, callback)
@@ -1846,12 +1846,12 @@ var ew_controller = {
         for ( var i in instances) {
             params.push([ "InstanceId." + (i + 1), instances[i].id ]);
         }
-        ew_client.queryEC2("RebootInstances", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("RebootInstances", params, this, false, "onComplete", callback);
     },
 
     getConsoleOutput : function(instanceId, isSync, callback)
     {
-        return ew_client.queryEC2("GetConsoleOutput", [ [ "InstanceId", instanceId ] ], this, isSync, "onCompleteGetConsoleOutput", callback);
+        return ew_session.queryEC2("GetConsoleOutput", [ [ "InstanceId", instanceId ] ], this, isSync, "onCompleteGetConsoleOutput", callback);
     },
 
     onCompleteGetConsoleOutput : function(responseObj)
@@ -1871,7 +1871,7 @@ var ew_controller = {
 
     describeAvailabilityZones : function(callback)
     {
-        ew_client.queryEC2("DescribeAvailabilityZones", [], this, false, "onCompleteDescribeAvailabilityZones", callback);
+        ew_session.queryEC2("DescribeAvailabilityZones", [], this, false, "onCompleteDescribeAvailabilityZones", callback);
     },
 
     onCompleteDescribeAvailabilityZones : function(responseObj)
@@ -1892,7 +1892,7 @@ var ew_controller = {
 
     describeAddresses : function(callback)
     {
-        ew_client.queryEC2("DescribeAddresses", [], this, false, "onCompleteDescribeAddresses", callback);
+        ew_session.queryEC2("DescribeAddresses", [], this, false, "onCompleteDescribeAddresses", callback);
     },
 
     onCompleteDescribeAddresses : function(responseObj)
@@ -1917,13 +1917,13 @@ var ew_controller = {
     allocateAddress : function(vpc, callback)
     {
         var params = vpc ? [["Domain", "vpc"]] : []
-        ew_client.queryEC2("AllocateAddress", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("AllocateAddress", params, this, false, "onComplete", callback);
     },
 
     releaseAddress : function(eip, callback)
     {
         var params = eip.allocationId ? [["AllocationId", eip.allocationId]] : [[ 'PublicIp', eip.publicIp ]]
-        ew_client.queryEC2("ReleaseAddress", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("ReleaseAddress", params, this, false, "onComplete", callback);
     },
 
     associateAddress : function(eip, instanceId, networkInterfaceId, callback)
@@ -1935,18 +1935,18 @@ var ew_controller = {
         if (networkInterfaceId) {
             params.push([ 'NetworkInterfaceId', networkInterfaceId ])
         }
-        ew_client.queryEC2("AssociateAddress", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("AssociateAddress", params, this, false, "onComplete", callback);
     },
 
     disassociateAddress : function(eip, callback)
     {
         var params = eip.associationId ? [["AssociationId", eip.associationId]] : [[ 'PublicIp', eip.publicIp ]]
-        ew_client.queryEC2("DisassociateAddress", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("DisassociateAddress", params, this, false, "onComplete", callback);
     },
 
     describeRegions : function(callback)
     {
-        ew_client.queryEC2("DescribeRegions", [], this, false, "onCompleteDescribeRegions", callback);
+        ew_session.queryEC2("DescribeRegions", [], this, false, "onCompleteDescribeRegions", callback);
     },
 
     onCompleteDescribeRegions : function(responseObj)
@@ -1968,7 +1968,7 @@ var ew_controller = {
 
     describeLoadBalancers : function(callback)
     {
-        ew_client.queryELB("DescribeLoadBalancers", [], this, false, "onCompleteDescribeLoadBalancers", callback);
+        ew_session.queryELB("DescribeLoadBalancers", [], this, false, "onCompleteDescribeLoadBalancers", callback);
     },
 
     onCompleteDescribeLoadBalancers : function(responseObj)
@@ -2056,7 +2056,7 @@ var ew_controller = {
     {
         var params =[ [ "LoadBalancerName", LoadBalancerName ] ];
 
-        ew_client.queryELB("DescribeInstanceHealth", params, this, false, "onCompleteDescribeInstanceHealth", callback);
+        ew_session.queryELB("DescribeInstanceHealth", params, this, false, "onCompleteDescribeInstanceHealth", callback);
     },
 
     onCompleteDescribeInstanceHealth : function(responseObj)
@@ -2084,7 +2084,7 @@ var ew_controller = {
         var params = []
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
-        ew_client.queryELB("DeleteLoadBalancer", params, this, false, "onComplete", callback);
+        ew_session.queryELB("DeleteLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     createLoadBalancer : function(LoadBalancerName, Protocol, elbport, instanceport, Zone, subnet, groups, callback)
@@ -2104,7 +2104,7 @@ var ew_controller = {
         }
         params.push([ "Listeners.member.LoadBalancerPort", elbport ]);
         params.push([ "Listeners.member.InstancePort", instanceport ]);
-        ew_client.queryELB("CreateLoadBalancer", params, this, false, "onComplete", callback);
+        ew_session.queryELB("CreateLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     configureHealthCheck : function(LoadBalancerName, Target, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, callback)
@@ -2117,7 +2117,7 @@ var ew_controller = {
         params.push([ "HealthCheck.HealthyThreshold", HealthyThreshold ]);
         params.push([ "HealthCheck.UnhealthyThreshold", UnhealthyThreshold ]);
 
-        ew_client.queryELB("ConfigureHealthCheck", params, this, false, "onComplete", callback);
+        ew_session.queryELB("ConfigureHealthCheck", params, this, false, "onComplete", callback);
     },
 
     registerInstancesWithLoadBalancer : function(LoadBalancerName, instances, callback)
@@ -2128,7 +2128,7 @@ var ew_controller = {
             params.push([ "Instances.member." + (i + 1) + ".InstanceId", instances[i] ]);
         }
         debug(params)
-        ew_client.queryELB("RegisterInstancesWithLoadBalancer", params, this, false, "onComplete", callback);
+        ew_session.queryELB("RegisterInstancesWithLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     deregisterInstancesWithLoadBalancer : function(LoadBalancerName, instances, callback)
@@ -2138,7 +2138,7 @@ var ew_controller = {
         for (var i = 0; i < instances.length; i++) {
             params.push([ "Instances.member." + (i + 1) + ".InstanceId", instances[i] ]);
         }
-        ew_client.queryELB("DeregisterInstancesFromLoadBalancer", params, this, false, "onComplete", callback);
+        ew_session.queryELB("DeregisterInstancesFromLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     enableAvailabilityZonesForLoadBalancer : function(LoadBalancerName, Zones, callback)
@@ -2148,7 +2148,7 @@ var ew_controller = {
         for (var i = 0; i < Zones.length; i++) {
             params.push([ "AvailabilityZones.member." + (i + 1), Zones[i] ]);
         }
-        ew_client.queryELB("EnableAvailabilityZonesForLoadBalancer", params, this, false, "onComplete", callback);
+        ew_session.queryELB("EnableAvailabilityZonesForLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     disableAvailabilityZonesForLoadBalancer : function(LoadBalancerName, Zones, callback)
@@ -2158,7 +2158,7 @@ var ew_controller = {
         for (var i = 0 ; i < Zones.length; i++) {
             params.push([ "AvailabilityZones.member." + (i + 1), Zones[i] ]);
         }
-        ew_client.queryELB("DisableAvailabilityZonesForLoadBalancer", params, this, false, "onComplete", callback);
+        ew_session.queryELB("DisableAvailabilityZonesForLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     createAppCookieStickinessPolicy : function(LoadBalancerName, CookieName, callback)
@@ -2171,7 +2171,7 @@ var ew_controller = {
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "CookieName", CookieName ]);
         params.push([ "PolicyName", PolicyName ]);
-        ew_client.queryELB("CreateAppCookieStickinessPolicy", params, this, false, "onComplete", callback);
+        ew_session.queryELB("CreateAppCookieStickinessPolicy", params, this, false, "onComplete", callback);
     },
 
     createLBCookieStickinessPolicy : function(LoadBalancerName, CookieExpirationPeriod, callback)
@@ -2184,7 +2184,7 @@ var ew_controller = {
         params.push([ "CookieExpirationPeriod", CookieExpirationPeriod ]);
         params.push([ "LoadBalancerName", LoadBalancerName ]);
         params.push([ "PolicyName", PolicyName ]);
-        ew_client.queryELB("CreateLBCookieStickinessPolicy", params, this, false, "onComplete", callback);
+        ew_session.queryELB("CreateLBCookieStickinessPolicy", params, this, false, "onComplete", callback);
     },
 
     deleteLoadBalancerPolicy : function(LoadBalancerName, policy, callback)
@@ -2193,7 +2193,7 @@ var ew_controller = {
         params.push([ "LoadBalancerName", LoadBalancerName ]);
 
         params.push([ "PolicyName", policy ]);
-        ew_client.queryELB("DeleteLoadBalancerPolicy", params, this, false, "onComplete", callback);
+        ew_session.queryELB("DeleteLoadBalancerPolicy", params, this, false, "onComplete", callback);
     },
 
     applySecurityGroupsToLoadBalancer : function (loadBalancerName, groups, callback)
@@ -2203,7 +2203,7 @@ var ew_controller = {
             var group = groups[i];
             params.push(["SecurityGroups.member." + (i + 1), group]);
         }
-        ew_client.queryELB("ApplySecurityGroupsToLoadBalancer", params, this, false, "onComplete", callback);
+        ew_session.queryELB("ApplySecurityGroupsToLoadBalancer", params, this, false, "onComplete", callback);
     },
 
     uploadServerCertificate : function(ServerCertificateName, CertificateBody, PrivateKey, Path, callback)
@@ -2213,7 +2213,7 @@ var ew_controller = {
         params.push([ "CertificateBody", CertificateBody ]);
         params.push([ "PrivateKey", PrivateKey ]);
         if (Path != null) params.push([ "Path", Path ]);
-        ew_client.queryIAM("UploadServerCertificate", params, this, false, "onComplete", callback);
+        ew_session.queryIAM("UploadServerCertificate", params, this, false, "onComplete", callback);
     },
 
     createTags : function(resIds, tags, callback)
@@ -2226,7 +2226,7 @@ var ew_controller = {
             params.push([ "Tag." + (i + 1) + ".Value", tags[i][1] ]);
         }
 
-        ew_client.queryEC2("CreateTags", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateTags", params, this, false, "onComplete", callback);
     },
 
     deleteTags : function(resIds, keys, callback)
@@ -2238,7 +2238,7 @@ var ew_controller = {
             params.push([ "Tag." + (i + 1) + ".Key", keys[i] ]);
         }
 
-        ew_client.queryEC2("DeleteTags", params, this, false, "onComplete", callback);
+        ew_session.queryEC2("DeleteTags", params, this, false, "onComplete", callback);
     },
 
     describeTags : function(resIds, callback)
@@ -2250,7 +2250,7 @@ var ew_controller = {
             params.push([ "Filter." + (i + 1) + ".Value.1", resIds[i] ]);
         }
 
-        ew_client.queryEC2("DescribeTags", params, this, false, "onCompleteDescribeTags", callback);
+        ew_session.queryEC2("DescribeTags", params, this, false, "onCompleteDescribeTags", callback);
     },
 
     onCompleteDescribeTags : function(responseObj)
@@ -2272,7 +2272,7 @@ var ew_controller = {
 
     describeInstanceAttribute : function(instanceId, attribute, callback)
     {
-        ew_client.queryEC2("DescribeInstanceAttribute", [[ "InstanceId", instanceId ], [ "Attribute", attribute ]], this, false, "onCompleteDescribeInstanceAttribute", callback);
+        ew_session.queryEC2("DescribeInstanceAttribute", [[ "InstanceId", instanceId ], [ "Attribute", attribute ]], this, false, "onCompleteDescribeInstanceAttribute", callback);
     },
 
     onCompleteDescribeInstanceAttribute : function(responseObj)
@@ -2286,11 +2286,11 @@ var ew_controller = {
 
     modifyInstanceAttribute : function(instanceId, name, value, callback)
     {
-        ew_client.queryEC2("ModifyInstanceAttribute", [ [ "InstanceId", instanceId ], [ name + ".Value", value ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("ModifyInstanceAttribute", [ [ "InstanceId", instanceId ], [ name + ".Value", value ] ], this, false, "onComplete", callback);
     },
 
     describeInstanceStatus : function (callback) {
-        ew_client.queryEC2("DescribeInstanceStatus", [], this, false, "onCompleteDescribeInstanceStatus", callback);
+        ew_session.queryEC2("DescribeInstanceStatus", [], this, false, "onCompleteDescribeInstanceStatus", callback);
     },
 
     onCompleteDescribeInstanceStatus : function (responseObj) {
@@ -2325,7 +2325,7 @@ var ew_controller = {
     },
 
     describeVolumeStatus : function (callback) {
-        ew_client.queryEC2("DescribeVolumeStatus", [], this, false, "onCompleteDescribeVolumeStatus", callback);
+        ew_session.queryEC2("DescribeVolumeStatus", [], this, false, "onCompleteDescribeVolumeStatus", callback);
     },
 
     onCompleteDescribeVolumeStatus : function (responseObj) {
@@ -2365,7 +2365,7 @@ var ew_controller = {
         if (name) {
             params.push([ "UserName", name ])
         }
-        ew_client.queryIAM("CreateAccessKey", params, this, false, "onCompleteCreateAccessKey", callback);
+        ew_session.queryIAM("CreateAccessKey", params, this, false, "onCompleteCreateAccessKey", callback);
     },
 
     onCompleteCreateAccessKey : function(responseObj)
@@ -2375,19 +2375,19 @@ var ew_controller = {
         var user = getNodeValue(xmlDoc, "UserName");
         var key = getNodeValue(xmlDoc, "AccessKeyId");
         var secret = getNodeValue(xmlDoc, "SecretAccessKey");
-        log("Access key = " + key + ", secret = " + secret)
+        debug("Access key = " + key + ", secret = " + secret)
 
         if (responseObj.callback) responseObj.callback(user, key, secret);
     },
 
     deleteAccessKey : function(name, callback)
     {
-        ew_client.queryIAM("DeleteAccessKey", [ [ "AccessKeyId", name ] ], this, false, "onComplete", callback);
+        ew_session.queryIAM("DeleteAccessKey", [ [ "AccessKeyId", name ] ], this, false, "onComplete", callback);
     },
 
     listAccessKeys : function(callback)
     {
-        ew_client.queryIAM("ListAccessKeys", [], this, false, "onCompleteListAccessKeys", callback);
+        ew_session.queryIAM("ListAccessKeys", [], this, false, "onCompleteListAccessKeys", callback);
     },
 
     onCompleteListAccessKeys : function(responseObj)
@@ -2400,7 +2400,7 @@ var ew_controller = {
             var user = getNodeValue(items[i], "UserName");
             var id = getNodeValue(items[i], "AccessKeyId");
             var status = getNodeValue(items[i], "Status");
-            list.push(new AccessKey(id, status, user, "", ew_client.accessCode == id));
+            list.push(new AccessKey(id, status, user, "", ew_session.accessCode == id));
         }
 
         ew_model.updateAccessKeys(list);
@@ -2409,7 +2409,7 @@ var ew_controller = {
 
     listUsers : function(callback)
     {
-        ew_client.queryIAM("ListUsers", [], this, false, "onCompleteListUsers", callback);
+        ew_session.queryIAM("ListUsers", [], this, false, "onCompleteListUsers", callback);
     },
 
     onCompleteListUsers : function(responseObj)
@@ -2426,7 +2426,20 @@ var ew_controller = {
             list.push(new User(id, name, path, arn));
         }
 
-        ew_model.updateUsers(list);
+        // Top level list ned to update the model
+        switch (responseObj.action) {
+        case 'ListUsers':
+            ew_model.updateUsers(list);
+            break;
+
+        case "GetGroup":
+            var group = ew_model.getObjectById(ew_model.getGroups(), responseObj.data[0][1], 'name');
+            if (group) {
+                group.users = list;
+            }
+            break;
+        }
+
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -2434,7 +2447,7 @@ var ew_controller = {
     {
         var params = [];
         if (name) params.push(["UserName", user])
-        ew_client.queryIAM("GetUser", params, this, false, "onCompleteGetUser", callback);
+        ew_session.queryIAM("GetUser", params, this, false, "onCompleteGetUser", callback);
     },
 
     onCompleteGetUser : function(responseObj)
@@ -2449,9 +2462,76 @@ var ew_controller = {
         if (responseObj.callback) responseObj.callback(new User(id, name, path, arn));
     },
 
+    createUser : function(name, path, callback)
+    {
+        ew_session.queryIAM("CreateUser", [ ["UserName", name], [ "Path", path] ], this, false, "onComplete", callback);
+    },
+
+    deleteUser : function(name, callback)
+    {
+        ew_session.queryIAM("DeleteUser", [ ["UserName", name] ], this, false, "onComplete", callback);
+    },
+
+    createLoginProfile : function(name, pwd, callback)
+    {
+        ew_session.queryIAM("CreateLoginProfile", [ ["UserName", name], [ "Password", pwd ] ], this, false, "onComplete", callback);
+    },
+
+    updateLoginProfile : function(name, pwd, callback)
+    {
+        ew_session.queryIAM("UpdateLoginProfile", [ ["UserName", name], [ "Password", pwd ] ], this, false, "onComplete", callback);
+    },
+
+    updateUser : function(name, newname, newpath, callback)
+    {
+        var params = [ ["UserName", name] ]
+        if (newname) {
+            params.push([ "NewUserName", newname])
+        }
+        if (newpath) {
+            params.push(["NewPath", newpath])
+        }
+        ew_session.queryIAM("UpdateUser", params, this, false, "onComplete", callback);
+    },
+
+    deleteLoginProfile : function(name, callback)
+    {
+        ew_session.queryIAM("DeleteLoginProfile", [ ["UserName", name] ], this, false, "onComplete", callback);
+    },
+
+    listUserPolicies : function(user, callback)
+    {
+        ew_session.queryIAM("ListUserPolicies", [ ["UserName", user]], this, false, "onCompleteListPolicies", callback);
+    },
+
+    deleteUserPolicy : function(user, policy, callback)
+    {
+        ew_session.queryIAM("DeleteUserPolicy", [ ["UserName", name], [ "PolicyName", policy ] ], this, false, "onComplete", callback);
+    },
+
+    changePassword : function(oldPw, newPw, callback)
+    {
+        ew_session.queryIAM("ChangePassword", [ ["OldPassword", oldPw], [ "NewPassword", newPw ] ], this, false, "onComplete", callback);
+    },
+
+    addUserToGroup : function(user, group, callback)
+    {
+        ew_session.queryIAM("AddUserToGroup", [ ["UserName", user], [ "GroupName", group ] ], this, false, "onComplete", callback);
+    },
+
+    removeUserFromGroup : function(user, group, callback)
+    {
+        ew_session.queryIAM("RemoveUserFromGroup", [ ["UserName", user], [ "GroupName", group ] ], this, false, "onComplete", callback);
+    },
+
     listGroups : function(callback)
     {
-        ew_client.queryIAM("ListGroups", [], this, false, "onCompleteListGroups", callback);
+        ew_session.queryIAM("ListGroups", [], this, false, "onCompleteListGroups", callback);
+    },
+
+    listGroupsForUser : function(user, callback)
+    {
+        ew_session.queryIAM("ListGroupsForUser", [ ["UserName", user]], this, false, "onCompleteListGroups", callback);
     },
 
     onCompleteListGroups : function(responseObj)
@@ -2468,68 +2548,86 @@ var ew_controller = {
             list.push(new UserGroup(id, name, path, arn));
         }
 
-        ew_model.updateGroups(list);
+        // Update model directly
+        switch (responseObj.action) {
+        case 'ListGroups':
+            ew_model.updateGroups(list);
+            break;
+
+        case "ListGroupsForUser":
+            var obj = ew_model.getUserByName(responseObj.data[0][1]);
+            if (obj) obj.groups = list;
+        }
+
         if (responseObj.callback) responseObj.callback(list);
     },
 
-    createUser : function(name, path, callback)
+    listGroupPolicies : function(name, callback)
     {
-        ew_client.queryIAM("CreateUser", [ ["UserName", name], [ "Path", path] ], this, false, "onComplete", callback);
+        ew_session.queryIAM("ListGroupPolicies", [ ["GroupName", name]], this, false, "onCompleteListPolicies", callback);
     },
 
-    deleteUser : function(name, callback)
+    onCompleteListPolicies : function(responseObj)
     {
-        ew_client.queryIAM("DeleteUser", [ ["UserName", name] ], this, false, "onComplete", callback);
-    },
+        var xmlDoc = responseObj.xmlDoc;
 
-    createLoginProfile : function(name, pwd, callback)
-    {
-        ew_client.queryIAM("CreateLoginProfile", [ ["UserName", name], [ "Password", pwd ] ], this, false, "onComplete", callback);
-    },
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("member");
+        for ( var i = 0; i < items.length; i++) {
+            list.push(items[i].nodeValue);
+        }
 
-    deleteLoginProfile : function(name, callback)
-    {
-        ew_client.queryIAM("DeleteLoginProfile", [ ["UserName", name] ], this, false, "onComplete", callback);
-    },
+        // Update model directly
+        switch(responseObj.action) {
+        case "ListGroupPolicies":
+            var obj = ew_model.getGroupByName(responseObj.data[0][1])
+            if (obj) obj.policies = list;
+            break;
 
-    deleteUserPolicy : function(user, policy, callback)
-    {
-        ew_client.queryIAM("DeleteUserPolicy", [ ["UserName", name], [ "PolicyName", policy ] ], this, false, "onComplete", callback);
-    },
+        case "ListUserPolicies":
+            var obj = ew_model.getUserByName(responseObj.data[0][1]);
+            if (obj) obj.policies = list;
+            break;
+        }
 
-    changePassword : function(oldPw, newPw, callback)
-    {
-        ew_client.queryIAM("ChangePassword", [ ["OldPassword", oldPw], [ "NewPassword", newPw ] ], this, false, "onComplete", callback);
-    },
-
-    addUserToGroup : function(user, group, callback)
-    {
-        ew_client.queryIAM("AddUserToGroup", [ ["UserName", user], [ "GroupName", group ] ], this, false, "onComplete", callback);
-    },
-
-    removeUserFromGroup : function(user, group, callback)
-    {
-        ew_client.queryIAM("RemoveUserFromGroup", [ ["UserName", user], [ "GroupName", group ] ], this, false, "onComplete", callback);
+        if (responseObj.callback) responseObj.callback(list);
     },
 
     createGroup : function(name, path, callback)
     {
-        ew_client.queryIAM("CreateGroup", [ ["GroupName", name], [ "Path", path] ], this, false, "onComplete", callback);
+        ew_session.queryIAM("CreateGroup", [ ["GroupName", name], [ "Path", path] ], this, false, "onComplete", callback);
     },
 
     deleteGroup : function(name, callback)
     {
-        ew_client.queryIAM("DeleteGroup", [ ["GroupName", name] ], this, false, "onComplete", callback);
+        ew_session.queryIAM("DeleteGroup", [ ["GroupName", name] ], this, false, "onComplete", callback);
+    },
+
+    getGroup : function(name, callback)
+    {
+        ew_session.queryIAM("GetGroup", [ ["GroupName", name]], this, false, "onCompleteListUsers", callback);
+    },
+
+    updateGroup: function(name, newname, newpath, callback)
+    {
+        var params = [ ["GroupName", name] ]
+        if (newname) {
+            params.push([ "NewGroupName", newname])
+        }
+        if (newpath) {
+            params.push(["NewPath", newpath])
+        }
+        ew_session.queryIAM("UpdateGroup", params, this, false, "onComplete", callback);
     },
 
     importKeypair : function(name, keyMaterial, callback)
     {
-        ew_client.queryEC2("ImportKeyPair", [ [ "KeyName", name ], [ "PublicKeyMaterial", keyMaterial ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("ImportKeyPair", [ [ "KeyName", name ], [ "PublicKeyMaterial", keyMaterial ] ], this, false, "onComplete", callback);
     },
 
     listSigningCertificates : function(callback)
     {
-        ew_client.queryIAM("ListSigningCertificates", [], this, false, "onCompleteListSigningCertificates", callback);
+        ew_session.queryIAM("ListSigningCertificates", [], this, false, "onCompleteListSigningCertificates", callback);
     },
 
     onCompleteListSigningCertificates : function(responseObj)
@@ -2550,11 +2648,11 @@ var ew_controller = {
 
     uploadSigningCertificate : function(body, callback)
     {
-        ew_client.queryIAM("UploadSigningCertificate", [ [ "CertificateBody", body ] ], this, false, "onComplete", callback);
+        ew_session.queryIAM("UploadSigningCertificate", [ [ "CertificateBody", body ] ], this, false, "onComplete", callback);
     },
 
     deleteSigningCertificate : function(cert, callback)
     {
-        ew_client.queryIAM("DeleteSigningCertificate", [ [ "CertificateId", cert ] ], this, false, "onComplete", callback);
+        ew_session.queryIAM("DeleteSigningCertificate", [ [ "CertificateId", cert ] ], this, false, "onComplete", callback);
     },
 };

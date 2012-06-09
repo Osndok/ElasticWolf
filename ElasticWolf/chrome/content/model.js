@@ -43,11 +43,14 @@ function Credential(name, accessKey, secretKey, endPoint)
 function User(id, name, path, arn)
 {
     this.id = id
-    this.name = name
-    this.path = path
-    this.arn = arn
+    this.name = name;
+    this.path = path;
+    this.arn = arn;
+    this.groups = null;
+    this.policies = null;
+
     this.toString = function() {
-        return this.id + ew_model.separator + this.name;
+        return this.name + (this.groups.length ? ew_model.separator + this.groups : "");
     }
 }
 
@@ -57,8 +60,11 @@ function UserGroup(id, name, path, arn)
     this.name = name
     this.path = path
     this.arn = arn
+    this.users = null;
+    this.policies = null;
+
     this.toString = function() {
-        return this.name + ew_model.separator + this.id;
+        return this.name;
     }
 }
 
@@ -974,8 +980,12 @@ var ew_model = {
             if (value instanceof Array) {
                 var rc = [];
                 for (var i in value) {
-                    var obj = this.getObjectById(list, value[i]);
-                    rc.push(obj ? obj.toString() : value[i]);
+                    if (typeof value[i] == "object") {
+                        c.push(value[i].toString());
+                    } else {
+                        var obj = this.getObjectById(list, value[i]);
+                        rc.push(obj ? obj.toString() : value[i]);
+                    }
                 }
                 return rc.join(",");
             } else {
@@ -1027,21 +1037,19 @@ var ew_model = {
         }
     },
 
-    getObjectById: function(list, id)
+    getObjectById: function(list, id, idcol)
     {
-        if (!list) return null;
+        if (!idcol) idcol = 'id';
         for (var i in list) {
-            if (list[i].id == id) {
-                return list[i]
-            }
+            if (list[i][idcol] == id) return list[i]
         }
-        return null
+        return null;
     },
 
     // Return objects if all arguments match
     getObjects: function(items, args)
     {
-        if (!args.length) return items;
+        if (!args.length) return items || [];
         var list = [];
         if (items) {
             for (var i in items) {
@@ -1105,7 +1113,12 @@ var ew_model = {
         if (this.users == null) {
             ew_session.controller.listUsers();
         }
-        return this.users;
+        return this.getObjects(this.users, arguments);
+    },
+
+    getUserByName: function(name)
+    {
+        return this.getObjectById(this.users, name, 'name');
     },
 
     updateGroups : function(list)
@@ -1119,7 +1132,12 @@ var ew_model = {
         if (this.groups == null) {
             ew_session.controller.listGroups();
         }
-        return this.groups;
+        return this.getObjects(this.groups, arguments);
+    },
+
+    getGroupByName: function(name)
+    {
+        return this.getObjectById(this.groups, name, 'name');
     },
 
     updateS3Buckets : function(list)
