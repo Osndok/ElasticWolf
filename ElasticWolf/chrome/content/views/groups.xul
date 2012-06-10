@@ -15,6 +15,7 @@
             </popupset>
 
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                <textbox id="ew.groups.search" size="15" value="" onkeypress="ew_GroupsTreeView.searchChanged(event);" />
                 <toolbarbutton image="images/refresh.png" oncommand="ew_GroupsTreeView.refresh();" tooltiptext="&ew.refresh.tip;" />
                 <toolbarbutton image="images/add.png" tooltiptext="Add Group" oncommand="ew_GroupsTreeView.addGroup();" />
                 <toolbarbutton image="images/delete.png" tooltiptext="Delete Group" oncommand="ew_GroupsTreeView.deleteGroup();" />
@@ -40,7 +41,7 @@
         </splitter>
 
         <groupbox orient="vertical" flex="1" id="eip.tree.holder">
-            <caption label="Users" />
+            <caption label="Users in the group" />
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
                 <toolbarbutton image="images/add.png" tooltiptext="Add User to group" oncommand="ew_GroupsTreeView.addUser();" />
                 <toolbarbutton image="images/delete.png" tooltiptext="Delete User from group" oncommand="ew_GroupsTreeView.deleteUser();" />

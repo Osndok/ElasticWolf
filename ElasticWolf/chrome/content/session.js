@@ -1,5 +1,19 @@
 //main object that holds the current session information
 var ew_session = {
+    VERSION: "2.0",
+    NAME: 'ElasticWolf',
+    EC2_API_VERSION : '2012-05-01',
+    ELB_API_VERSION : '2011-11-15',
+    IAM_API_VERSION : '2010-05-08',
+    APP_SITE: 'https://github.com',
+    APP_PATH: '/vseryakov/',
+    VPN_CONFIG_PATH : 'https://ec2-downloads.s3.amazonaws.com/',
+    SIG_VERSION: '2',
+    IAM_GOV_URL: 'https://iam.us-gov.amazonaws.com',
+    IAM_URL : 'https://iam.amazonaws.com',
+    REALM : 'chrome://ew/',
+    HOST  : 'chrome://ew/',
+
     accessCode : "",
     secretKey : "",
     locked: false,
@@ -18,39 +32,28 @@ var ew_session = {
     timers : {},
     disabled: false,
     httpCount: 0,
-
-    VERSION: "2.0",
-    NAME: 'ElasticWolf',
-    EC2_API_VERSION : '2012-05-01',
-    ELB_API_VERSION : '2011-11-15',
-    IAM_API_VERSION : '2010-05-08',
-    APP_SITE: 'https://github.com',
-    APP_PATH: '/vseryakov/',
-    VPN_CONFIG_PATH : 'https://ec2-downloads.s3.amazonaws.com/',
-    SIG_VERSION: '2',
-    IAM_GOV_URL: 'https://iam.us-gov.amazonaws.com',
-    IAM_URL : 'https://iam.amazonaws.com',
-    REALM : 'chrome://ew/',
-    HOST  : 'chrome://ew/',
+    prefs : null,
 
     initialize : function()
     {
-        ew_prefs.init();
+        if (this.prefs == null) {
+            this.prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+        }
+
         ew_menu.init();
 
         this.controller = ew_controller;
         this.model = ew_model;
-        this.prefs = ew_prefs;
 
         this.loadCredentials();
         this.getEndpoints();
 
-        document.title = ew_prefs.getAppName();
+        document.title = ew_session.getAppName();
 
         // Use last used credentials
         this.selectCredentials(this.getActiveCredentials());
         this.selectEndpoint(this.getActiveEndpoint());
-        this.selectTab(this.prefs.getCurrentTab());
+        this.selectTab(this.getCurrentTab());
 
         // Parse command line
         this.cmdLine = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine);
@@ -86,7 +89,7 @@ var ew_session = {
             idleService.removeIdleObserver(this.idleObserver, this.idleObserver.timeout);
             this.idleObserver = null;
         }
-        var timeout = this.prefs.getIdleTimeout();
+        var timeout = this.getIdleTimeout();
         if (timeout <= 0) return;
 
         this.idleObserver = {
@@ -119,13 +122,13 @@ var ew_session = {
         if (this.disabled) return;
 
         if (ew_menu.select(name)) {
-            this.prefs.setCurrentTab(name);
+            this.setCurrentTab(name);
         }
     },
 
     getCredentials : function () {
         var credentials = new Array();
-        var list = ew_session.getPasswordList("Cred:")
+        var list = this.getPasswordList("Cred:")
         for (var i = 0; i < list.length; i++) {
             var pw = list[i][1].split(";;");
             if (pw.length > 1) {
@@ -173,7 +176,7 @@ var ew_session = {
 
     getActiveCredentials : function()
     {
-        var cur = this.prefs.getLastUsedAccount();
+        var cur = this.getLastUsedAccount();
         for (var i in this.credentials) {
             if (cur == this.credentials[i].name) return this.credentials[i];
         }
@@ -184,7 +187,7 @@ var ew_session = {
     {
         if (cred) {
             debug("switch credentials to " + cred.name)
-            this.prefs.setLastUsedAccount(cred.name);
+            this.setLastUsedAccount(cred.name);
             this.setCredentials(cred.accessKey, cred.secretKey);
 
             if (cred.endPoint != "") {
@@ -205,7 +208,7 @@ var ew_session = {
         if (this.selectCredentials(cred)) {
             // GovCloud credentials require endpoint to be set explicitely, switching from GovCloud without explicit endpoint will result in errros
             if (wasGovCloud && cred.endPoint == '') {
-                this.selectEndpoint(this.prefs.getEndpoint("us-east-1"));
+                this.selectEndpoint(this.getEndpoint("us-east-1"));
             }
             // Since we are switching creds, ensure that all the views are redrawn
             this.model.invalidate();
@@ -214,17 +217,17 @@ var ew_session = {
 
     getActiveEndpoint : function()
     {
-        var name = this.prefs.getLastUsedEndpoint();
+        var name = this.getLastUsedEndpoint();
         var endpoint = this.getEndpoint(name);
-        return endpoint ? endpoint : new Endpoint(name, this.prefs.getServiceURL());
+        return endpoint ? endpoint : new Endpoint(name, this.getServiceURL());
     },
 
     selectEndpoint: function(endpoint)
     {
         if (endpoint != null) {
             debug("switch endpoint to " + endpoint.name)
-            this.prefs.setLastUsedEndpoint(endpoint.name);
-            this.prefs.setServiceURL(endpoint.url);
+            this.setLastUsedEndpoint(endpoint.name);
+            this.setServiceURL(endpoint.url);
             this.setEndpoint(endpoint);
             ew_menu.update();
             return true;
@@ -243,7 +246,7 @@ var ew_session = {
             if (this.isGovCloud() != wasGovCloud) {
                 debug('disable credentials when switching to/from GovCloud')
                 this.setCredentials("", "");
-                this.prefs.setLastUsedAccount("");
+                this.setLastUsedAccount("");
                 ew_menu.update();
             }
             // Since we are switching creds, ensure that all the views are redrawn
@@ -270,7 +273,7 @@ var ew_session = {
                 if (this.endpoints[i].name == name) return;
             }
             this.endpoints.push(new Endpoint(name, url))
-            this.prefs.setEndpoints(this.endpoints);
+            this.setListPrefs("ew.endpoints", this.endpoints);
         }
     },
 
@@ -280,7 +283,7 @@ var ew_session = {
             for (var i in this.endpoints) {
                 if (this.endpoints[i].name == name) {
                     this.endpoints.splice(i, 1);
-                    this.prefs.setEndpoints(this.endpoints);
+                    this.setListPrefs("ew.endpoints", this.endpoints);
                     break;
                 }
             }
@@ -292,14 +295,14 @@ var ew_session = {
         if (this.endpoints == null) {
             this.endpoints = [];
 
-            var list = this.prefs.getEndpoints();
+            var list = this.getListPrefs("ew.endpoints");
             for (var i in list) {
                 if (list[i] && list[i].name && list[i].url) {
                     this.endpoints.push(new Endpoint(list[i].name, list[i].url));
                 }
             }
             // Default regions
-            var regions = this.prefs.getEC2Regions();
+            var regions = this.model.getEC2Regions();
             for (var i in regions) {
                 if (this.getEndpoint(regions[i].name) == null) {
                     this.endpoints.push(regions[i]);
@@ -409,7 +412,7 @@ var ew_session = {
         // Update path to the command line tools
         var paths = [this.prefs.JAVA_TOOLS_PATH, this.prefs.EC2_TOOLS_PATH, this.prefs.IAM_TOOLS_PATH, this.prefs.AMI_TOOLS_PATH, this.prefs.CLOUDWATCH_TOOLS_PATH, this.prefs.AWS_AUTOSCALING_TOOLS_PATH];
         for(var i in paths) {
-            var p = this.prefs.getStringPreference(paths[i], "");
+            var p = this.prefs.getStrPrefs(paths[i], "");
             if (p == "") {
                 continue;
             }
@@ -773,7 +776,7 @@ var ew_session = {
         if (reg != region) {
             var newURL = null;
             // Determine the region's EC2 URL
-            var endpointlist = ew_prefs.getEndpoints();
+            var endpointlist = this.getEndpoints();
             region = region.toLowerCase();
             for (var i = 0; i < endpointlist.length; ++i) {
                 var curr = endpointlist[i];
@@ -815,7 +818,7 @@ var ew_session = {
         }
 
         var rsp = null;
-        while (ew_prefs.isHttpEnabled()) {
+        while (this.isHttpEnabled()) {
             try {
                 rsp = this.queryEC2Impl(action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion);
                 if (!this.retryRequest(rsp, action)) {
@@ -935,7 +938,7 @@ var ew_session = {
 
     queryS3Prepare : function(method, bucket, key, path, params, content) {
         var curTime = new Date().toUTCString();
-        var url = ew_prefs.getS3Protocol(this.region, bucket) + (bucket ? bucket + "." : "") + ew_prefs.getS3Region(this.region || "").url;
+        var url = this.getS3Protocol(this.region, bucket) + (bucket ? bucket + "." : "") + this.model.getS3Region(this.region || "").url;
 
         if (!params) params = {}
 
@@ -1065,7 +1068,7 @@ var ew_session = {
 
         var rsp = null;
 
-        while (ew_prefs.isHttpEnabled()) {
+        while (this.isHttpEnabled()) {
             try {
                 rsp = this.queryS3Impl(method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback);
                 if (!this.retryRequest(rsp, method + " " + bucket + "/" + key + path)) {
@@ -1181,7 +1184,7 @@ var ew_session = {
     },
 
     queryVpnConnectionStylesheets : function(stylesheet) {
-        if (this.disabled || !ew_prefs.isHttpEnabled()) return
+        if (this.disabled || !this.isHttpEnabled()) return
 
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
@@ -1198,7 +1201,7 @@ var ew_session = {
     },
 
     queryCheckIP : function(type, retVal) {
-        if (this.disabled || !ew_prefs.isHttpEnabled()) return;
+        if (this.disabled || !this.isHttpEnabled()) return;
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
@@ -1211,7 +1214,7 @@ var ew_session = {
     },
 
     download: function(url, headers, filename, callback, progresscb) {
-        if (this.disabled || !ew_prefs.isHttpEnabled()) return;
+        if (this.disabled || !this.isHttpEnabled()) return;
 
         debug('download: ' + url + '| ' + JSON.stringify(headers) + '| ' + filename)
 
@@ -1258,7 +1261,7 @@ var ew_session = {
     },
 
     startTimer : function(key, expr) {
-        var timer = window.setTimeout(expr, ew_prefs.getRequestTimeout());
+        var timer = window.setTimeout(expr, this.getRequestTimeout());
         this.timers[key] = timer;
     },
 
@@ -1272,4 +1275,506 @@ var ew_session = {
         timer = null;
         return true;
     },
+
+    getDirSeparator : function()
+    {
+        return navigator.platform.toLowerCase().indexOf('win') > -1 ? '\\' : '/';
+    },
+
+    getAppPath : function()
+    {
+        return DirIO.get("CurProcD").path;
+    },
+
+    getUserHome : function()
+    {
+        return DirIO.get("Home").path;
+    },
+
+    getProfileHome : function()
+    {
+        return DirIO.get("ProfD").path;
+    },
+
+    getRequestTimeout : function()
+    {
+        return this.getIntPrefs("ew.request.timeout", 15000);
+    },
+
+    setRequestTimeout : function(value)
+    {
+        this.setIntPrefs("ew.request.timeout", value);
+    },
+
+    getServiceURL : function()
+    {
+        return this.getStrPrefs("ew.endpoint.url", "https://ec2.us-east-1.amazonaws.com");
+    },
+
+    setServiceURL : function(value)
+    {
+        this.setStrPrefs("ew.endpoint.url", value);
+    },
+
+    getCurrentTab : function()
+    {
+        return this.getStrPrefs("ew.tab.current", '');
+    },
+
+    setCurrentTab : function(value)
+    {
+        this.setStrPrefs("ew.tab.current", value);
+    },
+
+    isDebugEnabled : function()
+    {
+        return this.getBoolPrefs("ew.debug.enabled", false);
+    },
+
+    setDebugEnabled : function(enabled)
+    {
+        this.setBoolPrefs("ew.debug.enabled", enabled);
+    },
+
+    isHttpEnabled : function()
+    {
+        return this.getBoolPrefs("ew.http.enabled", true);
+    },
+
+    setHttpEnabled : function(enabled)
+    {
+        this.setBoolPrefs("ew.http.enabled", enabled);
+    },
+
+    getOpenConnectionPort : function()
+    {
+        return this.getBoolPrefs("ew.open.connection.port", true);
+    },
+
+    setOpenConnectionPort : function(value)
+    {
+        this.setBoolPrefs("ew.open.connection.port", value);
+    },
+
+    getPromptForPortOpening : function()
+    {
+        return this.getBoolPrefs("ew.prompt.open.port", true);
+    },
+
+    setPromptForPortOpening : function(value)
+    {
+        this.setBoolPrefs("ew.prompt.open.port", value);
+    },
+
+    getKeyHome : function()
+    {
+        return this.getStrPrefs("ew.key.home", this.getHome() + this.getDirSeparator() + this.getAppName());
+    },
+
+    setKeyHome : function(value)
+    {
+        this.setStrPrefs("ew.key.home", value);
+    },
+
+    getLastUsedAccount : function()
+    {
+        return this.getStrPrefs("ew.account.name", "");
+    },
+
+    setLastUsedAccount : function(value)
+    {
+        this.setStrPrefs("ew.account.name", value);
+    },
+
+    getIdleAction: function()
+    {
+        return this.getStrPrefs("ew.idle.action", "");
+    },
+
+    setIdleAction : function(value)
+    {
+        this.setStrPrefs("ew.idle.action", value);
+    },
+
+    getIdleTimeout: function()
+    {
+        return this.getIntPrefs("ew.idle.timeout", 0);
+    },
+
+    setIdleTimeout : function(value)
+    {
+        this.setIntPrefs("ew.idle.timeout", value);
+    },
+
+    getShellCommand : function()
+    {
+        var shell = '/usr/bin/xterm';
+        if (isMacOS(navigator.platform)) {
+            shell = '/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal';
+        } else
+
+        if (isWindows(navigator.platform)) {
+            shell = 'c:\\\Windows\\System32\\cmd.exe';
+        }
+        return this.getStrPrefs("ew.shell.command", shell);
+    },
+
+    setShellCommand : function(value)
+    {
+        this.setStrPrefs("ew.shell.command", value);
+    },
+
+    getRDPCommand : function()
+    {
+        var cmd = "/usr/bin/rdesktop";
+        if (isMacOS(navigator.platform)) {
+            if (FileIO.exists("/Applications/Remote Desktop Connection.app")) {
+                cmd = "/Applications/Remote Desktop Connection.app/Contents/MacOS/Remote Desktop Connection";
+            } else
+            if (FileIO.exists("/opt/local/bin/rdesktop")) {
+                cmd = "/opt/local/bin/rdesktop";
+            }
+        } else
+        if (isWindows(navigator.platform)) {
+            cmd = "c:\\Windows\\System32\\mstsc.exe";
+        }
+        return this.getStrPrefs("ew.rdp.command", cmd);
+    },
+
+    setRDPCommand : function(value)
+    {
+        this.setStrPrefs("ew.rdp.command", value);
+    },
+
+    getRDPArgs : function()
+    {
+        var args = "-g 1440x900 -u administrator -p ${pass} -x l ${host}";
+        if (isMacOS(navigator.platform)) {
+            if (FileIO.exists("/Applications/Remote Desktop Connection.app")) {
+                args = "${host}";
+            }
+        } else
+        if (isWindows(navigator.platform)) {
+            args = '/v ${host}';
+        }
+        return this.getStrPrefs("ew.rdp.command", args);
+    },
+
+    setRDPArgs : function(value)
+    {
+        this.setStrPrefs("ew.rdp.args", value);
+    },
+
+    getSSHCommand : function()
+    {
+        var cmd = '/usr/bin/xterm';
+        if (isMacOS(navigator.platform)) {
+            cmd = "/usr/bin/osascript";
+        } else
+
+        if (isWindows(navigator.platform)) {
+            cmd = 'c:\\\Windows\\System32\\cmd.exe'
+        }
+        return this.getStrPrefs("ew.ssh.command", cmd);
+    },
+
+    setSSHCommand : function(value)
+    {
+        this.setStrPrefs("ew.ssh.command", value);
+    },
+
+    getSSHArgs : function()
+    {
+        var args = "'-e /usr/bin/ssh -i ${key} ${login}@${host}";
+        if (isMacOS(navigator.platform)) {
+            var cmdline = [
+                  'on run argv',
+                  '  tell app "System Events" to set termOn to (exists process "Terminal")',
+                  '  set cmd to "ssh -i ${key} ${login}@${host}"',
+                  '  if (termOn) then',
+                  '    tell app "Terminal" to do script cmd',
+                  '  else',
+                  '    tell app "Terminal" to do script cmd in front window',
+                  '  end if',
+                  '  tell app "Terminal" to activate',
+                  'end run'];
+            // turn into -e 'line1' -e 'line2' etc.
+            args = cmdline.map(function(s) { return "-e '" + s.replace(/^\s+/, '') + "'" }).join(" ");
+        } else
+
+        if (isWindows(navigator.platform)) {
+            args = "#!set HOME=" + this.getHome() + "#!" + quotepath(this.getAppPath() + '\\bin\\ssh.exe') + " -o \"ServerAliveInterval 5\" -i ${key} ${login}@${host}";
+        }
+        return this.getStrPrefs("ew.ssh.args", args);
+    },
+
+    setSSHArgs : function(value)
+    {
+        this.setStrPrefs("ew.ssh.args", value);
+    },
+
+    getSSHUser : function()
+    {
+        return this.getStrPrefs("ew.ssh.user", "");
+    },
+
+    setSSHUser : function(value)
+    {
+        this.setStrPrefs("ew.ssh.user", value);
+    },
+
+    getOpenSSLCommand : function()
+    {
+        var cmd = "/usr/bin/openssl";
+        if (isWindows(navigator.platform)) {
+            cmd = this.getAppPath() + "\\bin\\openssl.exe"
+        }
+        return this.getStrPrefs("ew.openssl.command", cmd);
+    },
+
+    setOpenSSLCommand : function(value)
+    {
+        this.setStrPrefs("ew.openssl.command", value);
+    },
+
+    getDefaultJavaHome: function() {
+        if (isWindows(navigator.platform)) {
+            return "C:\\Program Files (x86)\\Java\\jre6";
+        } else
+
+        if (isMacOS(navigator.platform)) {
+            return "/System/Library/Frameworks/JavaVM.framework/Home";
+        }
+        return "/usr/lib/java";
+    },
+
+    getCredentialFile : function(name)
+    {
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "AWSCredential_${keyname}.txt", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+    },
+
+    getPrivateKeyFile : function(name)
+    {
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "PrivateKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+    },
+
+    getPublicKeyFile : function(name)
+    {
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "PublicKey_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+    },
+
+    getCertificateFile : function(name)
+    {
+        return this.getTemplateProcessed(this.getKeyHome() + this.getDirSeparator() + "X509Certificate_${keyname}.pem", [ [ "keyname", sanitize(name ? name : this.getLastUsedAccount()) ] ]);
+    },
+
+    getTemplateProcessed : function(file, params)
+    {
+        var keyname = null
+        // Custom variables
+        for ( var i = 0; params && i < params.length; i++) {
+            var val = params[i][1]
+            if (file.indexOf("${" + params[i][0] + "}") > -1) {
+                file = file.replace(new RegExp("\\${" + params[i][0] + "}", "g"), quotepath(val));
+            }
+            switch (params[i][0]) {
+            case "keyname":
+                keyname = val
+                break;
+            }
+        }
+        // Global variables
+        if (file.indexOf("${login}") > -1) {
+            var user = this.getSSHUser()
+            if (user != "") {
+                file = file.replace(/\${login}/g, user);
+            } else {
+                file = file.replace(/\${login}@/g, "");
+            }
+        }
+        if (file.indexOf("${home}") > -1) {
+            var home = this.getHome()
+            file = file.replace(/\${home}/g, quotepath(home));
+        }
+        if (file.indexOf("${keyhome}") > -1) {
+            var home = this.getKeyHome()
+            file = file.replace(/\${keyhome}/g, quotepath(home));
+        }
+        if (file.indexOf("${user}") > -1) {
+            file = file.replace(/\${user}/g, this.getLastUsedAccount());
+        }
+        if (file.indexOf("${key}") > -1) {
+            file = file.replace(/\${key}/g, quotepath(this.getPrivateKeyFile(keyname)));
+        }
+        return file
+    },
+
+    getArgsProcessed: function(args, params, filename)
+    {
+        var idx = args.indexOf('#!');
+        if (idx == -1) {
+            return this.getTemplateProcessed(args, params);
+        }
+
+        // Batch file
+        if (!this.makeKeyHome()) return null
+
+        var batch = args.substr(idx + 2).replace(/\#\!/g, "\r\n") + "\r\n";
+        batch = this.getTemplateProcessed(batch, params);
+
+        var file = this.getKeyHome() + DirIO.sep + filename + (isWindows(navigator.platform) ? ".bat" : ".sh");
+        args = this.getTemplateProcessed(args.substr(0, idx) + " " + quotepath(file), params);
+
+        var fd = FileIO.open(file);
+        FileIO.write(fd, batch);
+        fd.permissions = 0700;
+
+        debug("BATCH:" + file + "\n" + batch)
+        return args;
+    },
+
+    makeKeyHome: function()
+    {
+        if (!DirIO.mkpath(this.getKeyHome())) {
+            alert("Error creating directory " + this.getKeyHome());
+            return 0
+        }
+        return 1
+    },
+
+    getLastEC2PrivateKeyFile : function()
+    {
+        return this.getStrPrefs("ew.ec2.pkey." + this.getLastUsedAccount() + "." + this.getLastUsedEndpoint(), "");
+    },
+
+    setLastEC2PrivateKeyFile : function(value)
+    {
+        this.setStrPrefs("ew.ec2.pkey." + this.getLastUsedAccount() + "." + this.getLastUsedEndpoint(), value);
+    },
+
+    getHome : function()
+    {
+        var home = "";
+        var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
+        if (isWindows(navigator.platform)) {
+            if (env.exists("HOMEDRIVE") && env.exists("HOMEPATH")) {
+                home = env.get("HOMEDRIVE") + env.get("HOMEPATH");
+            }
+        }
+        if (home == "" && env.exists('HOME')) {
+            home = env.get("HOME");
+        }
+        return home
+    },
+
+    getEnv : function(name)
+    {
+        var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
+        return env.exists(name) ? env.get(name) : "";
+    },
+
+    setEnv : function(name, value)
+    {
+        var env = Components.classes["@mozilla.org/process/environment;1"].getService(Components.interfaces.nsIEnvironment);
+        env.set(name, value);
+    },
+
+    getS3Protocol: function(region, bucket)
+    {
+        return this.getStrPrefs("ew.s3.proto." + region + "." + bucket, 'http://');
+    },
+
+    setS3Protocol: function(region, bucket, proto)
+    {
+        this.setStrPrefs("ew.s3.proto." + region + "." + bucket, proto || 'http://');
+    },
+
+    setLastUsedEndpoint : function(value)
+    {
+        this.setStrPrefs("ew.active.endpoint", value);
+    },
+
+    getLastUsedEndpoint : function()
+    {
+        return this.getStrPrefs("ew.active.endpoint", "us-east-1");
+    },
+
+    getListPrefs: function(name)
+    {
+        var list = [];
+        try {
+            list = JSON.parse(this.getStrPrefs(name));
+        }
+        catch(e) {}
+        if (!(list && list instanceof Array)) list = [];
+        return list;
+    },
+
+    setListPrefs: function(name, list)
+    {
+        if (name) this.setStrPrefs(name, JSON.stringify((list && list instanceof Array) ? list : []));
+    },
+
+    getStrPrefs : function(name, defValue)
+    {
+        if (!defValue || defValue == null) defValue = '';
+        if (this.prefs && name) {
+            if (!this.prefs.prefHasUserValue(name)) {
+                return defValue;
+            }
+            if (this.prefs.getPrefType(name) != this.prefs.PREF_STRING) {
+                return defValue;
+            }
+            var prefValue = this.prefs.getCharPref(name).toString();
+            if (prefValue.length == 0) {
+                prefValue = defValue;
+            }
+            return prefValue;
+        }
+        return defValue;
+    },
+
+    setStrPrefs : function(name, value)
+    {
+        if (name) this.prefs.setCharPref(name, value || '');
+    },
+
+    getIntPrefs : function(name, defValue)
+    {
+        if (this.prefs && name) {
+            if (!this.prefs.prefHasUserValue(name)) {
+                return defValue;
+            }
+            if (this.prefs.getPrefType(name) != this.prefs.PREF_INT) {
+                return defValue;
+            }
+            return this.prefs.getIntPref(name);
+        }
+        return defValue;
+    },
+
+    setIntPrefs : function(name, value)
+    {
+        if (name) this.prefs.setIntPref(name, value);
+    },
+
+    getBoolPrefs : function(name, defValue)
+    {
+        if (this.prefs && name) {
+            if (!this.prefs.prefHasUserValue(name)) {
+                return defValue;
+            }
+            if (this.prefs.getPrefType(name) != this.prefs.PREF_BOOL) {
+                return defValue;
+            }
+            return this.prefs.getBoolPref(name);
+        }
+        return defValue;
+    },
+
+    setBoolPrefs : function(name, value)
+    {
+        if (name) this.prefs.setBoolPref(name, value);
+    },
+
 };

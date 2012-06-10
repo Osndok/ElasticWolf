@@ -277,7 +277,7 @@ var ew_InstancesTreeView = {
     promptForKeyFile : function(keyName) {
         var keyFile = ew_session.promptForFile("Select the EC2 Private Key File for key: " + keyName);
         if (keyFile) {
-            ew_prefs.setLastEC2PrivateKeyFile(keyFile);
+            ew_session.setLastEC2PrivateKeyFile(keyFile);
         }
         log("getkey: " + keyName + "=" + keyFile);
         return keyFile;
@@ -306,7 +306,7 @@ var ew_InstancesTreeView = {
         }
 
         if (fSuccess) {
-            var prvKeyFile = ew_prefs.getPrivateKeyFile(instance.keyName);
+            var prvKeyFile = ew_session.getPrivateKeyFile(instance.keyName);
         }
 
         log("Private Key File: " + prvKeyFile);
@@ -323,7 +323,7 @@ var ew_InstancesTreeView = {
 
             if (!fSuccess) {
                 // Has a default key file been saved for this user account?
-                var savedKeyFile = ew_prefs.getLastEC2PrivateKeyFile();
+                var savedKeyFile = ew_session.getLastEC2PrivateKeyFile();
                 if (savedKeyFile.length > 0 && prvKeyFile != savedKeyFile) {
                     prvKeyFile = savedKeyFile;
                     log("Using default private key file");
@@ -588,7 +588,7 @@ var ew_InstancesTreeView = {
     },
 
     authorizeProtocolPortForGroup : function (transport, protocol, port, groups) {
-        if (!ew_prefs.getOpenConnectionPort()) return;
+        if (!ew_session.getOpenConnectionPort()) return;
 
         var result = {ipAddress:"0.0.0.0"};
         var fAdd = true;
@@ -643,9 +643,9 @@ var ew_InstancesTreeView = {
 
         if (fAdd) {
             var result = false;
-            if (ew_prefs.getPromptForPortOpening()) {
+            if (ew_session.getPromptForPortOpening()) {
                 port = port.toString();
-                var msg = ew_prefs.getAppName() + " needs to open " + transport.toUpperCase() + " port " + port + " (" + protocol + ") to continue. Click Ok to authorize this action";
+                var msg = ew_session.getAppName() + " needs to open " + transport.toUpperCase() + " port " + port + " (" + protocol + ") to continue. Click Ok to authorize this action";
 
                 // default the checkbox to false
                 var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
@@ -654,8 +654,8 @@ var ew_InstancesTreeView = {
 
                 if (check.value) {
                     // The user asked not to be prompted again
-                    ew_prefs.setPromptForPortOpening(false);
-                    ew_prefs.setOpenConnectionPort(result);
+                    ew_session.setPromptForPortOpening(false);
+                    ew_session.setOpenConnectionPort(result);
                 }
             } else {
                 result = true;
@@ -720,8 +720,8 @@ var ew_InstancesTreeView = {
     // ipType: 0 - private, 1 - public, 2 - elastic, 3 - public or elastic, 4 - dns name
     connectTo : function(instance, ipType)
     {
-        var args = ew_prefs.getSSHArgs();
-        var cmd = ew_prefs.getSSHCommand();
+        var args = ew_session.getSSHArgs();
+        var cmd = ew_session.getSSHCommand();
 
         var hostname = !ipType ? instance.privateIpAddress :
                        ipType == 1 || ipType == 3 ? instance.getPublicIp() :
@@ -742,8 +742,8 @@ var ew_InstancesTreeView = {
         }
 
         if (isWindows(instance.platform)) {
-            args = ew_prefs.getRDPArgs();
-            cmd = ew_prefs.getRDPCommand();
+            args = ew_session.getRDPArgs();
+            cmd = ew_session.getRDPCommand();
             if (isMac(navigator.platform)) {
                 // On Mac OS X, we use a totally different connection mechanism that isn't particularly extensible
                 this.getAdminPassword(false, instance);
@@ -767,7 +767,7 @@ var ew_InstancesTreeView = {
         } else
 
         if (args.indexOf("${key}") >= 0) {
-            var keyFile = ew_prefs.getPrivateKeyFile(instance.keyName);
+            var keyFile = ew_session.getPrivateKeyFile(instance.keyName);
             if (!FileIO.exists(keyFile)) {
                 keyFile = this.promptForKeyFile(instance.keyName);
             }
@@ -778,7 +778,7 @@ var ew_InstancesTreeView = {
             params.push(["key", keyFile])
         }
 
-        if (args.indexOf("${login}") >= 0 && ew_prefs.getSSHUser() == "") {
+        if (args.indexOf("${login}") >= 0 && ew_session.getSSHUser() == "") {
             var login = prompt("Please provide SSH user name:");
             if (login && login != "") {
                 params.push(["login", login])
@@ -786,7 +786,7 @@ var ew_InstancesTreeView = {
         }
 
         // Common substitution
-        args = ew_prefs.getArgsProcessed(args, params, hostname);
+        args = ew_session.getArgsProcessed(args, params, hostname);
 
         // Finally, split args into an array
         args = tokenise(args);
@@ -797,7 +797,7 @@ var ew_InstancesTreeView = {
 
     rdpToMac : function(hostname, cmd)
     {
-        var filename = ew_prefs.getHome() + "/" + ew_prefs.getAppName() + "/" + hostname + ".rdp";
+        var filename = ew_session.getHome() + "/" + ew_session.getAppName() + "/" + hostname + ".rdp";
         var config = FileIO.open(filename)
 
         if (!config.exists()) {

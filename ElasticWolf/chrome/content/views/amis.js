@@ -51,7 +51,7 @@ var ew_AMIsTreeView = {
     manageFavorites: function(remove) {
         var image = this.getSelected();
         if (image == null) return;
-        var favs = ew_prefs.getStringPreference(this.favorites, "").split("^");
+        var favs = ew_session.getStrPrefs(this.favorites, "").split("^");
         debug(remove + ":" + favs)
         if (remove) {
             var i = favs.indexOf(image.id)
@@ -63,7 +63,7 @@ var ew_AMIsTreeView = {
                 favs.push(image.id)
             }
         }
-        ew_prefs.setStringPreference(this.favorites, favs.join("^"));
+        ew_session.setStrPrefs(this.favorites, favs.join("^"));
         if (remove) {
             this.invalidate();
         }
@@ -74,7 +74,7 @@ var ew_AMIsTreeView = {
         if (!list) return list;
         var type = $("ew.images.type");
         if (type.value == "fav") {
-            var favs = ew_prefs.getStringPreference(this.favorites, "").split("^");
+            var favs = ew_session.getStrPrefs(this.favorites, "").split("^");
             var images = [];
             for (var i in list) {
                 if (favs.indexOf(list[i].id) >= 0) {

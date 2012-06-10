@@ -18,7 +18,7 @@ var ew_CredentialsTreeView = {
     },
 
     addCredentials : function() {
-        var rc = { ok: null, endpoints: ew_prefs.getEndpoints() };
+        var rc = { ok: null, endpoints: ew_session.getEndpoints() };
         window.openDialog("chrome://ew/content/dialogs/create_credentials.xul", null, "chrome,centerscreen, modal, resizable", rc);
         if (rc.ok) {
             var cred = new Credential(rc.name, rc.accessKey, rc.secretKey, rc.endpoint);
@@ -39,7 +39,7 @@ ew_CredentialsTreeView.__proto__ = TreeView;
 var ew_EndpointsTreeView = {
    activate : function() {
        this.refresh();
-       var name = ew_prefs.getLastUsedEndpoint();
+       var name = ew_session.getLastUsedEndpoint();
        if (name != null) {
            this.select({name:name});
        }

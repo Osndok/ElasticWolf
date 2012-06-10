@@ -361,7 +361,7 @@ function newWindow()
 
 function log(msg)
 {
-    if (ew_prefs.isDebugEnabled()) {
+    if (ew_session.isDebugEnabled()) {
         debug(msg)
     }
 }

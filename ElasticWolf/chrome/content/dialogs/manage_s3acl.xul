@@ -10,7 +10,6 @@
     ondialogcancel="return true;" onload="ew_S3Acl.init();"
     title="Manage S3 ACLs" buttonlabelaccept="Apply">
 
-    <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
     <script type="application/x-javascript" src="chrome://ew/content/session.js" />
     <script type="application/x-javascript" src="chrome://ew/content/model.js" />
     <script type="application/x-javascript" src="chrome://ew/content/utils.js" />

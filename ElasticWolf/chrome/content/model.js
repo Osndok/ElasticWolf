@@ -981,7 +981,7 @@ var ew_model = {
                 var rc = [];
                 for (var i in value) {
                     if (typeof value[i] == "object") {
-                        c.push(value[i].toString());
+                        rc.push(value[i].toString());
                     } else {
                         var obj = this.getObjectById(list, value[i]);
                         rc.push(obj ? obj.toString() : value[i]);
@@ -1626,6 +1626,40 @@ var ew_model = {
             return null;
         }
         return this.getObjects(this.loadBalancers, arguments);
+    },
+
+    getS3Regions: function()
+    {
+        return [ { name: "US Standard", url: "s3.amazonaws.com", region: "" },
+                 { name: "US West (Oregon)", url: "s3-us-west-2.amazonaws.com", region: "us-west-2" },
+                 { name: "US West (Northern California)", url: "s3-us-west-1.amazonaws.com", region: "us-west-1" },
+                 { name: "EU (Ireland)", url: "s3-eu-west-1.amazonaws.com", region: "EU" },
+                 { name: "Asia Pacific (Singapore)", url: "s3-ap-southeast-1.amazonaws.com", region: "ap-southeast-1" },
+                 { name: "Asia Pacific (Tokyo)", url: "s3-ap-northeast-1.amazonaws.com", region: "ap-northeast-1" },
+                 { name: "South America (Sao Paulo)", url: "s3-sa-east-1.amazonaws.com", region: "sa-east-1" },
+                 { name: "GovCloud", url: "s3-us-gov-west-1.amazonaws.com", region: 'us-gov-west-1' } ]
+    },
+
+    getS3Region: function(region)
+    {
+        var regions = this.getS3Regions();
+        for (var i in regions) {
+            if (regions[i].region == region) {
+                return regions[i]
+            }
+        }
+        return regions[0]
+    },
+
+    getEC2Regions: function()
+    {
+        return [ { name: 'us-east-1', url: 'https://ec2.us-east-1.amazonaws.com' },
+                 { name: 'eu-west-1', url: 'https://ec2.eu-west-1.amazonaws.com' },
+                 { name: 'us-west-1', url: 'https://ec2.us-west-1.amazonaws.com' },
+                 { name: 'ap-southeast-1', url: 'https://ec2.ap-southeast-1.amazonaws.com' },
+                 { name: 'ap-northeast-1', url: 'https://ec2.ap-northeast-1.amazonaws.com' },
+                 { name: 'us-gov-west-1', url: 'https://ec2.us-gov-west-1.amazonaws.com' },
+            ];
     },
 
 }

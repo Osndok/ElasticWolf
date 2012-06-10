@@ -190,7 +190,7 @@ var ew_KeypairTreeView = {
         var me = this;
         var wrap = function(name, key) {
             // Save key in the file
-            var file = ew_prefs.getPrivateKeyFile(name)
+            var file = ew_session.getPrivateKeyFile(name)
             var fp = FileIO.open(file)
             FileIO.write(fp, key + "\n\n", "");
             me.refresh();
@@ -225,9 +225,9 @@ var ew_KeypairTreeView = {
         name = name.trim();
         var me = this;
 
-        var file = ew_session.promptForDir("Choose where to store keys and certificate or Cancel to use " + ew_prefs.getKeyHome(), true)
+        var file = ew_session.promptForDir("Choose where to store keys and certificate or Cancel to use " + ew_session.getKeyHome(), true)
         if (file) {
-            ew_prefs.setKeyHome(file);
+            ew_session.setKeyHome(file);
         }
 
 
@@ -241,7 +241,7 @@ var ew_KeypairTreeView = {
         setTimeout(function() { ew_session.controller.uploadSigningCertificate(body, function() {ew_CertTreeView.refresh();}); }, 30000);
 
         // Import new public key as new keypair
-        var file = ew_prefs.getPublicKeyFile(name);
+        var file = ew_session.getPublicKeyFile(name);
         var pubkey = readPublicKey(file);
         if (pubkey == '') {
             return alert('Unable to read public key file ' + file);

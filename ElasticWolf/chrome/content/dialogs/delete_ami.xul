@@ -3,13 +3,11 @@
 <!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
 <dialog id="ew.dialog.delete.ami" style="width:450px; height:150px;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml" buttons="accept"
-    ondialogaccept="return true;" buttondisabledaccept="true" buttonlabelaccept="Done" onload="ew_AMIDeleter.init();" title="AMI Deleter"
->
+    ondialogaccept="return true;" buttondisabledaccept="true" buttonlabelaccept="Done" onload="ew_AMIDeleter.init();" title="AMI Deleter">
 
     <script type="application/x-javascript" src="chrome://ew/content/dialogs/delete_ami.js" />
     <script type="application/x-javascript" src="chrome://ew/content/controller.js" />
     <script type="application/x-javascript" src="chrome://ew/content/session.js" />
-    <script type="application/x-javascript" src="chrome://ew/content/preferences.js" />
     <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
 
     <groupbox flex="1">

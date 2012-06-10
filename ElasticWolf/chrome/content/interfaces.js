@@ -296,7 +296,7 @@ var TreeView = {
     {
         if (!this.searchElement) return;
         this.search = $(this.searchElement).value;
-        ew_prefs.setStringPreference(this.searchElement, this.search);
+        ew_session.setStrPrefs(this.searchElement, this.search);
 
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
@@ -384,11 +384,11 @@ var TreeView = {
         for (var i in items) {
             switch (items[i].type) {
             case "checkbox":
-                $(items[i].id).checked = ew_prefs.getBoolPreference(items[i].id, false);
+                $(items[i].id).checked = ew_session.getBoolPrefs(items[i].id, false);
                 break;
 
             default:
-                $(items[i].id).value = ew_prefs.getStringPreference(items[i].id);
+                $(items[i].id).value = ew_session.getStrPrefs(items[i].id);
             }
         }
     },
@@ -398,11 +398,11 @@ var TreeView = {
         for (var i in items) {
             switch (items[i].type) {
             case "checkbox":
-                ew_prefs.setBoolPreference(items[i].id, items[i].checked);
+                ew_session.setBoolPrefs(items[i].id, items[i].checked);
                 break;
 
             default:
-                ew_prefs.setStringPreference(items[i].id, items[i].value);
+                ew_session.setStrPrefs(items[i].id, items[i].value);
             }
         }
     },

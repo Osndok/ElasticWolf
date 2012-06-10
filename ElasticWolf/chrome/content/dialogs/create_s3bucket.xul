@@ -8,7 +8,6 @@
     ondialogcancel="return true;" onload="init();"
     title="Create S3 Bucket" buttonlabelaccept="Create">
 
-    <script type="application/x-javascript" src="chrome://ew/content/model.js" />
     <script>
     function createBucket() {
         this.retVal.name = document.getElementById("ew.bucket").value.trim();
@@ -32,7 +31,7 @@
         menu.removeAllItems();
         menu.disabled = true;
         if (this.retVal.type == "Bucket") {
-            var regions = this.session.prefs.getS3Regions()
+            var regions = this.session.model.getS3Regions()
             for (var i in regions) {
                 menu.appendItem(regions[i].name, regions[i].region);
             }
