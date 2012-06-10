@@ -2,7 +2,7 @@ var ew_ElasticIPTreeView = {
     model: [ "addresses", "instances", "networkInterfaces" ],
     tagId: "publicIp",
 
-    enableOrDisableItems : function() {
+    menuChanged : function() {
         var eip = this.getSelected();
         document.getElementById("ew.addresses.contextmenu").disabled = (eip == null);
         if (eip == null) return;

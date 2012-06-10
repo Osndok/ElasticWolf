@@ -6,8 +6,8 @@
     <groupbox flex="1" orient="vertical">
       <caption label="&ew.captions.images.instances.label;" />
       <popupset>
-        <menupopup id="ew.instances.contextmenu" onpopupshowing="ew_InstancesTreeView.enableOrDisableItems(event);">
-          <menuitem oncommand="ew_InstancesTreeView.viewDetails(event);" label="&ew.contextmenu.details.label;" />
+        <menupopup id="ew.instances.contextmenu" onpopupshowing="ew_InstancesTreeView.menuChanged(event);">
+          <menuitem oncommand="ew_InstancesTreeView.displayDetails(event);" label="&ew.contextmenu.details.label;" />
           <menuitem oncommand="ew_InstancesTreeView.tag(event);" label="Edit EC2 Tag" />
           <menuseparator />
           <menu label="Instance Lifecycle">
@@ -72,7 +72,7 @@
           <toolbarseparator />
           <toolbarbutton image="images/edit.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.fetchConsoleOutput();" tooltiptext="&ew.instances.console.tip;" />
           <toolbarbutton image="images/key.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.connectToSelectedInstances(3);" tooltiptext="&ew.instances.connect.tip;" />
-          <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.viewDetails();" tooltiptext="View Details" />
+          <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.displayDetails();" tooltiptext="View Details" />
           <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.tag();" tooltiptext="Edit EC2 Tag" />
           <toolbarseparator />
           <checkbox id="ew.instances.noterminated" label="Hide Terminated" oncommand="ew_InstancesTreeView.filterChanged();"/>

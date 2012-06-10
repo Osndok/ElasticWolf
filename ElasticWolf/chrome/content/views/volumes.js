@@ -1,5 +1,5 @@
 var ew_VolumeTreeView = {
-    model: ['volumes','azones','instances','snapshots'],
+    model: ['volumes','availabilityZones','instances','snapshots'],
     searchElement: 'ew.volumes.search',
     properties: ['status'],
 
@@ -18,7 +18,7 @@ var ew_VolumeTreeView = {
         return TreeView.filter.call(this, list);
     },
 
-    enableOrDisableItems : function() {
+    menuChanged : function() {
         var image = this.getSelected();
         document.getElementById("ew.volumes.contextmenu").disabled = (image == null);
         if (image == null) return;

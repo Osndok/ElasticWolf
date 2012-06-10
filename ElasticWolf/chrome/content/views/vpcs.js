@@ -2,7 +2,7 @@ var ew_VpcTreeView = {
     model: [ "vpcs", "instances", "internetGateways", 'dhcpOptions' ],
     searchElement: 'ew.vpcs.search',
 
-    enableOrDisableItems : function()
+    menuChanged : function()
     {
         document.getElementById("ew.vpcs.contextmenu").disabled = (this.getSelected() == null);
     },
@@ -88,7 +88,7 @@ var ew_DhcpoptsTreeView = {
     model: "dhcpOptions",
     searchElement: 'ew.dhcpopts.search',
 
-    enableOrDisableItems : function() {
+    menuChanged : function() {
         var image = this.getSelected();
         document.getElementById("ew.dhcpopts.contextmenu").disabled = (image == null);
     },

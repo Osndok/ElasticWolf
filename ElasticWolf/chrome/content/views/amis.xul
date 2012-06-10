@@ -8,8 +8,8 @@
                 <groupbox flex="9" orient="vertical">
                     <caption label="Images" />
                     <popupset>
-                        <menupopup id="ew.images.contextmenu" onpopupshowing="ew_AMIsTreeView.enableOrDisableItems(event);">
-                            <menuitem oncommand="ew_AMIsTreeView.viewDetails();" label="&ew.contextmenu.details.label;" />
+                        <menupopup id="ew.images.contextmenu" onpopupshowing="ew_AMIsTreeView.menuChanged(event);">
+                            <menuitem oncommand="ew_AMIsTreeView.displayDetails();" label="&ew.contextmenu.details.label;" />
                             <menuitem oncommand="ew_AMIsTreeView.tag(event);" label="Edit EC2 Tag" />
                             <menuseparator />
                             <menuitem id="amis.context.register" oncommand="ew_AMIsTreeView.registerNewImage();" label="&ew.images.contextmenu.register.label;" />

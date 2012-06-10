@@ -1,5 +1,9 @@
 var ew_UsersTreeView = {
-    model: "users",
+    model: [ "users", "groups"],
+    searchElement: "ew.users.search",
+
+    menuChanged: function() {
+    },
 
     selectionChanged: function()
     {
@@ -7,10 +11,16 @@ var ew_UsersTreeView = {
         var item = this.getSelected();
         if (!item) return;
         if (!item.groups) {
-            ew_session.controller.listGroupsForUser(item.name, function(list) { me.invalidate() })
+            ew_session.controller.listGroupsForUser(item.name, function(list) { })
         }
         if (!item.policies) {
-            ew_session.controller.listUserPolicies(item.name, function(list) { me.invalidate() })
+            ew_session.controller.listUserPolicies(item.name, function(list) { })
+        }
+        if (!item.keys) {
+            ew_session.controller.listAccessKeys(item.name, function(list) { })
+        }
+        if (!item.devices) {
+            ew_session.controller.listMFADevices(item.name, function(list) { })
         }
     },
 
@@ -18,9 +28,8 @@ var ew_UsersTreeView = {
     {
         var me = this;
         var name = prompt("User name");
-        if (name) {
-            ew_session.controller.createUser(name, "/", function() { me.refresh() })
-        }
+        if (!name) return;
+        ew_session.controller.createUser(name, "/", function() { me.refresh() })
     },
 
     deleteUser: function()
@@ -32,12 +41,23 @@ var ew_UsersTreeView = {
         ew_session.controller.deleteUser(item.name, function() { me.refresh() });
     },
 
+    renameUser: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item) return;
+        var newname = ew_session.promptForPassword("Rename User", "Enter new name");
+        var newpath = ew_session.promptForPassword("Rename User", "Enter new path");
+        if (!newname && !newpath) return;
+        ew_session.controller.updateUser(item.name, newname, newpath, function() { me.refresh() })
+    },
+
     setPassword: function(update)
     {
         var me = this;
         var item = this.getSelected();
         if (!item) return;
-        var pw = promptForPassword("Password", "Enter password for " + item.name);
+        var pw = ew_session.promptForPassword("Password", "Enter password for " + item.name);
         if (!pw) return;
         if (update) {
             ew_session.controller.updateLoginProfile(item.name, pw, function() { me.refresh() })
@@ -48,25 +68,11 @@ var ew_UsersTreeView = {
 
     changePassword: function()
     {
-        var me = this;
-        var item = this.getSelected();
-        if (!item) return;
-        var oldpw = promptForPassword("Old Password", "Enter current password");
+        var oldpw = ew_session.promptForPassword("Old Password", "Enter your current AWS Console password");
         if (!oldpw) return;
-        var newpw = promptForPassword("New Password", "Enter new password");
+        var newpw = ew_session.promptForPassword("New Password", "Enter new AWS console password");
         if (!newpw) return;
-        ew_session.controller.changePassword(oldpw, newpw, function() { me.refresh() })
-    },
-
-    renameUser: function()
-    {
-        var me = this;
-        var item = this.getSelected();
-        if (!item) return;
-        var newname = promptForPassword("Rename User", "Enter new name");
-        var newpath = promptForPassword("Rename User", "Enter new path");
-        if (!newname && !newpath) return;
-        ew_session.controller.updateUser(item.name, newname, newpath, function() { me.refresh() })
+        ew_session.controller.changePassword(oldpw, newpw, function() { alert("AWS Console password has been changed") })
     },
 
     deletePassword: function()
@@ -80,14 +86,141 @@ var ew_UsersTreeView = {
 
     addGroup: function()
     {
+        var me = this;
         var item = this.getSelected();
         if (!item) return;
         var list = ew_model.getGroups();
         var idx = ew_session.promptList("Group", "Select group to add this user to", list, ["name"]);
         if (idx < 0) return;
-        var me = this;
         ew_session.controller.addUserToGroup(item.name, list[idx].name, function() { me.refresh() });
     },
+
+    addPolicy: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item) return;
+        var name = prompt("Enter new policy name");
+        if (!name) return;
+        var text = '{\n "Statement": [\n  { "Effect": "",\n    "Action": [""],\n    "Resource": ""\n  }\n ]\n}';
+        text = ew_session.promptForText('Enter policy permissions',text);
+        if (text) {
+            ew_session.controller.putUserPolicy(item.name, name, text);
+        }
+    },
+
+    editPolicy: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item || !item.policies || !item.policies.length) return;
+        var idx = 0;
+
+        if (item.policies.length > 1) {
+            idx = ew_session.promptList("Policy", "Select policy to edit", item.policies);
+            if (idx < 0) return;
+        }
+
+        ew_session.controller.getUserPolicy(item.name, item.policies[idx], function(doc) {
+            var text = ew_session.promptForText('Enter policy permissions', doc);
+            if (text) {
+                ew_session.controller.putUserPolicy(item.name, item.policies[idx], text);
+            }
+        });
+    },
+
+    deletePolicy: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item || !item.policies || !item.policies.length) return;
+        var idx = 0;
+
+        if (item.policies.length > 0) {
+            idx = ew_session.promptList("Policy", "Select policy to delete", item.policies);
+            if (idx < 0) return;
+        } else {
+            if (!confirm('Delete policy ' + item.policies[idx] + '?')) return;
+        }
+        ew_session.controller.deleteUserPolicy(item.name, item.policies[idx], text, function() {
+            item.policies = null;
+            this.selectionChanged();
+        });
+    },
+
+    createAccessKey: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item) return;
+        ew_session.controller.createAccessKey(user, function(user, key, secret) {
+            item.keys = null;
+            this.selectionChanged();
+            ew_AccessKeyTreeView.saveAccessKey(user, key, secret);
+        });
+    },
+
+    deleteAccessKey: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item || !item.keys || !item.keys.length) return;
+        var idx = 0;
+
+        if (item.keys.length > 0) {
+            idx = ew_session.promptList("Access Key", "Select access key to delete", item.keys);
+            if (idx < 0) return;
+        } else {
+            if (!confirm('Delete access key ' + item.keys[idx] + '?')) return;
+        }
+        ew_session.controller.deleteAccessKey(item.keys[idx].id, function() {
+            item.keys = null;
+            this.selectionChanged();
+        });
+    },
+
+    createVMFA: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item) return;
+
+    },
+
+    enableMFA: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item) return;
+
+    },
+
+    resyncMFA: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item || !item.devices || !item.devices.length) return;
+
+    },
+
+    deactivateMFA: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item || !item.devices || !item.devices.length) return;
+
+        if (item.keys.length > 0) {
+            idx = ew_session.promptList("MFA Device", "Select device to deactivate", item.devices);
+            if (idx < 0) return;
+        } else {
+            if (!confirm('Deactivate MFA device ' + item.devices[idx] + '?')) return;
+        }
+        ew_session.controller.deactivateMFADevice(item.name, item.devices[idx].id, function() {
+            item.devices = null;
+            this.selectionChanged();
+        });
+    },
+
 };
 
 ew_UsersTreeView.__proto__ = TreeView;
@@ -95,6 +228,10 @@ ew_UsersTreeView.register();
 
 var ew_GroupsTreeView = {
     model: ["groups","users"],
+    searchElement: "ew.groups.search",
+
+    menuChanged: function() {
+    },
 
     selectionChanged: function()
     {
@@ -108,29 +245,40 @@ var ew_GroupsTreeView = {
             ew_session.controller.getGroup(item.name, function(list) { ew_GroupUsersTreeView.display(list); });
         }
         if (!item.policies) {
-            ew_session.controller.listGroupPolicies(item.name, function(list) { me.invalidate() })
+            ew_session.controller.listGroupPolicies(item.name, function(list) { })
         }
     },
 
     addUser: function()
     {
+        var me = this;
         var item = this.getSelected();
         if (!item) return;
         var users = ew_model.getUsers();
-        var idx = ew_session.promptList("User name", "Select user to add to current group?", users, ["name"]);
+        var list = [];
+        for (var i in users) {
+            var found = false
+            for (var j in item.users) {
+                if (users[i].name == item.users[j].name) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) list.push(users[i]);
+        }
+        var idx = ew_session.promptList("User name", "Select user to add to " + item.name, list);
         if (idx < 0) return;
-        var me = this;
         ew_session.controller.addUserToGroup(users[idx].name, item.name, function() { me.refresh() });
     },
 
     deleteUser: function()
     {
+        var me = this;
         var item = this.getSelected();
         if (!item) return;
         var user = ew_GroupUsersTreeView.getSelected()
         if (!user) return;
         if (!confirm("Remove user " + user.name + " from group " + item.name + "?")) return;
-        var me = this;
         ew_session.controller.removeUserFromGroup(user.name, item.name, function() { me.refresh() });
     },
 
@@ -157,10 +305,52 @@ var ew_GroupsTreeView = {
         var me = this;
         var item = this.getSelected();
         if (!item) return;
-        var newname = promptForPassword("Rename Group", "Enter new name");
-        var newpath = promptForPassword("Rename Group", "Enter new path");
+        var newname = ew_session.promptForPassword("Rename Group", "Enter new name");
+        var newpath = ew_session.promptForPassword("Rename Group", "Enter new path");
         if (!newname && !newpath) return;
         ew_session.controller.updateGroup(item.name, newname, newpath, function() { me.refresh() })
+    },
+
+    addPolicy: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item) return;
+        var name = prompt("Enter new policy name");
+        if (!name) return;
+        var text = '{\n "Statement": [\n  { "Effect": "",\n    "Action": [""],\n    "Resource": ""\n  }\n ]\n}';
+        text = ew_session.promptForText('Enter policy permissions',text);
+        if (text) {
+            ew_session.controller.putGroupPolicy(item.name, name, text);
+        }
+    },
+
+    editPolicy: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item || !item.policies || !item.policies.length) return;
+
+        var idx = ew_session.promptList("Policy", "Select policy to edit", item.policies);
+        if (idx < 0) return;
+
+        ew_session.controller.getGroupPolicy(item.name, item.policies[idx], function(doc) {
+            var text = ew_session.promptForText('Enter policy permissions', doc);
+            if (text) {
+                ew_session.controller.putGroupPolicy(item.name, item.policies[idx], text);
+            }
+        });
+    },
+
+    deletePolicy: function()
+    {
+        var me = this;
+        var item = this.getSelected();
+        if (!item || !item.policies || !item.policies.length) return;
+
+        var idx = ew_session.promptList("Policy", "Select policy to delete", item.policies);
+        if (idx < 0) return;
+        ew_session.controller.deleteGroupPolicy(item.name, item.policies[idx], text, function() { item.policies = null; });
     },
 };
 
@@ -168,6 +358,14 @@ ew_GroupsTreeView.__proto__ = TreeView;
 ew_GroupsTreeView.register();
 
 var ew_GroupUsersTreeView = {
+    searchElement: "ew.groupUsers.search",
+
+    selectionChanged: function()
+    {
+        var item = this.getSelected();
+        if (!item) return;
+        ew_UsersTreeView.select(item)
+    },
 };
 ew_GroupUsersTreeView.__proto__ = TreeView;
 
@@ -262,22 +460,28 @@ ew_KeypairTreeView.__proto__ = TreeView;
 ew_KeypairTreeView.register();
 
 var ew_AccessKeyTreeView = {
-    model: ["accesskeys","users"],
+    searchElement: "ew.accesskeys.search",
+
+    refresh: function()
+    {
+        var me = this;
+        ew_session.controller.listAccessKeys(null, function(list) { me.display(list); })
+    },
+
+    saveAccessKey: function(user, key, secret)
+    {
+        if (this.getBoolPrefs("ew.accesskey.save", true)) {
+            ew_session.savePassword('AccessKey:' + key, secret);
+        }
+        alert('Access Key is ready:\nAccessKeyId: ' + key + '\nAccessSecretKey: ' + secret);
+    },
 
     createAccessKey : function () {
         var me = this;
-        var wrap = function(user, key, secret) {
-            ew_session.savePassword('AccessKey:' + key, secret);
+        ew_session.controller.createAccessKey(null, function(user, key, secret) {
             me.refresh()
-        }
-        var user = null;
-        var users = ew_model.getUsers();
-        if (users) {
-            var idx = ew_session.promptList("User name", "Select user which needs access key?", users, ["name"]);
-            if (idx < 0) return;
-            user = users[idx].name;
-        }
-        ew_session.controller.createAccessKey(user, wrap);
+            me.saveAccessKey(user, key, secret);
+        });
     },
 
     getAccessKeySecret : function(key) {
@@ -337,8 +541,14 @@ var ew_AccessKeyTreeView = {
 ew_AccessKeyTreeView.__proto__ = TreeView;
 ew_AccessKeyTreeView.register();
 
-var ew_CertTreeView = {
-    model: 'certs',
+var ew_CertsTreeView = {
+    searchElement: "ew.certs.search",
+
+    refresh: function()
+    {
+        var me = this;
+        ew_session.controller.listSigningCertificates(null, function(list) { me.display(list); })
+    },
 
     createCert : function () {
         var me = this;
@@ -368,5 +578,44 @@ var ew_CertTreeView = {
         ew_session.controller.deleteSigningCertificate(item.id, function() { me.refresh(); });
     },
 };
-ew_CertTreeView.__proto__ = TreeView;
-ew_CertTreeView.register();
+ew_CertsTreeView.__proto__ = TreeView;
+ew_CertsTreeView.register();
+
+var ew_PasswordPolicyView = {
+    obj: null,
+    rowCount: 0,
+
+    refresh: function() {
+    },
+
+    activate: function() {
+        var me = this;
+        ew_session.controller.getAccountPasswordPolicy(function(obj) {
+            me.obj = obj;
+            for (var p in obj) {
+                var e = $('ew.' + p)
+                if (!e) continue;
+                if (e.tagName == 'textbox') e.value = obj[p]; else e.checked = obj[p];
+            }
+        });
+    },
+
+    deactivate: function() {
+        this.refresh();
+    },
+
+    display: function() {
+    },
+
+    invalidate: function() {
+    },
+
+    save: function() {
+        for (var p in this.obj) {
+            var e = $('ew.' + p)
+            if (!e) continue;
+            this.obj[p] = e.tagName == 'textbox' ? e.value : e.checked;
+            ew_session.controller.updateAccountPasswordPolicy(function() { alert('Password policy has been updated') });
+        }
+    },
+};

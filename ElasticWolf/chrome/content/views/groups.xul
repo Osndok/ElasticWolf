@@ -5,12 +5,16 @@
     <tabpanel id="ew.tabs.groups" flex="1">
       <vbox flex="1">
         <groupbox orient="vertical" flex="1" id="eip.tree.holder">
-            <caption label="IAM Groups" />
+            <caption label="Groups" />
             <popupset>
-                <menupopup id="ew.groups.contextmenu" onpopupshowing="ew_groupsTreeView.enableOrDisableItems();">
+                <menupopup id="ew.groups.contextmenu" onpopupshowing="ew_GroupsTreeView.menuChanged();">
                 <menuitem id="ew.groups.contextmenu" oncommand="ew_GroupsTreeView.addGroup();" label="Add group" />
                 <menuitem id="ew.groups.contextmenu" oncommand="ew_GroupsTreeView.deleteGroup();" label="Delete group" />
                 <menuitem id="ew.users.contextmenu" oncommand="ew_GroupsTreeView.renameGroup();" label="Rename group" />
+                <menuseparator />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_GroupsTreeView.addPolicy();" label="Add Policy" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_GroupsTreeView.editPolicy();" label="Edit Policy" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_GroupsTreeView.deletePolicy();" label="Delete Policy" />
                 </menupopup>
             </popupset>
 
@@ -41,8 +45,9 @@
         </splitter>
 
         <groupbox orient="vertical" flex="1" id="eip.tree.holder">
-            <caption label="Users in the group" />
+            <caption label="Group Users" />
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                <textbox id="ew.groupUsers.search" size="15" value="" onkeypress="ew_GroupUsersTreeView.searchChanged(event);" />
                 <toolbarbutton image="images/add.png" tooltiptext="Add User to group" oncommand="ew_GroupsTreeView.addUser();" />
                 <toolbarbutton image="images/delete.png" tooltiptext="Delete User from group" oncommand="ew_GroupsTreeView.deleteUser();" />
             </toolbar>
@@ -54,6 +59,14 @@
                     <treecol id="user.path" label="Path" flex="2" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                     <treecol id="user.arn" label="ARN" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.groups" label="Groups" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.policies" label="Policies" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.keys" label="Access Keys" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.devices" label="MFA Devices" flex="1" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                 </treecols>
                 <treechildren id="ew.users.children" context="ew.users.contextmenu" />

@@ -1,5 +1,5 @@
 var ew_S3BucketsTreeView = {
-    model : "s3buckets",
+    model : "s3Buckets",
     path: [],
     folder: '',
 
@@ -51,7 +51,7 @@ var ew_S3BucketsTreeView = {
         }
     },
 
-    viewDetails: function(event)
+    displayDetails: function(event)
     {
         var me = this;
         var item = this.getSelected()

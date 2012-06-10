@@ -234,6 +234,15 @@ function className(o) {
     return "Object";
 }
 
+// Return value of the parameter in the list of parameters pairs
+function getParam(list, name)
+{
+    for (var i in list) {
+        if (list[i][0] == name) return list[i][1];
+    }
+    return '';
+}
+
 function getNodeValue(item, nodeName, childName)
 {
     function _getNodeValue(parent, nodeName) {
@@ -361,7 +370,7 @@ function newWindow()
 
 function log(msg)
 {
-    if (ew_session.isDebugEnabled()) {
+    if (ew_session.getBoolPrefs("ew.debug.enabled", false)) {
         debug(msg)
     }
 }

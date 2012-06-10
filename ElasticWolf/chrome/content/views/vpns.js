@@ -2,7 +2,7 @@ var ew_VpnConnectionTreeView = {
     model: ['vpnConnections','customerGateways','vpnGateways','vpcs'],
     searchElement: 'ew.vpnconnections.search',
 
-    enableOrDisableItems : function() {
+    menuChanged : function() {
         var image = this.getSelected();
         $("ew.vpnconnections.contextmenu").disabled = (image == null);
     },
@@ -77,7 +77,7 @@ var ew_CustomerGatewayTreeView = {
     model: 'customerGateways',
     searchElement: 'ew.customergateways.search',
 
-    enableOrDisableItems : function() {
+    menuChanged : function() {
         var image = this.getSelected();
         document.getElementById("ew.customergateways.contextmenu").disabled = (image == null);
     },
@@ -118,7 +118,7 @@ var ew_VpnGatewayTreeView = {
     model: ['vpnGateways', 'vpcs'],
     searchElement: 'ew.vpngateways.search',
 
-    enableOrDisableItems : function() {
+    menuChanged : function() {
         var image = this.getSelected();
         $("ew.vpngateways.contextmenu").disabled = (image == null);
     },
@@ -170,7 +170,7 @@ ew_VpnGatewayTreeView.register();
 
 var ew_VpnAttachmentTreeView = {
 
-    enableOrDisableItems : function()
+    menuChanged : function()
     {
         var image = this.getSelected();
         $("ew.vpnattachments.contextmenu").disabled = (image == null);

@@ -409,7 +409,7 @@ var ew_InstancesTreeView = {
         TreeView.selectionChanged.call(this, event);
     },
 
-    enableOrDisableItems  : function(event) {
+    menuChanged  : function(event) {
         var instance = this.getSelected();
         var fDisabled = (instance == null);
         document.getElementById("ew.instances.contextmenu").disabled = fDisabled;
@@ -588,7 +588,7 @@ var ew_InstancesTreeView = {
     },
 
     authorizeProtocolPortForGroup : function (transport, protocol, port, groups) {
-        if (!ew_session.getOpenConnectionPort()) return;
+        if (!ew_session.getBoolPrefs("ew.open.connection.port", true)) return;
 
         var result = {ipAddress:"0.0.0.0"};
         var fAdd = true;
@@ -643,7 +643,7 @@ var ew_InstancesTreeView = {
 
         if (fAdd) {
             var result = false;
-            if (ew_session.getPromptForPortOpening()) {
+            if (ew_session.getBoolPrefs("ew.prompt.open.port", true)) {
                 port = port.toString();
                 var msg = ew_session.getAppName() + " needs to open " + transport.toUpperCase() + " port " + port + " (" + protocol + ") to continue. Click Ok to authorize this action";
 
@@ -652,10 +652,10 @@ var ew_InstancesTreeView = {
                 var check = {value: false};
                 result = prompts.confirmCheck(window, "EC2 Firewall Port Authorization", msg, "Do not ask me again", check);
 
+                // The user asked not to be prompted again
                 if (check.value) {
-                    // The user asked not to be prompted again
-                    ew_session.setPromptForPortOpening(false);
-                    ew_session.setOpenConnectionPort(result);
+                    ew_session.setBoolPrefs("ew.prompt.open.port", false);
+                    ew_session.setBoolPrefs("ew.open.connection.port", result);
                 }
             } else {
                 result = true;

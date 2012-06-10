@@ -7,9 +7,9 @@ var ew_controller = {
         return ew_session.getNsResolver();
     },
 
-    handleErrors: function(reqType)
+    handleErrors: function(action, method)
     {
-        this.errorHandlers[reqType] = true;
+        this.errorHandlers[action + ":" + method] = true;
     },
 
     onResponseComplete : function(responseObj)
@@ -17,9 +17,9 @@ var ew_controller = {
         // In sync mode handle errors in the caller
         if (responseObj.isSync && responseObj.hasErrors) {
             // Some handlers can manage errors in the callback
-            if (!this.errorHandlers[responseObj.method]) return;
+            if (!this.errorHandlers[responseObj.action + ":" + responseObj.method]) return;
         }
-        // In async mode callback must be called
+        // In async mode callback must always be called
         eval("this." + responseObj.method + "(responseObj)");
     },
 
@@ -1213,7 +1213,7 @@ var ew_controller = {
     onCompleteGetS3BucketAcl : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
-        var bucket = responseObj.data[0];
+        var bucket = responseObj.params[0];
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("Grant");
@@ -1251,7 +1251,7 @@ var ew_controller = {
     onCompleteSetS3BucketAcl : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
-        var bucket = responseObj.data[0];
+        var bucket = responseObj.params[0];
         var obj = ew_model.getS3Bucket(bucket)
         if (obj) obj.acls = null;
 
@@ -1266,7 +1266,7 @@ var ew_controller = {
     onCompleteGetS3BucketLocation : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
-        var bucket = responseObj.data[0];
+        var bucket = responseObj.params[0];
 
         var region = getNodeValue(xmlDoc, "LocationConstraint");
         var obj = ew_model.getS3Bucket(bucket)
@@ -1362,8 +1362,8 @@ var ew_controller = {
     onCompleteGetS3BucketKeyAcl : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
-        var bucket = responseObj.data[0];
-        var key = responseObj.data[1];
+        var bucket = responseObj.params[0];
+        var key = responseObj.params[1];
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("Grant");
@@ -1401,8 +1401,8 @@ var ew_controller = {
     onCompleteSetS3BucketKeyAcl : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
-        var bucket = responseObj.data[0];
-        var key = responseObj.data[1];
+        var bucket = responseObj.params[0];
+        var key = responseObj.params[1];
 
         var obj = ew_model.getS3BucketKey(bucket, key)
         if (obj) obj.acls = null;
@@ -1412,14 +1412,14 @@ var ew_controller = {
 
     getS3BucketWebsite : function(bucket, callback)
     {
-        this.handleErrors("onCompleteGetS3BucketWebsite");
+        this.handleErrors("GET", "onCompleteGetS3BucketWebsite");
         ew_session.queryS3("GET", bucket, "", "?website", {}, null, this, false, "onCompleteGetS3BucketWebsite", callback);
     },
 
     onCompleteGetS3BucketWebsite : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
-        var bucket = responseObj.data[0];
+        var bucket = responseObj.params[0];
 
         if (responseObj.hasErrors) {
             // Ignore no website error
@@ -1451,7 +1451,7 @@ var ew_controller = {
     onCompleteSetS3BucketWebsite : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
-        var bucket = responseObj.data[0];
+        var bucket = responseObj.params[0];
 
         if (responseObj.callback) responseObj.callback(bucket);
     },
@@ -1464,7 +1464,7 @@ var ew_controller = {
     onCompleteDeleteS3BucketKeyAcl : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
-        var bucket = responseObj.data[0];
+        var bucket = responseObj.params[0];
 
         if (responseObj.callback) responseObj.callback(bucket);
     },
@@ -2073,7 +2073,7 @@ var ew_controller = {
             list.push(new InstanceHealth(Description, State, InstanceId, ReasonCode));
         }
 
-        var elbs = ew_model.getLoadBalancers('LoadBalancerName', responseObj.data[0][1]);
+        var elbs = ew_model.getLoadBalancers('LoadBalancerName', responseObj.params[0][1]);
         if (elbs) elbs[0].InstanceHealth = list;
 
         if (responseObj.callback) responseObj.callback(list);
@@ -2380,31 +2380,114 @@ var ew_controller = {
         if (responseObj.callback) responseObj.callback(user, key, secret);
     },
 
-    deleteAccessKey : function(name, callback)
+    deleteAccessKey : function(id, callback)
     {
-        ew_session.queryIAM("DeleteAccessKey", [ [ "AccessKeyId", name ] ], this, false, "onComplete", callback);
+        ew_session.queryIAM("DeleteAccessKey", [ [ "AccessKeyId", id ] ], this, false, "onComplete", callback);
     },
 
-    listAccessKeys : function(callback)
+    listAccessKeys : function(user, callback)
     {
-        ew_session.queryIAM("ListAccessKeys", [], this, false, "onCompleteListAccessKeys", callback);
+        var params = [];
+        if (user) params.push(["UserName", user]);
+        ew_session.queryIAM("ListAccessKeys", params, this, false, "onCompleteListAccessKeys", callback);
     },
 
     onCompleteListAccessKeys : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
+        var params = responseObj.params;
 
+        var user = getNodeValue(xmlDoc, "UserName");
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("member");
         for (var i = 0; i < items.length; i++) {
-            var user = getNodeValue(items[i], "UserName");
             var id = getNodeValue(items[i], "AccessKeyId");
             var status = getNodeValue(items[i], "Status");
             list.push(new AccessKey(id, status, user, "", ew_session.accessCode == id));
         }
 
-        ew_model.updateAccessKeys(list);
+        ew_model.updateModel('users', getParam(params, 'UserName'), 'keys', list)
+
         if (responseObj.callback) responseObj.callback(list);
+    },
+
+    listMFADevices : function(user, callback)
+    {
+        var params = [];
+        if (user) params.push(["UserName", user]);
+        ew_session.queryIAM("ListMFADevices", params, this, false, "onCompleteListMFADevices", callback);
+    },
+
+    onCompleteListMFADevices : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+        var params = responseObj.params;
+
+        var user = getNodeValue(xmlDoc, "UserName");
+
+        var list = new Array();
+        var items = xmlDoc.getElementsByTagName("member");
+        for (var i = 0; i < items.length; i++) {
+            var id = getNodeValue(items[i], "SerialNumber");
+            list.push(id);
+        }
+
+        ew_model.updateModel('users', getParam(params, 'UserName'), 'devices', list)
+
+        if (responseObj.callback) responseObj.callback(list);
+    },
+
+    listVirtualMFADevices : function(user, callback)
+    {
+        ew_session.queryIAM("ListVirtualMFADevices", [], this, false, "onCompleteListVirtualMFADevices", callback);
+    },
+
+    onCompleteListVirtualMFADevices : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var list = [];
+        var items = xmlDoc.getElementsByTagName("member");
+        for ( var i = 0; i < items.length; i++) {
+            var serial = getNodeValue(items[i], "SerialNumber");
+            var arn = getNodeValue(items[i], "Arn");
+            var date = getNodeValue(items[i], "EnableDate");
+            list.push(new MFADevice(serial, date, arn.split(/[:\/]+/).pop(), arn));
+        }
+        ew_model.updateMFADevices(list);
+        if (responseObj.callback) responseObj.callback(list);
+    },
+
+    createVirtualMFADevice : function(name, path, callback)
+    {
+        ew_session.queryIAM("CreateVirtualMFADevice", [["VirtualMFADeviceName", name], [ "Path", path || "/" ]], this, false, "onCompleteCreateVirtualMFADevice", callback);
+    },
+
+    onCompleteCreateVirtualMFADevice : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var obj = [];
+        obj.id = getNodeValue(xmlDoc, "SerialNumber");
+        obj.seed = getNodeValue(xmlDoc, "Base32StringSeed");
+        obj.qr = getNodeValue(xmlDoc, "QRCodePNG");
+
+        if (responseObj.callback) responseObj.callback(obj);
+    },
+
+    enableMFADevice: function(user, serial, auth1, auth2, callback)
+    {
+        ew_session.queryIAM("EnableMFADevice", [["UserName", user], ["SerialNumber", serial], ["AuthenticationCode1", auth1], ["AuthenticationCode2", auth2] ], this, false, "onComplete", callback);
+    },
+
+    resyncMFADevice: function(user, serial, auth1, auth2, callback)
+    {
+        ew_session.queryIAM("ResyncMFADevice", [["UserName", user], ["SerialNumber", serial], ["AuthenticationCode1", auth1], ["AuthenticationCode2", auth2] ], this, false, "onComplete", callback);
+    },
+
+    deactivateMFADevice: function(user, serial, callback)
+    {
+        ew_session.queryIAM("DeactivateMFADevice", [["UserName", user], ["SerialNumber", serial] ], this, false, "onComplete", callback);
     },
 
     listUsers : function(callback)
@@ -2415,6 +2498,7 @@ var ew_controller = {
     onCompleteListUsers : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
+        var params = responseObj.params;
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("member");
@@ -2433,10 +2517,11 @@ var ew_controller = {
             break;
 
         case "GetGroup":
-            var group = ew_model.getObjectById(ew_model.getGroups(), responseObj.data[0][1], 'name');
-            if (group) {
-                group.users = list;
+            for (var i in list) {
+                var user = ew_model.findModel('users', list[i].id);
+                if (user) list[i] = user;
             }
+            ew_model.updateModel('groups', getParam(params, 'GroupName'), 'users', list)
             break;
         }
 
@@ -2462,6 +2547,24 @@ var ew_controller = {
         if (responseObj.callback) responseObj.callback(new User(id, name, path, arn));
     },
 
+    getUserPolicy : function(user, policy, callback)
+    {
+        ew_session.queryIAM("GetUserPolicy", [ ["UserName", user], [ "PolicyName", policy] ], this, false, "onCompleteGetPolicy", callback);
+    },
+
+    putUserPolicy: function(user, name, text, callback)
+    {
+        ew_session.queryIAM("PutUserPolicy", [ ["UserName", user], [ "PolicyName", name ], ["PolicyDocument", text] ], this, false, "onComplete", callback);
+    },
+
+    onCompleteGetPolicy : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var policy = decodeURIComponent(getNodeValue(xmlDoc, "PolicyDocument"));
+        if (responseObj.callback) responseObj.callback(policy);
+    },
+
     createUser : function(name, path, callback)
     {
         ew_session.queryIAM("CreateUser", [ ["UserName", name], [ "Path", path] ], this, false, "onComplete", callback);
@@ -2485,12 +2588,8 @@ var ew_controller = {
     updateUser : function(name, newname, newpath, callback)
     {
         var params = [ ["UserName", name] ]
-        if (newname) {
-            params.push([ "NewUserName", newname])
-        }
-        if (newpath) {
-            params.push(["NewPath", newpath])
-        }
+        if (newname) params.push([ "NewUserName", newname])
+        if (newpath) params.push(["NewPath", newpath])
         ew_session.queryIAM("UpdateUser", params, this, false, "onComplete", callback);
     },
 
@@ -2537,6 +2636,7 @@ var ew_controller = {
     onCompleteListGroups : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
+        var params = responseObj.params;
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("member");
@@ -2555,8 +2655,8 @@ var ew_controller = {
             break;
 
         case "ListGroupsForUser":
-            var obj = ew_model.getUserByName(responseObj.data[0][1]);
-            if (obj) obj.groups = list;
+            ew_model.updateModel('users', getParam(params, 'UserName'), 'groups', list)
+            break;
         }
 
         if (responseObj.callback) responseObj.callback(list);
@@ -2570,27 +2670,41 @@ var ew_controller = {
     onCompleteListPolicies : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
+        var params = responseObj.params;
 
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("member");
         for ( var i = 0; i < items.length; i++) {
-            list.push(items[i].nodeValue);
+            list.push(items[i].firstChild.nodeValue);
         }
 
         // Update model directly
         switch(responseObj.action) {
         case "ListGroupPolicies":
-            var obj = ew_model.getGroupByName(responseObj.data[0][1])
-            if (obj) obj.policies = list;
+            ew_model.updateModel('groups', getParam(params, 'GroupName'), 'policies', list)
             break;
 
         case "ListUserPolicies":
-            var obj = ew_model.getUserByName(responseObj.data[0][1]);
-            if (obj) obj.policies = list;
+            ew_model.updateModel('users', getParam(params, 'UserName'), 'policies', list)
             break;
         }
 
         if (responseObj.callback) responseObj.callback(list);
+    },
+
+    getGroupPolicy : function(group, policy, callback)
+    {
+        ew_session.queryIAM("GetGroupPolicy", [ ["GroupName", group], [ "PolicyName", policy] ], this, false, "onCompleteGetPolicy", callback);
+    },
+
+    deleteGroupPolicy : function(group, policy, callback)
+    {
+        ew_session.queryIAM("DeleteGroupPolicy", [ ["GroupName", group], [ "PolicyName", policy ] ], this, false, "onComplete", callback);
+    },
+
+    putGroupPolicy: function(group, name, text, callback)
+    {
+        ew_session.queryIAM("PutGroupPolicy", [ ["GroupName", group], [ "PolicyName", name ], ["PolicyDocument", text] ], this, false, "onComplete", callback);
     },
 
     createGroup : function(name, path, callback)
@@ -2611,13 +2725,42 @@ var ew_controller = {
     updateGroup: function(name, newname, newpath, callback)
     {
         var params = [ ["GroupName", name] ]
-        if (newname) {
-            params.push([ "NewGroupName", newname])
-        }
-        if (newpath) {
-            params.push(["NewPath", newpath])
-        }
+        if (newname) params.push([ "NewGroupName", newname])
+        if (newpath) params.push(["NewPath", newpath])
         ew_session.queryIAM("UpdateGroup", params, this, false, "onComplete", callback);
+    },
+
+    getAccountPasswordPolicy: function(callback)
+    {
+        this.handleErrors("GetAccountPasswordPolicy", "onCompleteGetPasswordPolicy");
+        ew_session.queryIAM("GetAccountPasswordPolicy", [], this, false, "onCompleteGetPasswordPolicy", callback);
+    },
+
+    onCompleteGetPasswordPolicy: function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+        var obj = {};
+
+        if (!responseObj.hasErrors) {
+            obj.MinimumPasswordLength = getNodeValue(xmlDoc, 'MinimumPasswordLength');
+            obj.RequireUppercaseCharacters = getNodeValue(xmlDoc, 'RequireUppercaseCharacters');
+            obj.RequireLowercaseCharacters = getNodeValue(xmlDoc, 'RequireLowercaseCharacters');
+            obj.RequireNumbers = getNodeValue(xmlDoc, 'RequireNumbers');
+            obj.RequireSymbols = getNodeValue(xmlDoc, 'RequireSymbols');
+            obj.AllowUsersToChangePassword = getNodeValue(xmlDoc, 'AllowUsersToChangePassword');
+        } else {
+            responseObj.hasErrors = false;
+        }
+        if (responseObj.callback) responseObj.callback(obj);
+    },
+
+    updateAccountPasswordPolicy: function(obj, callback)
+    {
+        var params = []
+        for (var p in obj) {
+            params.push([ p, obj[p]])
+        }
+        ew_session.queryIAM("UpdateAccountPasswordPolicy", params, this, false, "onComplete", callback);
     },
 
     importKeypair : function(name, keyMaterial, callback)
@@ -2625,24 +2768,29 @@ var ew_controller = {
         ew_session.queryEC2("ImportKeyPair", [ [ "KeyName", name ], [ "PublicKeyMaterial", keyMaterial ] ], this, false, "onComplete", callback);
     },
 
-    listSigningCertificates : function(callback)
+    listSigningCertificates : function(user, callback)
     {
-        ew_session.queryIAM("ListSigningCertificates", [], this, false, "onCompleteListSigningCertificates", callback);
+        var params = [];
+        if (user) params.push(["UserName", user]);
+        ew_session.queryIAM("ListSigningCertificates", params, this, false, "onCompleteListSigningCertificates", callback);
     },
 
     onCompleteListSigningCertificates : function(responseObj)
     {
         var xmlDoc = responseObj.xmlDoc;
 
+        var user = getNodeValue(xmlDoc, "UserName");
         var list = new Array();
         var items = xmlDoc.getElementsByTagName("member");
         for ( var i = 0; i < items.length; i++) {
             var id = getNodeValue(items[i], "CertificateId");
             var body = getNodeValue(items[i], "CertificateBody");
-            list.push(new Certificate(id, body));
+            list.push(new Certificate(id, user, body));
         }
 
-        ew_model.updateCerts(list);
+        // Update user record with the key list
+        ew_model.updateModel('users', user, 'certs', list)
+
         if (responseObj.callback) responseObj.callback(list);
     },
 

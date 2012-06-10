@@ -8,7 +8,7 @@
                 <caption label="&ew.captions.volumes.snapshots.label;" />
                 <popupset>
                     <menupopup id="ew.snapshots.contextmenu">
-                        <menuitem oncommand="ew_SnapshotTreeView.viewDetails(event);" label="&ew.contextmenu.details.label;" />
+                        <menuitem oncommand="ew_SnapshotTreeView.displayDetails(event);" label="&ew.contextmenu.details.label;" />
                         <menuitem oncommand="ew_SnapshotTreeView.tag(event);" label="Edit EC2 Tag" />
                         <menuseparator />
                         <menuitem oncommand="ew_SnapshotTreeView.showRegisterImageFromSnapshotDialog();" label="Register AMI from snapshot" />
@@ -26,7 +26,7 @@
                         <toolbarbutton image="images/add.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.createVolume()" tooltiptext="&ew.createvolfromsnap.tip;" />
                         <toolbarbutton image="images/delete.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.deleteSnapshot()" tooltiptext="&ew.deletesnap.tip;" />
                         <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.tag();" tooltiptext="Edit EC2 Tag" />
-                        <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.viewDetails();" tooltiptext="&ew.contextmenu.details.label;" />
+                        <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.displayDetails();" tooltiptext="&ew.contextmenu.details.label;" />
                         <menulist id="ew_SnapshotTreeView.snapshot.type" selectedIndex="0" oncommand="ew_SnapshotTreeView.snapshotTypeChanged();">
                             <menupopup>
                                 <menuitem label="My Snapshots" value="my_snapshots" />

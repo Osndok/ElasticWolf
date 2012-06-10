@@ -2,11 +2,10 @@
 var ew_session = {
     VERSION: "2.0",
     NAME: 'ElasticWolf',
+    URL: 'https://awsps.com/ElasticWolf',
     EC2_API_VERSION : '2012-05-01',
     ELB_API_VERSION : '2011-11-15',
     IAM_API_VERSION : '2010-05-08',
-    APP_SITE: 'https://github.com',
-    APP_PATH: '/vseryakov/',
     VPN_CONFIG_PATH : 'https://ec2-downloads.s3.amazonaws.com/',
     SIG_VERSION: '2',
     IAM_GOV_URL: 'https://iam.us-gov.amazonaws.com',
@@ -89,13 +88,13 @@ var ew_session = {
             idleService.removeIdleObserver(this.idleObserver, this.idleObserver.timeout);
             this.idleObserver = null;
         }
-        var timeout = this.getIdleTimeout();
-        if (timeout <= 0) return;
+        var timeout = this.getIntPrefs("ew.idle.timeout", 0);
+        if (isNaN(timeout) || timeout <= 0) return;
 
         this.idleObserver = {
              timeout: timeout * 60,
              observe: function(subject, topic, data) {
-                 var action = me.prefs.getIdleAction();
+                 var action = me.getStrPrefs("ew.idle.action", "");
                  debug(subject + ", " + topic + ", " + data + ", " + action)
                  switch (topic + ':' + action) {
                  case "idle:exit":
@@ -109,7 +108,6 @@ var ew_session = {
              }
         };
         idleService.addIdleObserver(this.idleObserver, this.idleObserver.timeout);
-        debug('idle timer: ' + this.idleObserver.timeout + ', ' + me.prefs.getIdleAction());
     },
 
     quit: function()
@@ -532,7 +530,7 @@ var ew_session = {
     promptForText: function(title, text, width, height)
     {
         var rc = { ok: false, text: text, title: title };
-        openDialog('chrome://ew/content/dialogs/text.xul', null, 'chrome,centerscreen,modal,width=' + (widht || 400) + ',height=' + (height || 240), rc);
+        openDialog('chrome://ew/content/dialogs/text.xul', null, 'chrome,centerscreen,modal,width=' + (width || 400) + ',height=' + (height || 240), rc);
         return rc.ok ? rc.text : null;
     },
 
@@ -683,23 +681,23 @@ var ew_session = {
         clip.setData(trans, null, Components.interfaces.nsIClipboard.kGlobalClipboard);
     },
 
-    getAppName : function() {
+    getAppName : function()
+    {
         return this.NAME;
     },
 
-    getAppUrl: function() {
-        return this.APP_SITE + this.APP_PATH + this.NAME
+    getAppUrl: function()
+    {
+        return this.URL
     },
 
-    getDownloadUrl: function() {
-        return this.getAppUrl() + "/downloads/"
-    },
-
-    getUserAgent: function () {
+    getUserAgent: function ()
+    {
         return this.getAppName() + "/" + this.VERSION;
     },
 
-    getIAMURL: function() {
+    getIAMURL: function()
+    {
         return this.isGovCloud() ? this.IAM_GOV_URL : this.IAM_URL;
     },
 
@@ -708,9 +706,10 @@ var ew_session = {
         return String(this.serviceURL).indexOf("ec2.us-gov") > -1;
     },
 
-    checkForUpdates: function() {
+    checkForUpdates: function()
+    {
         ver = parseFloat(this.VERSION) + 0.01
-        var url = this.getDownloadUrl()
+        var url = this.getAppUrl()
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
@@ -720,11 +719,11 @@ var ew_session = {
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4) {
                 var data = xmlhttp.responseText;
-                var d = data.match(new RegExp("\/downloads\/[^\/]+\/" + this.NAME + "\/" + this.NAME + (isWindows(navigator.platform) ? "-win-" : "-osx-") + "([0-9]\.[0-9][0-9])\.zip"))
+                var d = data.match(new RegExp("\/" + this.NAME + "\/" + this.NAME + (isWindows(navigator.platform) ? "-win-" : "-osx-") + "([0-9]\.[0-9][0-9])\.zip"))
                 if (d != null) {
                     debug(d);
                     if (parseFloat(d[1]) > parseFloat(this.VERSION)) {
-                        alert("New version " + d[1] + "is available at " + this.APP_SITE + d[0])
+                        alert("New version " + d[1] + "is available at " + url + d[0])
                         return;
                     }
                 }
@@ -736,7 +735,8 @@ var ew_session = {
         xmlhttp.send(null);
     },
 
-    getNsResolver : function() {
+    getNsResolver : function()
+    {
         var client = this;
         return function(prefix) {
             var ns = { 's':  "http://schemas.xmlsoap.org/soap/envelope/", 'ec2': "http://ec2.amazonaws.com/doc/" + client.EC2_API_VERSION + "/" };
@@ -744,13 +744,15 @@ var ew_session = {
         }
     },
 
-    setCredentials : function (accessCode, secretKey) {
+    setCredentials : function (accessCode, secretKey)
+    {
         this.accessCode = accessCode;
         this.secretKey = secretKey;
         this.errorCount = 0;
     },
 
-    setEndpoint : function (endpoint) {
+    setEndpoint : function (endpoint)
+    {
         if (endpoint != null) {
             this.serviceURL = endpoint.url;
             this.region = endpoint.name;
@@ -758,7 +760,8 @@ var ew_session = {
         }
     },
 
-    newInstance : function() {
+    newInstance : function()
+    {
         var xmlhttp = null;
         if (typeof XMLHttpRequest != 'undefined') {
             try {
@@ -770,7 +773,8 @@ var ew_session = {
         return xmlhttp;
     },
 
-    setEndpointURLForRegion : function(region) {
+    setEndpointURLForRegion : function(region)
+    {
         var reg = ew_utils.determineRegionFromString(ew_session.getActiveEndpoint().name);
         log(reg + ": active region prefix");
         if (reg != region) {
@@ -796,7 +800,8 @@ var ew_session = {
         }
     },
 
-    queryEC2InRegion : function (region, action, params, handlerObj, isSync, handlerMethod, callback) {
+    queryEC2InRegion : function (region, action, params, handlerObj, isSync, handlerMethod, callback)
+    {
         // Save the current Service URL
         var oldURL = this.serviceURL;
         log(oldURL + ": old URL");
@@ -810,7 +815,8 @@ var ew_session = {
         return toRet;
     },
 
-    queryEC2 : function (action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion) {
+    queryEC2 : function (action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion)
+    {
         if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
 
         if (this.serviceURL == null || this.serviceURL == "") {
@@ -818,7 +824,7 @@ var ew_session = {
         }
 
         var rsp = null;
-        while (this.isHttpEnabled()) {
+        while (this.getBoolPrefs("ew.http.enabled", true)) {
             try {
                 rsp = this.queryEC2Impl(action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion);
                 if (!this.retryRequest(rsp, action)) {
@@ -854,13 +860,15 @@ var ew_session = {
         return false;
     },
 
-    errorDialog : function(msg, code, rId, fStr) {
+    errorDialog : function(msg, code, rId, fStr)
+    {
         var retry = {value:null};
         window.openDialog("chrome://ew/content/dialogs/retry_cancel.xul", null, "chrome,centerscreen,modal,resizable", msg, code, rId, fStr, retry);
         return retry.value;
     },
 
-    sigParamCmp : function(x, y) {
+    sigParamCmp : function(x, y)
+    {
         if (x[0].toLowerCase() < y[0].toLowerCase ()) {
             return -1;
         }
@@ -870,7 +878,8 @@ var ew_session = {
         return 0;
     },
 
-    queryEC2Impl : function (action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion) {
+    queryEC2Impl : function (action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion)
+    {
         var curTime = new Date();
         var formattedTime = curTime.strftime("%Y-%m-%dT%H:%M:%SZ", true);
 
@@ -925,18 +934,21 @@ var ew_session = {
         return this.sendRequest(xmlhttp, queryParams, isSync, action, handlerMethod, handlerObj, callback, params);
     },
 
-    queryELB : function (action, params, handlerObj, isSync, handlerMethod, callback) {
+    queryELB : function (action, params, handlerObj, isSync, handlerMethod, callback)
+    {
         if (this.elbURL == null || this.elbURL == "") {
             this.setEndpoint(ew_session.getActiveEndpoint());
         }
         return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.elbURL, this.ELB_API_VERSION);
     },
 
-    queryIAM : function (action, params, handlerObj, isSync, handlerMethod, callback) {
+    queryIAM : function (action, params, handlerObj, isSync, handlerMethod, callback)
+    {
         return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.getIAMURL(), this.IAM_API_VERSION);
     },
 
-    queryS3Prepare : function(method, bucket, key, path, params, content) {
+    queryS3Prepare : function(method, bucket, key, path, params, content)
+    {
         var curTime = new Date().toUTCString();
         var url = this.getS3Protocol(this.region, bucket) + (bucket ? bucket + "." : "") + this.model.getS3Region(this.region || "").url;
 
@@ -990,7 +1002,8 @@ var ew_session = {
         return { method: method, url: url + "/" + key + path, headers: params, sig: strSig, time: curTime }
     },
 
-    queryS3Impl : function(method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback) {
+    queryS3Impl : function(method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback)
+    {
 
         var req = this.queryS3Prepare(method, bucket, key, path, params, content);
 
@@ -1008,13 +1021,15 @@ var ew_session = {
         return this.sendRequest(xmlhttp, content, isSync, method, handlerMethod, handlerObj, callback, [bucket, key, path]);
     },
 
-    downloadS3 : function (method, bucket, key, path, params, file, callback, progresscb) {
+    downloadS3 : function (method, bucket, key, path, params, file, callback, progresscb)
+    {
         if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
         var req = this.queryS3Prepare(method, bucket, key, path, params, null);
         return this.download(req.url, req.headers, file, callback, progresscb);
     },
 
-    uploadS3: function(bucket, key, path, params, filename, callback, progresscb) {
+    uploadS3: function(bucket, key, path, params, filename, callback, progresscb)
+    {
         if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
 
         var file = FileIO.streamOpen(filename);
@@ -1063,12 +1078,13 @@ var ew_session = {
         return true;
     },
 
-    queryS3 : function (method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback) {
+    queryS3 : function (method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback)
+    {
         if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
 
         var rsp = null;
 
-        while (this.isHttpEnabled()) {
+        while (this.getBoolPrefs("ew.http.enabled", true)) {
             try {
                 rsp = this.queryS3Impl(method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback);
                 if (!this.retryRequest(rsp, method + " " + bucket + "/" + key + path)) {
@@ -1096,8 +1112,9 @@ var ew_session = {
         }
     },
 
-    sendRequest: function(xmlhttp, content, isSync, action, handlerMethod, handlerObj, callback, data) {
-        debug('sendRequest: ' + action + ' ' + handlerMethod + ' ' + data);
+    sendRequest: function(xmlhttp, content, isSync, action, handlerMethod, handlerObj, callback, params)
+    {
+        log('sendRequest: ' + action + ' ' + handlerMethod + ' ' + params);
         var me = this;
 
         // Generate random timer
@@ -1113,7 +1130,7 @@ var ew_session = {
                 if (xhr.readyState == 4) {
                     me.showBusy(false);
                     me.stopTimer(timerKey);
-                    var rsp = me.handleResponse(xhr, isSync, action, handlerMethod, handlerObj, callback, data);
+                    var rsp = me.handleResponse(xhr, isSync, action, handlerMethod, handlerObj, callback, params);
                     me.retryRequest(rsp, handlerMethod);
                 }
             }
@@ -1125,22 +1142,23 @@ var ew_session = {
             debug(e)
             this.showBusy(false);
             this.stopTimer(timerKey);
-            return this.createResponse(null, action, handlerMethod, callback, true, "Send Request Error", e, "", data);
+            return this.createResponse(null, action, handlerMethod, callback, true, "Send Request Error", e, "", params);
         }
         if (isSync) {
             this.showBusy(false);
             this.stopTimer(timerKey);
-            return this.handleResponse(xmlhttp, isSync, action, handlerMethod, handlerObj, callback, data);
+            return this.handleResponse(xmlhttp, isSync, action, handlerMethod, handlerObj, callback, params);
         }
         return { hasErrors: false };
     },
 
-    handleResponse : function(xmlhttp, isSync, action, handlerMethod, handlerObj, callback, data) {
+    handleResponse : function(xmlhttp, isSync, action, handlerMethod, handlerObj, callback, params)
+    {
         log((isSync ? "Sync" : "Async") + " Response, status: " + xmlhttp.status + ", req:" + action + "/" + handlerMethod + ", response: " + xmlhttp.responseText);
 
         var rc = xmlhttp.status >= 200 && xmlhttp.status < 300 ?
-                 this.createResponse(xmlhttp, action, handlerMethod, callback, false, "", "", "", data) :
-                 this.handleResponseError(xmlhttp, action, handlerMethod, callback, data);
+                 this.createResponse(xmlhttp, action, handlerMethod, callback, false, "", "", "", params) :
+                 this.handleResponseError(xmlhttp, action, handlerMethod, callback, params);
 
         rc.isSync = isSync;
         // If context object is not specified call the callback directly
@@ -1153,7 +1171,8 @@ var ew_session = {
         return rc;
     },
 
-    handleResponseError : function(xmlhttp, action, handlerMethod, callback, data) {
+    handleResponseError : function(xmlhttp, action, handlerMethod, callback, params)
+    {
         var faultCode = "Unknown: " + xmlhttp.status;
         var faultString = "An unknown error occurred, please check connectivity";
         var requestId = "";
@@ -1168,24 +1187,26 @@ var ew_session = {
             faultString = getNodeValue(xmlDoc, "Message");
             requestId = getNodeValue(xmlDoc, "RequestID");
         }
-        return this.createResponse(xmlhttp, action, handlerMethod, callback, true, faultCode, faultString, requestId, data);
+        return this.createResponse(xmlhttp, action, handlerMethod, callback, true, faultCode, faultString, requestId, params);
     },
 
-    createResponse : function(xmlhttp, action, handlerMethod, callback, hasErrors, faultCode, faultString, requestId, data) {
+    createResponse : function(xmlhttp, action, handlerMethod, callback, hasErrors, faultCode, faultString, requestId, params)
+    {
         return { xmlhttp: xmlhttp,
                  xmlDoc: xmlhttp && xmlhttp.responseXML ? xmlhttp.responseXML : document.createElement('p'),
                  textBody: xmlhttp ? xmlhttp.responseText : '',
                  action: action,
                  method: handlerMethod,
                  requestId: requestId,
-                 faultCode: faultCode, faultString: faultString,
+                 faultCode: faultCode,
+                 faultString: faultString,
                  hasErrors: hasErrors,
-                 data: data, callback: callback, };
+                 params: params,
+                 callback: callback, };
     },
 
-    queryVpnConnectionStylesheets : function(stylesheet) {
-        if (this.disabled || !this.isHttpEnabled()) return
-
+    queryVpnConnectionStylesheets : function(stylesheet)
+    {
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
@@ -1200,8 +1221,8 @@ var ew_session = {
         return this.sendRequest(xmlhttp, 'vpnConfig', null, true, stylesheet);
     },
 
-    queryCheckIP : function(type, retVal) {
-        if (this.disabled || !this.isHttpEnabled()) return;
+    queryCheckIP : function(type, retVal)
+    {
         var xmlhttp = this.newInstance();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
@@ -1213,9 +1234,8 @@ var ew_session = {
         return this.sendRequest(xmlhttp, 'checkIP', null, true, "checkip", null, function(obj) { retVal.ipAddress = obj.textBody; });
     },
 
-    download: function(url, headers, filename, callback, progresscb) {
-        if (this.disabled || !this.isHttpEnabled()) return;
-
+    download: function(url, headers, filename, callback, progresscb)
+    {
         debug('download: ' + url + '| ' + JSON.stringify(headers) + '| ' + filename)
 
         try {
@@ -1265,7 +1285,8 @@ var ew_session = {
         this.timers[key] = timer;
     },
 
-    stopTimer : function(key, timeout) {
+    stopTimer : function(key, timeout)
+    {
         var timer = this.timers[key];
         this.timers[key] = null;
         if (timer == null) {
@@ -1326,46 +1347,6 @@ var ew_session = {
         this.setStrPrefs("ew.tab.current", value);
     },
 
-    isDebugEnabled : function()
-    {
-        return this.getBoolPrefs("ew.debug.enabled", false);
-    },
-
-    setDebugEnabled : function(enabled)
-    {
-        this.setBoolPrefs("ew.debug.enabled", enabled);
-    },
-
-    isHttpEnabled : function()
-    {
-        return this.getBoolPrefs("ew.http.enabled", true);
-    },
-
-    setHttpEnabled : function(enabled)
-    {
-        this.setBoolPrefs("ew.http.enabled", enabled);
-    },
-
-    getOpenConnectionPort : function()
-    {
-        return this.getBoolPrefs("ew.open.connection.port", true);
-    },
-
-    setOpenConnectionPort : function(value)
-    {
-        this.setBoolPrefs("ew.open.connection.port", value);
-    },
-
-    getPromptForPortOpening : function()
-    {
-        return this.getBoolPrefs("ew.prompt.open.port", true);
-    },
-
-    setPromptForPortOpening : function(value)
-    {
-        this.setBoolPrefs("ew.prompt.open.port", value);
-    },
-
     getKeyHome : function()
     {
         return this.getStrPrefs("ew.key.home", this.getHome() + this.getDirSeparator() + this.getAppName());
@@ -1384,26 +1365,6 @@ var ew_session = {
     setLastUsedAccount : function(value)
     {
         this.setStrPrefs("ew.account.name", value);
-    },
-
-    getIdleAction: function()
-    {
-        return this.getStrPrefs("ew.idle.action", "");
-    },
-
-    setIdleAction : function(value)
-    {
-        this.setStrPrefs("ew.idle.action", value);
-    },
-
-    getIdleTimeout: function()
-    {
-        return this.getIntPrefs("ew.idle.timeout", 0);
-    },
-
-    setIdleTimeout : function(value)
-    {
-        this.setIntPrefs("ew.idle.timeout", value);
     },
 
     getShellCommand : function()

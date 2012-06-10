@@ -7,6 +7,10 @@ var ew_menu = {
 
             { tab: "ew.tabs.endpoint",      views: [ { id: "ew.endpoints.view", view: ew_EndpointsTreeView } ] },
 
+            { tab: "ew.tabs.policy",        views: [ { view: ew_PasswordPolicyView } ] },
+
+            { tab: "ew.tabs.password",      call: ew_UsersTreeView.changePassword },
+
             { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: true }] } ], },
 
             { tab: "ew.tabs.vpcinstance",   views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: false }] } ],
@@ -15,7 +19,7 @@ var ew_menu = {
             { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
 
             { tab: "ew.tabs.access",        views: [ { id: "ew.accesskeys.view", view: ew_AccessKeyTreeView },
-                                                     { id: "ew.certs.view", view: ew_CertTreeView } ], },
+                                                     { id: "ew.certs.view", view: ew_CertsTreeView } ], },
 
             { tab: "ew.tabs.keypair",       views: [ { id: "ew.keypairs.view", view: ew_KeypairTreeView, } ] },
 
@@ -149,6 +153,9 @@ var ew_menu = {
             } else {
                 tab.views[i].view.invalidate();
             }
+        }
+        if (tab.call) {
+            tab.call();
         }
         return true;
     },

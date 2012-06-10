@@ -1,6 +1,7 @@
-function Certificate(id, body)
+function Certificate(id, user, body)
 {
     this.id = id
+    this.userName = user
     this.body = body
     this.toString = function() {
         return this.id;
@@ -48,9 +49,12 @@ function User(id, name, path, arn)
     this.arn = arn;
     this.groups = null;
     this.policies = null;
+    this.keys = null;
+    this.devices = null;
+    this.certs = null;
 
     this.toString = function() {
-        return this.name + (this.groups.length ? ew_model.separator + this.groups : "");
+        return this.name + (this.groups && this.groups.length ? ew_model.separator + this.groups : "");
     }
 }
 
@@ -65,6 +69,18 @@ function UserGroup(id, name, path, arn)
 
     this.toString = function() {
         return this.name;
+    }
+}
+
+function MFADevice(serial, date, user, arn)
+{
+    this.id = serial
+    this.date = date
+    this.userName = user
+    this.arn = arn
+
+    toString = function() {
+        return this.id;
     }
 }
 
@@ -693,7 +709,7 @@ function CustomerGateway(id, ipAddress, bgpAsn, state, type, tags)
     }
 }
 
-function LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, azones, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName, vpcId, subnets, groups)
+function LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, availabilityZones, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName, vpcId, subnets, groups)
 {
     this.LoadBalancerName = LoadBalancerName;
     this.CreatedTime = CreatedTime;
@@ -707,7 +723,7 @@ function LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protoco
     this.HealthyThreshold = HealthyThreshold;
     this.UnhealthyThreshold = UnhealthyThreshold;
     this.Target = Target;
-    this.zones = azones;
+    this.zones = availabilityZones;
     this.CookieName = CookieName;
     this.APolicyName = APolicyName;
     this.CookieExpirationPeriod = CookieExpirationPeriod;
@@ -742,9 +758,7 @@ var ew_model = {
     snapshots : null,
     instances : null,
     keypairs : null,
-    accesskeys : null,
-    certs : null,
-    azones : null,
+    availabilityZones : null,
     securityGroups : null,
     addresses : null,
     bundleTasks : null,
@@ -761,14 +775,16 @@ var ew_model = {
     routeTables: null,
     networkAcls: null,
     networkInterfaces: null,
-    s3buckets: null,
+    s3Buckets: null,
     regions: null,
     users: null,
     groups: null,
+    mfa: null,
 
     invalidate : function()
     {
         // reset all lists, these will notify their associated views
+        this.updateMFADevices(null);
         this.updateUsers(null);
         this.updateGroups(null);
         this.updateImages(null);
@@ -801,6 +817,8 @@ var ew_model = {
     getModel : function(name)
     {
         switch (name) {
+        case "mfa":
+            return this.mfa;
         case "regions":
             return this.regions;
         case "volumes":
@@ -813,12 +831,8 @@ var ew_model = {
             return this.instances;
         case "keypairs":
             return this.keypairs;
-        case "accesskeys":
-            return this.accesskeys;
-        case "certs":
-            return this.certs;
-        case "azones":
-            return this.azones;
+        case "availabilityZones":
+            return this.availabilityZones;
         case "securityGroups":
             return this.securityGroups;
         case "addresses":
@@ -851,8 +865,8 @@ var ew_model = {
             return this.networkAcls;
         case "networkInterfaces":
             return this.networkInterfaces;
-        case "s3buckets":
-            return this.s3buckets;
+        case "s3Buckets":
+            return this.s3Buckets;
         case "users":
             return this.users;
         case "groups":
@@ -865,6 +879,9 @@ var ew_model = {
     {
         log('refreshModel: ' + name)
         switch (name) {
+        case "mfs":
+            ew_session.listVirtualMFADevices();
+            break;
         case "regions":
             ew_session.controller.describeRegions();
             break;
@@ -889,13 +906,7 @@ var ew_model = {
         case "keypairs":
             ew_session.controller.describeKeypairs();
             break;
-        case "accesskeys":
-            ew_session.controller.listAccessKeys();
-            break;
-        case "certs":
-            ew_session.controller.listSigningCertificates();
-            break;
-        case "azones":
+        case "availabilityZones":
             ew_session.controller.describeAvailabilityZones();
             break;
         case "securityGroups":
@@ -946,7 +957,7 @@ var ew_model = {
         case "networkInterfaces":
             ew_session.controller.describeNetworkInterfaces();
             break;
-        case "s3buckets":
+        case "s3Buckets":
             ew_session.controller.listS3Buckets();
             break;
         case "users":
@@ -957,6 +968,22 @@ var ew_model = {
             break;
         }
         return []
+    },
+
+    // Update field of an object in the model
+    updateModel: function(model, id, field, value)
+    {
+        if (!model || !id || !field) return null;
+        var obj = this.findObject(this.getModel(model), id);
+        if (obj) {
+            obj[field] = value;
+        }
+        return obj;
+    },
+
+    findModel: function(model, id)
+    {
+        return this.findObject(this.getModel(model), id);
     },
 
     // Common replacement for cells by name, builds human readable value
@@ -983,13 +1010,13 @@ var ew_model = {
                     if (typeof value[i] == "object") {
                         rc.push(value[i].toString());
                     } else {
-                        var obj = this.getObjectById(list, value[i]);
+                        var obj = this.findObject(list, value[i]);
                         rc.push(obj ? obj.toString() : value[i]);
                     }
                 }
                 return rc.join(",");
             } else {
-                var obj = this.getObjectById(list, value);
+                var obj = this.findObject(list, value);
                 if (obj) {
                     return obj.toString()
                 }
@@ -1003,7 +1030,7 @@ var ew_model = {
         if (obj == null) return null;
         if (typeof obj == "object") {
             var item = "";
-            // Show class name as the firt column for mutli object lists
+            // Show class name as the first column for mutli object lists
             if (columns && columns.indexOf("__class__") >= 0) {
                 item = className(obj)
             }
@@ -1037,11 +1064,11 @@ var ew_model = {
         }
     },
 
-    getObjectById: function(list, id, idcol)
+    findObject: function(list, id)
     {
-        if (!idcol) idcol = 'id';
         for (var i in list) {
-            if (list[i][idcol] == id) return list[i]
+            if (list[i].id && list[i].id == id) return list[i];
+            if (list[i].name && list[i].name == id) return list[i];
         }
         return null;
     },
@@ -1088,18 +1115,32 @@ var ew_model = {
         }
     },
 
+    updateMFADevices : function(list)
+    {
+        this.mfs = list;
+        this.notifyComponents("mfa");
+    },
+
+    getMFADevicess : function()
+    {
+        if (this.mfa == null) {
+            ew_session.controller.listMFADevices();
+        }
+        return this.getObjects(this.mfa, arguments);
+    },
+
     updateRegions : function(list)
     {
-        this.users = list;
+        this.regions = list;
         this.notifyComponents("regions");
     },
 
     getRegions : function()
     {
-        if (this.regins == null) {
+        if (this.regions == null) {
             ew_session.controller.describeRegions();
         }
-        return this.regions;
+        return this.getObjects(this.regions, arguments);
     },
 
     updateUsers : function(list)
@@ -1118,7 +1159,7 @@ var ew_model = {
 
     getUserByName: function(name)
     {
-        return this.getObjectById(this.users, name, 'name');
+        return this.findObject(this.users, name, 'name');
     },
 
     updateGroups : function(list)
@@ -1137,38 +1178,38 @@ var ew_model = {
 
     getGroupByName: function(name)
     {
-        return this.getObjectById(this.groups, name, 'name');
+        return this.findObject(this.groups, name, 'name');
     },
 
     updateS3Buckets : function(list)
     {
-        this.s3buckets = list;
-        this.notifyComponents("s3buckets");
+        this.s3Buckets = list;
+        this.notifyComponents("s3Buckets");
     },
 
     getS3Buckets : function()
     {
-        if (this.s3buckets == null) {
+        if (this.s3Buckets == null) {
             ew_session.controller.listS3Buckets();
         }
-        return this.getObjects(this.s3buckets, arguments);
+        return this.getObjects(this.s3Buckets, arguments);
     },
 
     getS3Bucket: function(bucket) {
-        for (var i in this.getS3Buckets()) {
-            if (bucket == this.s3buckets[i].name) {
-                return this.s3buckets[i]
+        for (var i in this.s3Buckets) {
+            if (bucket == this.s3Buckets[i].name) {
+                return this.s3Buckets[i]
             }
         }
         return null;
     },
 
     getS3BucketKey: function(bucket, key) {
-        for (var i in this.getS3Buckets()) {
-            if (bucket == this.s3buckets[i].name) {
-                for (var j in this.s3buckets[i].keys) {
-                    if (this.s3buckets[i].keys[j].name == key) {
-                        return this.s3buckets[i].keys[j]
+        for (var i in this.s3Buckets) {
+            if (bucket == this.s3Buckets[i].name) {
+                for (var j in this.s3Buckets[i].keys) {
+                    if (this.s3Buckets[i].keys[j].name == key) {
+                        return this.s3Buckets[i].keys[j]
                     }
                 }
                 break;
@@ -1207,7 +1248,7 @@ var ew_model = {
 
     getVpcById: function(id)
     {
-        return this.getObjectById(this.vpcs, id)
+        return this.findObject(this.vpcs, id)
     },
 
     updateSubnets : function(list)
@@ -1226,7 +1267,7 @@ var ew_model = {
 
     getSubnetById: function(id)
     {
-        return this.getObjectById(this.subnets, id)
+        return this.findObject(this.subnets, id)
     },
 
     getSubnetsByVpcId: function(vpcId)
@@ -1446,7 +1487,7 @@ var ew_model = {
     },
 
     getInstanceById: function(id) {
-        return this.getObjectById(this.instances, id)
+        return this.findObject(this.instances, id)
     },
 
     updateKeypairs : function(list)
@@ -1461,34 +1502,6 @@ var ew_model = {
             ew_session.controller.describeKeypairs();
         }
         return this.keypairs;
-    },
-
-    updateAccessKeys : function(list)
-    {
-        this.accesskeys = list;
-        this.notifyComponents("accesskeys");
-    },
-
-    getAccessKeys : function()
-    {
-        if (this.accesskeys == null) {
-            ew_session.controller.listAccessKeys();
-        }
-        return this.accesskeys;
-    },
-
-    updateCerts : function(list)
-    {
-        this.certs = list;
-        this.notifyComponents("certs");
-    },
-
-    getCerts : function()
-    {
-        if (this.certs == null) {
-            ew_session.controller.listSigningCertificates();
-        }
-        return this.certs;
     },
 
     updateSecurityGroups : function(list)
@@ -1507,7 +1520,7 @@ var ew_model = {
 
     getSecurityGroupById: function(id)
     {
-        return this.getObjectById(this.securityGroups, id)
+        return this.findObject(this.securityGroups, id)
     },
 
     getSecurityGroupsByVpcId: function(vpcId)
@@ -1559,16 +1572,16 @@ var ew_model = {
 
     updateAvailabilityZones : function(list)
     {
-        this.azones = list;
-        this.notifyComponents("azones");
+        this.availabilityZones = list;
+        this.notifyComponents("availabilityZones");
     },
 
     getAvailabilityZones : function()
     {
-        if (this.azones == null) {
+        if (this.availabilityZones == null) {
             ew_session.controller.describeAvailabilityZones();
         }
-        return this.azones;
+        return this.availabilityZones;
     },
 
     updateBundleTasks : function(list)

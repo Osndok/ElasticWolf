@@ -2,7 +2,7 @@ var ew_BundleTasksTreeView = {
     model: 'bundleTasks',
     searchElement: 'ew.bundleTasks.search',
 
-    enableOrDisableItems  : function (event) {
+    menuChanged  : function (event) {
         var task = this.getSelected();
         if (task == null) return;
 

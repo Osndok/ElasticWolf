@@ -7,7 +7,7 @@
             <groupbox orient="vertical" flex="1">
                 <caption label="&ew.captions.vpngateways.vpngateways.label;" />
                 <popupset>
-                    <menupopup id="ew.vpngateways.contextmenu" onpopupshowing="ew_VpnGatewayTreeView.enableOrDisableItems();">
+                    <menupopup id="ew.vpngateways.contextmenu" onpopupshowing="ew_VpnGatewayTreeView.menuChanged();">
                         <menuitem oncommand="ew_VpnGatewayTreeView.tag(event);" label="Add Tag" />
                         <menuseparator />
                         <menuitem oncommand="ew_VpnGatewayTreeView.createVpnConnection();" label="&ew.vpngateway.contextmenu.createvpnconnection.label;" />
@@ -52,7 +52,7 @@
             <groupbox orient="vertical" flex="1">
                 <caption label="&ew.captions.vpngateways.attachments.label;" />
                 <popupset>
-                    <menupopup id="ew.vpnattachments.contextmenu" onpopupshowing="ew_VpnAttachmentTreeView.enableOrDisableItems();">
+                    <menupopup id="ew.vpnattachments.contextmenu" onpopupshowing="ew_VpnAttachmentTreeView.menuChanged();">
                         <menuitem oncommand="ew_VpnAttachmentTreeView.deleteVpnAttachment();" label="&ew.vpnattachment.contextmenu.delete.label;" />
                     </menupopup>
                 </popupset>

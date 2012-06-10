@@ -8,7 +8,7 @@
                 <caption label="Elastic Network Interfaces" />
                 <popupset>
                     <menupopup id="ew.enis.contextmenu">
-                        <menuitem oncommand="ew_NetworkInterfacesTreeView.viewDetails();" label="View Details" />
+                        <menuitem oncommand="ew_NetworkInterfacesTreeView.displayDetails();" label="View Details" />
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.edit();" label="Edit ENI" />
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.createInterface();" label="Create ENI" />
                         <menuitem oncommand="ew_NetworkInterfacesTreeView.deleteInterface();" label="Delete ENI" />

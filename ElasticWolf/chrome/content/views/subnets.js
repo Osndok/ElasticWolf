@@ -1,8 +1,8 @@
 var ew_SubnetsTreeView = {
-    model: [ "subnets", "vpcs", "routeTables", "networkAcls", "azones" ],
+    model: [ "subnets", "vpcs", "routeTables", "networkAcls", "availabilityZones" ],
     searchElement: 'ew.subnets.search',
 
-    enableOrDisableItems : function()
+    menuChanged : function()
     {
         $("ew.subnets.contextmenu").disabled = (this.getSelected() == null);
     },

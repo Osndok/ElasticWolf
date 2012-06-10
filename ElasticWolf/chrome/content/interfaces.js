@@ -290,7 +290,13 @@ var TreeView = {
         }
         return list;
     },
+    menuChanged: function()
+    {
+    },
     selectionChanged: function(event) {
+    },
+    filterChanged: function(event) {
+        this.invalidate();
     },
     searchChanged : function(event)
     {
@@ -345,10 +351,10 @@ var TreeView = {
     },
     clicked: function(event) {
         if (ew_session.winDetails && event) {
-            this.viewDetails();
+            this.displayDetails();
         }
     },
-    viewDetails : function(event) {
+    displayDetails : function(event) {
         var item = this.getSelected();
         if (item == null) return;
         var me = this;
@@ -419,7 +425,7 @@ var TreeView = {
         }
         // Wrapping handlers to preserve correct context for 'this'
         if (!tab.owner) {
-            (function(v) { var me = v; tree.addEventListener('dblclick', function(e) { e.stopPropagation();me.viewDetails(e); }, false); }(this));
+            (function(v) { var me = v; tree.addEventListener('dblclick', function(e) { e.stopPropagation();me.displayDetails(e); }, false); }(this));
             (function(v) { var me = v; tree.addEventListener('select', function(e) { e.stopPropagation();me.selectionChanged(e); }, false); }(this));
             (function(v) { var me = v; tree.addEventListener('click', function(e) { e.stopPropagation();me.clicked(e); }, false); }(this));
         }
@@ -484,9 +490,13 @@ var ew_ListBox = {
                 list.appendChild(row);
             } else {
                 list.appendItem(this.toItem(this.listItems[i]), i);
+                for (var j in this.checkedItems) {
+                    if (this.listItems[i] == this.checkedItems[j]) {
+                        list.selectedIndex = i;
+                    }
+                }
             }
         }
-        list.selectedIndex = 0;
         for (var i in this.header) {
             var hdr = $(this.name + '.header' + i)
             if (hdr) hdr.setAttribute('label', this.header[i]);

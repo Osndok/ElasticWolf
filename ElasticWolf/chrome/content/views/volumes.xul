@@ -7,8 +7,8 @@
             <groupbox orient="vertical" flex="2">
                 <caption label="&ew.captions.volumes.volumes.label;" />
                 <popupset>
-                    <menupopup id="ew.volumes.contextmenu" onpopupshowing="ew_VolumeTreeView.enableOrDisableItems();">
-                        <menuitem oncommand="ew_VolumeTreeView.viewDetails(event);" label="&ew.contextmenu.details.label;" />
+                    <menupopup id="ew.volumes.contextmenu" onpopupshowing="ew_VolumeTreeView.menuChanged();">
+                        <menuitem oncommand="ew_VolumeTreeView.displayDetails(event);" label="&ew.contextmenu.details.label;" />
                         <menuitem oncommand="ew_VolumeTreeView.tag(event);" label="Edit EC2 Tag" />
                         <menuseparator />
                         <menuitem id="volumes.context.attach" oncommand="ew_VolumeTreeView.attachVolume();" label="&ew.volume.contextmenu.attach.label;" />
@@ -33,7 +33,7 @@
                         <toolbarbutton image="images/attach.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VolumeTreeView.attachVolume()" tooltiptext="&ew.attachvol.tip;" />
                         <toolbarbutton image="images/stop.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_VolumeTreeView.detachVolume()" tooltiptext="&ew.detachvol.tip;" />
                         <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_VolumeTreeView.tag();" tooltiptext="Edit EC2 Tag" />
-                        <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_VolumeTreeView.viewDetails();" tooltiptext="&ew.contextmenu.details.label;" />
+                        <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_VolumeTreeView.displayDetails();" tooltiptext="&ew.contextmenu.details.label;" />
                         <toolbarseparator />
                         <checkbox id="ew.volumes.norootdev" label="Hide /dev/sda1" checked="false" oncommand="ew_VolumeTreeView.invalidate();" />
                     </hbox>

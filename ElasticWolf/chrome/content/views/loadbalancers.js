@@ -1,5 +1,5 @@
 var ew_LoadbalancerTreeView = {
-    model: ["loadBalancers", "azones", "instances" ],
+    model: ["loadBalancers", "availabilityZones", "instances" ],
 
     display: function(list)
     {
@@ -173,7 +173,7 @@ var ew_LoadbalancerTreeView = {
         ew_session.controller.CreateLBCookieSP(loadbalancername,CookieExpirationPeriod, function() { me.refresh(); });
     },
 
-    enableOrDisableItems : function(){
+    menuChanged : function(){
         var elb = this.getSelected();
         if (elb == null) return;
         document.getElementById("loadbalancer.tree.contextmenu").disabled = true;
@@ -218,7 +218,7 @@ var ew_InstanceHealthTreeView = {
 ew_InstanceHealthTreeView.__proto__ = TreeView;
 
 var ew_AvailZoneTreeView = {
-    model: 'azones',
+    model: 'availabilityZones',
 };
 ew_AvailZoneTreeView.__proto__ = TreeView;
 ew_AvailZoneTreeView.register();

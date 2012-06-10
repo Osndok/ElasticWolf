@@ -6,14 +6,26 @@
         <groupbox orient="vertical" flex="1" id="eip.tree.holder">
             <caption label="IAM Users" />
             <popupset>
-                <menupopup id="ew.users.contextmenu" onpopupshowing="ew_UsersTreeView.enableOrDisableItems();">
+                <menupopup id="ew.users.contextmenu" onpopupshowing="ew_UsersTreeView.menuChanged();">
                 <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addUser();" label="Add user" />
                 <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deleteUser();" label="Delete user" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addGroup();" label="Add to Group" />
+                <menuseparator />
                 <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.setPassword();" label="Add Password" />
                 <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.setPassword(true);" label="Change Password" />
                 <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deletePassword();" label="Delete Password" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addGroup();" label="Add to Group" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.renameUser();" label="Rename User" />
+                <menuseparator />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.createAccessKey();" label="Create Access Key" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deleteAccessKey();" label="Delete Access Key" />
+                <menuseparator />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.createVMFA();" label="Create Virtual MFA Device" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.enableMFA();" label="Enable MFA Device" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.resyncMFA();" label="Resync MFA Device" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deactivateMFA();" label="Deactivate MFA Device" />
+                <menuseparator />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addPolicy();" label="Add Policy" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.editPolicy();" label="Edit Policy" />
+                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deletePolicy();" label="Delete Policy" />
                 </menupopup>
             </popupset>
 
@@ -35,6 +47,10 @@
                     <treecol id="user.groups" label="Groups" flex="1" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                     <treecol id="user.policies" label="Policies" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.keys" label="Access Keys" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="user.devices" label="MFA Devices" flex="1" persist="width ordinal hidden sortDirection" />
                     <splitter class="tree-splitter" />
                 </treecols>
                 <treechildren id="ew.users.children" context="ew.users.contextmenu" />

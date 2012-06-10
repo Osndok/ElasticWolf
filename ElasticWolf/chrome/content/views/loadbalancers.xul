@@ -7,8 +7,8 @@
     <groupbox orient="vertical" flex="1" id="loadbalancer.tree.holder">
       <caption label="&ew.captions.loadbalancer.label;" />
        <popupset >
-          <menupopup id="loadbalancer.tree.contextmenu"  onpopupshowing="ew_LoadbalancerTreeView.enableOrDisableItems(event);">
-              <menuitem oncommand="ew_LoadbalancerTreeView.viewDetails(event);" label="&ew.loadbalancer.contextmenu.viewdetails.label;" />
+          <menupopup id="loadbalancer.tree.contextmenu"  onpopupshowing="ew_LoadbalancerTreeView.menuChanged(event);">
+              <menuitem oncommand="ew_LoadbalancerTreeView.displayDetails(event);" label="&ew.loadbalancer.contextmenu.viewdetails.label;" />
               <menuitem oncommand="ew_LoadbalancerTreeView.copyToClipboard('DNSName');" label="&ew.loadbalancer.contextmenu.copydns.label;" />
               <menuseparator/>
               <menuitem oncommand="ew_LoadbalancerTreeView.registerinstances(event);" label="&ew.loadbalancer.contextmenu.registerinstance.label;" />
@@ -31,7 +31,7 @@
         <toolbarbutton image="images/refresh.png" oncommand="ew_LoadbalancerTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
         <toolbarbutton image="images/add.png" tooltiptext="&ew.create.loadbalancer.tip;" oncommand="ew_LoadbalancerTreeView.create();" />
         <toolbarbutton image="images/delete.png" tooltiptext="&ew.loadbalancer.contextmenu.delete.label;" oncommand="ew_LoadbalancerTreeView.deleteLoadBalancer();" />
-        <toolbarbutton image="images/details.png" tooltiptext="&ew.loadbalancer.contextmenu.viewdetails.label;" oncommand="ew_LoadbalancerTreeView.viewDetails();" />
+        <toolbarbutton image="images/details.png" tooltiptext="&ew.loadbalancer.contextmenu.viewdetails.label;" oncommand="ew_LoadbalancerTreeView.displayDetails();" />
       </toolbar>
       <tree enableColumnDrag="true" id="ew.loadbalancer.view" flex="1" >
         <treecols>

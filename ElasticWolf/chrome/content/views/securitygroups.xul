@@ -8,7 +8,7 @@
       <caption label="&ew.captions.secgroups.groups.label;" />
       <popupset>
         <menupopup id="ew.secgroups.contextmenu">
-          <menuitem oncommand="ew_SecurityGroupsTreeView.viewDetails();" label="View Details" />
+          <menuitem oncommand="ew_SecurityGroupsTreeView.displayDetails();" label="View Details" />
           <menuitem oncommand="ew_PermissionsTreeView.grantPermission();" label="Grant New Permission" />
           <menuseparator />
           <menuitem oncommand="ew_SecurityGroupsTreeView.createNewGroup();" label="Create a new security group" />

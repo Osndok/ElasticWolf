@@ -31,6 +31,7 @@
 <?xul-overlay href="chrome://ew/content/views/prefs.xul"?>
 <?xul-overlay href="chrome://ew/content/views/users.xul"?>
 <?xul-overlay href="chrome://ew/content/views/groups.xul"?>
+<?xul-overlay href="chrome://ew/content/views/policy.xul"?>
 
 <window id="ew-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml"
         orient="vertical" persist="width height screenX screenY sizemode" onload="ew_session.initialize()">
@@ -104,15 +105,25 @@
 
       <treeitem container="true" open="true">
        <treerow>
-         <treecell label="Access Management" src="images/iam.png" />
+         <treecell label="Access" src="images/iam.png" />
        </treerow>
        <treechildren>
          <treeitem><treerow><treecell label="Credentials" value="ew.tabs.credential" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Endpoints" value="ew.tabs.endpoint" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Access Keys" value="ew.tabs.access" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Keypairs" value="ew.tabs.keypair" /></treerow></treeitem>
+       </treechildren>
+      </treeitem>
+
+      <treeitem container="true" open="true">
+       <treerow>
+         <treecell label="IAM" src="images/iam.png" />
+       </treerow>
+       <treechildren>
          <treeitem><treerow><treecell label="Users" value="ew.tabs.users" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Groups" value="ew.tabs.groups" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Password Policy" value="ew.tabs.policy" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Change My Password" value="ew.tabs.password" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
@@ -180,6 +191,7 @@
       <tabpanel id="ew.tabs.prefs"/>
       <tabpanel id="ew.tabs.credential"/>
       <tabpanel id="ew.tabs.endpoint"/>
+      <tabpanel id="ew.tabs.policy"/>
       <tabpanel id="ew.tabs.instance"/>
       <tabpanel id="ew.tabs.image"/>
       <tabpanel id="ew.tabs.access"/>

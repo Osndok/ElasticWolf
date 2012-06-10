@@ -6,7 +6,7 @@
         <groupbox orient="vertical" flex="1" id="eip.tree.holder">
             <caption label="&ew.captions.eip.label;" />
             <popupset>
-                <menupopup id="ew.addresses.contextmenu" onpopupshowing="ew_ElasticIPTreeView.enableOrDisableItems();">
+                <menupopup id="ew.addresses.contextmenu" onpopupshowing="ew_ElasticIPTreeView.menuChanged();">
                     <menuitem id="addresses.context.associate" oncommand="ew_ElasticIPTreeView.associateAddress();" label="Associate EIP" />
                     <menuitem id="addresses.context.disassociate" oncommand="ew_ElasticIPTreeView.disassociateAddress();" label="Disassociate EIP" />
                     <menuitem oncommand="ew_ElasticIPTreeView.releaseAddress();" label="Release EIP" />

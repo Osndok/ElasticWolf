@@ -4,7 +4,7 @@ var ew_AMIsTreeView = {
     favorites: "ew.images.favorites",
     properties: ['ownerAlias', 'isPublic', 'state'],
 
-    enableOrDisableItems : function(event)
+    menuChanged : function(event)
     {
         var image = this.getSelected();
         var fDisabled = (image == null);

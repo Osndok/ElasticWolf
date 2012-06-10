@@ -187,6 +187,10 @@
                     <checkbox id="ew.tools.http" />
                 </row>
                 <row>
+                    <label control="ew.tools.accesskey" value="Save generated Access Keys on local disk in encrypted format:" />
+                    <checkbox id="ew.tools.accesskey" />
+                </row>
+                <row>
                     <label control="ew.tools.debug" value="" />
                     <button id="ew.tools.updates" label="Check for Updates" oncommand="session.checkForUpdates()" />
                 </row>
