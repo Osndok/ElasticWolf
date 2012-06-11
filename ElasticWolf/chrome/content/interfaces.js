@@ -301,8 +301,7 @@ var TreeView = {
     searchChanged : function(event)
     {
         if (!this.searchElement) return;
-        this.search = $(this.searchElement).value;
-        ew_session.setStrPrefs(this.searchElement, this.search);
+        ew_session.setStrPrefs(this.searchElement, $(this.searchElement).value);
 
         if (this.searchTimer) {
             clearTimeout(this.searchTimer);
@@ -422,6 +421,12 @@ var TreeView = {
         for (var j = 0; j < tree.columns.length; j++) {
             var col = tree.columns.getColumnAt(j);
             this.columns.push(col.id);
+        }
+        // Search text box
+        if (!this.searchElement) {
+            // Try naming convertion by primary model name
+            var search = $("ew." + this.getModelName() + ".search");
+            if (search) this.searchElement = search.id;
         }
         // Wrapping handlers to preserve correct context for 'this'
         if (!tab.owner) {

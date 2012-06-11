@@ -1,6 +1,5 @@
 var ew_VolumeTreeView = {
     model: ['volumes','availabilityZones','instances','snapshots'],
-    searchElement: 'ew.volumes.search',
     properties: ['status'],
 
     filter : function(list) {

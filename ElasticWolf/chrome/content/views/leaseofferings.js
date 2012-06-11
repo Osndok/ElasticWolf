@@ -1,6 +1,5 @@
 var ew_ReservedInstancesTreeView = {
     model: 'reservedInstances',
-    searchElement: 'ew.rsvdInst.search',
 
     isRefreshable: function() {
         for (var i in this.treeList) {
@@ -15,7 +14,6 @@ ew_ReservedInstancesTreeView.register();
 
 var ew_LeaseOfferingsTreeView = {
     model: 'offerings',
-    searchElement: 'ew.offerings.search',
 
     purchaseOffering : function()
     {

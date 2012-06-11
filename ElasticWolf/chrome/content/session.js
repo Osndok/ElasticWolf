@@ -449,11 +449,26 @@ var ew_session = {
         return true
     },
 
+    // Select from the list
+    // items are object to show
+    // columns is list of propety names to show, otherwise convert object to string using toString
+    // checked is list of initially selected item indexes
     promptList: function(title, msg, items, columns, width, multiple, checked)
     {
         var params = { session: ew_session, listItems: items, checkedItems: checked, selectedIndex: -1, selectedItems: [], selectedIndexes: [], columns: columns, width: width, multiple: multiple, title: title, msg: msg };
         window.openDialog("chrome://ew/content/dialogs/select.xul", null, "chrome,centerscreen,modal,resizable", params);
         return params.multiple ? params.selectedItems : params.selectedIndex;
+    },
+
+    // MultiInput dialog:
+    // items is list of input field labels,
+    // values are corresponding initial values for the input fields,
+    // types are corresponding field types: textbox, checkbox, password
+    promptInput: function(title, items, values, types)
+    {
+        var params = { session: ew_session, title: title, items: items || [ "" ], values: values || [], types: types || [] };
+        window.openDialog("chrome://ew/content/dialogs/input.xul", null, "chrome,centerscreen,modal,resizable", params);
+        return params.ok ? params.values : null;
     },
 
     promptForFile : function(msg, save, filename)

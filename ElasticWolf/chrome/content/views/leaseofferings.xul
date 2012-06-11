@@ -52,7 +52,7 @@
             <groupbox orient="vertical" flex="1">
                 <caption label="&ew.captions.leases.rsvdInst.label;" />
                 <popupset>
-                    <menupopup id="ew.rsvdInst.contextmenu">
+                    <menupopup id="ew.reservedInstances.contextmenu">
                         <menuitem oncommand="ew_ReservedInstancesTreeView.displayDetails();" label="&ew.contextmenu.details.label;" />
                         <menuseparator />
                         <menuitem oncommand="ew_ReservedInstancesTreeView.copyToClipboard('id');" label="&ew.contextmenu.copyid.label;" />
@@ -60,11 +60,11 @@
                 </popupset>
                 <toolbar style="padding: 0px 3px; -moz-box-align: center">
                     <hbox flex="10">
-                        <textbox id="ew.rsvdInst.search" size="15" value="" onkeypress="ew_ReservedInstancesTreeView.searchChanged(event);" />
+                        <textbox id="ew.reservedInstances.search" size="15" value="" onkeypress="ew_ReservedInstancesTreeView.searchChanged(event);" />
                         <toolbarbutton image="images/refresh.png" style="-moz-box-orient:horizontal;-moz-box-pack:center;" oncommand="ew_ReservedInstancesTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
                     </hbox>
                 </toolbar>
-                <tree id="ew.rsvdInstances.view" seltype="single" enableColumnDrag="true" flex="1" >
+                <tree id="ew.reservedInstances.view" seltype="single" enableColumnDrag="true" flex="1" >
                     <treecols>
                         <treecol id="rsvdInst.id" label="&ew.rsvdInst.id.label;" flex="3" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
@@ -89,7 +89,7 @@
                         <treecol id="rsvdInst.state" label="&ew.rsvdInst.state.label;" flex="1" persist="width ordinal hidden sortDirection" />
                         <splitter class="tree-splitter" />
                     </treecols>
-                    <treechildren context="ew.rsvdInst.contextmenu" />
+                    <treechildren context="ew.reservedInstances.contextmenu" />
                 </tree>
             </groupbox>
         </vbox>

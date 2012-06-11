@@ -1,6 +1,5 @@
 var ew_VpcTreeView = {
     model: [ "vpcs", "instances", "internetGateways", 'dhcpOptions' ],
-    searchElement: 'ew.vpcs.search',
 
     menuChanged : function()
     {
@@ -86,7 +85,6 @@ ew_VpcTreeView.register();
 
 var ew_DhcpoptsTreeView = {
     model: "dhcpOptions",
-    searchElement: 'ew.dhcpopts.search',
 
     menuChanged : function() {
         var image = this.getSelected();

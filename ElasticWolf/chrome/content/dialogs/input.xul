@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://ew/locale/main.dtd">
+
+<dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  title=""
+  buttons="accept,cancel"
+  ondialogaccept="return accept();"
+  ondialogcancel="return true;"
+  onload="init();">
+
+  <script>
+  <![CDATA[
+    function init() {
+      this.rc = window.arguments[0];
+      document.title = rc.title;
+      document.getElementById('title').label = rc.title;
+      var rows = document.getElementById('rows');
+      for (var i in rc.items) {
+          var row = document.createElement('row');
+          row.setAttribute('flex', '1');
+          var label = document.createElement('label');
+          label.setAttribute('value', rc.items[i]);
+          row.appendChild(label);
+          var type = rc.types[i] || 'textbox';
+          var textbox = null;
+          switch (type) {
+          case 'password':
+             textbox = document.createElement('textbox');
+             textbox.setAttribute('type', 'password');
+             break;
+
+          default:
+             textbox = document.createElement(type);
+          }
+          textbox.setAttribute('id', 'text' + i);
+          if (rc.values[i]) {
+             textbox.setAttribute('value', rc.values[i]);
+          }
+          row.appendChild(textbox);
+          rows.appendChild(row);
+      }
+    }
+
+    function accept() {
+      for (var i in rc.items) {
+          var obj = document.getElementById('text' + i);
+          var type = rc.types[i] || 'textbox';
+          switch(type) {
+          case 'checkbox':
+             rc.values[i] = obj.checked;
+             break;
+
+          default:
+             rc.values[i] = obj.value;
+          }
+      }
+      rc.ok = true;
+      return true;
+    }
+  ]]>
+  </script>
+
+  <groupbox flex="1">
+  <caption id="title" style="text-align:center;"/>
+  <grid flex="1">
+   <columns>
+    <column />
+    <column />
+   </columns>
+   <rows id="rows">
+   </rows>
+  </grid>
+  </groupbox>
+</dialog>

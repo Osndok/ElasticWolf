@@ -2454,7 +2454,7 @@ var ew_controller = {
             var date = getNodeValue(items[i], "EnableDate");
             list.push(new MFADevice(serial, date, arn.split(/[:\/]+/).pop(), arn));
         }
-        ew_model.updateMFADevices(list);
+        ew_model.updateVMFADevices(list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -2488,6 +2488,11 @@ var ew_controller = {
     deactivateMFADevice: function(user, serial, callback)
     {
         ew_session.queryIAM("DeactivateMFADevice", [["UserName", user], ["SerialNumber", serial] ], this, false, "onComplete", callback);
+    },
+
+    deleteVirtualMFADevice: function(serial, callback)
+    {
+        ew_session.queryIAM("DeleteVirtualMFADevice", [ ["SerialNumber", serial] ], this, false, "onComplete", callback);
     },
 
     listUsers : function(callback)
@@ -2567,7 +2572,7 @@ var ew_controller = {
 
     createUser : function(name, path, callback)
     {
-        ew_session.queryIAM("CreateUser", [ ["UserName", name], [ "Path", path] ], this, false, "onComplete", callback);
+        ew_session.queryIAM("CreateUser", [ ["UserName", name], [ "Path", path || "/"] ], this, false, "onComplete", callback);
     },
 
     deleteUser : function(name, callback)
@@ -2709,7 +2714,7 @@ var ew_controller = {
 
     createGroup : function(name, path, callback)
     {
-        ew_session.queryIAM("CreateGroup", [ ["GroupName", name], [ "Path", path] ], this, false, "onComplete", callback);
+        ew_session.queryIAM("CreateGroup", [ ["GroupName", name], [ "Path", path || "/"] ], this, false, "onComplete", callback);
     },
 
     deleteGroup : function(name, callback)

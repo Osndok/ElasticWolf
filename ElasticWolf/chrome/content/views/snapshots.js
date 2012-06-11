@@ -1,6 +1,5 @@
 var ew_SnapshotTreeView = {
     model: ['snapshots', 'securityGroups'],
-    searchElement: 'ew.snapshots.search',
 
     filter: function(list) {
         if (!list) return list;

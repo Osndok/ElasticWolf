@@ -1,6 +1,5 @@
 var ew_SubnetsTreeView = {
     model: [ "subnets", "vpcs", "routeTables", "networkAcls", "availabilityZones" ],
-    searchElement: 'ew.subnets.search',
 
     menuChanged : function()
     {

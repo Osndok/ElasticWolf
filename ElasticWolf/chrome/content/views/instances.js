@@ -1,6 +1,5 @@
 var ew_InstancesTreeView = {
     model: ['instances', 'images', 'addresses'],
-    searchElement: 'ew.instances.search',
     properties: [ 'state' ],
 
     filterChanged: function()

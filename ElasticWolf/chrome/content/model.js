@@ -79,8 +79,8 @@ function MFADevice(serial, date, user, arn)
     this.userName = user
     this.arn = arn
 
-    toString = function() {
-        return this.id;
+    this.toString = function() {
+        return this.id + (this.userName ? ew_model.separator + this.userName : "");
     }
 }
 
@@ -779,12 +779,12 @@ var ew_model = {
     regions: null,
     users: null,
     groups: null,
-    mfa: null,
+    vmfa: null,
 
     invalidate : function()
     {
         // reset all lists, these will notify their associated views
-        this.updateMFADevices(null);
+        this.updateVMFADevices(null);
         this.updateUsers(null);
         this.updateGroups(null);
         this.updateImages(null);
@@ -817,8 +817,8 @@ var ew_model = {
     getModel : function(name)
     {
         switch (name) {
-        case "mfa":
-            return this.mfa;
+        case "vmfa":
+            return this.vmfa;
         case "regions":
             return this.regions;
         case "volumes":
@@ -877,10 +877,9 @@ var ew_model = {
 
     refreshModel : function(name)
     {
-        log('refreshModel: ' + name)
         switch (name) {
-        case "mfs":
-            ew_session.listVirtualMFADevices();
+        case "vmfa":
+            ew_session.controller.listVirtualMFADevices();
             break;
         case "regions":
             ew_session.controller.describeRegions();
@@ -1115,18 +1114,18 @@ var ew_model = {
         }
     },
 
-    updateMFADevices : function(list)
+    updateVMFADevices : function(list)
     {
-        this.mfs = list;
-        this.notifyComponents("mfa");
+        this.vmfa = list;
+        this.notifyComponents("vmfa");
     },
 
-    getMFADevicess : function()
+    getVMFADevicess : function()
     {
-        if (this.mfa == null) {
-            ew_session.controller.listMFADevices();
+        if (this.vmfa == null) {
+            ew_session.controller.listVirtualMFADevices();
         }
-        return this.getObjects(this.mfa, arguments);
+        return this.getObjects(this.vmfa, arguments);
     },
 
     updateRegions : function(list)

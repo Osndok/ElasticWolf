@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <tabpanel id="ew.tabs.vmfa" flex="1">
+        <groupbox orient="vertical" flex="1" id="eip.tree.holder">
+            <caption label="Virtual MFA Devices" />
+            <popupset>
+                <menupopup id="ew.vmfa.contextmenu" onpopupshowing="ew_VMFATreeView.menuChanged();">
+                <menuitem id="ew.vmfa.contextmenu" oncommand="ew_VMFATreeView.addDevice();" label="Add device" />
+                <menuitem id="ew.vmfa.contextmenu" oncommand="ew_VMFATreeView.deleteDevice();" label="Delete device" />
+                <menuitem id="ew.vmfa.contextmenu" oncommand="ew_VMFATreeView.assignDevice();" label="Assign device to a user" />
+                <menuitem id="ew.vmfa.contextmenu" oncommand="ew_VMFATreeView.unassignDevice();" label="Unassign device from a user" />
+                </menupopup>
+            </popupset>
+
+            <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                <textbox id="ew.vmfa.search" size="15" value="" onkeypress="ew_VMFATreeView.searchChanged(event);" />
+                <toolbarbutton image="images/refresh.png" oncommand="ew_VMFATreeView.refresh();" tooltiptext="&ew.refresh.tip;" />
+                <toolbarbutton image="images/add.png" tooltiptext="Add Device" oncommand="ew_VMFATreeView.addDevice();" />
+                <toolbarbutton image="images/delete.png" tooltiptext="Delete Device" oncommand="ew_VMFATreeView.deleteDevice();" />
+                <toolbarbutton image="images/attach.png" tooltiptext="Assign device to a user" oncommand="ew_VMFATreeView.assignDevice();" />
+                <toolbarbutton image="images/revoke.png" tooltiptext="Unassign device from a user" oncommand="ew_VMFATreeView.unassignDevice();" />
+            </toolbar>
+
+            <tree enableColumnDrag="true" seltype="single" id="ew.vmfa.view" flex="1">
+                <treecols>
+                    <treecol id="vmfa.id" label="Serial" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="vmfa.date" label="Date" flex="2" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="vmfa.arn" label="ARN" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="vmfa.userName" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                </treecols>
+                <treechildren id="ew.vmfa.children" context="ew.vmfa.contextmenu" />
+            </tree>
+        </groupbox>
+    </tabpanel>
+</overlay>
