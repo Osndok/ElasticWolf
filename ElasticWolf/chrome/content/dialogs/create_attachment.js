@@ -31,7 +31,7 @@ var ew_VolumeAttacher = {
     // Since there is a chance that the instanceId has
     // the instance tag appended to it
     instanceId = instanceId.split(":")[0];
-    var instances = this.ew_session.model.getInstances();
+    var instances = this.ew_session.model.get('instances');
     var fdisabled = false;
     for (var i in instances) {
         if (instances[i].id == instanceId) {
@@ -60,7 +60,7 @@ var ew_VolumeAttacher = {
     document.getElementById("ew.newattachment.volumeId").value = this.volumeId;
     // instances
     var instanceIdMenu = document.getElementById("ew.newattachment.instanceId");
-    var instances = this.ew_session.model.getInstances('state', 'running', 'AvailabilityZone', this.zone);
+    var instances = this.ew_session.model.get('instances', 'state', 'running', 'AvailabilityZone', this.zone);
     for (var i in instances) {
         instanceIdMenu.appendItem(instances[i].toString(), instances[i].id);
     }

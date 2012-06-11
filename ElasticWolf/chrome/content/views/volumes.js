@@ -81,7 +81,7 @@ var ew_VolumeTreeView = {
             window.openDialog("chrome://ew/content/dialogs/create_attachment.xul",null,"chrome,centerscreen,modal,resizable",image,ew_session,retVal);
             if (retVal.ok) {
                 // If this is a Windows instance, the device should be windows_device and the instance should be ready to use
-                var instance = ew_session.model.getInstanceById(retVal.instanceId);
+                var instance = ew_session.model.find('instances', retVal.instanceId);
                 if (instance) {
                     if (!ew_InstancesTreeView.isInstanceReadyToUse(instance)) {
                         continue;

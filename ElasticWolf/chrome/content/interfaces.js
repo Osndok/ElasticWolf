@@ -224,14 +224,14 @@ var TreeView = {
         this.selection.selectEventsSuppressed = false;
     },
     refresh : function(force) {
-        ew_model.refreshModel(this.getModelName(this.model));
+        ew_model.refresh(this.getModelName(this.model));
         this.refreshAll(force);
     },
     refreshAll: function(force) {
         if (this.model instanceof Array) {
             for (var i = 1; i < this.model.length; i++) {
                 if (force || ew_model.getModel(this.model[i]) == null) {
-                    ew_model.refreshModel(this.model[i]);
+                    ew_model.refresh(this.model[i]);
                 }
             }
         }

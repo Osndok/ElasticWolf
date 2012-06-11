@@ -198,7 +198,7 @@ var ew_controller = {
             list.push(new Volume(id, size, snapshotId, zone, status, createTime, instanceId, device, attachStatus, attachTime, tags));
         }
 
-        ew_model.updateVolumes(list);
+        ew_model.set('volumes', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -228,7 +228,7 @@ var ew_controller = {
             list.push(new Snapshot(id, volumeId, status, startTime, progress, volumeSize, description, ownerId, ownerAlias, tags));
         }
 
-        ew_model.updateSnapshots(list);
+        ew_model.set('snapshots', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -292,7 +292,7 @@ var ew_controller = {
             var tags = this.getTags(items.snapshotItem(i));
             list.push(new Vpc(id, cidr, state, dhcpopts, tags));
         }
-        ew_model.updateVpcs(list);
+        ew_model.set('vpcs', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -326,7 +326,7 @@ var ew_controller = {
             var tags = this.getTags(items.snapshotItem(i));
             list.push(new Subnet(id, vpcId, cidrBlock, state, availableIp, availabilityZone, tags));
         }
-        ew_model.updateSubnets(list);
+        ew_model.set('subnets', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -376,7 +376,7 @@ var ew_controller = {
             var tags = this.getTags(items.snapshotItem(i));
             list.push(new DhcpOptions(id, options.join("; "), tags));
         }
-        ew_model.updateDhcpOptions(list);
+        ew_model.set('dhcpOptions', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -493,7 +493,7 @@ var ew_controller = {
             list.push(new NetworkAcl(id, vpcId, dflt, entryList, assocList));
         }
 
-        ew_model.updateNetworkAcls(list);
+        ew_model.set('networkAcls', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -523,7 +523,7 @@ var ew_controller = {
             }
             list.push(new VpnGateway(id, availabilityZone, state, type, attachments));
         }
-        ew_model.updateVpnGateways(list);
+        ew_model.set('vpnGateways', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -556,7 +556,7 @@ var ew_controller = {
             var tags = this.getTags(items.snapshotItem(i));
             list.push(new CustomerGateway(id, ipAddress, bgpAsn, state, type, tags));
         }
-        ew_model.updateCustomerGateways(list);
+        ew_model.set('customerGateways', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -591,7 +591,7 @@ var ew_controller = {
             var tags = this.getTags(items.snapshotItem(i));
             list.push(new InternetGateway(id, vpcId, tags));
         }
-        ew_model.updateInternetGateways(list);
+        ew_model.set('internetGateways', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -648,7 +648,7 @@ var ew_controller = {
             var tags = this.getTags(items.snapshotItem(i));
             list.push(new VpnConnection(id, vgwId, cgwId, type, state, config, tags));
         }
-        ew_model.updateVpnConnections(list);
+        ew_model.set('vpnConnections', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -753,7 +753,7 @@ var ew_controller = {
             list.push(new AMI(imageId, imageLocation, imageState, owner, (isPublic == 'true' ? 'public' : 'private'), arch, platform, aki, ari, rdt, ownerAlias, name, description, snapshotId, tags));
         }
 
-        ew_model.updateImages(list);
+        ew_model.set('images', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -783,7 +783,7 @@ var ew_controller = {
             list.push(new LeaseOffering(id, type, az, duration, fPrice, uPrice, desc, otype, tenancy));
         }
 
-        ew_model.updateLeaseOfferings(list);
+        ew_model.set('offerings', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -817,7 +817,7 @@ var ew_controller = {
             list.push(new ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state, tenancy));
         }
 
-        ew_model.updateReservedInstances(list);
+        ew_model.set('reservedInstances', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -983,7 +983,7 @@ var ew_controller = {
             }
         }
 
-        ew_model.updateInstances(list);
+        ew_model.set('instances', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -1171,7 +1171,7 @@ var ew_controller = {
             list.push(this.unpackBundleTask(items.snapshotItem(i)));
         }
 
-        ew_model.updateBundleTasks(list);
+        ew_model.set('bundleTasks', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -1200,7 +1200,7 @@ var ew_controller = {
             var date = getNodeValue(items[i], "CreationDate");
             list.push(new S3Bucket(name, date, owner));
         }
-        ew_model.updateS3Buckets(list);
+        ew_model.set('s3Buckets', list);
 
         if (responseObj.callback) responseObj.callback(list);
     },
@@ -1486,7 +1486,7 @@ var ew_controller = {
             list.push(new KeyPair(name, fp));
         }
 
-        ew_model.updateKeypairs(list);
+        ew_model.set('keypairs', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -1555,7 +1555,7 @@ var ew_controller = {
             var tags = this.getTags(items.snapshotItem(i));
             list.push(new RouteTable(id, vpcId, routes, associations, tags));
         }
-        ew_model.updateRouteTables(list);
+        ew_model.set('routeTables', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -1705,7 +1705,7 @@ var ew_controller = {
             list.push(new NetworkInterface(id, status, descr, subnetId, vpcId, azone, mac, ip, check, groups, attachment, association, tags));
         }
 
-        ew_model.updateNetworkInterfaces(list);
+        ew_model.set('networkInterfaces', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -1769,7 +1769,7 @@ var ew_controller = {
             list.push(new SecurityGroup(groupId, ownerId, groupName, groupDescription, vpcId, ipPermissionsList, tags));
         }
 
-        ew_model.updateSecurityGroups(list);
+        ew_model.set('securityGroups', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -1886,7 +1886,7 @@ var ew_controller = {
             list.push(new AvailabilityZone(name, state));
         }
 
-        ew_model.updateAvailabilityZones(list);
+        ew_model.set('availabilityZones', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -1910,7 +1910,7 @@ var ew_controller = {
             var tags = this.getTags(items[i]);
             list.push(new EIP(publicIp, instanceid, allocId, assocId, domain, tags));
         }
-        ew_model.updateAddresses(list);
+        ew_model.set('addresses', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -2047,7 +2047,7 @@ var ew_controller = {
             if (LoadBalancerName != '' && CreatedTime != '') {
                 list.push(new LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, azones, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName, vpcId, subnetList, groupList));
             }
-            ew_model.updateLoadBalancers(list);
+            ew_model.set('loadBalancers', list);
             if (responseObj.callback) responseObj.callback(list);
         }
     },
@@ -2073,8 +2073,8 @@ var ew_controller = {
             list.push(new InstanceHealth(Description, State, InstanceId, ReasonCode));
         }
 
-        var elbs = ew_model.getLoadBalancers('LoadBalancerName', responseObj.params[0][1]);
-        if (elbs) elbs[0].InstanceHealth = list;
+        var elb = ew_model.find('loadBalancers', responseObj.params[0][1], 'LoadBalancerName');
+        if (elb) elb.InstanceHealth = list;
 
         if (responseObj.callback) responseObj.callback(list);
     },
@@ -2315,10 +2315,8 @@ var ew_controller = {
                 var endTime = getNodeValue(event, "notAfter");
                 list.push(new InstanceStatusEvent(instanceId, availabilityZone, code, description, startTime, endTime));
             }
-            var instance = ew_model.getInstanceById(instanceId);
-            if (instance) {
-                instance.events = list;
-            }
+            var instance = ew_model.find('instances', instanceId);
+            if (instance) instance.events = list;
         }
 
         if (responseObj.callback) responseObj.callback();
@@ -2406,7 +2404,7 @@ var ew_controller = {
             list.push(new AccessKey(id, status, user, "", ew_session.accessCode == id));
         }
 
-        ew_model.updateModel('users', getParam(params, 'UserName'), 'keys', list)
+        ew_model.update('users', getParam(params, 'UserName'), 'keys', list)
 
         if (responseObj.callback) responseObj.callback(list);
     },
@@ -2432,7 +2430,7 @@ var ew_controller = {
             list.push(id);
         }
 
-        ew_model.updateModel('users', getParam(params, 'UserName'), 'devices', list)
+        ew_model.update('users', getParam(params, 'UserName'), 'devices', list)
 
         if (responseObj.callback) responseObj.callback(list);
     },
@@ -2454,7 +2452,7 @@ var ew_controller = {
             var date = getNodeValue(items[i], "EnableDate");
             list.push(new MFADevice(serial, date, arn.split(/[:\/]+/).pop(), arn));
         }
-        ew_model.updateVMFADevices(list);
+        ew_model.set('vmfas', list);
         if (responseObj.callback) responseObj.callback(list);
     },
 
@@ -2518,15 +2516,15 @@ var ew_controller = {
         // Top level list ned to update the model
         switch (responseObj.action) {
         case 'ListUsers':
-            ew_model.updateUsers(list);
+            ew_model.set('users' ,list);
             break;
 
         case "GetGroup":
             for (var i in list) {
-                var user = ew_model.findModel('users', list[i].id);
+                var user = ew_model.find('users', list[i].id);
                 if (user) list[i] = user;
             }
-            ew_model.updateModel('groups', getParam(params, 'GroupName'), 'users', list)
+            ew_model.update('groups', getParam(params, 'GroupName'), 'users', list)
             break;
         }
 
@@ -2656,11 +2654,11 @@ var ew_controller = {
         // Update model directly
         switch (responseObj.action) {
         case 'ListGroups':
-            ew_model.updateGroups(list);
+            ew_model.set('groups', list);
             break;
 
         case "ListGroupsForUser":
-            ew_model.updateModel('users', getParam(params, 'UserName'), 'groups', list)
+            ew_model.update('users', getParam(params, 'UserName'), 'groups', list)
             break;
         }
 
@@ -2686,11 +2684,11 @@ var ew_controller = {
         // Update model directly
         switch(responseObj.action) {
         case "ListGroupPolicies":
-            ew_model.updateModel('groups', getParam(params, 'GroupName'), 'policies', list)
+            ew_model.update('groups', getParam(params, 'GroupName'), 'policies', list)
             break;
 
         case "ListUserPolicies":
-            ew_model.updateModel('users', getParam(params, 'UserName'), 'policies', list)
+            ew_model.update('users', getParam(params, 'UserName'), 'policies', list)
             break;
         }
 
@@ -2794,7 +2792,7 @@ var ew_controller = {
         }
 
         // Update user record with the key list
-        ew_model.updateModel('users', user, 'certs', list)
+        ew_model.update('users', user, 'certs', list)
 
         if (responseObj.callback) responseObj.callback(list);
     },

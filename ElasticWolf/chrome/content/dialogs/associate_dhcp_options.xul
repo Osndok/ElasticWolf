@@ -22,7 +22,7 @@
         this.retVal = window.arguments[1];
         // Prepare vpc list
         var vpcMenu = document.getElementById("ew.associatedhcpoptions.vpcid");
-        var vpcs = this.ew_session.model.getVpcs();
+        var vpcs = this.ew_session.model.get('vpcs);
         var selvpc = 0;
         for (var i in vpcs) {
             if (vpcs[i].id == this.retVal.vpcId)
@@ -35,7 +35,7 @@
         // Prepare dhcp options list
         var dhcpMenu = document.getElementById("ew.associatedhcpoptions.dhcpoptionsid");
         dhcpMenu.appendItem("Default Options Set", 'default');
-        var dhcpopts = this.ew_session.model.getDhcpOptions();
+        var dhcpopts = this.ew_session.model.get('dhcpOptions');
         for (var i in dhcpopts) {
             dhcpMenu.appendItem(dhcpopts[i].toString(), dhcpopts[i].id);
         }

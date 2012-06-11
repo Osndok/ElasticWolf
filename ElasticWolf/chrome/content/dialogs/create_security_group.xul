@@ -43,7 +43,7 @@
         var vpcMenu = document.getElementById("ew.newsecgroup.vpcId");
         vpcMenu.removeAllItems();
         vpcMenu.appendItem("None", "");
-        var vpcs = this.ew_session.model.getVpcs();
+        var vpcs = this.ew_session.model.get('vpcs');
         for (var i in vpcs) {
             vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);
         }

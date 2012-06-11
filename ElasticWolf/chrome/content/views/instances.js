@@ -121,7 +121,7 @@ var ew_InstancesTreeView = {
         }
 
         // Determine if there is actually an EBS volume to attach to
-        var volumes = ew_session.model.getVolumes();
+        var volumes = ew_session.model.get('volumes');
         if (volumes == null || volumes.length == 0) {
             // There are no volumes to attach to.
             var fRet = confirm ("Would you like to create a new EBS volume to attach to this instance?");
@@ -130,7 +130,7 @@ var ew_InstancesTreeView = {
             }
 
             if (fRet) {
-                volumes = ew_session.model.getVolumes();
+                volumes = ew_session.model.get('volumes');
             } else {
                 return;
             }
@@ -155,7 +155,7 @@ var ew_InstancesTreeView = {
         }
 
         // Determine if there is actually an EIP to associate with
-        var eipList = ew_session.model.getAddresses();
+        var eipList = ew_session.model.get('addresses');
         if (!eipList) {
             if (confirm ("Would you like to create a new Elastic IP to associate with this instance?")) {;
                 ew_session.selectTab('ew.tabs.eip');
@@ -402,8 +402,8 @@ var ew_InstancesTreeView = {
             instance.publicIpAddress = instance.getPublicIp();
         }
         if (instance.elasticIp == '') {
-            var eip = ew_session.model.getAddressByInstanceId(instance.id);
-            instance.elasticIp = eip ? eip.publicIp : '';
+            var eip = ew_session.model.get('addresses', 'instanceId', instance.id);
+            instance.elasticIp = eip && eip.length ? eip[0].publicIp : '';
         }
         TreeView.selectionChanged.call(this, event);
     },
@@ -694,7 +694,7 @@ var ew_InstancesTreeView = {
     openConnectionPort : function(instance)
     {
         // Get the group in which this instance was launched
-        var groups = ew_model.getSecurityGroups();
+        var groups = ew_model.get('securityGroups');
         var instGroups = new Array(instance.groups.length);
         for (var j in instance.groups) {
             instGroups[j] = null;

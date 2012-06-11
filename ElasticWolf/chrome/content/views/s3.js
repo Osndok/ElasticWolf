@@ -36,7 +36,7 @@ var ew_S3BucketsTreeView = {
     show: function()
     {
         if (!this.path.length) {
-            ew_S3BucketsTreeView.display(ew_model.getS3Buckets());
+            ew_S3BucketsTreeView.display(ew_model.get('s3Buckets'));
         } else {
             var item = ew_model.getS3Bucket(this.path[0])
             if (item.keys.length) {

@@ -76,7 +76,7 @@ var ew_NetworkInterfacesTreeView = {
             return;
         }
 
-        var instance = ew_model.getInstanceById(eni.attachment.instanceId);
+        var instance = ew_model.find('instances', eni.attachment.instanceId);
         if (!instance) {
             alert('Could not find attached instance');
             return;

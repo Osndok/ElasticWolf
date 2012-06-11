@@ -749,10 +749,9 @@ function InstanceHealth(Description, State, InstanceId, ReasonCode)
 }
 
 var ew_model = {
-    components : new Array(),
-    componentInterests : new Object(),
-
+    components : {},
     separator: " | ",
+
     volumes : null,
     images : null,
     snapshots : null,
@@ -779,106 +778,12 @@ var ew_model = {
     regions: null,
     users: null,
     groups: null,
-    vmfa: null,
+    vmfas: null,
 
-    invalidate : function()
-    {
-        // reset all lists, these will notify their associated views
-        this.updateVMFADevices(null);
-        this.updateUsers(null);
-        this.updateGroups(null);
-        this.updateImages(null);
-        this.updateInstances(null);
-        this.updateKeypairs(null);
-        this.updateAccessKeys(null);
-        this.updateCerts(null);
-        this.updateSecurityGroups(null);
-        this.updateAvailabilityZones(null);
-        this.updateAddresses(null);
-        this.updateVolumes(null);
-        this.updateSnapshots(null);
-        this.updateBundleTasks(null);
-        this.updateLeaseOfferings(null);
-        this.updateReservedInstances(null);
-        this.updateLoadBalancers(null);
-        this.updateVpcs(null);
-        this.updateSubnets(null);
-        this.updateDhcpOptions(null);
-        this.updateVpnConnections(null);
-        this.updateVpnGateways(null);
-        this.updateCustomerGateways(null);
-        this.updateInternetGateways(null);
-        this.updateRouteTables(null);
-        this.updateNetworkAcls(null);
-        this.updateNetworkInterfaces(null);
-        this.updateS3Buckets(null);
-    },
-
-    getModel : function(name)
+    refresh: function(name)
     {
         switch (name) {
-        case "vmfa":
-            return this.vmfa;
-        case "regions":
-            return this.regions;
-        case "volumes":
-            return this.volumes;
-        case "images":
-            return this.images;
-        case "snapshots":
-            return this.snapshots;
-        case "instances":
-            return this.instances;
-        case "keypairs":
-            return this.keypairs;
-        case "availabilityZones":
-            return this.availabilityZones;
-        case "securityGroups":
-            return this.securityGroups;
-        case "addresses":
-            return this.addresses;
-        case "bundleTasks":
-            return this.bundleTasks;
-        case "offerings":
-            return this.offerings;
-        case "reservedInstances":
-            return this.reservedInstances;
-        case "loadBalancers":
-            return this.loadBalancers;
-        case "subnets":
-            return this.subnets;
-        case "vpcs":
-            return this.vpcs;
-        case "dhcpOptions":
-            return this.dhcpOptions;
-        case "vpnConnections":
-            return this.vpnConnections;
-        case "vpnGateways":
-            return this.vpnGateways;
-        case "customerGateways":
-            return this.customerGateways;
-        case "internetGateways":
-            return this.internetGateways;
-        case "routeTables":
-            return this.routeTables;
-        case "networkAcls":
-            return this.networkAcls;
-        case "networkInterfaces":
-            return this.networkInterfaces;
-        case "s3Buckets":
-            return this.s3Buckets;
-        case "users":
-            return this.users;
-        case "groups":
-            return this.groups;
-        }
-        return []
-    },
-
-    refreshModel : function(name)
-    {
-        switch (name) {
-        case "vmfa":
+        case "vmfas":
             ew_session.controller.listVirtualMFADevices();
             break;
         case "regions":
@@ -969,8 +874,40 @@ var ew_model = {
         return []
     },
 
+    // Return direct list to the list
+    getModel: function(name)
+    {
+        if (!this.hasOwnProperty(name)) debug('model ' + name + ' not found');
+        return this[name];
+    },
+
+    // Return list or initiate refresh if it is empty, perform search if arguments specified
+    get: function()
+    {
+        var list = this.getModel(arguments[0]);
+        if (list == null) {
+            this.refresh(arguments[0]);
+        }
+        var args = [];
+        for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);
+        return this.getObjects(list, args);
+    },
+
+    // Update model list and notify components
+    set: function(name, list)
+    {
+        this[name] = list;
+        this.notifyComponents(name);
+    },
+
+    // Find object in the model list, optional field can be used first before comparing id and name fields
+    find: function(model, id, field)
+    {
+        return this.findObject(this.getModel(model), id, field);
+    },
+
     // Update field of an object in the model
-    updateModel: function(model, id, field, value)
+    update: function(model, id, field, value)
     {
         if (!model || !id || !field) return null;
         var obj = this.findObject(this.getModel(model), id);
@@ -980,9 +917,13 @@ var ew_model = {
         return obj;
     },
 
-    findModel: function(model, id)
+    invalidate: function()
     {
-        return this.findObject(this.getModel(model), id);
+        for (var p in this) {
+            if (this[p] instanceof Array) {
+                this.setModel([p], null);
+            }
+        }
     },
 
     // Common replacement for cells by name, builds human readable value
@@ -1063,9 +1004,11 @@ var ew_model = {
         }
     },
 
-    findObject: function(list, id)
+    // Find object in the list by id or name
+    findObject: function(list, id, field)
     {
         for (var i in list) {
+            if (field && list[i][field] == id) return list[i];
             if (list[i].id && list[i].id == id) return list[i];
             if (list[i].name && list[i].name == id) return list[i];
         }
@@ -1091,9 +1034,9 @@ var ew_model = {
         return list;
     },
 
-    notifyComponents : function(interest)
+    notifyComponents: function(interest)
     {
-        var comps = this.componentInterests[interest] || [];
+        var comps = this.components[interest] || [];
         for (var i in comps) {
             if (ew_menu.isViewVisible(comps[i])) {
                 comps[i].notifyModelChanged(interest);
@@ -1103,57 +1046,15 @@ var ew_model = {
         }
     },
 
-    registerInterest : function(component, interest)
+    registerInterest: function(component, interest)
     {
         var list = (interest instanceof Array) ? interest : [interest];
         for (var i in list) {
-            if (!this.componentInterests[list[i]]) {
-                this.componentInterests[list[i]] = [];
+            if (!this.components[list[i]]) {
+                this.components[list[i]] = [];
             }
-            this.componentInterests[list[i]].push(component);
+            this.components[list[i]].push(component);
         }
-    },
-
-    updateVMFADevices : function(list)
-    {
-        this.vmfa = list;
-        this.notifyComponents("vmfa");
-    },
-
-    getVMFADevicess : function()
-    {
-        if (this.vmfa == null) {
-            ew_session.controller.listVirtualMFADevices();
-        }
-        return this.getObjects(this.vmfa, arguments);
-    },
-
-    updateRegions : function(list)
-    {
-        this.regions = list;
-        this.notifyComponents("regions");
-    },
-
-    getRegions : function()
-    {
-        if (this.regions == null) {
-            ew_session.controller.describeRegions();
-        }
-        return this.getObjects(this.regions, arguments);
-    },
-
-    updateUsers : function(list)
-    {
-        this.users = list;
-        this.notifyComponents("users");
-    },
-
-    getUsers : function()
-    {
-        if (this.users == null) {
-            ew_session.controller.listUsers();
-        }
-        return this.getObjects(this.users, arguments);
     },
 
     getUserByName: function(name)
@@ -1161,37 +1062,9 @@ var ew_model = {
         return this.findObject(this.users, name, 'name');
     },
 
-    updateGroups : function(list)
-    {
-        this.groups = list;
-        this.notifyComponents("groups");
-    },
-
-    getGroups : function()
-    {
-        if (this.groups == null) {
-            ew_session.controller.listGroups();
-        }
-        return this.getObjects(this.groups, arguments);
-    },
-
     getGroupByName: function(name)
     {
         return this.findObject(this.groups, name, 'name');
-    },
-
-    updateS3Buckets : function(list)
-    {
-        this.s3Buckets = list;
-        this.notifyComponents("s3Buckets");
-    },
-
-    getS3Buckets : function()
-    {
-        if (this.s3Buckets == null) {
-            ew_session.controller.listS3Buckets();
-        }
-        return this.getObjects(this.s3Buckets, arguments);
     },
 
     getS3Bucket: function(bucket) {
@@ -1217,165 +1090,14 @@ var ew_model = {
         return null;
     },
 
-    updateNetworkInterfaces: function(list)
-    {
-        this.networkInterfaces = list;
-        this.notifyComponents("networkInterfaces");
-    },
-
-    getNetworkInterfaces: function()
-    {
-        if (this.networkInterfaces == null) {
-            ew_session.controller.describeNetworkInterfaces();
-        }
-        return this.getObjects(this.networkInterfaces, arguments);
-    },
-
-    updateVpcs : function(list)
-    {
-        this.vpcs = list;
-        this.notifyComponents("vpcs");
-    },
-
-    getVpcs : function()
-    {
-        if (this.vpcs == null) {
-            ew_session.controller.describeVpcs();
-        }
-        return this.getObjects(this.vpns, arguments);
-    },
-
     getVpcById: function(id)
     {
         return this.findObject(this.vpcs, id)
     },
 
-    updateSubnets : function(list)
-    {
-        this.subnets = list;
-        this.notifyComponents("subnets");
-    },
-
-    getSubnets : function()
-    {
-        if (this.subnets == null) {
-            ew_session.controller.describeSubnets();
-        }
-        return this.getObjects(this.subnets, arguments);
-    },
-
     getSubnetById: function(id)
     {
         return this.findObject(this.subnets, id)
-    },
-
-    getSubnetsByVpcId: function(vpcId)
-    {
-        var rc = []
-        for (var i in this.subnets) {
-            if (this.subnets[i].vpcId == vpcId) {
-                rc.push(this.subnets[i])
-            }
-        }
-        return rc
-    },
-
-    updateDhcpOptions : function(list)
-    {
-        this.dhcpOptions = list;
-        this.notifyComponents("dhcpOptions");
-    },
-
-    getDhcpOptions : function()
-    {
-        if (this.dhcpOptions == null) {
-            ew_session.controller.describeDhcpOptions();
-        }
-        return this.dhcpOptions;
-    },
-
-    updateVpnConnections : function(list)
-    {
-        this.vpnConnections = list;
-        this.notifyComponents("vpnConnections");
-    },
-
-    getVpnConnections : function()
-    {
-        if (this.vpnConnections == null) {
-            ew_session.controller.describeVpnConnections();
-        }
-        return this.getObjects(this.vpnConnections, arguments);
-    },
-
-    updateVpnGateways : function(list)
-    {
-        this.vpnGateways = list;
-        this.notifyComponents("vpnGateways");
-    },
-
-    getVpnGateways : function()
-    {
-        if (this.vpnGateways == null) {
-            ew_session.controller.describeVpnGateways();
-        }
-        return this.getObjects(this.vpnGateways, arguments);
-    },
-
-    updateCustomerGateways : function(list)
-    {
-        this.customerGateways = list;
-        this.notifyComponents("customerGateways");
-    },
-
-    getCustomerGateways : function()
-    {
-        if (this.customerGateways == null) {
-            ew_session.controller.describeCustomerGateways();
-        }
-        return this.getObjects(this.customerGateways, arguments);
-    },
-
-    updateInternetGateways : function(list)
-    {
-        this.internetGateways = list;
-        this.notifyComponents("internetGateways");
-    },
-
-    getInternetGateways : function()
-    {
-        if (this.internetGateways == null) {
-            ew_session.controller.describeInternetGateways();
-        }
-        return this.getObjects(this.internetGateways, arguments);
-    },
-
-    updateRouteTables : function(list)
-    {
-        this.routeTables = list;
-        this.notifyComponents("routeTables");
-    },
-
-    getRouteTables : function()
-    {
-        if (this.routeTables == null) {
-            ew_session.controller.describeRouteTables();
-        }
-        return this.getObjects(this.routeTables, arguments);
-    },
-
-    updateNetworkAcls : function(list)
-    {
-        this.networkAcls = list;
-        this.notifyComponents("networkAcls");
-    },
-
-    getNetworkAcls : function()
-    {
-        if (this.networkAcls == null) {
-            ew_session.controller.describeNetworkAcls();
-        }
-        return this.getObjects(this.networkAcls, arguments);
     },
 
     getNetworkAclsByVpcId: function(vpcId)
@@ -1401,243 +1123,13 @@ var ew_model = {
         return null;
     },
 
-    getVolumes : function()
-    {
-        if (this.volumes == null) {
-            ew_session.controller.describeVolumes();
-        }
-        return this.getObjects(this.volumes, arguments);
-    },
-
-    updateVolumes : function(list)
-    {
-        this.volumes = list;
-        this.notifyComponents("volumes");
-    },
-
-    updateSnapshots : function(list)
-    {
-        if (!this.images) {
-            ew_session.controller.describeImages();
-        }
-
-        this.snapshots = list;
-
-        if (this.images && list) {
-            var amiNames = new Object();
-
-            for ( var i = 0; i < this.images.length; i++) {
-                var image = this.images[i];
-                amiNames[image.id] = image.name;
-            }
-
-            for ( var i = 0; i < list.length; i++) {
-                var snapshot = list[i];
-                var snapshotAmiId = null;
-                var m = null;
-
-                if (snapshot.description && (m = snapshot.description.match(/\bami-\w+\b/))) {
-                    snapshotAmiId = m[0];
-                }
-
-                if (snapshotAmiId) {
-                    snapshot.amiId = snapshotAmiId;
-                    snapshot.amiName = amiNames[snapshotAmiId];
-                }
-            }
-        }
-
-        this.notifyComponents("snapshots");
-    },
-
-    getSnapshots : function()
-    {
-        if (this.snapshots == null) {
-            ew_session.controller.describeSnapshots();
-        }
-        return this.getObjects(this.snapshots, arguments);
-    },
-
-    updateImages : function(list)
-    {
-        this.images = list;
-        this.notifyComponents("images");
-    },
-
-    getImages : function()
-    {
-        if (this.images == null) {
-            ew_session.controller.describeImages();
-        }
-        return this.getObjects(this.images, arguments);
-    },
-
-    getInstances: function() {
-        if (this.instances == null) {
-            ew_session.controller.describeInstances();
-        }
-        return this.getObjects(this.instances, arguments);
-    },
-
-    updateInstances : function(list)
-    {
-        this.instances = list;
-        this.notifyComponents("instances");
-    },
-
     getInstanceById: function(id) {
         return this.findObject(this.instances, id)
-    },
-
-    updateKeypairs : function(list)
-    {
-        this.keypairs = list;
-        this.notifyComponents("keypairs");
-    },
-
-    getKeypairs : function()
-    {
-        if (this.keypairs == null) {
-            ew_session.controller.describeKeypairs();
-        }
-        return this.keypairs;
-    },
-
-    updateSecurityGroups : function(list)
-    {
-        this.securityGroups = list;
-        this.notifyComponents("securityGroups");
-    },
-
-    getSecurityGroups : function()
-    {
-        if (this.securityGroups == null) {
-            ew_session.controller.describeSecurityGroups();
-        }
-        return this.getObjects(this.securityGroups, arguments);
     },
 
     getSecurityGroupById: function(id)
     {
         return this.findObject(this.securityGroups, id)
-    },
-
-    getSecurityGroupsByVpcId: function(vpcId)
-    {
-        var list = [];
-        if (this.securityGroups) {
-            for (var i in this.securityGroups) {
-                if (this.securityGroups[i].vpcId == vpcId) {
-                    list.push(this.securityGroups[i]);
-                }
-            }
-        }
-        return list;
-    },
-
-    getAddresses : function()
-    {
-        if (this.addresses == null) {
-            ew_session.controller.describeAddresses();
-        }
-        return this.getObjects(this.addresses, arguments);
-    },
-
-    updateAddresses : function(list)
-    {
-        this.addresses = list;
-        this.notifyComponents("addresses");
-    },
-
-    getAddressByIp: function(ip)
-    {
-        if (this.addresses) {
-            for (var i in this.addresses) {
-                if (this.addresses[i].publicIp == ip) return this.addresses[i];
-            }
-        }
-        return null;
-    },
-
-    getAddressByInstanceId: function(id)
-    {
-        if (this.addresses) {
-            for (var i in this.addresses) {
-                if (this.addresses[i].instanceId == id) return this.addresses[i];
-            }
-        }
-        return null;
-    },
-
-    updateAvailabilityZones : function(list)
-    {
-        this.availabilityZones = list;
-        this.notifyComponents("availabilityZones");
-    },
-
-    getAvailabilityZones : function()
-    {
-        if (this.availabilityZones == null) {
-            ew_session.controller.describeAvailabilityZones();
-        }
-        return this.availabilityZones;
-    },
-
-    updateBundleTasks : function(list)
-    {
-        this.bundleTasks = list;
-        this.notifyComponents("bundleTasks");
-    },
-
-    getBundleTasks : function()
-    {
-        if (this.bundleTasks == null) {
-            ew_session.controller.describeBundleTasks();
-        }
-        return this.bundleTasks;
-    },
-
-    updateLeaseOfferings : function(list)
-    {
-        this.offerings = list;
-        this.notifyComponents("offerings");
-    },
-
-    getLeaseOfferings : function()
-    {
-        if (this.offerings == null) {
-            ew_session.controller.describeLeaseOfferings();
-        }
-        return this.offerings;
-    },
-
-    updateReservedInstances : function(list)
-    {
-        this.reservedInstances = list;
-        this.notifyComponents("reservedInstances");
-    },
-
-    getReservedInstances : function()
-    {
-        if (this.reservedInstances == null) {
-            ew_session.controller.describeReservedInstances();
-        }
-        return this.reservedInstances;
-    },
-
-    updateLoadBalancers : function(list)
-    {
-        this.loadBalancers = list;
-        this.notifyComponents("loadBalancers");
-    },
-
-    getLoadBalancers : function()
-    {
-        if (this.loadBalancers == null) {
-            ew_session.controller.describeLoadBalancers();
-            return null;
-        }
-        return this.getObjects(this.loadBalancers, arguments);
     },
 
     getS3Regions: function()

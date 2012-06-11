@@ -1,5 +1,5 @@
 var ew_AMIsTreeView = {
-    model : ['images','securityGroups','instances'],
+    model : ['images','securityGroups','instances', 'keypairs', 'vpcs', 'subnets', 'availabilityZones' ],
     favorites: "ew.images.favorites",
     properties: ['ownerAlias', 'isPublic', 'state'],
 
@@ -86,7 +86,7 @@ var ew_AMIsTreeView = {
         // Initialize the owner display filter to the empty string
         var alias = null, owner = null, root = null, rx = null;
         if (type.value == "my_ami" || type.value == "my_ami_rdt_ebs") {
-            var groups = ew_model.getSecurityGroups();
+            var groups = ew_model.get('securityGroups');
             if (groups) {
                 owner = groups[0].ownerId;
                 rx = regExs["ami"];

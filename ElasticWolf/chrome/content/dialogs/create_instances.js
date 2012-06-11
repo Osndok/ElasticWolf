@@ -172,7 +172,7 @@ var ew_InstanceLauncher = {
         document.getElementById("ew.newinstances.ipAddress").disabled = true;
 
         if (sel.value != null && sel.value != '') {
-            var subnets = this.ew_session.model.getSubnets();
+            var subnets = this.ew_session.model.get('subnets');
             for ( var i in subnets) {
                 if (subnets[i].vpcId == sel.value && (az == "" || az == subnets[i].availabilityZone)) {
                     this.subnetMenu.appendItem(subnets[i].toString(), subnets[i].id)
@@ -228,7 +228,7 @@ var ew_InstanceLauncher = {
         // This will trigger a DescribeKeyPairs if the model
         // doesn't have any keypair info yet. If there are no keypairs,
         // this dialog shouldn't be initialized any further.
-        var keypairs = this.ew_session.model.getKeypairs();
+        var keypairs = this.ew_session.model.get('keypairs');
         if (keypairs == null) {
             alert("Please create a keypair before launching an instance");
             return false;
@@ -276,7 +276,7 @@ var ew_InstanceLauncher = {
         // availability zones
         this.azMenu = document.getElementById("ew.newinstances.azId");
         this.azMenu.appendItem("<any>", null);
-        var availZones = this.ew_session.model.getAvailabilityZones();
+        var availZones = this.ew_session.model.get('availabilityZones');
         for ( var i in availZones) {
             this.azMenu.appendItem(availZones[i].name + " (" + availZones[i].state + ")", availZones[i].name);
         }
@@ -296,7 +296,7 @@ var ew_InstanceLauncher = {
 
         // Get the list of security groups visible to this user. This will trigger a DescribeSecurityGroups
         // if the model doesn't have any info yet.
-        this.securityGroups = this.ew_session.model.getSecurityGroups();
+        this.securityGroups = this.ew_session.model.get('securityGroups');
         this.buildGroupList();
 
         var aki = this.image.aki;
@@ -305,7 +305,7 @@ var ew_InstanceLauncher = {
         // Populate the AKI and ARI lists
         var akiList = document.getElementById("ew.newinstances.aki");
         var ariList = document.getElementById("ew.newinstances.ari");
-        var images = this.ew_session.model.getImages();
+        var images = this.ew_session.model.get('images');
         var akiRegex = regExs["aki"];
         var ariRegex = regExs["ari"];
         akiList.appendItem("");
@@ -331,7 +331,8 @@ var ew_InstanceLauncher = {
         }
 
         // Populate VPCs
-        var vpcs = this.ew_session.model.getVpcs();
+        var vpcs = this.ew_session.model.get('vpcs');
+        debug(vpcs)
         this.vpcMenu.appendItem("", "");
         for (var i in vpcs) {
             this.vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);

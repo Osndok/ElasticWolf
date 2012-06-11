@@ -60,9 +60,9 @@ var ew_LoadbalancerTreeView = {
         if (elb == null) return;
         var instances = [];
         if (elb.vpcId) {
-            instances = ew_model.getInstances('state', 'running', 'vpcId', elb.vpcId);
+            instances = ew_model.get('instances', 'state', 'running', 'vpcId', elb.vpcId);
         } else {
-            instances = ew_model.getInstances('state', 'running');
+            instances = ew_model.get('instances', 'state', 'running');
         }
         var list = ew_session.promptList('Register Instances', 'Select instances to register with this load balancer:', instances, null, null, true);
         if (!list || !list.length) return;
@@ -79,7 +79,7 @@ var ew_LoadbalancerTreeView = {
         if (elb == null) return;
         var instances = [];
         for (var  i in elb.Instances) {
-            instances.push(ew_model.getInstanceById(elb.Instances[i]))
+            instances.push(ew_model.find('instances', elb.Instances[i]))
         }
         var list = ew_session.promptList('Deregister Instances', 'Select instances to deregister with this load balancer:', instances, null, null, true);
         if (!list || !list.length) return;
@@ -94,7 +94,7 @@ var ew_LoadbalancerTreeView = {
     manageZones : function(enable) {
         var elb = this.getSelected();
         if (elb == null) return;
-        var zones = ew_model.getAvailabilityZones();
+        var zones = ew_model.get('availabilityZones');
         var checked = [];
         if (enable) {
             for (var i in zones) {
@@ -198,7 +198,7 @@ var ew_LoadbalancerTreeView = {
             alert('Change of a security group is only for VPC.');
             return;
         }
-        var groups = ec2ui_model.getSecurityGroupsByVpcId(elb.vpcId);
+        var groups = ew_model.get('securityGroups', 'vpcId', elb.vpcId);
         var list = ew_session.promptList('Change Security Groups', 'Select security groups for load balancer:', groups, null, null, true);
         if (!list || !list.length) return;
         var me = this;

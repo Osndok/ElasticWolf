@@ -11,7 +11,7 @@ var ew_SubnetsTreeView = {
         var subnet = this.getSelected();
         if (subnet == null) return;
 
-        var instances = ew_model.getInstances('subnetId', subnet.id, 'state', 'running');
+        var instances = ew_model.get('instances', 'subnetId', subnet.id, 'state', 'running');
         if (instances.length) {
             alert("There is instance " + instances[0].toString() + " in this subnet");
             return false
@@ -53,8 +53,8 @@ var ew_SubnetsTreeView = {
 
     display: function(list)
     {
-        var tables = ew_model.getRouteTables();
-        var acls = ew_model.getNetworkAcls();
+        var tables = ew_model.get('routeTables');
+        var acls = ew_model.get('networkAcls');
         for (var k in list) {
             if (tables) {
                 for (var i in tables) {
@@ -90,7 +90,7 @@ var ew_SubnetsTreeView = {
         var subnet = this.getSelected();
         if (!subnet) return;
 
-        var acls = ew_model.getNetworkAclsByVpcId(subnet.vpcId);
+        var acls = ew_model.get('networkAcls', 'vpcId', subnet.vpcId);
         if (!acls.length) {
             alert("No ACLs available, try later")
             return;
@@ -107,7 +107,7 @@ var ew_SubnetsTreeView = {
         var subnet = this.getSelected();
         if (!subnet) return;
 
-        var routes = ew_session.model.getRouteTables();
+        var routes = ew_session.model.get('routeTables');
         if (!routes) {
             alert("No route tables available, try later")
             return;

@@ -12,7 +12,7 @@ var ew_NetworkAclsTreeView = {
 
     createACL : function()
     {
-        var vpcs = ew_session.model.getVpcs();
+        var vpcs = ew_session.model.get('vpcs');
         if (!vpcs) {
             alert("No VPCs available, try later")
             return;
@@ -43,7 +43,7 @@ var ew_NetworkAclsTreeView = {
             alert("Please, select ACL");
             return;
         }
-        var subnets = ew_session.model.getSubnetsByVpcId(acl.vpcId);
+        var subnets = ew_session.model.get('subnets', 'vpcId', acl.vpcId);
         if (!subnets.length) {
             alert("No subnets available, try later")
             return;

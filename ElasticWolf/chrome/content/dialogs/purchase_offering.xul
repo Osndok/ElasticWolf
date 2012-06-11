@@ -11,7 +11,7 @@
 
     <vbox flex="1">
         <hbox>
-            <image src="images/cash.png" />
+            <image src="../images/cash.png" />
             <caption label="Review, Specify Number of Instances, and click Continue" />
         </hbox>
         <groupbox orient="vertical" pack="start" flex="1">

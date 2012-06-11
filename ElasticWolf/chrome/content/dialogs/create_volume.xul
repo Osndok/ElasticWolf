@@ -49,7 +49,7 @@
 
         // availability zones
         var availZoneMenu = document.getElementById("ew.newvolume.availabilityzonelist");
-        var availZones = this.ew_session.model.getAvailabilityZones();
+        var availZones = this.ew_session.model.get('availabilityZones');
         for (var i in availZones) {
             availZoneMenu.appendItem(availZones[i].toString(), availZones[i].name);
         }
@@ -58,7 +58,7 @@
         // snapshots
         var snapshotIdMenu = document.getElementById("ew.newvolume.snapshotId");
         snapshotIdMenu.appendItem("<none>");
-        var snapshots = this.ew_session.model.getSnapshots();
+        var snapshots = this.ew_session.model.get('snapshots');
         var snap = null;
         for (var i in snapshots) {
             snap = snapshots[i];

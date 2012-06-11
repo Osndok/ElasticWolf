@@ -315,7 +315,7 @@ var ew_session = {
     refreshEndpoints: function()
     {
         // Merge with saved list of regions
-        ew_model.getRegions(function(regions) {
+        this.controller.describeRegions(function(regions) {
             for (var i in regions) {
                 if (this.getEndpoint(regions[i].name) == null) {
                     this.endpoints.push(regions[i]);

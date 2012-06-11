@@ -36,7 +36,7 @@ var ew_BundleTasksTreeView = {
     registerBundledImage : function (bucket, prefix) {
         var manifestPath = bucket + "/" + prefix + ".manifest.xml";
         var wrap = function(x) {
-            ew_model.refreshModels('images');
+            ew_model.refresh('images');
             // Navigate to the AMIs tab
             ew_session.selectTab('ew.tabs.image');
         }

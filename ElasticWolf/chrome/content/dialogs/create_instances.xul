@@ -122,8 +122,8 @@
                             </listcols>
                         </listbox>
                         <vbox flex="1">
-                            <button image="images/right.png" oncommand="ew_InstanceLauncher.addSecurityGroup();" />
-                            <button image="images/left.png" oncommand="ew_InstanceLauncher.removeSecurityGroup();" />
+                            <button image="../images/right.png" oncommand="ew_InstanceLauncher.addSecurityGroup();" />
+                            <button image="../images/left.png" oncommand="ew_InstanceLauncher.removeSecurityGroup();" />
                         </vbox>
                         <listbox flex="1" rows="3" id="ew.newinstances.secgroups.used" seltype="multiple">
                             <listcols>

@@ -23,7 +23,7 @@
 
         var availZoneMenu = document.getElementById("ew.newvpngateway.az");
         availZoneMenu.appendItem("&lt;any&gt;", null);
-        var availZones = this.ew_session.model.getAvailabilityZones();
+        var availZones = this.ew_session.model.get('availabilityZones');
         for (var i in availZones) {
             availZoneMenu.appendItem(availZones[i].name + " (" + availZones[i].state + ")", availZones[i].name);
         }

@@ -91,7 +91,7 @@ var ew_UsersTreeView = {
         var me = this;
         var item = this.getSelected();
         if (!item) return;
-        var list = ew_model.getGroups();
+        var list = ew_model.get('groups');
         var idx = ew_session.promptList("Group", "Select group to add this user to", list, ["name"]);
         if (idx < 0) return;
         ew_session.controller.addUserToGroup(item.name, list[idx].name, function() { me.refresh() });
@@ -263,7 +263,7 @@ var ew_GroupsTreeView = {
         var me = this;
         var item = this.getSelected();
         if (!item) return;
-        var users = ew_model.getUsers();
+        var users = ew_model.get('users');
         var list = [];
         for (var i in users) {
             var found = false
@@ -378,7 +378,7 @@ var ew_GroupUsersTreeView = {
 ew_GroupUsersTreeView.__proto__ = TreeView;
 
 var ew_VMFATreeView = {
-    model: "vmfa",
+    model: ["vmfas", "users"],
 
     addDevice: function()
     {
@@ -402,7 +402,7 @@ var ew_VMFATreeView = {
     {
         var item = this.getSelected();
         if (!item || item.userName) return;
-        var users = ew_model.getUsers();
+        var users = ew_model.get('users');
         var idx = ew_session.promptList("User name", "Select user to assign this device to", users);
         if (idx < 0) return;
         var values = ew_session.promptInput('Assign MFA device', ["Auth Code 1", "Auth Code 2"]);

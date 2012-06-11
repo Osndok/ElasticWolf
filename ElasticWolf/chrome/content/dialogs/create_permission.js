@@ -233,7 +233,7 @@ var ew_Authorizer = {
 
     var user = document.getElementById("ew.newpermission.source.user");
     user.value = this.group.ownerId;
-    var securityGroups = this.ew_session.model.getSecurityGroups();
+    var securityGroups = this.ew_session.model.get('securityGroups');
     var groupMenu = document.getElementById("ew.newpermission.source.group");
     groupMenu.appendItem("", "");
     for(var i in securityGroups) {

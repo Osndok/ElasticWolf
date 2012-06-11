@@ -34,10 +34,10 @@ var ew_VpcTreeView = {
             return;
         }
 
-        var subnets = ew_model.getSubnets();
+        var subnets = ew_model.get('subnets');
         for (var i in subnets) {
             if (subnets[i].vpcId == vpc.id) {
-                var instances = ew_model.getInstances('subnetId', subnets[i].id, 'state', 'running');
+                var instances = ew_model.get('instances', 'subnetId', subnets[i].id, 'state', 'running');
                 if (instances.length) {
                     alert("There is instance " + instances[0].toString() + " in subnet " + subnets[i].toString());
                     return;

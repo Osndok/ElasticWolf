@@ -12,7 +12,7 @@ var ew_RouteTablesTreeView = {
 
     createTable : function()
     {
-        var vpcs = ew_session.model.getVpcs();
+        var vpcs = ew_session.model.get('vpcs');
         if (!vpcs) {
             alert("No VPCs available, try later")
             return;
@@ -44,9 +44,9 @@ var ew_RoutesTreeView = {
     {
         var table = ew_RouteTablesTreeView.getSelected();
         if (!table) return;
-        var gws = ew_session.model.getInternetGateways('vpcId', table.vpcId);
-        var instances = ew_session.model.getInstances('vpcId', table.vpcId);
-        var enis = ew_session.model.getNetworkInterfaces('vpcId', table.vpcId);
+        var gws = ew_session.model.get('internetGateways', 'vpcId', table.vpcId);
+        var instances = ew_session.model.get('instances', 'vpcId', table.vpcId);
+        var enis = ew_session.model.get('networkInterfaces', 'vpcId', table.vpcId);
 
         var retVal = { ok: false, title: table.toString(), gws : gws, instances: instances, enis: enis }
         window.openDialog("chrome://ew/content/dialogs/create_route.xul", null, "chrome,centerscreen,modal,resizable", ew_session, retVal);
@@ -73,7 +73,7 @@ var ew_RouteAssociationsTreeView = {
             alert("Please, select route table");
             return;
         }
-        var subnets = ew_session.model.getSubnets();
+        var subnets = ew_session.model.get('subnets');
         if (!subnets) {
             alert("No subnets available, try later")
             return;

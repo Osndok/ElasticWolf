@@ -34,7 +34,7 @@ var ew_ElasticIPTreeView = {
     },
 
     getUnassociatedInstances : function() {
-        var instances = ew_model.getInstances('state', 'running');
+        var instances = ew_model.get('instances', 'state', 'running');
         var unassociated = new Array();
         var eips = {};
 
@@ -69,7 +69,7 @@ var ew_ElasticIPTreeView = {
             }
 
             var list = this.getUnassociatedInstances();
-            list = list.concat(ew_model.getNetworkInterfaces())
+            list = list.concat(ew_model.get('networkInterfaces'))
 
             var idx = ew_session.promptList("Associate Elastic IP", "Which Instance/ENI would you like to associate "+ eip.publicIp +" with?", list, ['__class__', 'toString'], 550);
             if (idx < 0) return;
@@ -102,7 +102,7 @@ var ew_ElasticIPTreeView = {
         var eip = this.getSelected();
         if (!eip || !eip.instanceId) { return; }
 
-        var instance = ew_model.getInstanceById(eip.instanceId);
+        var instance = ew_model.gfind('instances', eip.instanceId);
         if (instance) {
             ew_session.copyToClipboard(instance.publicDnsName);
         }
