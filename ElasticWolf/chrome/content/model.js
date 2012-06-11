@@ -750,6 +750,7 @@ function InstanceHealth(Description, State, InstanceId, ReasonCode)
 
 var ew_model = {
     components : {},
+    progress: {},
     separator: " | ",
 
     volumes : null,
@@ -782,6 +783,13 @@ var ew_model = {
 
     refresh: function(name)
     {
+        var now = (new Date).getTime();
+        if (this.progress[name] > 0 && now - this.progress[name] < 30000) {
+            debug('refresh: ' + name + ' in progress')
+            return;
+        }
+        this.progress[name] = now;
+
         switch (name) {
         case "vmfas":
             ew_session.controller.listVirtualMFADevices();
@@ -896,6 +904,7 @@ var ew_model = {
     // Update model list and notify components
     set: function(name, list)
     {
+        this.progress[name] = 0;
         this[name] = list;
         this.notifyComponents(name);
     },

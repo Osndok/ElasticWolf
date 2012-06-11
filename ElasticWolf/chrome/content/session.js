@@ -337,15 +337,15 @@ var ew_session = {
     generateCertificate : function(name)
     {
         // Make sure we have directory
-        if (!this.prefs.makeKeyHome()) {
+        if (!this.makeKeyHome()) {
             return 0
         }
 
-        var certfile = this.prefs.getCertificateFile(name);
-        var keyfile = this.prefs.getPrivateKeyFile(name);
-        var pubfile = this.prefs.getPublicKeyFile(name);
-        var openssl = this.prefs.getOpenSSLCommand();
-        var conffile = this.prefs.getKeyHome() + DirIO.sep + "openssl.cnf"
+        var certfile = this.getCertificateFile(name);
+        var keyfile = this.getPrivateKeyFile(name);
+        var pubfile = this.getPublicKeyFile(name);
+        var openssl = this.getOpenSSLCommand();
+        var conffile = this.getKeyHome() + DirIO.sep + "openssl.cnf"
 
         FileIO.remove(certfile);
         FileIO.remove(keyfile);
@@ -357,7 +357,7 @@ var ew_session = {
         FileIO.write(FileIO.open(conffile), confdata)
 
         // Create private and cert files
-        this.prefs.setEnv("OPENSSL_CONF", conffile);
+        this.setEnv("OPENSSL_CONF", conffile);
         this.launchProcess(openssl, [ "genrsa", "-out", keyfile, "1024" ], true);
         if (!waitForFile(keyfile, 5000)) {
             debug("ERROR: no private key generated")
@@ -389,37 +389,37 @@ var ew_session = {
     launchShell : function(name)
     {
         // Make sure we have directory
-        if (!this.prefs.makeKeyHome()) {
+        if (!this.makeKeyHome()) {
             return 0
         }
 
         // Save current acces key into file
-        FileIO.write(FileIO.open(this.prefs.getCredentialFile(name)), "AWSAccessKeyId=" + this.accessCode + "\nAWSSecretKey=" + this.secretKey + "\n")
+        FileIO.write(FileIO.open(this.getCredentialFile(name)), "AWSAccessKeyId=" + this.accessCode + "\nAWSSecretKey=" + this.secretKey + "\n")
 
         // Setup environment
-        this.prefs.setEnv("EC2_URL", this.serviceURL);
-        this.prefs.setEnv("EC2_PRIVATE_KEY", this.prefs.getPrivateKeyFile(name));
-        this.prefs.setEnv("EC2_CERT", this.prefs.getCertificateFile(name));
-        this.prefs.setEnv("AWS_CREDENTIAL_FILE", this.prefs.getCredentialFile(name));
-        this.prefs.setEnv("AWS_IAM_URL", this.getIAMURL());
+        this.setEnv("EC2_URL", this.serviceURL);
+        this.setEnv("EC2_PRIVATE_KEY", this.getPrivateKeyFile(name));
+        this.setEnv("EC2_CERT", this.getCertificateFile(name));
+        this.setEnv("AWS_CREDENTIAL_FILE", this.getCredentialFile(name));
+        this.setEnv("AWS_IAM_URL", this.getIAMURL());
 
         // Current PATH
-        var path = this.prefs.getEnv("PATH");
+        var path = this.getEnv("PATH");
         var sep = isWindows(navigator.platform) ? ";" : ":";
 
         // Update path to the command line tools
-        var paths = [this.prefs.JAVA_TOOLS_PATH, this.prefs.EC2_TOOLS_PATH, this.prefs.IAM_TOOLS_PATH, this.prefs.AMI_TOOLS_PATH, this.prefs.CLOUDWATCH_TOOLS_PATH, this.prefs.AWS_AUTOSCALING_TOOLS_PATH];
+        var paths = ["ec2", "java", "iam", "ami", "cloudwatch", "autoscaling"];
         for(var i in paths) {
-            var p = this.prefs.getStrPrefs(paths[i], "");
+            var p = this.getStrPrefs("ew.path." + paths[i], "");
             if (p == "") {
                 continue;
             }
-            this.prefs.setEnv(paths[i].split(".").pop().toUpperCase(), p);
+            this.setEnv(paths[i].split(".").pop().toUpperCase(), p);
             path += sep + p + DirIO.sep + "bin";
         }
         debug(path)
-        this.prefs.setEnv("PATH", path);
-        this.launchProcess(this.prefs.getShellCommand(), []);
+        this.setEnv("PATH", path);
+        this.launchProcess(this.getShellCommand(), []);
     },
 
     launchProcess : function(cmd, args, block)
@@ -476,7 +476,7 @@ var ew_session = {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, save ? nsIFilePicker.modeSave : nsIFilePicker.modeOpen);
-        fp.displayDirectory = FileIO.open(this.prefs.getKeyHome());
+        fp.displayDirectory = FileIO.open(this.getKeyHome());
         fp.defaultString = filename || ""
         if (fp.show() != nsIFilePicker.returnCancel) {
             return fp.file.path;
@@ -489,7 +489,7 @@ var ew_session = {
         var nsIFilePicker = Components.interfaces.nsIFilePicker;
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, nsIFilePicker.modeGetFolder);
-        fp.displayDirectory = FileIO.open(this.prefs.getKeyHome());
+        fp.displayDirectory = FileIO.open(this.getKeyHome());
         if (fp.show() != nsIFilePicker.returnCancel) {
             return fp.file.path;
         }
@@ -1296,7 +1296,7 @@ var ew_session = {
     },
 
     startTimer : function(key, expr) {
-        var timer = window.setTimeout(expr, this.getRequestTimeout());
+        var timer = window.setTimeout(expr, this.getIntPrefs("ew.http.timeout", 15000));
         this.timers[key] = timer;
     },
 
@@ -1330,16 +1330,6 @@ var ew_session = {
     getProfileHome : function()
     {
         return DirIO.get("ProfD").path;
-    },
-
-    getRequestTimeout : function()
-    {
-        return this.getIntPrefs("ew.request.timeout", 15000);
-    },
-
-    setRequestTimeout : function(value)
-    {
-        this.setIntPrefs("ew.request.timeout", value);
     },
 
     getServiceURL : function()
@@ -1717,6 +1707,7 @@ var ew_session = {
 
     getIntPrefs : function(name, defValue)
     {
+        if (!defValue || defValue == null) defValue = 0;
         if (this.prefs && name) {
             if (!this.prefs.prefHasUserValue(name)) {
                 return defValue;
@@ -1736,6 +1727,7 @@ var ew_session = {
 
     getBoolPrefs : function(name, defValue)
     {
+        if (!defValue || defValue == null) defValue = false;
         if (this.prefs && name) {
             if (!this.prefs.prefHasUserValue(name)) {
                 return defValue;

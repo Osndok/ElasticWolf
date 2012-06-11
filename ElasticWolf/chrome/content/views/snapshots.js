@@ -3,7 +3,8 @@ var ew_SnapshotTreeView = {
 
     filter: function(list) {
         if (!list) return list;
-        if ($("ew_SnapshotTreeView.snapshot.type").value == "my_snapshots") {
+        var type = $("ew.snapshots.type").value;
+        if (type == "my_snapshots") {
             var groups = ew_model.get('securityGroups');
             if (groups) {
                 owner = groups[0].ownerId;

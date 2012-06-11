@@ -6,7 +6,7 @@
   <tabpanel id="ew.tabs.prefs" flex="1">
     <vbox flex="1">
     <tabbox flex="1" style="padding: 20px;" >
-       <tabs id="ew.tools.tabs">
+       <tabs id="ew.tabs">
          <tab label="Paths" selected="true" />
          <tab label="Security" selected="true" />
          <tab label="System" selected="true" />
@@ -21,99 +21,95 @@
             </columns>
             <rows>
                 <row>
-                    <label control="ew.tools.home" value="User home directory:" />
+                    <label control="ew.home" value="User home directory:" />
+                    <label id="ew.home" />
+                </row>
+                <row>
+                    <label control="ew.profile" value="Profile directory:" />
+                    <label id="ew.profile" />
+                </row>
+                <row>
+                    <label control="ew.key.home" value="Directory for private key files:" />
                     <hbox>
-                        <textbox id="ew.tools.home" size="60" readonly="true" />
+                        <textbox id="ew.key.home" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.key.home')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.profile" value="Profile directory:" />
+                    <label control="ew.ssh.command" value="SSH Command:" />
                     <hbox>
-                        <textbox id="ew.tools.profile" size="60" readonly="true" />
+                        <textbox id="ew.ssh.command" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.ssh.command', true)" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.keyhome" value="Directory for private key files:" />
+                    <label control="ew.ssh.args" value="SSH Arguments:" />
                     <hbox>
-                        <textbox id="ew.tools.keyhome" size="60" /> <button label="Browse" oncommand="browse('ew.tools.keyhome')" />
+                        <textbox id="ew.ssh.args" size="60" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.ssh.command" value="SSH Command:" />
+                    <label control="ew.ssh.user" value="SSH User:" />
                     <hbox>
-                        <textbox id="ew.tools.ssh.command" size="60" /> <button label="Browse" oncommand="browse('ew.tools.ssh.command', true)" />
+                        <textbox id="ew.ssh.user" size="20" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.ssh.args" value="SSH Arguments:" />
+                    <label control="ew.openssl.command" value="OPENSSL Command:" />
                     <hbox>
-                        <textbox id="ew.tools.ssh.args" size="60" />
+                        <textbox id="ew.openssl.command" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.openssl.command', true)" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.ssh.user" value="SSH User:" />
+                    <label control="ew.shell.command" value="SHELL Command:" />
                     <hbox>
-                        <textbox id="ew.tools.ssh.user" size="20" />
+                        <textbox id="ew.shell.command" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.shell.command', true)" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.openssl.command" value="OPENSSL Command:" />
+                    <label control="ew.rdp.command" value="RDP Command:" />
                     <hbox>
-                        <textbox id="ew.tools.openssl.command" size="60" /> <button label="Browse" oncommand="browse('ew.tools.openssl.command', true)" />
+                        <textbox id="ew.rdp.command" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.rdp.command', true)" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.shell.command" value="SHELL Command:" />
+                    <label control="ew.rdp.args" value="RDP Arguments:" />
                     <hbox>
-                        <textbox id="ew.tools.shell.command" size="60" /> <button label="Browse" oncommand="browse('ew.tools.shell.command', true)" />
+                        <textbox id="ew.rdp.args" size="60" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.rdp.command" value="RDP Command:" />
+                    <label control="ew.path.java" value="Java Home Path:" />
                     <hbox>
-                        <textbox id="ew.tools.rdp.command" size="60" /> <button label="Browse" oncommand="browse('ew.tools.rdp.command', true)" />
+                        <textbox id="ew.path.java" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.path.java')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.rdp.args" value="RDP Arguments:" />
+                    <label control="ew.path.ec2" value="EC2 API Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ew.tools.rdp.args" size="60" />
+                        <textbox id="ew.path.ec2" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.path.ec2')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.path.java" value="Java Home Path:" />
+                    <label control="ew.path.iam" value="IAM Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ew.tools.path.java" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.java')" />
+                        <textbox id="ew.path.iam" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.path.iam')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.path.ec2" value="EC2 API Command-line Tools Home:" />
+                    <label control="ew.path.ami" value="AMI Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ew.tools.path.ec2" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.ec2')" />
+                        <textbox id="ew.path.ami" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.path.ami')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.path.iam" value="IAM Command-line Tools Home:" />
+                    <label control="ew.path.cloudwatch" value="Cloud Watch Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ew.tools.path.iam" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.iam')" />
+                        <textbox id="ew.path.cloudwatch" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.path.cloudwatch')" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.path.ami" value="AMI Command-line Tools Home:" />
+                    <label control="ew.path.autoscaling" value="AWS Auto Scaling Command-line Tools Home:" />
                     <hbox>
-                        <textbox id="ew.tools.path.ami" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.ami')" />
-                    </hbox>
-                </row>
-                <row>
-                    <label control="ew.tools.path.cloudwatch" value="Cloud Watch Command-line Tools Home:" />
-                    <hbox>
-                        <textbox id="ew.tools.path.cloudwatch" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.cloudwatch')" />
-                    </hbox>
-                </row>
-                <row>
-                    <label control="ew.tools.path.autoscale" value="AWS Auto Scaling Command-line Tools Home:" />
-                    <hbox>
-                        <textbox id="ew.tools.path.autoscale" size="60" /> <button label="Browse" oncommand="browse('ew.tools.path.autoscale')" />
+                        <textbox id="ew.path.autoscaling" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.path.autoscaling')" />
                     </hbox>
                 </row>
             </rows>
@@ -128,21 +124,21 @@
             </columns>
             <rows>
                 <row>
-                    <label control="ew.tools.pin" value="Access PIN:" tooltiptext="Restrict access to the console with PIN" />
+                    <label control="ew.pin" value="Access PIN:" tooltiptext="Restrict access to the console with PIN" />
                     <hbox>
-                        <textbox id="ew.tools.pin" type="password" size="20" />
+                        <textbox id="ew.pin" type="password" size="20" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.idle.timeout" value="Idle timeout (min):" />
+                    <label control="ew.idle.timeout" value="Idle timeout (min):" />
                     <hbox>
-                        <textbox id="ew.tools.idle.timeout" size="3" maxlength="3" type="number" />
+                        <textbox id="ew.idle.timeout" size="3" maxlength="3" type="number" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.tools.idle.action" value="Action on idle timeout:" />
+                    <label control="ew.idle.action" value="Action on idle timeout:" />
                     <hbox>
-                        <menulist id="ew.tools.idle.action">
+                        <menulist id="ew.idle.action">
                          <menupopup>
                             <menuitem label="None" value=""/>
                             <menuitem label="Ask for PIN" value="pin"/>
@@ -163,36 +159,40 @@
             </columns>
             <rows>
                 <row>
-                   <label control="ew.tools.version" value="Version:" />
-                   <label id="ew.tools.version" />
+                   <label control="ew.version" value="Version:" />
+                   <label id="ew.version" />
                 </row>
                 <row>
-                   <label control="ew.tools.version" value="EC2 API Version:" />
-                   <label id="ew.tools.ec2_version" />
+                   <label control="ew.ec2_version" value="EC2 API Version:" />
+                   <label id="ew.ec2_version" />
                 </row>
                 <row>
-                   <label control="ew.tools.version" value="IAM API Version:" />
-                   <label id="ew.tools.iam_version" />
+                   <label control="ew.iam_version" value="IAM API Version:" />
+                   <label id="ew.iam_version" />
                 </row>
                 <row>
-                   <label control="ew.tools.version" value="ELB API Version:" />
-                   <label id="ew.tools.elb_version" />
+                   <label control="ew.elb_version" value="ELB API Version:" />
+                   <label id="ew.elb_version" />
                 </row>
                 <row>
-                    <label control="ew.tools.debug" value="Enable debug output:" />
-                    <checkbox id="ew.tools.debug" />
+                    <label control="ew.debug.enabled" value="Enable debug output:" />
+                    <checkbox id="ew.debug.enabled" />
                 </row>
                 <row>
-                    <label control="ew.tools.debug" value="Enable HTTP requests:" />
-                    <checkbox id="ew.tools.http" />
+                    <label control="ew.http.enabled" value="Enable HTTP requests:" />
+                    <checkbox id="ew.http.enabled" />
                 </row>
                 <row>
-                    <label control="ew.tools.accesskey" value="Save generated Access Keys on local disk in encrypted format:" />
-                    <checkbox id="ew.tools.accesskey" />
+                    <label control="ew.http.timeout" value="HTTP timeout(ms):" />
+                    <textbox id="ew.http.timeout" type="number" size="5" maxlength="5"/>
                 </row>
                 <row>
-                    <label control="ew.tools.debug" value="" />
-                    <button id="ew.tools.updates" label="Check for Updates" oncommand="session.checkForUpdates()" />
+                    <label control="ew.accesskey.save" value="Save generated Access Keys on local disk in encrypted format:" />
+                    <checkbox id="ew.accesskey.save" />
+                </row>
+                <row>
+                    <label value="" />
+                    <button label="Check for Updates" oncommand="ew_session.checkForUpdates()" />
                 </row>
             </rows>
         </grid>
