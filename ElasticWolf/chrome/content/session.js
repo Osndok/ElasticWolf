@@ -3,13 +3,12 @@ var ew_session = {
     VERSION: "2.0",
     NAME: 'ElasticWolf',
     URL: 'https://awsps.com/ElasticWolf',
-    EC2_API_VERSION : '2012-05-01',
-    ELB_API_VERSION : '2011-11-15',
-    IAM_API_VERSION : '2010-05-08',
+    EC2_API_VERSION: '2012-05-01',
+    ELB_API_VERSION: '2011-11-15',
+    IAM_API_VERSION: '2010-05-08',
+    CW_API_VERSION: '',
     VPN_CONFIG_PATH : 'https://ec2-downloads.s3.amazonaws.com/',
     SIG_VERSION: '2',
-    IAM_GOV_URL: 'https://iam.us-gov.amazonaws.com',
-    IAM_URL : 'https://iam.amazonaws.com',
     REALM : 'chrome://ew/',
     HOST  : 'chrome://ew/',
 
@@ -21,17 +20,19 @@ var ew_session = {
     credentials : null,
     cmdline: null,
     endpoints: null,
-    serviceURL : "",
-    region : "",
-    elbURL  : "",
-    accessCode : null,
-    secretKey : null,
+    region: "",
+    serviceURL: "",
+    elbURL: "",
+    cwURL: "",
+    iamURL: "",
+    accessCode: null,
+    secretKey: null,
     errorCount: 0,
     errorMax: 3,
-    timers : {},
+    timers: {},
     disabled: false,
     httpCount: 0,
-    prefs : null,
+    prefs: null,
 
     initialize : function()
     {
@@ -210,6 +211,24 @@ var ew_session = {
             }
             // Since we are switching creds, ensure that all the views are redrawn
             this.model.invalidate();
+        }
+    },
+
+    setCredentials : function (accessCode, secretKey)
+    {
+        this.accessCode = accessCode;
+        this.secretKey = secretKey;
+        this.errorCount = 0;
+    },
+
+    setEndpoint : function (endpoint)
+    {
+        if (endpoint != null) {
+            this.serviceURL = endpoint.url;
+            this.region = endpoint.name;
+            this.elbURL = "https://elasticloadbalancing." + this.region + ".amazonaws.com";
+            this.cwURL = "https://monitoring." + this.region + ".amazonaws.com";
+            this.iamURL = this.isGovCloud() ? 'https://iam.us-gov.amazonaws.com' : 'https://iam.amazonaws.com';
         }
     },
 
@@ -401,7 +420,8 @@ var ew_session = {
         this.setEnv("EC2_PRIVATE_KEY", this.getPrivateKeyFile(name));
         this.setEnv("EC2_CERT", this.getCertificateFile(name));
         this.setEnv("AWS_CREDENTIAL_FILE", this.getCredentialFile(name));
-        this.setEnv("AWS_IAM_URL", this.getIAMURL());
+        this.setEnv("AWS_IAM_URL", this.iamURL);
+        this.setEnv("AWS_CLOUDWATCH_URL", this.cwURL);
 
         // Current PATH
         var path = this.getEnv("PATH");
@@ -711,11 +731,6 @@ var ew_session = {
         return this.getAppName() + "/" + this.VERSION;
     },
 
-    getIAMURL: function()
-    {
-        return this.isGovCloud() ? this.IAM_GOV_URL : this.IAM_URL;
-    },
-
     isGovCloud : function()
     {
         return String(this.serviceURL).indexOf("ec2.us-gov") > -1;
@@ -759,22 +774,6 @@ var ew_session = {
         }
     },
 
-    setCredentials : function (accessCode, secretKey)
-    {
-        this.accessCode = accessCode;
-        this.secretKey = secretKey;
-        this.errorCount = 0;
-    },
-
-    setEndpoint : function (endpoint)
-    {
-        if (endpoint != null) {
-            this.serviceURL = endpoint.url;
-            this.region = endpoint.name;
-            this.elbURL = "https://elasticloadbalancing." + this.region + ".amazonaws.com";
-        }
-    },
-
     newInstance : function()
     {
         var xmlhttp = null;
@@ -786,48 +785,6 @@ var ew_session = {
             }
         }
         return xmlhttp;
-    },
-
-    setEndpointURLForRegion : function(region)
-    {
-        var reg = ew_utils.determineRegionFromString(ew_session.getActiveEndpoint().name);
-        log(reg + ": active region prefix");
-        if (reg != region) {
-            var newURL = null;
-            // Determine the region's EC2 URL
-            var endpointlist = this.getEndpoints();
-            region = region.toLowerCase();
-            for (var i = 0; i < endpointlist.length; ++i) {
-                var curr = endpointlist[i];
-                if (curr.name.indexOf(region) >= 0) {
-                    newURL = curr.url;
-                    break;
-                }
-            }
-
-            log(newURL + ": new URL");
-            if (newURL == null) {
-                return;
-            }
-
-            // Switch to the new URL
-            this.serviceURL = newURL;
-        }
-    },
-
-    queryEC2InRegion : function (region, action, params, handlerObj, isSync, handlerMethod, callback)
-    {
-        // Save the current Service URL
-        var oldURL = this.serviceURL;
-        log(oldURL + ": old URL");
-        this.setEndpointURLForRegion(region);
-
-        // Make the call
-        var toRet = this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback);
-
-        // Switch back to the old URL
-        this.serviceURL = oldURL;
-        return toRet;
     },
 
     queryEC2 : function (action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion)
@@ -959,7 +916,12 @@ var ew_session = {
 
     queryIAM : function (action, params, handlerObj, isSync, handlerMethod, callback)
     {
-        return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.getIAMURL(), this.IAM_API_VERSION);
+        return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.iamURL, this.IAM_API_VERSION);
+    },
+
+    queryCloudWatch : function (action, params, handlerObj, isSync, handlerMethod, callback)
+    {
+        return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.cwURL, this.CW_API_VERSION);
     },
 
     queryS3Prepare : function(method, bucket, key, path, params, content)

@@ -709,9 +709,9 @@ function CustomerGateway(id, ipAddress, bgpAsn, state, type, tags)
     }
 }
 
-function LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, availabilityZones, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName, vpcId, subnets, groups)
+function LoadBalancer(name, CreatedTime, DNSName, Instances, Protocol, LoadBalancerPort, InstancePort, Interval, Timeout, HealthyThreshold, UnhealthyThreshold, Target, availabilityZones, CookieName, APolicyName, CookieExpirationPeriod, CPolicyName, vpcId, subnets, groups)
 {
-    this.LoadBalancerName = LoadBalancerName;
+    this.name = name;
     this.CreatedTime = CreatedTime;
     this.DNSName = DNSName;
     this.Instances = Instances;
@@ -733,7 +733,7 @@ function LoadBalancer(LoadBalancerName, CreatedTime, DNSName, Instances, Protoco
     this.groups = groups
 
     this.toString = function() {
-        return this.LoadBalancerName;
+        return this.name;
     }
 }
 
@@ -744,7 +744,7 @@ function InstanceHealth(Description, State, InstanceId, ReasonCode)
     this.InstanceId = InstanceId;
     this.ReasonCode = ReasonCode;
     this.toString = function() {
-        return this.Description + ew_model.separator + this.State + ew_model.separator + ew_model("instanceId", this.InstanceId);
+        return this.Description + ew_model.separator + this.State + ew_model.separator + ew_model.modelValue("instanceId", this.InstanceId);
     }
 }
 
@@ -785,7 +785,7 @@ var ew_model = {
     {
         var now = (new Date).getTime();
         if (this.progress[name] > 0 && now - this.progress[name] < 30000) {
-            debug('refresh: ' + name + ' in progress')
+            log('refresh: ' + name + ' in progress')
             return;
         }
         this.progress[name] = now;

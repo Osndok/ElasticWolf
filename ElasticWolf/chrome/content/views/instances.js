@@ -39,11 +39,10 @@ var ew_InstancesTreeView = {
             }
 
             if (retVal.ok) {
-                var reg = ew_utils.determineRegionFromString(ew_session.getActiveEndpoint().name);
-                bucketReg = ew_session.controller.getS3BucketLocation(retVal.bucketName) || reg;
-                retVal.ok = (reg == bucketReg);
+                bucketReg = ew_session.controller.getS3BucketLocation(retVal.bucketName) || ew_session.region;
+                retVal.ok = (ew_session.region == bucketReg);
                 if (!retVal.ok) {
-                    alert ("You must specify a bucket in the '" + reg + "'. Please try again");
+                    alert ("You must specify a bucket in the '" + ew_session.region + "'. Please try again");
                     retVal.bucketName = "";
                 }
             }

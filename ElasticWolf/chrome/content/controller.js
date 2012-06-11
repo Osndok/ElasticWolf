@@ -76,16 +76,16 @@ var ew_controller = {
 
     registerImageInRegion : function(manifestPath, region, callback)
     {
-        // Determine the current region
-        var activeReg = ew_utils.determineRegionFromString(ew_session.getActiveEndpoint().name);
-        log(activeReg + ": active, requested: " + region);
-
-        if (activeReg == region) {
-            // The image's region is the same as the active region
-            this.registerImage(manifestPath, callback);
-        } else {
-            ew_session.queryEC2InRegion(region, "RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onComplete", callback);
+        // The image's region is the same as the active region
+        if (ew_session.region == region) {
+            return this.registerImage(manifestPath, callback);
         }
+
+        var endpoint = ew_session.getEndpoint(region)
+        if (!endpoint) {
+            return alert('Cannot determine endpoint url for ' + region);
+        }
+        ew_session.queryEC2InRegion(region, "RegisterImage", [ [ "ImageLocation", manifestPath ] ], this, false, "onComplete", callback, endpoint.url);
     },
 
     registerImage : function(manifestPath, callback)
@@ -2073,7 +2073,7 @@ var ew_controller = {
             list.push(new InstanceHealth(Description, State, InstanceId, ReasonCode));
         }
 
-        var elb = ew_model.find('loadBalancers', responseObj.params[0][1], 'LoadBalancerName');
+        var elb = ew_model.find('loadBalancers', responseObj.params[0][1]);
         if (elb) elb.InstanceHealth = list;
 
         if (responseObj.callback) responseObj.callback(list);
@@ -2204,6 +2204,26 @@ var ew_controller = {
             params.push(["SecurityGroups.member." + (i + 1), group]);
         }
         ew_session.queryELB("ApplySecurityGroupsToLoadBalancer", params, this, false, "onComplete", callback);
+    },
+
+    attachLoadBalancerToSubnets : function(LoadBalancerName, subnets, callback)
+    {
+        var params = []
+        params.push([ "LoadBalancerName", LoadBalancerName ]);
+        for (var i = 0; i < subnets.length; i++) {
+            params.push(["Subnets.member." + (i + 1), subnets[i]]);
+        }
+        ew_session.queryELB("AttachLoadBalancerToSubnets", params, this, false, "onComplete", callback);
+    },
+
+    detachLoadBalancerFromSubnets : function(LoadBalancerName, subnets, callback)
+    {
+        var params = []
+        params.push([ "LoadBalancerName", LoadBalancerName ]);
+        for (var i = 0; i < subnets.length; i++) {
+            params.push(["Subnets.member." + (i + 1), subnets[i]]);
+        }
+        ew_session.queryELB("DetachLoadBalancerFromSubnets", params, this, false, "onComplete", callback);
     },
 
     uploadServerCertificate : function(ServerCertificateName, CertificateBody, PrivateKey, Path, callback)

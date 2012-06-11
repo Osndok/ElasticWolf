@@ -37,7 +37,7 @@
                             <toolbarbutton image="images/tools.png" style="-moz-box-pack:center;" oncommand="ew_AMIsTreeView.tag();" tooltiptext="Edit EC2 Tag" />
                             <menulist id="ew.images.type" oncommand="ew_AMIsTreeView.imageTypeChanged();">
                                 <menupopup>
-                                    <menuitem label="No Filter" selected="true" value="all" />
+                                    <menuitem label="No Filter" value="" />
                                     <menuitem label="My AMIs" value="my_ami" />
                                     <menuitem label="All AMIs" value="ami" />
                                     <menuitem label="All AMIs with EBS Root Device" value="rdt_ebs" />

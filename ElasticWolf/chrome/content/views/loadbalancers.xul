@@ -9,6 +9,8 @@
        <popupset >
           <menupopup id="loadbalancer.tree.contextmenu"  onpopupshowing="ew_LoadbalancerTreeView.menuChanged(event);">
               <menuitem oncommand="ew_LoadbalancerTreeView.displayDetails(event);" label="&ew.loadbalancer.contextmenu.viewdetails.label;" />
+              <menuitem oncommand="ew_LoadbalancerTreeView.create(event);" label="&ew.create.loadbalancer.tip;" />
+              <menuitem oncommand="ew_LoadbalancerTreeView.deleteLoadBalancer(event);" label="&ew.loadbalancer.contextmenu.delete.label;" />
               <menuitem oncommand="ew_LoadbalancerTreeView.copyToClipboard('DNSName');" label="&ew.loadbalancer.contextmenu.copydns.label;" />
               <menuseparator/>
               <menuitem oncommand="ew_LoadbalancerTreeView.registerinstances(event);" label="&ew.loadbalancer.contextmenu.registerinstance.label;" />
@@ -22,9 +24,9 @@
               <menuitem id="loadbalancer.context.lbstickness" oncommand="ew_LoadbalancerTreeView.loadbalancerstickness(event);" label="&ew.loadbalancer.contextmenu.loadbalancerstickness.label;" />
               <menuseparator/>
               <menuitem oncommand="ew_LoadbalancerTreeView.ConfigureHealthCheck(event);" label="&ew.loadbalancer.contextmenu.configurehealthcheck.label;" />
-              <menuseparator/>
               <menuitem id="loadbalancer.context.changegroups" oncommand="ew_LoadbalancerTreeView.changeSecurityGroup(event);" label="Change Security Group" />
-              <menuitem oncommand="ew_LoadbalancerTreeView.deleteLoadBalancer(event);" label="&ew.loadbalancer.contextmenu.delete.label;" />
+              <menuitem id="loadbalancer.context.addsubnet" oncommand="ew_LoadbalancerTreeView.addSubnet(event);" label="Attach to subnets" />
+              <menuitem id="loadbalancer.context.delsubnet" oncommand="ew_LoadbalancerTreeView.deleteSubnet(event);" label="Detach from subnets" />
           </menupopup>
         </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
@@ -35,7 +37,7 @@
       </toolbar>
       <tree enableColumnDrag="true" id="ew.loadbalancer.view" flex="1" >
         <treecols>
-          <treecol id="loadbalancer.LoadBalancerName" label="&ew.loadbalancer.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+          <treecol id="loadbalancer.name" label="&ew.loadbalancer.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="loadbalancer.CreatedTime" label="&ew.loadbalancer.creationtime.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />

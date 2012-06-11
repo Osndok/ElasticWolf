@@ -28,7 +28,7 @@ function init()
 
 function launch()
 {
-    this.rc.LoadBalancerName = document.getElementById("ew.Name").value.trim();
+    this.rc.name = document.getElementById("ew.Name").value.trim();
     this.rc.Protocol = document.getElementById("ew.Protocol").value.trim();
     this.rc.elbport = document.getElementById("ew.elbport").value.trim();
     this.rc.instanceport = document.getElementById("ew.instanceport").value.trim();

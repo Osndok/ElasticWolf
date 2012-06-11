@@ -15,8 +15,7 @@ var ew_AMIsTreeView = {
 
         fDisabled = !isWindows(image.platform);
 
-        // If this is not a Windows Instance, Disable the following
-        // context menu items.
+        // If this is not a Windows Instance, Disable the following context menu items.
         $("amis.context.migrate").disabled = fDisabled;
 
         // These items apply only to AMIs
@@ -201,9 +200,6 @@ var ew_AMIsTreeView = {
             alert("This AMI is currently being migrated!");
             return;
         }
-
-        alert("Not implemented yet");
-        return;
 
         var retVal = { ok : null };
         window.openDialog("chrome://ew/content/dialogs/migrate_ami.xul", null, "chrome,centerscreen,modal,resizable", image, ew_session, retVal);
