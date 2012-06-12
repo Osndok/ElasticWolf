@@ -1,6 +1,7 @@
 
 // Base class for tree container
 var TreeView = {
+    name: "",
     columns : [],
     tree: null,
     treeBox : null,
@@ -89,10 +90,12 @@ var TreeView = {
         return idx >= this.rowCount ? "" : ew_model.modelValue(name, this.treeList[idx][name]);
     },
     getCellValue : function(idx, column) {
+        var name = column.id.split(".").pop();
         return idx >= this.rowCount ? "" : this.treeList[idx][name];
     },
     setCellValue: function (idx, column, val) {
-        if (idx >= 0 && idx < this.rowCount) this.treeList[idx][column.id.split(".").pop()] = val;
+        var name = column.id.split(".").pop();
+        if (idx >= 0 && idx < this.rowCount) this.treeList[idx][name] = val;
     },
     notifyModelChanged : function(interest) {
         log('notify model changed ' + this.model)
@@ -117,11 +120,11 @@ var TreeView = {
     getCellProperties : function(idx, column, prop) {
         var name = column.id.split(".").pop();
         if (this.properties.indexOf(name) == -1) return;
-        var value = this.treeList[idx][name].replace(/[ -.:]+/g,'_').toLowerCase();
+        var value = String(this.treeList[idx][name]).replace(/[ -.:]+/g,'_').toLowerCase();
         if (!this.atomService) {
             this.atomService = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
         }
-        prop.AppendElement(this.atomService.getAtom(this.getModelName() + "_" + value));
+        prop.AppendElement(this.atomService.getAtom((this.getModelName() || this.name) + "_" + value));
     },
     getColumnProperties : function(column, element, prop) {
     },

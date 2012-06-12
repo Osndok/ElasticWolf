@@ -1,15 +1,28 @@
 var ew_CredentialsTreeView = {
-    activate : function() {
-        this.display(ew_session.getCredentials());
+    name: "credentials",
+    properties: ["status"],
+
+    activate : function()
+    {
+        this.refresh();
+        TreeView.activate.call(this);
     },
 
-    deactivate: function() {
+    deactivate: function()
+    {
         if (ew_session.getActiveCredentials() == null) {
             this.switchCredentials();
         }
+        TreeView.activate.call(this);
     },
 
-    deleteCredentials : function() {
+    refresh: function()
+    {
+        this.display(ew_session.getCredentials());
+    },
+
+    deleteCredentials : function()
+    {
         var cred = this.getSelected();
         if (!cred) return;
         if (!confirm("Delete credentials " + cred.name)) return;
@@ -17,7 +30,8 @@ var ew_CredentialsTreeView = {
         this.display(ew_session.getCredentials());
     },
 
-    addCredentials : function() {
+    addCredentials : function()
+    {
         var rc = { ok: null, endpoints: ew_session.getEndpoints() };
         window.openDialog("chrome://ew/content/dialogs/create_credentials.xul", null, "chrome,centerscreen, modal, resizable", rc);
         if (rc.ok) {
@@ -27,11 +41,21 @@ var ew_CredentialsTreeView = {
         }
     },
 
+    filter: function(list)
+    {
+        var cred = ew_session.getActiveCredentials();
+        for (var i in list) {
+            list[i].status = list[i].name == cred.name ? "Current" : "";
+        }
+        return TreeView.filter.call(this, list);
+    },
+
     switchCredentials: function()
     {
         var cred = this.getSelected();
         if (!cred) return;
         ew_session.switchCredentials(cred);
+        this.refresh();
     },
 };
 ew_CredentialsTreeView.__proto__ = TreeView;

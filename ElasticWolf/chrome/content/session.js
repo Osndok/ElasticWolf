@@ -405,21 +405,24 @@ var ew_session = {
         return FileIO.toString(certfile)
     },
 
-    launchShell : function(name)
+    launchShell : function(keypairName, accessKey)
     {
         // Make sure we have directory
         if (!this.makeKeyHome()) {
             return 0
         }
 
-        // Save current acces key into file
-        FileIO.write(FileIO.open(this.getCredentialFile(name)), "AWSAccessKeyId=" + this.accessCode + "\nAWSSecretKey=" + this.secretKey + "\n")
+        // Save access key into file
+        if (!accessKey) accessKey = { id: this.accessCode, secret: this.secretKey };
+        FileIO.write(FileIO.open(this.getCredentialFile(name)), "AWSAccessKeyId=" + accessKey.id + "\nAWSSecretKey=" + accessKey.secret + "\n")
 
         // Setup environment
+        if (keypairName) {
+            this.setEnv("EC2_PRIVATE_KEY", this.getPrivateKeyFile(keypairName));
+            this.setEnv("EC2_CERT", this.getCertificateFile(keypairName));
+            this.setEnv("AWS_CREDENTIAL_FILE", this.getCredentialFile(keypairName));
+        }
         this.setEnv("EC2_URL", this.serviceURL);
-        this.setEnv("EC2_PRIVATE_KEY", this.getPrivateKeyFile(name));
-        this.setEnv("EC2_CERT", this.getCertificateFile(name));
-        this.setEnv("AWS_CREDENTIAL_FILE", this.getCredentialFile(name));
         this.setEnv("AWS_IAM_URL", this.iamURL);
         this.setEnv("AWS_CLOUDWATCH_URL", this.cwURL);
 

@@ -35,6 +35,7 @@ function Credential(name, accessKey, secretKey, endPoint)
     this.accessKey = accessKey;
     this.secretKey = secretKey;
     this.endPoint = endPoint || "";
+    this.status = "";
 
     this.toString = function() {
         return this.accessKey + ";;" + this.secretKey + ";;" + this.endPoint;

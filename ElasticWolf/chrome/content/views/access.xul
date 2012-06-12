@@ -22,6 +22,7 @@
             <toolbarbutton image="images/add.png" tooltiptext="&ew.accesskeys.create.tip;" oncommand="ew_AccessKeyTreeView.createAccessKey();" />
             <toolbarbutton image="images/delete.png" tooltiptext="&ew.accesskeys.delete.tip;" oncommand="ew_AccessKeyTreeView.deleteSelected();" />
             <toolbarbutton image="images/attach.png" tooltiptext="&ew.accesskeys.switch.tip;" oncommand="ew_AccessKeyTreeView.switchCredentials();" />
+             <toolbarbutton image="images/shell.png" tooltiptext="&ew.keypairs.shell.tip;" oncommand="ew_AccessKeyTreeView.runShell()"/>
         </toolbar>
         <tree enableColumnDrag="true" id="ew.accesskeys.view" flex="1">
             <treecols>

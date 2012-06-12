@@ -25,7 +25,7 @@ var ew_PrefsView = {
        this.getPrefs('ew.path.autoscaling');
        this.getPrefs('ew.path.cloudwatch');
        this.getPrefs("ew.debug.enabled");
-       this.getPrefs("ew.http.enabled");
+       this.getPrefs("ew.http.enabled", true);
        this.getPrefs("ew.idle.timeout");
        this.getPrefs("ew.idle.action");
        this.getPrefs("ew.accesskey.save")

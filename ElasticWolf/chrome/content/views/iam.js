@@ -535,15 +535,23 @@ ew_KeypairTreeView.register();
 var ew_AccessKeyTreeView = {
     searchElement: "ew.accesskeys.search",
 
+    runShell: function() {
+        var key = this.getSelected();
+        if (!key) return;
+        key.secret = getAccessKeySecret(key.id);
+        if (!key.secret) alert('Cannot get secret for the access code, command line tools will not work');
+        ew_session.launchShell(null, key);
+    },
+
     refresh: function()
     {
         var me = this;
         ew_session.controller.listAccessKeys(null, function(list) { me.display(list); })
     },
 
-    saveAccessKey: function(user, key, secret)
+    saveAccessKey: function(user, key, secret, save)
     {
-        if (this.getBoolPrefs("ew.accesskey.save", true)) {
+        if (save || this.getBoolPrefs("ew.accesskey.save", true)) {
             ew_session.savePassword('AccessKey:' + key, secret);
         }
         alert('Access Key is ready:\nAccessKeyId: ' + key + '\nAccessSecretKey: ' + secret);
@@ -553,7 +561,8 @@ var ew_AccessKeyTreeView = {
         var me = this;
         ew_session.controller.createAccessKey(null, function(user, key, secret) {
             me.refresh()
-            me.saveAccessKey(user, key, secret);
+            // Alwayse save my own access keys
+            me.saveAccessKey(user, key, secret, true);
         });
     },
 

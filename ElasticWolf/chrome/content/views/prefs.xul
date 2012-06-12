@@ -183,12 +183,12 @@
                     <checkbox id="ew.http.enabled" />
                 </row>
                 <row>
-                    <label control="ew.http.timeout" value="HTTP timeout(ms):" />
-                    <textbox id="ew.http.timeout" type="number" size="5" maxlength="5"/>
+                    <label control="ew.accesskey.save" value="Save generated Access Keys:" />
+                    <checkbox id="ew.accesskey.save" />
                 </row>
                 <row>
-                    <label control="ew.accesskey.save" value="Save generated Access Keys on local disk in encrypted format:" />
-                    <checkbox id="ew.accesskey.save" />
+                    <label control="ew.http.timeout" value="HTTP timeout(ms):" />
+                    <textbox id="ew.http.timeout" type="number" size="5" maxlength="5"/>
                 </row>
                 <row>
                     <label value="" />
