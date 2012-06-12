@@ -9,6 +9,11 @@ var ew_UsersTreeView = {
         var me = this;
         var item = this.getSelected();
         if (!item) return;
+        this.updateUser(item);
+    },
+
+    updateUser: function(item)
+    {
         if (!item.groups) {
             ew_session.controller.listGroupsForUser(item.name, function(list) { })
         }
@@ -69,7 +74,6 @@ var ew_UsersTreeView = {
     {
         var values = ew_session.promptInput('Change Password', ["Old Password", "New Password", "Retype Password", "Check"], null, ["textbox", "password", "password", "checkbox"]);
         if (!values) return;
-        debug(values)
         if (values[1] != values[2]) {
             return alert('New entered passwords mismatch')
         }
@@ -372,7 +376,21 @@ var ew_GroupUsersTreeView = {
     {
         var item = this.getSelected();
         if (!item) return;
-        ew_UsersTreeView.select(item)
+        // Non visible views do not get updates so if we never show users list we need to updte manually
+        if (ew_UsersTreeView.rowCount > 0) {
+            ew_UsersTreeView.select(item);
+        } else {
+            var user = ew_model.find('users', item.id);
+            if (user) {
+                ew_UsersTreeView.updateUser(user);
+            }
+        }
+
+        // Replace with actual users from the model to show all properties
+        for (var i in this.treeList) {
+            var user = ew_model.find('users', this.treeList[i].id);
+            if (user) this.treeList[i] = user;
+        }
     },
 };
 ew_GroupUsersTreeView.__proto__ = TreeView;

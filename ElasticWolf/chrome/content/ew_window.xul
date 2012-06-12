@@ -37,6 +37,8 @@
 <window id="ew-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml"
         orient="vertical" persist="width height screenX screenY sizemode" onload="ew_session.initialize()">
 
+  <script src="chrome://venkman/content/venkman-overlay.js" />
+
   <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
   <script type="application/x-javascript" src="chrome://ew/content/crypto.js" />
   <script type="application/x-javascript" src="chrome://ew/content/interfaces.js" />
@@ -77,6 +79,7 @@
       <menupopup>
        <menuitem label="New Window" image="images/add.png" class="menuitem-iconic" oncommand="newWindow();"/>
        <menuitem label="Exit" image="images/reboot.png" class="menuitem-iconic" oncommand="ew_session.quit();"/>
+
       </menupopup>
     </menu>
     <menu label="Help">
@@ -125,7 +128,7 @@
          <treeitem><treerow><treecell label="Groups" value="ew.tabs.groups" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Virtual MFA Devices" value="ew.tabs.vmfa" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Password Policy" value="ew.tabs.policy" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="Change My Password" value="ew.tabs.password" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Change Console Password" value="ew.tabs.password" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 

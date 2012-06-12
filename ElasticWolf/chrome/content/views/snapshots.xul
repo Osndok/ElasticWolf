@@ -12,6 +12,7 @@
                         <menuitem oncommand="ew_SnapshotTreeView.tag(event);" label="Edit EC2 Tag" />
                         <menuseparator />
                         <menuitem oncommand="ew_SnapshotTreeView.showRegisterImageFromSnapshotDialog();" label="Register AMI from snapshot" />
+                        <menuitem oncommand="ew_SnapshotTreeView.viewPermissions();" label="Manage Permissions" />
                         <menuseparator />
                         <menuitem oncommand="ew_SnapshotTreeView.createVolume();" label="&ew.snapshot.contextmenu.createvol.label;" />
                         <menuitem oncommand="ew_SnapshotTreeView.deleteSnapshot();" label="&ew.snapshot.contextmenu.delete.label;" />
@@ -30,7 +31,7 @@
                         <menulist id="ew.snapshots.type" selectedIndex="0" oncommand="ew_SnapshotTreeView.snapshotTypeChanged();">
                             <menupopup>
                                 <menuitem label="My Snapshots" value="my_snapshots" />
-                                <menuitem label="No Filter" value="all" />
+                                <menuitem label="No Filter" value="" />
                             </menupopup>
                         </menulist>
                         <toolbarseparator />
@@ -66,18 +67,6 @@
                     </treecols>
                     <treechildren context="ew.snapshots.contextmenu" />
                 </tree>
-            </groupbox>
-            <splitter style="width: 4px; max-height: 4px;" persist="state" collapse="after" resizebefore="closest">
-                <grippy />
-            </splitter>
-            <groupbox flex="1" orient="vertical">
-                <caption label="Snapshot Permissions" />
-                <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                    <toolbarbutton image="images/add.png" style="-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.addPermission();" tooltiptext="Add user to the permissions list" />
-                    <toolbarbutton image="images/delete.png" style="-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.deletePermission();" tooltiptext="Remove from the permissions list" />
-                    <toolbarbutton image="images/details.png" style="-moz-box-pack:center;" oncommand="ew_SnapshotTreeView.addPublicPermission();" tooltiptext="Make it publically available" />
-                </toolbar>
-                <listbox id="ew.snapshot.permissions.list" seltype="single" rows="4" flex="1" />
             </groupbox>
         </vbox>
     </tabpanel>

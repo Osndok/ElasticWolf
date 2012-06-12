@@ -247,10 +247,10 @@ var ew_controller = {
             var group = getNodeValue(items[i], "group");
             var user = getNodeValue(items[i], "userId");
             if (group != '') {
-                list.push({ id: group, label: "Group: " + group })
+                list.push({ id: group, type: 'Group' })
             } else
             if (user != '') {
-                list.push({ id: user, label: "UserId: " + user })
+                list.push({ id: user, type: 'UserId' })
             }
         }
 
@@ -1164,7 +1164,7 @@ var ew_controller = {
 
     onCompleteDescribeBundleTasks : function(responseObj)
     {
-        var xmldoc = responseObj.xmlDoc;
+        var xmlDoc = responseObj.xmlDoc;
         var list = new Array();
         var items = xmlDoc.evaluate("/ec2:DescribeBundleTasksResponse/ec2:bundleInstanceTasksSet/ec2:item", xmlDoc, this.getNsResolver(), XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for ( var i = 0; i < items.snapshotLength; ++i) {
@@ -2127,7 +2127,6 @@ var ew_controller = {
         for (var i = 0; i < instances.length; i++) {
             params.push([ "Instances.member." + (i + 1) + ".InstanceId", instances[i] ]);
         }
-        debug(params)
         ew_session.queryELB("RegisterInstancesWithLoadBalancer", params, this, false, "onComplete", callback);
     },
 
@@ -2533,10 +2532,10 @@ var ew_controller = {
             list.push(new User(id, name, path, arn));
         }
 
-        // Top level list ned to update the model
+        // Top level list need to update the model
         switch (responseObj.action) {
         case 'ListUsers':
-            ew_model.set('users' ,list);
+            ew_model.set('users', list);
             break;
 
         case "GetGroup":

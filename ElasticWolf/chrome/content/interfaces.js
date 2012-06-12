@@ -7,7 +7,7 @@ var TreeView = {
     treeList : new Array(),
     selection : null,
     registered : false,
-    initialized: false,
+    visible: false,
     model : '',
     atomService: null,
     properties: [],
@@ -27,10 +27,6 @@ var TreeView = {
     },
     getModel: function()
     {
-        if (!this.initialized) {
-            this.initialized = true;
-            this.refreshAll();
-        }
         return ew_model.getModel(this.getModelName(this.model));
     },
     getData: function()
@@ -46,6 +42,12 @@ var TreeView = {
     },
     setTree : function(treeBox) {
         this.treeBox = treeBox;
+    },
+    isRefreshable: function() {
+        return false;
+    },
+    isVisible: function() {
+        return this.visible;
     },
     isEditable : function(idx, column) {
         return true;
@@ -87,12 +89,13 @@ var TreeView = {
         return idx >= this.rowCount ? "" : ew_model.modelValue(name, this.treeList[idx][name]);
     },
     getCellValue : function(idx, column) {
-        return this.getCellText(idx, columns);
+        return idx >= this.rowCount ? "" : this.treeList[idx][name];
     },
     setCellValue: function (idx, column, val) {
         if (idx >= 0 && idx < this.rowCount) this.treeList[idx][column.id.split(".").pop()] = val;
     },
     notifyModelChanged : function(interest) {
+        log('notify model changed ' + this.model)
         this.invalidate();
     },
     hasNextSibling: function(idx, after) {
@@ -106,7 +109,6 @@ var TreeView = {
     cycleCell : function(idx, column) {
     },
     performAction : function(action) {
-        debug('action ' + action);
     },
     performActionOnCell : function(action, idx, column) {
     },
@@ -152,18 +154,18 @@ var TreeView = {
             var col = cols[i];
             if ($(col) != null) {
                 var direction = document.getElementById(col).getAttribute("sortDirection");
-            }
-            if (direction && direction != "natural") {
-                ascending = (direction == "ascending");
-                sortField = col.slice(col.indexOf(".") + 1);
-                break;
+                if (direction && direction != "natural") {
+                    ascending = (direction == "ascending");
+                    sortField = col.slice(col.indexOf(".") + 1);
+                    break;
+                }
             }
         }
 
         if (sortField != null) {
             var sortFunc = function(a, b) {
-                var aVal = eval("a." + sortField) || "";
-                var bVal = eval("b." + sortField) || "";
+                var aVal = a[sortField] || "";
+                var bVal = b[sortField] || "";
                 var aF = parseFloat(aVal);
                 if (!isNaN(aF) && aF.toString() == aVal) {
                     aVal = aF;
@@ -200,10 +202,11 @@ var TreeView = {
     select : function(obj, columns) {
         var i = this.find(obj, columns)
         if (i >= 0) {
+            var old = this.selection.currentIndex;
             this.selection.select(i);
             this.treeBox.ensureRowIsVisible(i);
             // Make sure the event is fired if we select same item
-            if (this.selection.currentIndex == i) {
+            if (old == i) {
                 this.selectionChanged();
             }
             return true;
@@ -228,6 +231,7 @@ var TreeView = {
         this.refreshAll(force);
     },
     refreshAll: function(force) {
+        log('refreshAll ' + (force ? "force" : "") + ' ' + this.model)
         if (this.model instanceof Array) {
             for (var i = 1; i < this.model.length; i++) {
                 if (force || ew_model.getModel(this.model[i]) == null) {
@@ -236,15 +240,13 @@ var TreeView = {
             }
         }
     },
-    isRefreshable: function() {
-        return false;
-    },
     startRefreshTimer : function() {
         if (this.refreshTimer) {
             clearTimeout(this.refreshTimer);
         }
         var me = this;
         this.refreshTimer = setTimeout(function() { me.refresh() }, this.refreshTimeout);
+        log('start timer ' + this.model)
     },
     stopRefreshTimer : function() {
         if (this.refreshTimer) {
@@ -319,20 +321,26 @@ var TreeView = {
         this.treeBox.rowCountChanged(0, this.treeList.length);
         this.treeBox.invalidate();
         this.selection.clearSelection();
-        this.sort();
-        if (!this.select(sel)) {
-            this.selection.select(0);
-        }
-        if (this.isRefreshable()) {
-            this.startRefreshTimer();
-        } else {
-            this.stopRefreshTimer();
+        // No need to sort or select if we are not visible but because we refer to the original model list,
+        // multiple views may sort the same list at the same time
+        if (this.isVisible()) {
+            this.sort();
+            if (this.isRefreshable()) {
+                this.startRefreshTimer();
+            } else {
+                this.stopRefreshTimer();
+            }
+            if (!this.select(sel)) {
+                this.selection.select(0);
+            }
         }
     },
     activate: function() {
+        this.visible = true;
         this.restorePreferences();
     },
     deactivate: function() {
+        this.false = true;
         this.stopRefreshTimer();
         this.savePreferences();
     },

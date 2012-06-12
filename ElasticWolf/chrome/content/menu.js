@@ -147,6 +147,7 @@ var ew_menu = {
 
         // Activate and refresh if no records yet
         for (var i in tab.views) {
+            log('activate ' + tab.views[i].id + ", rows=" + tab.views[i].view.rowCount)
             tab.views[i].view.activate();
             // Assign new filter list and refresh contents
             tab.views[i].view.filterList = tab.views[i].filterList;

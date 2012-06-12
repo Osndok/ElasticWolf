@@ -788,6 +788,7 @@ var ew_model = {
             log('refresh: ' + name + ' in progress')
             return;
         }
+        log('refresh model ' + name)
         this.progress[name] = now;
 
         switch (name) {
@@ -882,7 +883,7 @@ var ew_model = {
         return []
     },
 
-    // Return direct list to the list
+    // Return direct list
     getModel: function(name)
     {
         if (!this.hasOwnProperty(name)) debug('model ' + name + ' not found');
@@ -904,6 +905,7 @@ var ew_model = {
     // Update model list and notify components
     set: function(name, list)
     {
+        log('set model ' + name + ' ' + (list ? list.length : 0))
         this.progress[name] = 0;
         this[name] = list;
         this.notifyComponents(name);
@@ -930,7 +932,7 @@ var ew_model = {
     {
         for (var p in this) {
             if (this[p] instanceof Array) {
-                this.setModel([p], null);
+                this.set(p, null);
             }
         }
     },
@@ -1047,7 +1049,7 @@ var ew_model = {
     {
         var comps = this.components[interest] || [];
         for (var i in comps) {
-            if (ew_menu.isViewVisible(comps[i])) {
+            if (comps[i].isVisible()) {
                 comps[i].notifyModelChanged(interest);
             } else {
                 comps[i].display([]);

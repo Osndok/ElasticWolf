@@ -192,7 +192,10 @@
                 </row>
                 <row>
                     <label value="" />
-                    <button label="Check for Updates" oncommand="ew_session.checkForUpdates()" />
+                    <hbox>
+                    <button id="ew.updates" label="Check for Updates" oncommand="ew_session.checkForUpdates()" />
+                    <button id="ew.venkman" label="Run Venkman" oncommand="start_venkman()" />
+                    </hbox>
                 </row>
             </rows>
         </grid>

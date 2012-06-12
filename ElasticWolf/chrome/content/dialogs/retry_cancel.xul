@@ -49,8 +49,7 @@
         </row>
         <row>
           <label value="Details:" />
-          <textbox id="ew.retrycancel.error" multiline="true" cols="50" rows="3" wrap="true"
-            style="font-family: monospace;" readonly="true"/>
+          <textbox id="ew.retrycancel.error" multiline="true" cols="50" rows="3" wrap="true" style="font-family: monospace;" readonly="true"/>
         </row>
       </rows>
     </grid>

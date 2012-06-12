@@ -24,6 +24,7 @@ var ew_AMIsTreeView = {
         $("amis.context.deregister").disabled = fDisabled;
         $("amis.context.launch").disabled = fDisabled;
         $("amis.context.delete").disabled = fDisabled;
+        $("amis.context.perms").disabled = image.state == "deregistered";
 
         // These context menu items don't apply to Windows instancesso enable them.
 
@@ -86,7 +87,7 @@ var ew_AMIsTreeView = {
         var alias = null, owner = null, root = null, rx = null;
         if (type.value == "my_ami" || type.value == "my_ami_rdt_ebs") {
             var groups = ew_model.get('securityGroups');
-            if (groups) {
+            if (groups && groups.length) {
                 owner = groups[0].ownerId;
                 rx = regExs["ami"];
                 root = type.value == "my_ami" ? null : "ebs";
@@ -104,7 +105,6 @@ var ew_AMIsTreeView = {
         } else {
             rx = regExs[type.value || "all"];
         }
-        debug(type.value + " " + alias + " " + owner + " " + root + " " + rx)
         var nlist = new Array();
         for (var i in list) {
             if (rx && !list[i].id.match(rx)) continue;
@@ -265,10 +265,10 @@ var ew_AMIsTreeView = {
     viewPermissions: function()
     {
         var image = this.getSelected();
-        if (image == null) {
-            return;
-        }
-        window.openDialog("chrome://ew/content/dialogs/ami_permissions.xul", null, "chrome,centerscreen,modal,resizable", ew_session, image);
+        if (image == null) return;
+        ew_session.controller.describeLaunchPermissions(this.image.id, function(list) {
+            window.openDialog("chrome://ew/content/dialogs/manage_ami_permissions.xul", null, "chrome,centerscreen,modal,resizable", ew_session, image, list);
+        });
     },
 };
 

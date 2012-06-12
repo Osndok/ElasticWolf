@@ -35,74 +35,6 @@ var ew_SnapshotTreeView = {
         this.invalidate();
     },
 
-    selectionChanged : function(event) {
-        var me = this;
-        var image = this.getSelected();
-        if (image == null) return;
-
-        function wrap(id, acls) {
-            var list = me.getPermissionsList();
-            var count = list.getRowCount();
-            for ( var i = count - 1; i >= 0; i--) {
-                list.removeItemAt(i);
-            }
-            for (var i in acls) {
-                list.appendItem(acls[i].label, acls[i].id);
-            }
-            image.acls = acls;
-        }
-
-        if (image.acls) {
-            wrap(image.id, image.acls);
-        } else {
-            ew_session.controller.describeSnapshotAttribute(image.id, wrap);
-        }
-    },
-
-    getPermissionsList : function()
-    {
-        return document.getElementById("ew.snapshot.permissions.list");
-    },
-
-    getSelectedPermission : function()
-    {
-        var item = this.getPermissionsList().getSelectedItem(0);
-        if (item == null) return null;
-        return item;
-    },
-
-    addPublicPermission: function()
-    {
-        var me = this;
-        var image = this.getSelected();
-        if (image == null) return;
-        image.acls = null;
-        ew_session.controller.modifySnapshotAttribute(image.id, [ [ "Group", "all" ]], null, function() { me.refresh(true); });
-    },
-
-    addPermission: function()
-    {
-        var me = this;
-        var image = this.getSelected();
-        if (image == null) return;
-        var user = prompt("Please provide an EC2 user ID");
-        if (user == null) return;
-        image.acls = null;
-        ew_session.controller.modifySnapshotAttribute(image.id, [ [ "UserId", user ]], null, function() { me.refresh(true); });
-    },
-
-    deletePermission: function()
-    {
-        var me = this;
-        var image = this.getSelected();
-        if (image == null) return;
-        var perm = this.getSelectedPermission();
-        if (!perm) return
-        if (!confirm("Remove permissions " + perm.label + " from " + image.id + "?")) return;
-        image.acls = null;
-        ew_session.controller.modifySnapshotAttribute(image.id, null, [ [ perm.label.split(":")[0], perm.value ]], function() { me.refresh(true); });
-    },
-
     deleteSnapshot : function () {
         var image = this.getSelected();
         if (image == null) return;
@@ -136,6 +68,16 @@ var ew_SnapshotTreeView = {
             ew_session.controller.registerImageFromSnapshot(image.id, retVal.amiName, retVal.amiDescription, retVal.architecture, retVal.kernelId, retVal.ramdiskId, retVal.deviceName, retVal.deleteOnTermination, wrap);
         }
     },
+
+    viewPermissions: function()
+    {
+        var image = this.getSelected();
+        if (image == null) return;
+        ew_session.controller.describeSnapshotAttribute(this.image.id, function(id, list) {
+           window.openDialog("chrome://ew/content/dialogs/manage_snapshot_permissions.xul", null, "chrome,centerscreen,modal,resizable", ew_session, image, list);
+        });
+    },
+
 };
 
 ew_SnapshotTreeView.__proto__ = TreeView;

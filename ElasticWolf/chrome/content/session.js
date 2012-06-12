@@ -529,7 +529,7 @@ var ew_session = {
         if (this.pinPrompt || pin == '') return;
         this.disabled = true;
 
-        // Use timer so we do not block all the time and give a chance to proces events
+        // Use timer so we do not block all the time and give a chance to process events
         setTimeout(function() {
             var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"].getService(Components.interfaces.nsIPromptService);
             var pw = { value: "" };
@@ -540,7 +540,7 @@ var ew_session = {
                 me.quit();
             } else
             if (pw.value == pin) {
-                me.client.disabled = false;
+                me.disabled = false;
             } else {
                 me.promptForPin();
             }
@@ -740,12 +740,11 @@ var ew_session = {
     {
         ver = parseFloat(this.VERSION) + 0.01
         var url = this.getAppUrl()
-        var xmlhttp = this.newInstance();
+        var xmlhttp = this.getXmlHttp();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
             return;
         }
-        debug(url)
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4) {
                 var data = xmlhttp.responseText;
@@ -774,7 +773,7 @@ var ew_session = {
         }
     },
 
-    newInstance : function()
+    getXmlHttp : function()
     {
         var xmlhttp = null;
         if (typeof XMLHttpRequest != 'undefined') {
@@ -809,34 +808,6 @@ var ew_session = {
             }
         }
         return rsp;
-    },
-
-    retryRequest: function(rsp, action)
-    {
-        if (rsp.hasErrors) {
-            debug('action: ' + action + ', errorCount: ' + this.errorCount)
-            // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
-            this.errorCount++;
-            if (this.errorCount < this.errorMax) {
-                if (!this.errorDialog("Server responded with an error for " + action, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
-                    this.errorCount = this.errorMax;
-                    return false;
-                }
-            } else {
-                return false;
-            }
-            return true;
-        }
-
-        this.errorCount = 0;
-        return false;
-    },
-
-    errorDialog : function(msg, code, rId, fStr)
-    {
-        var retry = {value:null};
-        window.openDialog("chrome://ew/content/dialogs/retry_cancel.xul", null, "chrome,centerscreen,modal,resizable", msg, code, rId, fStr, retry);
-        return retry.value;
     },
 
     sigParamCmp : function(x, y)
@@ -892,7 +863,7 @@ var ew_session = {
 
         log("URL ["+url+"?"+queryParams+"]");
 
-        var xmlhttp = this.newInstance();
+        var xmlhttp = this.getXmlHttp();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
             return null;
@@ -984,7 +955,7 @@ var ew_session = {
 
         var req = this.queryS3Prepare(method, bucket, key, path, params, content);
 
-        var xmlhttp = this.newInstance();
+        var xmlhttp = this.getXmlHttp();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
             return null;
@@ -1019,7 +990,7 @@ var ew_session = {
 
         var req = this.queryS3Prepare("PUT", bucket, key, path, params, null);
 
-        var xmlhttp = this.newInstance();
+        var xmlhttp = this.getXmlHttp();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
             return null;
@@ -1091,24 +1062,24 @@ var ew_session = {
 
     sendRequest: function(xmlhttp, content, isSync, action, handlerMethod, handlerObj, callback, params)
     {
-        log('sendRequest: ' + action + ' ' + handlerMethod + ' ' + params);
+        debug('sendRequest: ' + action + '/' + handlerMethod + ", mode=" + (isSync ? "Sync" : "Async") + ', params=' + params);
         var me = this;
 
+        var xhr = xmlhttp;
         // Generate random timer
         var timerKey = this.getTimerKey();
-        this.startTimer(timerKey, xmlhttp.abort);
+        this.startTimer(timerKey, function() { xhr.abort() });
         this.showBusy(true);
 
         if (isSync) {
             xmlhttp.onreadystatechange = function() {}
         } else {
-            var xhr = xmlhttp;
             xmlhttp.onreadystatechange = function () {
                 if (xhr.readyState == 4) {
                     me.showBusy(false);
                     me.stopTimer(timerKey);
                     var rsp = me.handleResponse(xhr, isSync, action, handlerMethod, handlerObj, callback, params);
-                    me.retryRequest(rsp, handlerMethod);
+                    me.retryRequest(rsp, action);
                 }
             }
         }
@@ -1131,7 +1102,8 @@ var ew_session = {
 
     handleResponse : function(xmlhttp, isSync, action, handlerMethod, handlerObj, callback, params)
     {
-        log((isSync ? "Sync" : "Async") + " Response, status: " + xmlhttp.status + ", req:" + action + "/" + handlerMethod + ", response: " + xmlhttp.responseText);
+        debug('handleResponse: ' + action + "/" + handlerMethod + ", mode=" + (isSync ? "Sync" : "Async") + ", status=" + xmlhttp.status);
+        log(xmlhttp.responseText);
 
         var rc = xmlhttp.status >= 200 && xmlhttp.status < 300 ?
                  this.createResponse(xmlhttp, action, handlerMethod, callback, false, "", "", "", params) :
@@ -1172,6 +1144,7 @@ var ew_session = {
         return { xmlhttp: xmlhttp,
                  xmlDoc: xmlhttp && xmlhttp.responseXML ? xmlhttp.responseXML : document.createElement('p'),
                  textBody: xmlhttp ? xmlhttp.responseText : '',
+                 status : xmlhttp.status,
                  action: action,
                  method: handlerMethod,
                  requestId: requestId,
@@ -1182,9 +1155,37 @@ var ew_session = {
                  callback: callback, };
     },
 
+    retryRequest: function(rsp, action)
+    {
+        if (rsp.hasErrors) {
+            debug('error: action: ' + action + ', status: ' + rsp.status + ', errorCount: ' + this.errorCount)
+            // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
+            this.errorCount++;
+            if (this.errorCount < this.errorMax) {
+                if (!this.errorDialog("Server responded with an error for " + action, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
+                    this.errorCount = this.errorMax;
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            return true;
+        }
+
+        this.errorCount = 0;
+        return false;
+    },
+
+    errorDialog : function(msg, code, rId, fStr)
+    {
+        var retry = {value:null};
+        window.openDialog("chrome://ew/content/dialogs/retry_cancel.xul", null, "chrome,centerscreen,modal,resizable", msg, code, rId, fStr, retry);
+        return retry.value;
+    },
+
     queryVpnConnectionStylesheets : function(stylesheet)
     {
-        var xmlhttp = this.newInstance();
+        var xmlhttp = this.getXmlHttp();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
             return;
@@ -1200,7 +1201,7 @@ var ew_session = {
 
     queryCheckIP : function(type, retVal)
     {
-        var xmlhttp = this.newInstance();
+        var xmlhttp = this.getXmlHttp();
         if (!xmlhttp) {
             log("Could not create xmlhttp object");
             return;
@@ -1257,20 +1258,18 @@ var ew_session = {
         return String(Math.random()) + ":" + String(new Date().getTime());
     },
 
-    startTimer : function(key, expr) {
+    startTimer : function(key, expr)
+    {
         var timer = window.setTimeout(expr, this.getIntPrefs("ew.http.timeout", 15000));
         this.timers[key] = timer;
     },
 
     stopTimer : function(key, timeout)
     {
-        var timer = this.timers[key];
-        this.timers[key] = null;
-        if (timer == null) {
-            return false;
+        if (this.timers[key]) {
+            window.clearTimeout(this.timers[key]);
         }
-        window.clearTimeout(timer);
-        timer = null;
+        this.timers[key] = null;
         return true;
     },
 

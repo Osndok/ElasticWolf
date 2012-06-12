@@ -30,6 +30,8 @@ var ew_PrefsView = {
        this.getPrefs("ew.idle.action");
        this.getPrefs("ew.accesskey.save")
        this.getPrefs("ew.http.timeout");
+       // Optional debugging support
+       $('ew.venkman').hidden = typeof start_venkman != 'function';
    },
 
    deactivate: function() {

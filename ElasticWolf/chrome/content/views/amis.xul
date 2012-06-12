@@ -15,9 +15,10 @@
                             <menuitem id="amis.context.register" oncommand="ew_AMIsTreeView.registerNewImage();" label="&ew.images.contextmenu.register.label;" />
                             <menuitem id="amis.context.deregister" oncommand="ew_AMIsTreeView.deregisterImage();" label="&ew.images.contextmenu.deregister.label;" />
                             <menuitem id="amis.context.migrate" oncommand="ew_AMIsTreeView.migrateImage();" label="Migrate AMI and Register" />
+                            <menuitem id="amis.context.perms" oncommand="ew_AMIsTreeView.viewPermissions();" label="Manage Launch Permissions" />
+                            <menuseparator />
                             <menuitem id="amis.context.delete" oncommand="ew_AMIsTreeView.deleteImage();" label="Delete AMI Parts and Deregister" />
                             <menuitem id="amis.context.deleteSnapshotAndDeregister" oncommand="ew_AMIsTreeView.deleteSnapshotAndDeregister();" label="Delete Snapshot and Deregister AMI" />
-                            <menuitem id="amis.context.perms" oncommand="ew_AMIsTreeView.viewPermissions();" label="Manage Launch Permissions" />
                             <menuseparator />
                             <menuitem id="amis.context.launch" oncommand="ew_AMIsTreeView.launchNewInstances();" label="Launch instance(s) of this AMI" />
                             <menuseparator />

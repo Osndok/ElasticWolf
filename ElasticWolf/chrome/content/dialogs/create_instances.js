@@ -332,7 +332,6 @@ var ew_InstanceLauncher = {
 
         // Populate VPCs
         var vpcs = this.ew_session.model.get('vpcs');
-        debug(vpcs)
         this.vpcMenu.appendItem("", "");
         for (var i in vpcs) {
             this.vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);

@@ -209,6 +209,11 @@ function waitForFile(file, ms)
     return FileIO.exists(file);
 }
 
+function toOpenWindowByType(inType, uri)
+{
+    window.open(uri, "_blank", "chrome,extrachrome,menubar,resizable,scrollbars,status,toolbar");
+}
+
 // Deep copy of an object
 function cloneObject(obj)
 {
