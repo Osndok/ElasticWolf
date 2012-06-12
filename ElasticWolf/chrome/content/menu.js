@@ -94,6 +94,8 @@ var ew_menu = {
             { tab: "ew.tabs.availzone",     views: [ { id: "ew.azones.view", view: ew_AvailZoneTreeView }], },
 
             { tab: "ew.tabs.s3",            views: [ { id: "ew.s3.view", view: ew_S3BucketsTreeView }], },
+
+            { tab: "ew.tabs.alarm",         views: [ { id: "ew.alarms.view", view: ew_AlarmsTreeView }], },
     ],
 
     init: function() {

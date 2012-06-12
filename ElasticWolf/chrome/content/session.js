@@ -6,7 +6,7 @@ var ew_session = {
     EC2_API_VERSION: '2012-05-01',
     ELB_API_VERSION: '2011-11-15',
     IAM_API_VERSION: '2010-05-08',
-    CW_API_VERSION: '',
+    CW_API_VERSION: '2010-08-01',
     VPN_CONFIG_PATH : 'https://ec2-downloads.s3.amazonaws.com/',
     SIG_VERSION: '2',
     REALM : 'chrome://ew/',
@@ -766,9 +766,11 @@ var ew_session = {
 
     getNsResolver : function()
     {
-        var client = this;
+        var me = this;
         return function(prefix) {
-            var ns = { 's':  "http://schemas.xmlsoap.org/soap/envelope/", 'ec2': "http://ec2.amazonaws.com/doc/" + client.EC2_API_VERSION + "/" };
+            var ns = { 's':  "http://schemas.xmlsoap.org/soap/envelope/",
+                       'monitoring': "http://monitoring.amazonaws.com/doc/" + me.CW_API_VERSION + "/",
+                       'ec2': "http://ec2.amazonaws.com/doc/" + me.EC2_API_VERSION + "/" };
             return ns[prefix] || null;
         }
     },
@@ -1143,7 +1145,7 @@ var ew_session = {
     {
         return { xmlhttp: xmlhttp,
                  xmlDoc: xmlhttp && xmlhttp.responseXML ? xmlhttp.responseXML : document.createElement('p'),
-                 textBody: xmlhttp ? xmlhttp.responseText : '',
+                 responseText: xmlhttp ? xmlhttp.responseText : '',
                  status : xmlhttp.status,
                  action: action,
                  method: handlerMethod,

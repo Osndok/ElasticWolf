@@ -2825,4 +2825,53 @@ var ew_controller = {
     {
         ew_session.queryIAM("DeleteSigningCertificate", [ [ "CertificateId", cert ] ], this, false, "onComplete", callback);
     },
+
+    describeAlarms : function(callback)
+    {
+        ew_session.queryCloudWatch("DescribeAlarms", [], this, false, "onCompleteDescribeAlarms", callback);
+    },
+
+    onCompleteDescribeAlarms : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+        var items = xmlDoc.evaluate("/monitoring:DescribeAlarmsResponse/monitoring:DescribeAlarmsResult/monitoring:MetricAlarms/monitoring:member",xmlDoc,this.getNsResolver(),XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
+        var alarms = new Array();
+
+        for (var i = 0 ; i < items.snapshotLength; i++) {
+            var item = items.snapshotItem(i);
+            var arn = getNodeValue(item, "AlarmArn");
+            var name = getNodeValue(item, "AlarmName");
+            var enabled = getNodeValue(item, "ActionsEnabled");
+            var actions = getNodeValue(item, "AlarmActions");
+            var descr = getNodeValue(item, "AlarmDescription");
+            var stateReason = getNodeValue(item, "StateReason");
+            var stateReasonData = getNodeValue(item, "StateReasonData");
+            var stateValue = getNodeValue(item, "StateValue");
+            var namespace = getNodeValue(item, "Namespace");
+            var period = getNodeValue(item, "Period");
+            var threshold = getNodeValue(item, "Threshold");
+            var statistic = getNodeValue(item, "Statistic");
+            var oper = getNodeValue(item, "ComparisonOperator");
+            var metricName = getNodeValue(item, "MetricName");
+            var evalPeriods = getNodeValue(item, "EvaluationPeriods");
+            var dims = [];
+            var list = this.getItems(item, "Dimensions", "member", ["Name", "Value"]);
+            for (var j = 0; j < list.length; j++) {
+                dims.push(new Tag(list[j].Name, list[j].Value));
+            }
+            var actions = [];
+            list = this.getItems(item, "AlarmActions", "member");
+            for (var j = 0; j < list.length; j++) {
+                actions.push(list[j].firstChild.nodeValue);
+            }
+
+            alarms.push(new MetricAlarm(name, arn, descr, stateReason, stateReasonData, stateValue, namespace, period, threshold, statistic, oper, metricName, evalPeriods, dims, actions));
+        }
+
+        ew_model.set('alarms', alarms);
+
+        if (responseObj.callback) responseObj.callback(alarms);
+    },
+
+
 };

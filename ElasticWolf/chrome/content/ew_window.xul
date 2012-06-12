@@ -33,6 +33,7 @@
 <?xul-overlay href="chrome://ew/content/views/groups.xul"?>
 <?xul-overlay href="chrome://ew/content/views/policy.xul"?>
 <?xul-overlay href="chrome://ew/content/views/vmfa.xul"?>
+<?xul-overlay href="chrome://ew/content/views/alarms.xul"?>
 
 <window id="ew-window" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:html="http://www.w3.org/1999/xhtml"
         orient="vertical" persist="width height screenX screenY sizemode" onload="ew_session.initialize()">
@@ -65,6 +66,7 @@
   <script type="application/x-javascript" src="chrome://ew/content/views/enis.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/subnets.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/s3.js" />
+  <script type="application/x-javascript" src="chrome://ew/content/views/cloudwatch.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/credentials.js" />
   <script type="application/x-javascript" src="chrome://ew/content/views/prefs.js" />
   <script type="application/x-javascript" src="chrome://ew/content/menu.js" />
@@ -149,7 +151,7 @@
 
       <treeitem container="true" open="true">
        <treerow>
-         <treecell label="EC2 networking" src="images/cloudwatch.png" />
+         <treecell label="EC2 networking" src="images/ec2.png" />
        </treerow>
        <treechildren>
          <treeitem><treerow><treecell label="&ew.tabs.securitygroup.label;" value="ew.tabs.securitygroup" /></treerow></treeitem>
@@ -177,6 +179,15 @@
          <treeitem><treerow><treecell label="&ew.tabs.vgw.label;" value="ew.tabs.vgw" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.cgw.label;" value="ew.tabs.cgw" /></treerow></treeitem>
          <treeitem><treerow><treecell label="&ew.tabs.vpn.label;" value="ew.tabs.vpn" /></treerow></treeitem>
+       </treechildren>
+      </treeitem>
+
+      <treeitem container="true" open="true">
+       <treerow>
+         <treecell label="Cloud Watch" src="images/cloudwatch.png" />
+       </treerow>
+       <treechildren>
+         <treeitem><treerow><treecell label="Alarms" value="ew.tabs.alarm" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
@@ -223,6 +234,7 @@
       <tabpanel id="ew.tabs.cgw"/>
       <tabpanel id="ew.tabs.availzone"/>
       <tabpanel id="ew.tabs.s3"/>
+      <tabpanel id="ew.tabs.alarm"/>
     </tabpanels>
     </tabbox>
   </hbox>

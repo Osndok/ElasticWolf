@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://ew/locale/ew.dtd">
+
+<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+    <tabpanel id="ew.tabs.alarm" flex="1">
+        <groupbox orient="vertical" flex="1" id="eip.tree.holder">
+            <caption label="Cloud Watch Alarms" />
+            <popupset>
+                <menupopup id="ew.alarms.contextmenu" onpopupshowing="ew_AlarmsTreeView.menuChanged();">
+                </menupopup>
+            </popupset>
+
+            <toolbar style="padding: 0px 3px; -moz-box-align: center">
+                <textbox id="ew.alarms.search" size="15" value="" onkeypress="ew_AlarmsTreeView.searchChanged(event);" />
+                <toolbarbutton image="images/refresh.png" oncommand="ew_AlarmsTreeView.refresh();" tooltiptext="&ew.refresh.tip;" />
+            </toolbar>
+
+            <tree enableColumnDrag="true" seltype="single" id="ew.alarms.view" flex="1">
+                <treecols>
+                    <treecol id="alarms.name" label="Serial" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.arn" label="Date" flex="2" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.descr" label="ARN" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.stateReason" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.stateValue" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.stateValue" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.namespace" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.period" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.threshold" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.statistic" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.oper" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="alarms.metricName" label="User" flex="1" persist="width ordinal hidden sortDirection" />
+                </treecols>
+                <treechildren id="ew.alarms.children" context="ew.alarms.contextmenu" />
+            </tree>
+        </groupbox>
+    </tabpanel>
+</overlay>

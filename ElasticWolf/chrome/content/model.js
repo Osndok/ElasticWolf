@@ -748,6 +748,29 @@ function InstanceHealth(Description, State, InstanceId, ReasonCode)
     }
 }
 
+function MetricAlarm(name, arn, descr, stateReason, stateReasonData, stateValue, namespace, period, threshold, statistic, oper, metricName, evalPeriods, dimensions, actions)
+{
+    this.name = name;
+    this.arn = arn;
+    this.descr = descr;
+    this.stateReason = stateReason
+    this.stateReasonData = stateReasonData
+    this.stateValue = stateValue
+    this.namespace = namespace
+    this.period = period
+    this.threshold = threshold
+    this.statistic = statistic
+    this.oper = oper
+    this.metricName = metricName
+    this.evaluationPeriods = evalPeriods
+    this.dimensions = dimensions
+    this.actions = actions
+
+    this.toString = function() {
+        return this.name + em_model.separator + this.descr;
+    }
+}
+
 var ew_model = {
     components : {},
     progress: {},
@@ -780,6 +803,7 @@ var ew_model = {
     users: null,
     groups: null,
     vmfas: null,
+    alarms: null,
 
     refresh: function(name)
     {
@@ -792,6 +816,9 @@ var ew_model = {
         this.progress[name] = now;
 
         switch (name) {
+        case "alarms":
+            ew_session.controller.describeAlarms();
+            break;
         case "vmfas":
             ew_session.controller.listVirtualMFADevices();
             break;
