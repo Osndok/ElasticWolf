@@ -10,19 +10,20 @@
         <popupset>
             <menupopup id="accesskey.tree.contextmenu">
                 <menuitem oncommand="ew_AccessKeyTreeView.displayDetails()" label="View Details" />
-                <menuitem oncommand="ew_AccessKeyTreeView.createAccessKey()" label="Create a new access key" />
-                <menuitem oncommand="ew_AccessKeyTreeView.switchCredentials();" label="Use this access key for credentials" />
-                <menuitem oncommand="ew_AccessKeyTreeView.deleteSelected();" label="Delete this access key" />
-                <menuitem oncommand="ew_AccessKeyTreeView.exportSelected();" label="Export this access key into text file" />
+                <menuitem oncommand="ew_AccessKeyTreeView.createAccessKey()" label="&ew.accesskeys.create.tip;" />
+                <menuitem oncommand="ew_AccessKeyTreeView.switchCredentials();" label="&ew.accesskeys.switch.tip;" />
+                <menuitem oncommand="ew_AccessKeyTreeView.deleteSelected();" label="&ew.accesskeys.delete.tip;" />
+                <menuitem oncommand="ew_AccessKeyTreeView.exportSelected();" label="&ew.accesskeys.export.tip;" />
+                <menuitem oncommand="ew_AccessKeyTreeView.runShell();" label="&ew.accesskeys.shell.tip;" />
             </menupopup>
         </popupset>
         <toolbar style="padding: 0px 3px; -moz-box-align: center">
-            <textbox id="ew.accesskeys.search" size="15" value="" onkeypress="ew_AccesKeyTreeView.searchChanged(event);" />
+            <textbox id="ew.accesskeys.search" size="15" />
             <toolbarbutton image="images/refresh.png" tooltiptext="&ew.refresh.tip;" oncommand="ew_AccessKeyTreeView.refresh()" />
             <toolbarbutton image="images/add.png" tooltiptext="&ew.accesskeys.create.tip;" oncommand="ew_AccessKeyTreeView.createAccessKey();" />
             <toolbarbutton image="images/delete.png" tooltiptext="&ew.accesskeys.delete.tip;" oncommand="ew_AccessKeyTreeView.deleteSelected();" />
             <toolbarbutton image="images/attach.png" tooltiptext="&ew.accesskeys.switch.tip;" oncommand="ew_AccessKeyTreeView.switchCredentials();" />
-             <toolbarbutton image="images/shell.png" tooltiptext="&ew.keypairs.shell.tip;" oncommand="ew_AccessKeyTreeView.runShell()"/>
+            <toolbarbutton image="images/shell.png" tooltiptext="&ew.accesskeys.shell.tip;" oncommand="ew_AccessKeyTreeView.runShell()"/>
         </toolbar>
         <tree enableColumnDrag="true" id="ew.accesskeys.view" flex="1">
             <treecols>
@@ -32,7 +33,7 @@
                 <splitter class="tree-splitter" />
                 <treecol id="accesskey.userName" label="User" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
                 <splitter class="tree-splitter" />
-                <treecol id="accesskey.isCurrent" label="&ew.accesskeys.current.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                <treecol id="accesskey.state" label="&ew.accesskeys.current.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
             </treecols>
             <treechildren id="accesskey.tree.children" context="accesskey.tree.contextmenu" />
         </tree>
@@ -42,28 +43,38 @@
         <grippy />
       </splitter>
 
-        <groupbox flex="1" id="certs.tree.holder" orient="vertical">
-            <caption label="&ew.captions.certs.label;" />
+        <groupbox flex="1" id="keypairs.tree.holder" orient="vertical">
+            <caption label="&ew.captions.keypairs.label;" />
             <popupset>
-                <menupopup id="certs.tree.contextmenu">
-                    <menuitem oncommand="ew_CertsTreeView.createCert()" label="&ew.certs.create.tip;" />
-                    <menuitem oncommand="ew_CertsTreeView.deleteSelected();" label="&ew.certs.delete.tip;" />
+                <menupopup id="keypair.tree.contextmenu">
+                    <menuitem oncommand="ew_KeypairTreeView.displayDetails()" label="&ew.keypairs.details.tip;" />
+                    <menuitem oncommand="ew_KeypairTreeView.createKeypair()" label="&ew.keypairs.create.tip;" />
+                    <menuitem oncommand="ew_KeypairTreeView.deleteSelected();" label="&ew.keypairs.delete.tip;" />
+                    <menuitem oncommand="ew_KeypairTreeView.importKeypair();" label="&ew.keypairs.import.tip;"/>
+                    <menuitem oncommand="ew_KeypairTreeView.makeKeypair(true);" label="&ew.keypairs.generate.tip;"/>
+                    <menuitem oncommand="ew_KeypairTreeView.makeKeypair();" label="&ew.keypairs.make.tip;"/>
+                    <menuitem oncommand="ew_KeypairTreeView.runShell()" label="&ew.accesskeys.shell.tip;"/>
                 </menupopup>
             </popupset>
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                <textbox id="ew.certs.search" size="15" value="" onkeypress="ew_CertsTreeView.searchChanged(event);" />
-                <toolbarbutton image="images/refresh.png" oncommand="ew_CertsTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
-                <toolbarbutton image="images/add.png" tooltiptext="&ew.certs.create.tip;" oncommand="ew_CertsTreeView.createCert();" />
-                <toolbarbutton image="images/import.png" tooltiptext="&ew.certs.upload.tip;" oncommand="ew_CertsTreeView.uploadCert();" />
-                <toolbarbutton image="images/delete.png" tooltiptext="&ew.certs.delete.tip;" oncommand="ew_CertsTreeView.deleteSelected();" />
+                <textbox id="ew.keypairs.search" size="15" />
+                <toolbarbutton image="images/refresh.png" tooltiptext="&ew.refresh.tip;" oncommand="ew_KeypairTreeView.refresh()" />
+                <toolbarbutton image="images/add.png" tooltiptext="&ew.keypairs.create.tip;" oncommand="ew_KeypairTreeView.createKeypair();" />
+                <toolbarbutton image="images/delete.png" tooltiptext="&ew.keypairs.delete.tip;" oncommand="ew_KeypairTreeView.deleteSelected();" />
+                <toolbarbutton image="images/import.png" tooltiptext="&ew.keypairs.import.tip;" oncommand="ew_KeypairTreeView.importKeypair();" />
+                <toolbarbutton image="images/gen.png" tooltiptext="&ew.keypairs.generate.tip;" oncommand="ew_KeypairTreeView.makeKeypair(true);" />
+                <toolbarbutton image="images/key.png" tooltiptext="&ew.keypairs.make.tip;" oncommand="ew_KeypairTreeView.makeKeypair();" />
+                <toolbarbutton image="images/details.png" tooltiptext="&ew.keypairs.details.tip;" oncommand="ew_KeypairTreeView.displayDetails()"/>
+                <toolbarbutton image="images/shell.png" tooltiptext="&ew.accesskeys.shell.tip;" oncommand="ew_AccessKeyTreeView.runShell()"/>
             </toolbar>
-            <tree enableColumnDrag="true" id="ew.certs.view" flex="1">
+            <tree enableColumnDrag="true" id="ew.keypairs.view" flex="1">
                 <treecols>
-                  <treecol id="certs.id" label="&ew.certs.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
-                  <splitter class="tree-splitter" />
-                  <treecol id="certs.userName" label="User" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    <treecol id="keypair.name" label="&ew.keypairs.name.label;" flex="1" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
+                    <treecol id="keypair.fingerprint" label="&ew.keypairs.fingerprint.label;" flex="4" persist="width ordinal hidden sortDirection" />
+                    <splitter class="tree-splitter" />
                 </treecols>
-                <treechildren id="certs.tree.children" context="certs.tree.contextmenu" />
+                <treechildren id="keypair.tree.children" context="keypair.tree.contextmenu" />
             </tree>
         </groupbox>
     </vbox>

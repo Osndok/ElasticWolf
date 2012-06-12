@@ -6,7 +6,7 @@
 <?xul-overlay href="chrome://ew/content/views/instances.xul"?>
 <?xul-overlay href="chrome://ew/content/views/amis.xul"?>
 <?xul-overlay href="chrome://ew/content/views/access.xul"?>
-<?xul-overlay href="chrome://ew/content/views/keypairs.xul"?>
+<?xul-overlay href="chrome://ew/content/views/certs.xul"?>
 <?xul-overlay href="chrome://ew/content/views/securitygroups.xul"?>
 <?xul-overlay href="chrome://ew/content/views/azone.xul"?>
 <?xul-overlay href="chrome://ew/content/views/eip.xul"?>
@@ -116,8 +116,8 @@
        <treechildren>
          <treeitem><treerow><treecell label="Credentials" value="ew.tabs.credential" /></treerow></treeitem>
          <treeitem><treerow><treecell label="Endpoints" value="ew.tabs.endpoint" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="Access Keys" value="ew.tabs.access" /></treerow></treeitem>
-         <treeitem><treerow><treecell label="Keypairs" value="ew.tabs.keypair" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Access Keys/Keypairs" value="ew.tabs.access" /></treerow></treeitem>
+         <treeitem><treerow><treecell label="Signing Certificates" value="ew.tabs.cert" /></treerow></treeitem>
        </treechildren>
       </treeitem>
 
@@ -212,7 +212,7 @@
       <tabpanel id="ew.tabs.instance"/>
       <tabpanel id="ew.tabs.image"/>
       <tabpanel id="ew.tabs.access"/>
-      <tabpanel id="ew.tabs.keypair"/>
+      <tabpanel id="ew.tabs.cert"/>
       <tabpanel id="ew.tabs.users"/>
       <tabpanel id="ew.tabs.groups"/>
       <tabpanel id="ew.tabs.securitygroup"/>

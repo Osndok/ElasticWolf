@@ -354,13 +354,15 @@
 <!ENTITY ew.keypairs.details.tip "Show keypair details">
 <!ENTITY ew.keypairs.create.tip "Create a new keypair">
 <!ENTITY ew.keypairs.delete.tip "Delete selected keypair">
-<!ENTITY ew.keypairs.shell.tip "Run shell with this key for command line tools">
 <!ENTITY ew.keypairs.import.tip "Create keypair from existing public key">
-<!ENTITY ew.keypairs.generate.tip "Create new certificate and public/private keys and import into new keypair">
+<!ENTITY ew.keypairs.generate.tip "Create new certificate/public/private keys and import into new keypair">
+<!ENTITY ew.keypairs.make.tip "Create new public/private keys and import into new keypair">
 
 <!ENTITY ew.accesskeys.create.tip "Create a new access key">
 <!ENTITY ew.accesskeys.delete.tip "Delete selected access key">
 <!ENTITY ew.accesskeys.switch.tip "Use selected access key for credentials authentication">
+<!ENTITY ew.accesskeys.shell.tip "Run shell with environment variables set to use currently selected access key and keypair">
+<!ENTITY ew.accesskeys.export.tip "Export this access key into text file">
 
 <!ENTITY ew.certs.create.tip "Create a new certificate">
 <!ENTITY ew.certs.delete.tip "Delete selected certificate">

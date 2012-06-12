@@ -2420,7 +2420,7 @@ var ew_controller = {
         for (var i = 0; i < items.length; i++) {
             var id = getNodeValue(items[i], "AccessKeyId");
             var status = getNodeValue(items[i], "Status");
-            list.push(new AccessKey(id, status, user, "", ew_session.accessCode == id));
+            list.push(new AccessKey(id, status, user, "", ew_session.accessCode == id ? "Current" : ""));
         }
 
         ew_model.update('users', getParam(params, 'UserName'), 'keys', list)

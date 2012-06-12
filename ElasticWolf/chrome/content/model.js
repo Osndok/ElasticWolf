@@ -17,15 +17,15 @@ function KeyPair(name, fingerprint)
     }
 }
 
-function AccessKey(id, status, user, secret, isCurrent)
+function AccessKey(id, status, user, secret, state)
 {
     this.id = id;
     this.status = status;
     this.userName = user
     this.secret = secret || "";
-    this.isCurrent = isCurrent
+    this.state = state
     this.toString = function() {
-        return this.id + (this.isCurrent ? ew_model.separator + "Current" : "");
+        return this.id + ew_model.separator + this.userName + (this.state ? ew_model.separator + this.state : "");
     }
 }
 

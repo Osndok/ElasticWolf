@@ -7,15 +7,15 @@
             <caption label="Virtual MFA Devices" />
             <popupset>
                 <menupopup id="ew.vmfa.contextmenu" onpopupshowing="ew_VMFATreeView.menuChanged();">
-                <menuitem id="ew.vmfa.contextmenu" oncommand="ew_VMFATreeView.addDevice();" label="Add device" />
-                <menuitem id="ew.vmfa.contextmenu" oncommand="ew_VMFATreeView.deleteDevice();" label="Delete device" />
-                <menuitem id="ew.vmfa.contextmenu" oncommand="ew_VMFATreeView.assignDevice();" label="Assign device to a user" />
-                <menuitem id="ew.vmfa.contextmenu" oncommand="ew_VMFATreeView.unassignDevice();" label="Unassign device from a user" />
+                 <menuitem id="ew.vmfa.contextmenu.add" oncommand="ew_VMFATreeView.addDevice();" label="Add device" />
+                 <menuitem id="ew.vmfa.contextmenu.delete" oncommand="ew_VMFATreeView.deleteDevice();" label="Delete device" />
+                 <menuitem id="ew.vmfa.contextmenu.assign" oncommand="ew_VMFATreeView.assignDevice();" label="Assign device to a user" />
+                 <menuitem id="ew.vmfa.contextmenu.unassign" oncommand="ew_VMFATreeView.unassignDevice();" label="Unassign device from a user" />
                 </menupopup>
             </popupset>
 
             <toolbar style="padding: 0px 3px; -moz-box-align: center">
-                <textbox id="ew.vmfa.search" size="15" value="" onkeypress="ew_VMFATreeView.searchChanged(event);" />
+                <textbox id="ew.vmfa.search" size="15" />
                 <toolbarbutton image="images/refresh.png" oncommand="ew_VMFATreeView.refresh();" tooltiptext="&ew.refresh.tip;" />
                 <toolbarbutton image="images/add.png" tooltiptext="Add Device" oncommand="ew_VMFATreeView.addDevice();" />
                 <toolbarbutton image="images/delete.png" tooltiptext="Delete Device" oncommand="ew_VMFATreeView.deleteDevice();" />

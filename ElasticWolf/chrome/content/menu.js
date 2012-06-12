@@ -21,9 +21,9 @@ var ew_menu = {
             { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
 
             { tab: "ew.tabs.access",        views: [ { id: "ew.accesskeys.view", view: ew_AccessKeyTreeView },
-                                                     { id: "ew.certs.view", view: ew_CertsTreeView } ], },
+                                                     { id: "ew.keypairs.view", view: ew_KeypairTreeView, } ], },
 
-            { tab: "ew.tabs.keypair",       views: [ { id: "ew.keypairs.view", view: ew_KeypairTreeView, } ] },
+            { tab: "ew.tabs.cert",       views: [  { id: "ew.certs.view", view: ew_CertsTreeView } ] },
 
             { tab: "ew.tabs.users",         views: [ { id: "ew.users.view", view: ew_UsersTreeView, }, ] },
 

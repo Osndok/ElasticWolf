@@ -183,7 +183,7 @@
                     <checkbox id="ew.http.enabled" />
                 </row>
                 <row>
-                    <label control="ew.accesskey.save" value="Save generated Access Keys:" />
+                    <label control="ew.accesskey.save" value="Save generated Access Keys:" tooltiptext="When creating new Access Keys for a user it is possible to store sectets locally in encrypted form for further access, otherwise only genereting new key in case secret is lost" />
                     <checkbox id="ew.accesskey.save" />
                 </row>
                 <row>

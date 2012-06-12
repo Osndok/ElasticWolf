@@ -370,7 +370,7 @@ ew_GroupsTreeView.__proto__ = TreeView;
 ew_GroupsTreeView.register();
 
 var ew_GroupUsersTreeView = {
-    searchElement: "ew.groupUsers.search",
+    name: "groupUsers",
 
     selectionChanged: function()
     {
@@ -397,6 +397,14 @@ ew_GroupUsersTreeView.__proto__ = TreeView;
 
 var ew_VMFATreeView = {
     model: ["vmfas", "users"],
+
+    menuChanged: function()
+    {
+        var item = this.getSelected();
+        $('ew.vmfa.contextmenu.delete').disabled = item == null;
+        $('ew.vmfa.contextmenu.assign').disabled = !item || !item.userName;
+        $('ew.vmfa.contextmenu.unassign').disabled = !item || item.userName;
+    },
 
     addDevice: function()
     {
@@ -435,8 +443,6 @@ var ew_VMFATreeView = {
         if (!confirm('Deactivate MFA device from user ' + item.userName)) return;
         ew_session.controller.deactivateMFADevice(item.userName, item.id, function() { me.refresh() });
     },
-
-
 };
 ew_VMFATreeView.__proto__ = TreeView;
 ew_VMFATreeView.register();
@@ -445,12 +451,8 @@ ew_VMFATreeView.register();
 var ew_KeypairTreeView = {
     model: "keypairs",
 
-    runShell: function() {
-        var keypair = this.getSelected();
-        ew_session.launchShell(keypair ? keypair.name: null);
-    },
-
-    createKeypair : function () {
+    createKeypair : function ()
+    {
         if (ew_session.isGovCloud()) {
             alert("This function is disabled in GovCloud mode")
             return
@@ -470,7 +472,8 @@ var ew_KeypairTreeView = {
         ew_session.controller.createKeypair(name, wrap);
     },
 
-    importKeypair : function () {
+    importKeypair : function ()
+    {
         var name = prompt("Please provide a new keypair name");
         if (name == null) return;
         name = name.trim();
@@ -490,7 +493,8 @@ var ew_KeypairTreeView = {
         }
     },
 
-    createCertAndKeypair: function () {
+    makeKeypair: function(uploadCert)
+    {
         var name = prompt("Please provide a new keypair name");
         if (name == null) return;
         name = name.trim();
@@ -501,15 +505,15 @@ var ew_KeypairTreeView = {
             ew_session.setKeyHome(file);
         }
 
-
         // Create new certificate file using openssl and return cert value
         var body = ew_session.generateCertificate(name);
         if (!body) {
             return alert("Could not create certificate and key pair files");
         }
-
-        // Delay to avoid "not valid yet" error due to clock drift
-        setTimeout(function() { ew_session.controller.uploadSigningCertificate(body, function() {ew_CertTreeView.refresh();}); }, 30000);
+        // For signing in command line tools we need at least one certificate
+        if (uploadCert) {
+            ew_CertTreeView.upload(body);
+        }
 
         // Import new public key as new keypair
         var file = ew_session.getPublicKeyFile(name);
@@ -520,27 +524,33 @@ var ew_KeypairTreeView = {
         ew_session.controller.importKeypair(name, pubkey, function() {me.refresh();});
     },
 
-    deleteSelected  : function () {
+    deleteSelected  : function ()
+    {
         var keypair = this.getSelected();
         if (keypair == null) return;
         if (!confirm("Delete key pair "+keypair.name+"?")) return;
         var me = this;
         ew_session.controller.deleteKeypair(keypair.name, function() {me.refresh();});
-    }
+    },
 };
 
 ew_KeypairTreeView.__proto__ = TreeView;
 ew_KeypairTreeView.register();
 
 var ew_AccessKeyTreeView = {
-    searchElement: "ew.accesskeys.search",
+    name: "accesskeys",
+    properties: ["state"],
 
-    runShell: function() {
-        var key = this.getSelected();
-        if (!key) return;
-        key.secret = getAccessKeySecret(key.id);
-        if (!key.secret) alert('Cannot get secret for the access code, command line tools will not work');
-        ew_session.launchShell(null, key);
+    runShell: function()
+    {
+        var accesskey = this.getSelected();
+        if (accesskey) {
+            accesskey.secret = this.getAccessKeySecret(accesskey.id);
+            if (!accesskey.secret) alert('Cannot get secret for the access key, AWS command line tools will not work');
+        }
+        // Use currently selected keypair
+        var keypair = ew_KeypairTreeView.getSelected();
+        ew_session.launchShell(keypair, accesskey);
     },
 
     refresh: function()
@@ -618,7 +628,7 @@ var ew_AccessKeyTreeView = {
         ew_session.setCredentials(key.name, key.secret);
         ew_session.updateCredentials(ew_session.getActiveCredentials(), key.id, key.secret);
         this.refresh();
-    }
+    },
 };
 ew_AccessKeyTreeView.__proto__ = TreeView;
 ew_AccessKeyTreeView.register();
@@ -632,11 +642,18 @@ var ew_CertsTreeView = {
         ew_session.controller.listSigningCertificates(null, function(list) { me.display(list); })
     },
 
+    upload: function(body)
+    {
+        // Delay to avoid "not valid yet" error due to clock drift
+        var me = this;
+        setTimeout(function() { ew_session.controller.uploadSigningCertificate(body, function() { me.refresh();}); }, 30000);
+    },
+
     createCert : function () {
         var me = this;
         var body = ew_session.generateCertificate();
         if (body) {
-            ew_session.controller.uploadSigningCertificate(body, function() { me.refresh(); });
+            this.upload(body);
         } else {
             alert("Could not generate new X509 certificate")
         }

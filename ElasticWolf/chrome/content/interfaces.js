@@ -1,7 +1,8 @@
 
 // Base class for tree container
 var TreeView = {
-    name: "",
+    name: '',
+    model: '',
     columns : [],
     tree: null,
     treeBox : null,
@@ -9,7 +10,6 @@ var TreeView = {
     selection : null,
     registered : false,
     visible: false,
-    model : '',
     atomService: null,
     properties: [],
     refreshTimeout: 10000,
@@ -21,6 +21,10 @@ var TreeView = {
     winDetails: null,
     tab: null,
 
+    getName: function()
+    {
+        return this.name ? this.name : this.getModelName();
+    },
     getModelName: function()
     {
         if (this.model instanceof Array) return this.model[0];
@@ -41,34 +45,44 @@ var TreeView = {
     get rowCount() {
         return this.treeList.length;
     },
-    setTree : function(treeBox) {
+    setTree : function(treeBox)
+    {
         this.treeBox = treeBox;
     },
-    isRefreshable: function() {
+    isRefreshable: function()
+    {
         return false;
     },
-    isVisible: function() {
+    isVisible: function()
+    {
         return this.visible;
     },
-    isEditable : function(idx, column) {
+    isEditable : function(idx, column)
+    {
         return true;
     },
-    isContainer : function(idx) {
+    isContainer : function(idx)
+    {
         return false;
     },
-    isSeparator : function(idx) {
+    isSeparator : function(idx)
+    {
         return false;
     },
-    isSorted : function() {
+    isSorted : function()
+    {
         return false;
     },
-    getSelected : function() {
+    getSelected : function()
+{
         return !this.selection || this.selection.currentIndex == -1 ? null : this.treeList[this.selection.currentIndex];
     },
-    setSelected : function(index) {
+    setSelected : function(index)
+    {
         this.selection.select(index);
     },
-    getSelectedAll: function() {
+    getSelectedAll: function()
+    {
         var list = new Array();
         for (var i in this.treeList) {
             if (this.selection.isSelected(i)) {
@@ -77,23 +91,29 @@ var TreeView = {
         }
         return list;
     },
-    getImageSrc : function(idx, column) {
+    getImageSrc : function(idx, column)
+    {
         return ""
     },
-    getProgressMode : function(idx, column) {
+    getProgressMode : function(idx, column)
+    {
     },
-    getParentIndex: function(idx) {
+    getParentIndex: function(idx)
+    {
         return -1;
     },
-    getCellText : function(idx, column) {
+    getCellText : function(idx, column)
+    {
         var name = column.id.split(".").pop();
         return idx >= this.rowCount ? "" : ew_model.modelValue(name, this.treeList[idx][name]);
     },
-    getCellValue : function(idx, column) {
+    getCellValue : function(idx, column)
+    {
         var name = column.id.split(".").pop();
         return idx >= this.rowCount ? "" : this.treeList[idx][name];
     },
-    setCellValue: function (idx, column, val) {
+    setCellValue: function (idx, column, val)
+    {
         var name = column.id.split(".").pop();
         if (idx >= 0 && idx < this.rowCount) this.treeList[idx][name] = val;
     },
@@ -101,37 +121,49 @@ var TreeView = {
         log('notify model changed ' + this.model)
         this.invalidate();
     },
-    hasNextSibling: function(idx, after) {
+    hasNextSibling: function(idx, after)
+    {
         return false;
     },
-    canDrop: function(idx, orientation, data) {
+    canDrop: function(idx, orientation, data)
+    {
         return true;
     },
-    drop: function(idx, orientation, data) {
+    drop: function(idx, orientation, data)
+    {
     },
-    cycleCell : function(idx, column) {
+    cycleCell : function(idx, column)
+    {
     },
-    performAction : function(action) {
+    performAction : function(action)
+    {
     },
-    performActionOnCell : function(action, idx, column) {
+    performActionOnCell : function(action, idx, column)
+    {
     },
-    getRowProperties : function(idx, column, prop) {
+    getRowProperties : function(idx, column, prop)
+    {
     },
-    getCellProperties : function(idx, column, prop) {
+    getCellProperties : function(idx, column, prop)
+    {
         var name = column.id.split(".").pop();
         if (this.properties.indexOf(name) == -1) return;
         var value = String(this.treeList[idx][name]).replace(/[ -.:]+/g,'_').toLowerCase();
         if (!this.atomService) {
             this.atomService = Components.classes["@mozilla.org/atom-service;1"].getService(Components.interfaces.nsIAtomService);
         }
-        prop.AppendElement(this.atomService.getAtom((this.getModelName() || this.name) + "_" + value));
+        // Use CSS entry if exists:  treechildren::-moz-tree-cell(name_value) {}
+        prop.AppendElement(this.atomService.getAtom(this.getName() + "_" + value));
     },
-    getColumnProperties : function(column, element, prop) {
+    getColumnProperties : function(column, element, prop)
+    {
     },
-    getLevel : function(idx) {
+    getLevel : function(idx)
+    {
         return 0;
     },
-    cycleHeader : function(col) {
+    cycleHeader : function(col)
+    {
         var item = this.getSelected();
         var csd = col.element.getAttribute("sortDirection");
         var sortDirection = (csd == "ascending" || csd == "natural") ? "descending" : "ascending";
@@ -143,7 +175,8 @@ var TreeView = {
         this.treeBox.invalidate();
         if (item) this.select(item);
     },
-    sort : function() {
+    sort : function()
+    {
         var item = this.getSelected();
         this.treeBox.invalidate();
         this.sortView(document, this.columns, this.treeList);
@@ -184,13 +217,15 @@ var TreeView = {
             list.sort(sortFunc);
         }
     },
-    register : function() {
+    register : function()
+    {
         if (!this.registered) {
             this.registered = true;
             ew_model.registerInterest(this, this.model);
         }
     },
-    find: function(obj, columns) {
+    find: function(obj, columns)
+    {
         if (obj) {
             if (!columns) columns = ['id', 'name', 'title'];
             for (var i in this.treeList) {
@@ -202,7 +237,8 @@ var TreeView = {
         }
         return -1;
     },
-    select : function(obj, columns) {
+    select : function(obj, columns)
+    {
         var i = this.find(obj, columns)
         if (i >= 0) {
             var old = this.selection.currentIndex;
@@ -216,7 +252,8 @@ var TreeView = {
         }
         return false;
     },
-    selectAll: function(list) {
+    selectAll: function(list)
+    {
         if (!list) return;
         this.selection.selectEventsSuppressed = true;
         this.selection.clearSelection();
@@ -229,11 +266,13 @@ var TreeView = {
         }
         this.selection.selectEventsSuppressed = false;
     },
-    refresh : function(force) {
+    refresh : function(force)
+    {
         ew_model.refresh(this.getModelName(this.model));
         this.refreshAll(force);
     },
-    refreshAll: function(force) {
+    refreshAll: function(force)
+    {
         log('refreshAll ' + (force ? "force" : "") + ' ' + this.model)
         if (this.model instanceof Array) {
             for (var i = 1; i < this.model.length; i++) {
@@ -243,7 +282,8 @@ var TreeView = {
             }
         }
     },
-    startRefreshTimer : function() {
+    startRefreshTimer : function()
+    {
         if (this.refreshTimer) {
             clearTimeout(this.refreshTimer);
         }
@@ -251,15 +291,18 @@ var TreeView = {
         this.refreshTimer = setTimeout(function() { me.refresh() }, this.refreshTimeout);
         log('start timer ' + this.model)
     },
-    stopRefreshTimer : function() {
+    stopRefreshTimer : function()
+    {
         if (this.refreshTimer) {
             clearTimeout(this.refreshTimer);
         }
     },
-    invalidate : function() {
+    invalidate : function()
+    {
         this.display(this.filter(this.getList()));
     },
-    filter : function(list) {
+    filter : function(list)
+    {
         if (this.searchElement) {
             var nlist = new Array();
             var rx = new RegExp($(this.searchElement).value, "i");
@@ -298,9 +341,11 @@ var TreeView = {
     menuChanged: function()
     {
     },
-    selectionChanged: function(event) {
+    selectionChanged: function(event)
+    {
     },
-    filterChanged: function(event) {
+    filterChanged: function(event)
+    {
         this.invalidate();
     },
     searchChanged : function(event)
@@ -314,7 +359,8 @@ var TreeView = {
         var me = this;
         this.searchTimer = setTimeout(function() { me.invalidate(); }, 500);
     },
-    display : function(list) {
+    display : function(list)
+    {
         var sel = cloneObject(this.getSelected())
         this.treeBox.rowCountChanged(0, -this.treeList.length);
         this.treeList = new Array();
@@ -338,33 +384,39 @@ var TreeView = {
             }
         }
     },
-    activate: function() {
+    activate: function()
+    {
         this.visible = true;
         this.restorePreferences();
     },
-    deactivate: function() {
+    deactivate: function()
+    {
         this.false = true;
         this.stopRefreshTimer();
         this.savePreferences();
     },
-    tag: function(event) {
+    tag: function(event)
+    {
         var item = this.getSelected();
         if (item) {
             ew_session.tagResource(item, this.tagId);
         }
     },
-    copyToClipboard : function(name) {
+    copyToClipboard : function(name)
+    {
         var item = this.getSelected();
         if (item) {
             ew_session.copyToClipboard(item[name]);
         }
     },
-    clicked: function(event) {
+    clicked: function(event)
+    {
         if (ew_session.winDetails && event) {
             this.displayDetails();
         }
     },
-    displayDetails : function(event) {
+    displayDetails : function(event)
+    {
         var item = this.getSelected();
         if (item == null) return;
         var me = this;
@@ -433,10 +485,10 @@ var TreeView = {
             var col = tree.columns.getColumnAt(j);
             this.columns.push(col.id);
         }
-        // Search text box
+        // Search text box, one per attached toolbar
         if (!this.searchElement) {
-            // Try naming convertion by primary model name
-            var search = $("ew." + this.getModelName() + ".search");
+            // Try naming convertion by name or model name
+            var search = $("ew." + this.getName() + ".search");
             if (search) this.searchElement = search.id;
         }
         // Wrapping handlers to preserve correct context for 'this'
@@ -444,6 +496,10 @@ var TreeView = {
             (function(v) { var me = v; tree.addEventListener('dblclick', function(e) { e.stopPropagation();me.displayDetails(e); }, false); }(this));
             (function(v) { var me = v; tree.addEventListener('select', function(e) { e.stopPropagation();me.selectionChanged(e); }, false); }(this));
             (function(v) { var me = v; tree.addEventListener('click', function(e) { e.stopPropagation();me.clicked(e); }, false); }(this));
+            if (this.searchElement) {
+                var textbox = $(this.searchElement);
+                (function(v) { var me = v; textbox.addEventListener('keypress', function(e) { e.stopPropagation();me.searchChanged(e); }, false); }(this));
+            }
         }
     },
 };
