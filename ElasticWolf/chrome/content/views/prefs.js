@@ -29,7 +29,7 @@ var ew_PrefsView = {
        this.getPrefs("ew.idle.timeout");
        this.getPrefs("ew.idle.action");
        this.getPrefs("ew.accesskey.save")
-       this.getPrefs("ew.http.timeout");
+       this.getPrefs("ew.http.timeout", 15000);
        // Optional debugging support
        $('ew.venkman').hidden = typeof start_venkman != 'function';
    },
@@ -52,11 +52,11 @@ var ew_PrefsView = {
        this.setPrefs('ew.path.autoscaling');
        this.setPrefs('ew.path.cloudwatch');
        this.setPrefs("ew.debug.enabled");
-       this.setPrefs("ew.http.enabled", true);
+       this.setPrefs("ew.http.enabled");
        this.setPrefs("ew.idle.timeout");
-       this.setPrefs("ew.accesskey.save", true)
+       this.setPrefs("ew.accesskey.save")
        this.setPrefs("ew.idle.action");
-       this.setPrefs("ew.http.timeout", 15000);
+       this.setPrefs("ew.http.timeout", 5000, 3600000);
 
        ew_session.setIdleTimer();
        this.rowCount = 0;
@@ -79,7 +79,7 @@ var ew_PrefsView = {
        }
    },
 
-   setPrefs: function(name)
+   setPrefs: function(name, min, max)
    {
        var obj = $(name);
        switch (obj.type) {
@@ -88,7 +88,7 @@ var ew_PrefsView = {
            break;
 
        case "number":
-           ew_session.setIntPrefs(name, obj.value);
+           ew_session.setIntPrefs(name, obj.value, min, max);
            break;
 
        default:

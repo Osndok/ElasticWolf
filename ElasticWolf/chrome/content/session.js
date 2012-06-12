@@ -1262,7 +1262,8 @@ var ew_session = {
 
     startTimer : function(key, expr)
     {
-        var timer = window.setTimeout(expr, this.getIntPrefs("ew.http.timeout", 15000));
+        var timeout = this.getIntPrefs("ew.http.timeout", 15000, 5000, 3600000);
+        var timer = window.setTimeout(expr, timeout);
         this.timers[key] = timer;
     },
 
@@ -1668,24 +1669,32 @@ var ew_session = {
         if (name) this.prefs.setCharPref(name, value || '');
     },
 
-    getIntPrefs : function(name, defValue)
+    getIntPrefs : function(name, defValue, minValue, maxValue)
     {
         if (!defValue || defValue == null) defValue = 0;
+        var val = defValue;
         if (this.prefs && name) {
             if (!this.prefs.prefHasUserValue(name)) {
-                return defValue;
-            }
+                val = defValue;
+            } else
             if (this.prefs.getPrefType(name) != this.prefs.PREF_INT) {
-                return defValue;
+                val = defValue;
+            } else {
+                val = this.prefs.getIntPref(name);
             }
-            return this.prefs.getIntPref(name);
         }
-        return defValue;
+        if (minValue && val < minValue) val = minValue;
+        if (maxValue && val > maxValue) val = maxValue;
+        return val;
     },
 
-    setIntPrefs : function(name, value)
+    setIntPrefs : function(name, value, min, max)
     {
-        if (name) this.prefs.setIntPref(name, value);
+        var n = parseInt(value);
+        if (isNaN(n)) n = 0;
+        if (n < min) n = min;
+        if (n > max) n = max;
+        if (name) this.prefs.setIntPref(name, n);
     },
 
     getBoolPrefs : function(name, defValue)
