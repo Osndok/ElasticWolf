@@ -3,7 +3,7 @@ var ew_session = {
     VERSION: "2.0",
     NAME: 'ElasticWolf',
     URL: 'https://www.awsps.com/ElasticWolf/',
-    EC2_API_VERSION: '2012-06-01',
+    EC2_API_VERSION: '2012-05-01',
     ELB_API_VERSION: '2011-11-15',
     IAM_API_VERSION: '2010-05-08',
     CW_API_VERSION: '2010-08-01',
