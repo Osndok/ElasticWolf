@@ -9,14 +9,14 @@ var ew_UsersTreeView = {
         $("ew.users.contextmenu.changePassword").disabled = !item || !item.loginProfileDate;
         $("ew.users.contextmenu.deletePassword").disabled = !item || !item.loginProfileDate;
         $("ew.users.contextmenu.createKey").disabled = !item;
-        $("ew.users.contextmenu.deleteKey").disabled = !item || !item.keys;
+        $("ew.users.contextmenu.deleteKey").disabled = !item || !item.keys || !item.keys.length;
         $("ew.users.contextmenu.createVMFA").disabled = !item;
         $("ew.users.contextmenu.enableMFA").disabled = !item;
-        $("ew.users.contextmenu.resyncMFA").disabled = !item || !item.devices;
-        $("ew.users.contextmenu.deactivateMFA").disabled = !item || !item.devices;
+        $("ew.users.contextmenu.resyncMFA").disabled = !item || !item.devices || item.devices.length;
+        $("ew.users.contextmenu.deactivateMFA").disabled = !item || !item.devices || !item.devices.length;
         $("ew.users.contextmenu.addPolicy").disabled = !item;
-        $("ew.users.contextmenu.editPolicy").disabled = !item || !item.policies;
-        $("ew.users.contextmenu.deletePolicy").disabled = !item || !item.policies;
+        $("ew.users.contextmenu.editPolicy").disabled = !item || !item.policies || !item.policies.length;
+        $("ew.users.contextmenu.deletePolicy").disabled = !item || !item.policies || !item.policies.length;
     },
 
     selectionChanged: function()
@@ -275,10 +275,10 @@ var ew_GroupsTreeView = {
     menuChanged: function() {
         var item = this.getSelected();
         $("ew.groups.contextmenu.delete").disabled = !item;
-        $("ew.users.contextmenu.rename").disabled = !item;
-        $("ew.users.contextmenu.addPolicy").disabled = !item;
-        $("ew.users.contextmenu.editPolicy").disabled = !item || !item.policies;
-        $("ew.users.contextmenu.deletePolicy").disabled = !item || !item.policies;
+        $("ew.groups.contextmenu.rename").disabled = !item;
+        $("ew.groups.contextmenu.addPolicy").disabled = !item;
+        $("ew.groups.contextmenu.editPolicy").disabled = !item || !item.policies || !item.policies.length;
+        $("ew.groups.contextmenu.deletePolicy").disabled = !item || !item.policies || !item.policies.length;
     },
 
     selectionChanged: function()
@@ -379,9 +379,11 @@ var ew_GroupsTreeView = {
         if (!item || !item.policies || !item.policies.length) {
             return alert('No policied to edit');
         }
-
-        var idx = ew_session.promptList("Policy", "Select policy to edit", item.policies);
-        if (idx < 0) return;
+        var idx = 0;
+        if (item.policies.length > 1) {
+            idx = ew_session.promptList("Policy", "Select policy to edit", item.policies);
+            if (idx < 0) return;
+        }
 
         ew_session.controller.getGroupPolicy(item.name, item.policies[idx], function(doc) {
             var text = ew_session.promptForText('Enter policy permissions', doc);
@@ -398,9 +400,14 @@ var ew_GroupsTreeView = {
         if (!item || !item.policies || !item.policies.length) {
             return alert('No policies to delete');
         }
+        var idx = 0;
 
-        var idx = ew_session.promptList("Policy", "Select policy to delete", item.policies);
-        if (idx < 0) return;
+        if (item.policies.length > 1) {
+            idx = ew_session.promptList("Policy", "Select policy to delete", item.policies);
+            if (idx < 0) return;
+        } else
+        if (!confirm('Delete policy ' + item.policies[idx])) return;
+
         ew_session.controller.deleteGroupPolicy(item.name, item.policies[idx], text, function() { item.policies = null; });
     },
 };
@@ -440,9 +447,9 @@ var ew_VMFATreeView = {
     menuChanged: function()
     {
         var item = this.getSelected();
-        $('ew.vmfa.contextmenu.delete').disabled = item == null;
-        $('ew.vmfa.contextmenu.assign').disabled = !item || !item.userName;
-        $('ew.vmfa.contextmenu.unassign').disabled = !item || item.userName;
+        $('ew.vmfas.contextmenu.delete').disabled = item == null;
+        $('ew.vmfas.contextmenu.assign').disabled = !item || !item.userName;
+        $('ew.vmfas.contextmenu.unassign').disabled = !item || item.userName;
     },
 
     addDevice: function()

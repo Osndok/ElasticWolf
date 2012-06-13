@@ -21,20 +21,20 @@ var ew_menu = {
             { name: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
 
             { name: "ew.tabs.access",        views: [ { id: "ew.accesskeys.view", view: ew_AccessKeyTreeView },
-                                                     { id: "ew.keypairs.view", view: ew_KeypairTreeView, } ], },
+                                                      { id: "ew.keypairs.view", view: ew_KeypairTreeView, } ], },
 
             { name: "ew.tabs.cert",          views: [  { id: "ew.certs.view", view: ew_CertsTreeView } ] },
 
             { name: "ew.tabs.users",         views: [ { id: "ew.users.view", view: ew_UsersTreeView, }, ] },
 
             { name: "ew.tabs.groups",        views: [ { id: "ew.groups.view", view: ew_GroupsTreeView, },
-                                                     { id: "ew.groupUsers.view", view: ew_GroupUsersTreeView, }, ] },
+                                                      { id: "ew.groupUsers.view", view: ew_GroupUsersTreeView, }, ] },
 
             { name: "ew.tabs.securitygroup", views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: true }] },
-                                                     { id: "ew.permissions.view", view: ew_PermissionsTreeView }], },
+                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }], },
 
             { name: "ew.tabs.vpcgroup",      views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: false }] },
-                                                     { id: "ew.permissions.view", view: ew_PermissionsTreeView }],
+                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }],
               owner: "ew.tabs.securitygroup"
             },
 
@@ -49,24 +49,21 @@ var ew_menu = {
             { name: "ew.tabs.snapshot",      views: [ { id: "ew.snapshots.view", view: ew_SnapshotTreeView }], },
 
             { name: "ew.tabs.loadbalancer",  views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView, filterList: [ { name: "vpcId", empty: true }] },
-                                                     { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }], },
+                                                      { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }], },
 
             { name: "ew.tabs.vpcelb",        views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView, filterList: [ { name: "vpcId", empty: false }] },
-                                                     { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }],
+                                                      { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }],
               owner: "ew.tabs.loadbalancer"
             },
 
             { name: "ew.tabs.bundletask",    views: [ { id: "ew.bundleTasks.view", view: ew_BundleTasksTreeView } ], },
-
-            { name: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
-                                                     { id: "ew.rsvdInst.view", view: ew_ReservedInstancesTreeView } ], },
 
             { name: "ew.tabs.vpc",           views: [ { id: "ew.vpcs.view", view: ew_VpcTreeView }, ] },
 
             { name: "ew.tabs.dhcp",          views: [ { id: "ew.dhcpOptions.view", view: ew_DhcpoptsTreeView } ], },
 
             { name: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
-                                                     { id: "ew.reservedInstances.view", view: ew_ReservedInstancesTreeView } ], },
+                                                      { id: "ew.reservedInstances.view", view: ew_ReservedInstancesTreeView } ], },
 
             { name: "ew.tabs.subnet",        views: [ { id: "ew.subnets.view", view: ew_SubnetsTreeView },
                                                      { id: "ew.subnetroutes.view", view: ew_SubnetRoutesTreeView },
