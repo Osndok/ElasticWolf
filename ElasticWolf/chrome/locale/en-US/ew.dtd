@@ -73,10 +73,11 @@
 <!ENTITY ew.instances.vpcId.label "VPC">
 <!ENTITY ew.instances.subnetId.label "Subnet">
 <!ENTITY ew.instances.state.label "State">
-<!ENTITY ew.instances.publicDnsName.label "Public DNS">
+<!ENTITY ew.instances.dnsName.label "Public DNS">
 <!ENTITY ew.instances.privateDnsName.label "Private DNS">
 <!ENTITY ew.instances.monitoringState.label "Monitoring State">
 <!ENTITY ew.instances.privateIpAddress.label "Private IP">
+<!ENTITY ew.instances.ipAddress.label "IP Address">
 <!ENTITY ew.instances.keyName.label "Key">
 <!ENTITY ew.instances.reason.label "Reason">
 <!ENTITY ew.instances.amiLaunchIdx.label "Idx">

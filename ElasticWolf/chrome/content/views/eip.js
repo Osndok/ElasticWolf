@@ -102,9 +102,9 @@ var ew_ElasticIPTreeView = {
         var eip = this.getSelected();
         if (!eip || !eip.instanceId) { return; }
 
-        var instance = ew_model.gfind('instances', eip.instanceId);
+        var instance = ew_model.find('instances', eip.instanceId);
         if (instance) {
-            ew_session.copyToClipboard(instance.publicDnsName);
+            ew_session.copyToClipboard(instance.dnsName);
         }
     }
 

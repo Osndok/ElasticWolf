@@ -53,6 +53,7 @@ function User(id, name, path, arn)
     this.keys = null;
     this.devices = null;
     this.certs = null;
+    this.loginProfileDate = null;
 
     this.toString = function() {
         return this.name + (this.groups && this.groups.length ? ew_model.separator + this.groups : "");
@@ -373,8 +374,6 @@ function Instance(reservationId, ownerId, requesterId, instanceId, imageId, stat
     this.reservationId = reservationId;
     this.ownerId = ownerId;
     this.requesterId = requesterId;
-    this.publicIpAddress = '';
-    this.publicDnsName = '';
     this.elasticIp = '';
     this.imageId = imageId;
     this.state = state;
@@ -416,12 +415,15 @@ function Instance(reservationId, ownerId, requesterId, instanceId, imageId, stat
         return (this.name ? this.name + ew_model.separator : "") + this.id + ew_model.separator + this.state;
     }
 
-    this.getPublicIp = function() {
-        if (this.publicDnsName) {
-            var parts = this.publicDnsName.split('-');
-            return parts[1] + "." + parts[2] + "." + parts[3] + "." + parseInt(parts[4]);
+    this.validate = function() {
+        if (!this.ipAddress && this.dnsName) {
+            var parts = this.dnsName.split('-');
+            this.ipAddress = parts[1] + "." + parts[2] + "." + parts[3] + "." + parseInt(parts[4]);
         }
-        return "";
+        if (this.elasticIp == '') {
+            var eip = ew_session.model.get('addresses', 'instanceId', this.id);
+            this.elasticIp = eip && eip.length ? eip[0].publicIp : '';
+        }
     }
 }
 

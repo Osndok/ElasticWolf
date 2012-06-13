@@ -2,6 +2,21 @@ var ew_UsersTreeView = {
     model: [ "users", "groups"],
 
     menuChanged: function() {
+        var item = this.getSelected();
+        $("ew.users.contextmenu.delete").disabled = !item;
+        $("ew.users.contextmenu.addGroup").disabled = !item;
+        $("ew.users.contextmenu.addPassword").disabled = !item || item.loginProfileDate;
+        $("ew.users.contextmenu.changePassword").disabled = !item || !item.loginProfileDate;
+        $("ew.users.contextmenu.deletePassword").disabled = !item || !item.loginProfileDate;
+        $("ew.users.contextmenu.createKey").disabled = !item;
+        $("ew.users.contextmenu.deleteKey").disabled = !item || !item.keys;
+        $("ew.users.contextmenu.createVMFA").disabled = !item;
+        $("ew.users.contextmenu.enableMFA").disabled = !item;
+        $("ew.users.contextmenu.resyncMFA").disabled = !item || !item.devices;
+        $("ew.users.contextmenu.deactivateMFA").disabled = !item || !item.devices;
+        $("ew.users.contextmenu.addPolicy").disabled = !item;
+        $("ew.users.contextmenu.editPolicy").disabled = !item || !item.policies;
+        $("ew.users.contextmenu.deletePolicy").disabled = !item || !item.policies;
     },
 
     selectionChanged: function()
@@ -14,17 +29,21 @@ var ew_UsersTreeView = {
 
     updateUser: function(item)
     {
+        var me = this;
+        if (!item.loginProfileDate) {
+            ew_session.controller.getLoginProfile(item.name, function(list) { me.menuChanged() })
+        }
         if (!item.groups) {
-            ew_session.controller.listGroupsForUser(item.name, function(list) { })
+            ew_session.controller.listGroupsForUser(item.name, function(list) { me.menuChanged() })
         }
         if (!item.policies) {
-            ew_session.controller.listUserPolicies(item.name, function(list) { })
+            ew_session.controller.listUserPolicies(item.name, function(list) { me.menuChanged() })
         }
         if (!item.keys) {
-            ew_session.controller.listAccessKeys(item.name, function(list) { })
+            ew_session.controller.listAccessKeys(item.name, function(list) { me.menuChanged() })
         }
         if (!item.devices) {
-            ew_session.controller.listMFADevices(item.name, function(list) { })
+            ew_session.controller.listMFADevices(item.name, function(list) { me.menuChanged() })
         }
     },
 
@@ -119,7 +138,9 @@ var ew_UsersTreeView = {
     {
         var me = this;
         var item = this.getSelected();
-        if (!item || !item.policies || !item.policies.length) return;
+        if (!item || !item.policies || !item.policies.length) {
+            return alert('No policies to edit');
+        }
         var idx = 0;
 
         if (item.policies.length > 1) {
@@ -139,7 +160,9 @@ var ew_UsersTreeView = {
     {
         var me = this;
         var item = this.getSelected();
-        if (!item || !item.policies || !item.policies.length) return;
+        if (!item || !item.policies || !item.policies.length) {
+            return alert('No policies to delete');
+        }
         var idx = 0;
 
         if (item.policies.length > 0) {
@@ -170,7 +193,9 @@ var ew_UsersTreeView = {
     {
         var me = this;
         var item = this.getSelected();
-        if (!item || !item.keys || !item.keys.length) return;
+        if (!item || !item.keys || !item.keys.length) {
+            return alert('No access keys');
+        }
         var idx = 0;
 
         if (item.keys.length > 0) {
@@ -211,7 +236,9 @@ var ew_UsersTreeView = {
     {
         var me = this;
         var item = this.getSelected();
-        if (!item || !item.devices || !item.devices.length) return;
+        if (!item || !item.devices || !item.devices.length) {
+            return alert('No devices to resync');
+        }
         var values = ew_session.promptInput('Resync MFA device', ["Serial Number", "Auth Code 1", "Auth Code 2"]);
         if (!values) return;
         ew_session.controller.resyncMFADevice(item.name, values[0], values[1], values[2], function() { me.refresh() });
@@ -221,7 +248,9 @@ var ew_UsersTreeView = {
     {
         var me = this;
         var item = this.getSelected();
-        if (!item || !item.devices || !item.devices.length) return;
+        if (!item || !item.devices || !item.devices.length) {
+            return alert('No device to delete');
+        }
 
         if (item.keys.length > 0) {
             idx = ew_session.promptList("MFA Device", "Select device to deactivate", item.devices);
@@ -244,6 +273,12 @@ var ew_GroupsTreeView = {
     model: ["groups","users"],
 
     menuChanged: function() {
+        var item = this.getSelected();
+        $("ew.groups.contextmenu.delete").disabled = !item;
+        $("ew.users.contextmenu.rename").disabled = !item;
+        $("ew.users.contextmenu.addPolicy").disabled = !item;
+        $("ew.users.contextmenu.editPolicy").disabled = !item || !item.policies;
+        $("ew.users.contextmenu.deletePolicy").disabled = !item || !item.policies;
     },
 
     selectionChanged: function()
@@ -258,7 +293,7 @@ var ew_GroupsTreeView = {
             ew_session.controller.getGroup(item.name, function(list) { ew_GroupUsersTreeView.display(list); });
         }
         if (!item.policies) {
-            ew_session.controller.listGroupPolicies(item.name, function(list) { })
+            ew_session.controller.listGroupPolicies(item.name, function(list) { me.menuChanged() })
         }
     },
 
@@ -341,7 +376,9 @@ var ew_GroupsTreeView = {
     {
         var me = this;
         var item = this.getSelected();
-        if (!item || !item.policies || !item.policies.length) return;
+        if (!item || !item.policies || !item.policies.length) {
+            return alert('No policied to edit');
+        }
 
         var idx = ew_session.promptList("Policy", "Select policy to edit", item.policies);
         if (idx < 0) return;
@@ -358,7 +395,9 @@ var ew_GroupsTreeView = {
     {
         var me = this;
         var item = this.getSelected();
-        if (!item || !item.policies || !item.policies.length) return;
+        if (!item || !item.policies || !item.policies.length) {
+            return alert('No policies to delete');
+        }
 
         var idx = ew_session.promptList("Policy", "Select policy to delete", item.policies);
         if (idx < 0) return;

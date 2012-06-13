@@ -40,11 +40,13 @@ var ew_controller = {
                     if (columns instanceof Array) {
                         var obj = {};
                         for (var j in columns) {
-                            obj[columns[j]] = getNodeValue(items[i], columns[j]);
+                            var val = getNodeValue(items[i], columns[j])
+                            if (val) obj[columns[j]] = val;
                         }
                         list.push(obj)
                     } else {
-                        list.push(getNodeValue(items[i], columns));
+                        var val = getNodeValue(items[i], columns)
+                        if (val) list.push(val);
                     }
                 } else {
                     list.push(items[i]);
@@ -2595,6 +2597,24 @@ var ew_controller = {
     deleteUser : function(name, callback)
     {
         ew_session.queryIAM("DeleteUser", [ ["UserName", name] ], this, false, "onComplete", callback);
+    },
+
+    getLoginProfile : function(name, callback)
+    {
+        var params = [];
+        if (name) params.push(["UserName", user])
+        ew_session.queryIAM("GetLoginProfile", params, this, false, "onCompleteGetLoginProfile", callback);
+    },
+
+    onCompleteGetLoginProfile : function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+
+        var name = getNodeValue(xmlDoc, "UserName");
+        var date = getNodeValue(xmlDoc, "CreateDate");
+        ew_model.update('users', getParam(params, 'UserName'), 'loginProfileDate', date)
+
+        if (responseObj.callback) responseObj.callback(name, date);
     },
 
     createLoginProfile : function(name, pwd, callback)

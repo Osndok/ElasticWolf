@@ -7,25 +7,25 @@
             <caption label="IAM Users" />
             <popupset>
                 <menupopup id="ew.users.contextmenu" onpopupshowing="ew_UsersTreeView.menuChanged();">
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addUser();" label="Add user" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deleteUser();" label="Delete user" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addGroup();" label="Add to Group" />
+                <menuitem id="ew.users.contextmenu.add" oncommand="ew_UsersTreeView.addUser();" label="Add user" />
+                <menuitem id="ew.users.contextmenu.delete" oncommand="ew_UsersTreeView.deleteUser();" label="Delete user" />
+                <menuitem id="ew.users.contextmenu.addGroup" oncommand="ew_UsersTreeView.addGroup();" label="Add to Group" />
                 <menuseparator />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.setPassword();" label="Add Password" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.setPassword(true);" label="Change Password" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deletePassword();" label="Delete Password" />
+                <menuitem id="ew.users.contextmenu.addPassword" oncommand="ew_UsersTreeView.setPassword();" label="Add Password" />
+                <menuitem id="ew.users.contextmenu.changePassword" oncommand="ew_UsersTreeView.setPassword(true);" label="Change Password" />
+                <menuitem id="ew.users.contextmenu.deletePassword" oncommand="ew_UsersTreeView.deletePassword();" label="Delete Password" />
                 <menuseparator />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.createAccessKey();" label="Create Access Key" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deleteAccessKey();" label="Delete Access Key" />
+                <menuitem id="ew.users.contextmenu.createKey" oncommand="ew_UsersTreeView.createAccessKey();" label="Create Access Key" />
+                <menuitem id="ew.users.contextmenu.deleteKey" oncommand="ew_UsersTreeView.deleteAccessKey();" label="Delete Access Key" />
                 <menuseparator />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.createVMFA();" label="Create Virtual MFA Device" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.enableMFA();" label="Enable MFA Device" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.resyncMFA();" label="Resync MFA Device" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deactivateMFA();" label="Deactivate MFA Device" />
+                <menuitem id="ew.users.contextmenu.createVMFA" oncommand="ew_UsersTreeView.createVMFA();" label="Create Virtual MFA Device" />
+                <menuitem id="ew.users.contextmenu.enableMFA" oncommand="ew_UsersTreeView.enableMFA();" label="Enable MFA Device" />
+                <menuitem id="ew.users.contextmenu.resyncMFA" oncommand="ew_UsersTreeView.resyncMFA();" label="Resync MFA Device" />
+                <menuitem id="ew.users.contextmenu.deactivateMFA" oncommand="ew_UsersTreeView.deactivateMFA();" label="Deactivate MFA Device" />
                 <menuseparator />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.addPolicy();" label="Add Policy" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.editPolicy();" label="Edit Policy" />
-                <menuitem id="ew.users.contextmenu" oncommand="ew_UsersTreeView.deletePolicy();" label="Delete Policy" />
+                <menuitem id="ew.users.contextmenu.addPolicy" oncommand="ew_UsersTreeView.addPolicy();" label="Add Policy" />
+                <menuitem id="ew.users.contextmenu.editPolicy" oncommand="ew_UsersTreeView.editPolicy();" label="Edit Policy" />
+                <menuitem id="ew.users.contextmenu.deletePolicy" oncommand="ew_UsersTreeView.deletePolicy();" label="Delete Policy" />
                 </menupopup>
             </popupset>
 

@@ -41,11 +41,11 @@
             <menupopup>
               <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('name');" label="&ew.instances.contextmenu.copyname.label;" />
               <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('id');" label="&ew.instances.contextmenu.copyid.label;" />
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('publicDnsName');" label="Public DNS Name" />
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('publicIpAddress');" label="Public IP Address" />
+              <menuitem id="instances.context.copyPublicDns" oncommand="ew_InstancesTreeView.copyToClipboard('dnsName');" label="Public DNS Name" />
+              <menuitem id="instances.context.copyPublic" oncommand="ew_InstancesTreeView.copyToClipboard('ipAddress');" label="Public IP Address" />
               <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('privateDnsName');" label="Private DNS Name" />
               <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('privateIpAddress');" label="Private IP Address" />
-              <menuitem oncommand="ew_InstancesTreeView.copyToClipboard('eip');" label="Elastic IP Address" />
+              <menuitem id="instances.context.copyElastic" oncommand="ew_InstancesTreeView.copyToClipboard('eip');" label="Elastic IP Address" />
             </menupopup>
           </menu>
           <menuseparator />
@@ -54,7 +54,7 @@
                 <menuitem id="instances.context.connectPrivate" oncommand="ew_InstancesTreeView.connectToSelectedInstances();" label="Connect to Private IP" />
                 <menuitem id="instances.context.connectPublic" oncommand="ew_InstancesTreeView.connectToSelectedInstances(1);" label="Connect to Public IP" />
                 <menuitem id="instances.context.connectElastic" oncommand="ew_InstancesTreeView.connectToSelectedInstances(2);" label="Connect to Elastic IP" />
-                <menuitem id="instances.context.connectPublic" oncommand="ew_InstancesTreeView.connectToSelectedInstances(4);" label="Connect to Public DNS" />
+                <menuitem id="instances.context.connectPublicDns" oncommand="ew_InstancesTreeView.connectToSelectedInstances(4);" label="Connect to Public DNS" />
             </menupopup>
           </menu>
         </menupopup>
@@ -84,25 +84,15 @@
         <treecols>
           <treecol id="instance.name" label="Name" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="instance.reservationId" label="&ew.instances.resid.label;" flex="2" persist="width ordinal hidden sortDirection" />
-          <splitter class="tree-splitter" />
-          <treecol id="instance.ownerId" label="&ew.instances.owner.label;" flex="2" sortDirection="ascending" persist="width ordinal hidden sortDirection" />
-          <splitter class="tree-splitter" />
           <treecol id="instance.id" label="&ew.instances.id.label;" flex="2" persist="width ordinal hidden sortDirection" />
-          <splitter class="tree-splitter" />
-          <treecol id="instance.imageId" label="&ew.instances.imageId.label;" flex="2" persist="width ordinal hidden sortDirection" />
-          <splitter class="tree-splitter" />
-          <treecol id="instance.kernelId" label="&ew.instances.kernelId.label;" flex="2" persist="width ordinal hidden sortDirection" />
-          <splitter class="tree-splitter" />
-          <treecol id="instance.ramdiskId" label="&ew.instances.ramdiskId.label;" flex="2" persist="width ordinal hidden sortDirection" />
-          <splitter class="tree-splitter" />
-          <treecol id="instance.vpcId" label="&ew.instances.vpcId.label;" flex="9" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="instance.subnetId" label="&ew.instances.subnetId.label;" flex="9" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="instance.state" label="&ew.instances.state.label;" flex="3" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="instance.publicDnsName" label="&ew.instances.publicDnsName.label;" flex="9" persist="width ordinal hidden sortDirection" />
+          <treecol id="instance.ipAddress" label="&ew.instances.ipAddress.label;" flex="9" persist="width ordinal hidden sortDirection" />
+          <splitter class="tree-splitter" />
+          <treecol id="instance.dnsName" label="&ew.instances.dnsName.label;" flex="9" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="instance.privateDnsName" label="&ew.instances.privateDnsName.label;" flex="9" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
@@ -112,13 +102,7 @@
           <splitter class="tree-splitter" />
           <treecol id="instance.groups" label="&ew.instances.groups.label;" flex="5" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
-          <treecol id="instance.reason" label="&ew.instances.reason.label;" flex="7" persist="width ordinal hidden sortDirection" />
-          <splitter class="tree-splitter" />
-          <treecol id="instance.amiLaunchIdx" label="&ew.instances.amiLaunchIdx.label;" flex="1" persist="width ordinal hidden sortDirection" />
-          <splitter class="tree-splitter" />
           <treecol id="instance.instanceType" label="&ew.instances.instanceType.label;" flex="1" persist="width ordinal hidden sortDirection" />
-          <splitter class="tree-splitter" />
-          <treecol id="instance.launchTime" label="&ew.instances.launchTime.label;" flex="2" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />
           <treecol id="instance.availabilityZone" label="&ew.availabilityZone.label;" flex="1" persist="width ordinal hidden sortDirection" />
           <splitter class="tree-splitter" />

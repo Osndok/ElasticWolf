@@ -7,7 +7,6 @@ var ew_AMIsTreeView = {
     {
         var image = this.getSelected();
         if (!image) return;
-        debug(image.id + " " + image.platform)
 
         // If this is not a Windows Instance, Disable the following context menu items.
         $("amis.context.migrate").disabled = !isWindows(image.platform);
@@ -124,6 +123,7 @@ var ew_AMIsTreeView = {
                                                retVal.subnetId, retVal.ipAddress, function(list) {
                 if (retVal.tag != "") {
                     var tags = ew_session.parseTags(retVal.tag);
+                    debug(list, tags)
                     ew_session.setTags(list, tags, function() { ew_InstancesTreeView.refresh() });
                 } else {
                     ew_InstancesTreeView.refresh();

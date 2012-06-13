@@ -1,5 +1,5 @@
 var ew_InstancesTreeView = {
-    model: ['instances', 'images', 'addresses', 'enis', 'subnets', 'vpcs'],
+    model: ['instances', 'images', 'addresses', 'networkInterfaces', 'subnets', 'vpcs'],
     properties: [ 'state' ],
 
     filterChanged: function()
@@ -397,53 +397,53 @@ var ew_InstancesTreeView = {
     selectionChanged : function(event) {
         var instance = this.getSelected();
         if (instance == null) return;
-        if (instance.publicIpAddress == '') {
-            instance.publicIpAddress = instance.getPublicIp();
-        }
-        if (instance.elasticIp == '') {
-            var eip = ew_session.model.get('addresses', 'instanceId', instance.id);
-            instance.elasticIp = eip && eip.length ? eip[0].publicIp : '';
-        }
+        instance.validate();
         TreeView.selectionChanged.call(this, event);
     },
 
     menuChanged  : function(event) {
         var instance = this.getSelected();
         var fDisabled = (instance == null);
-        document.getElementById("ew.instances.contextmenu").disabled = fDisabled;
+        $("ew.instances.contextmenu").disabled = fDisabled;
         if (fDisabled) return;
+
+        instance.validate();
 
         // Windows-based enable/disable
         if (isWindows(instance.platform)) {
-          document.getElementById("instances.context.getPassword").disabled = false;
+          $("instances.context.getPassword").disabled = false;
         } else {
-          document.getElementById("instances.context.getPassword").disabled = true;
+          $("instances.context.getPassword").disabled = true;
         }
 
-        document.getElementById("instances.context.connectPublic").disabled = instance.publicIpAddress == ""
-        document.getElementById("instances.context.connectElastic").disabled = instance.elasticIp == ""
+        $("instances.context.connectPublic").disabled = instance.ipAddress == "";
+        $("instances.context.copyPublic").disabled = instance.ipAddress == "";
+        $("instances.context.connectElastic").disabled = instance.elasticIp == "";
+        $("instances.context.copyElastic").disabled = instance.elasticIp == ""
+        $("instances.context.connectPublicDns").disabled = instance.dnsName == "";
+        $("instances.context.copyPublicDns").disabled = instance.dnsName == "";
 
         if (isEbsRootDeviceType(instance.rootDeviceType)) {
-            document.getElementById("instances.context.bundle").disabled = true;
-            document.getElementById("instances.context.createimage").disabled = false;
+            $("instances.context.bundle").disabled = true;
+            $("instances.context.createimage").disabled = false;
         } else {
-            document.getElementById("instances.context.createimage").disabled = true;
+            $("instances.context.createimage").disabled = true;
 
             if (isWindows(instance.platform)) {
-                document.getElementById("instances.context.bundle").disabled = false;
+                $("instances.context.bundle").disabled = false;
             } else {
-                document.getElementById("instances.context.bundle").disabled = true;
+                $("instances.context.bundle").disabled = true;
             }
         }
         // These items are only valid for instances with EBS-backed root devices.
         var optDisabled = !isEbsRootDeviceType(instance.rootDeviceType);
-        document.getElementById("instances.context.start").disabled = optDisabled;
-        document.getElementById("instances.context.stop").disabled = optDisabled;
-        document.getElementById("instances.context.forceStop").disabled = optDisabled;
-        document.getElementById("instances.context.showTerminationProtection").disabled = optDisabled;
-        document.getElementById("instances.context.changeTerminationProtection").disabled = optDisabled;
-        document.getElementById("instances.button.start").disabled = optDisabled;
-        document.getElementById("instances.button.stop").disabled = optDisabled;
+        $("instances.context.start").disabled = optDisabled;
+        $("instances.context.stop").disabled = optDisabled;
+        $("instances.context.forceStop").disabled = optDisabled;
+        $("instances.context.showTerminationProtection").disabled = optDisabled;
+        $("instances.context.changeTerminationProtection").disabled = optDisabled;
+        $("instances.button.start").disabled = optDisabled;
+        $("instances.button.stop").disabled = optDisabled;
     },
 
     launchMore : function() {
@@ -722,8 +722,8 @@ var ew_InstancesTreeView = {
         var cmd = ew_session.getSSHCommand();
 
         var hostname = !ipType ? instance.privateIpAddress :
-                       ipType == 1 || ipType == 3 ? instance.getPublicIp() :
-                       ipType == 4 ? instance.publicDnsName :
+                       ipType == 1 || ipType == 3 ? instance.ipAddress :
+                       ipType == 4 ? instance.dnsName :
                        ipType == 2 ? instance.elasticIP : "";
         if (hostname == "" && ipType == 3) {
             hostname = this.instance.elasticIP
@@ -753,7 +753,7 @@ var ew_InstancesTreeView = {
         params.push(["host", hostname]);
         params.push(["name", instance.name]);
         params.push(["keyname", instance.keyName])
-        params.push(["publicDnsName", instance.publicDnsName]);
+        params.push(["publicDnsName", instance.dnsName]);
         params.push(["privateDnsName", instance.privateDnsName]);
         params.push(["privateIpAddress", instance.privateIpAddress]);
 
