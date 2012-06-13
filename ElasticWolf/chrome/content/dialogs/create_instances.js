@@ -244,20 +244,9 @@ var ew_InstanceLauncher = {
 
         var typeMenu = document.getElementById("ew.newinstances.instancetypelist");
         // Add the instance sizes based on AMI architecture
-        if (this.image.arch == "x86_64") {
-            typeMenu.appendItem("t1.micro", "t1.micro");
-            typeMenu.appendItem("m1.large", "m1.large");
-            typeMenu.appendItem("m1.xlarge", "m1.xlarge");
-            typeMenu.appendItem("c1.xlarge", "c1.xlarge");
-            typeMenu.appendItem("m2.xlarge", "m2.xlarge");
-            typeMenu.appendItem("m2.2xlarge", "m2.2xlarge");
-            typeMenu.appendItem("m2.4xlarge", "m2.4xlarge");
-            typeMenu.appendItem("cc1.4xlarge", "cc1.4xlarge");
-            typeMenu.appendItem("cg1.4xlarge", "cg1.4xlarge");
-        } else {
-            typeMenu.appendItem("t1.micro", "t1.micro");
-            typeMenu.appendItem("m1.small", "m1.small");
-            typeMenu.appendItem("c1.medium", "c1.medium");
+        var types = this.ew_session.model.getInstanceTypes(this.image.arch);
+        for (var i in types) {
+            typeMenu.appendItem(types[i].name, types[i].id);
         }
         typeMenu.selectedIndex = 0;
 

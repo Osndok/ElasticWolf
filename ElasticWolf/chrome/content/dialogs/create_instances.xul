@@ -32,7 +32,7 @@
                     <label id="ew.newinstances.ami.tag" readonly="true" />
                     <spacer style="width:30px;" />
                     <label control="ew.newinstances.instancetypelist" value="Instance Type:" />
-                    <menulist id="ew.newinstances.instancetypelist" />
+                    <menulist id="ew.newinstances.instancetypelist" crop="end" sizetopopup="none" style="max-width: 350px;"/>
                 </row>
                 <row>
                     <label control="ew.newinstances.ami.location" value="AMI Manifest:" />

@@ -449,7 +449,7 @@ ew_VMFATreeView.register();
 
 
 var ew_KeypairTreeView = {
-    model: "keypairs",
+    model: ["keypairs","certs"],
 
     createKeypair : function ()
     {
@@ -538,7 +538,7 @@ ew_KeypairTreeView.__proto__ = TreeView;
 ew_KeypairTreeView.register();
 
 var ew_AccessKeyTreeView = {
-    name: "accesskeys",
+    name: ["accesskeys","certs"],
     properties: ["state"],
 
     runShell: function()

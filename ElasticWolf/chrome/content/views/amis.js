@@ -6,17 +6,11 @@ var ew_AMIsTreeView = {
     menuChanged : function(event)
     {
         var image = this.getSelected();
-        var fDisabled = (image == null);
-
-        if (fDisabled) {
-            $("ew.images.contextmenu").hidePopup();
-            return;
-        }
-
-        fDisabled = !isWindows(image.platform);
+        if (!image) return;
+        debug(image.id + " " + image.platform)
 
         // If this is not a Windows Instance, Disable the following context menu items.
-        $("amis.context.migrate").disabled = fDisabled;
+        $("amis.context.migrate").disabled = !isWindows(image.platform);
 
         // These items apply only to AMIs
         fDisabled = !(image.id.match(regExs["ami"]));
@@ -24,9 +18,7 @@ var ew_AMIsTreeView = {
         $("amis.context.deregister").disabled = fDisabled;
         $("amis.context.launch").disabled = fDisabled;
         $("amis.context.delete").disabled = fDisabled;
-        $("amis.context.perms").disabled = image.state == "deregistered";
-
-        // These context menu items don't apply to Windows instancesso enable them.
+        $("amis.context.perms").disabled = fDisabled || image.state == "deregistered";
 
         // These items don't apply to AMIs with root device type 'ebs'
         if (isEbsRootDeviceType(image.rootDeviceType)) {

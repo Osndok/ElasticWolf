@@ -806,6 +806,7 @@ var ew_model = {
     vmfas: null,
     alarms: null,
 
+    // Refresh model list by name, this is primary interface to use in the lists and trees
     refresh: function(name)
     {
         var now = (new Date).getTime();
@@ -956,6 +957,7 @@ var ew_model = {
         return obj;
     },
 
+    // Clean up all lists, mostly in credentials switch
     invalidate: function()
     {
         for (var p in this) {
@@ -1004,6 +1006,7 @@ var ew_model = {
         return value;
     },
 
+    // Convert object into string, used in listboxes, can use list of columns to limit what properties to show
     toString: function(obj, columns)
     {
         if (obj == null) return null;
@@ -1031,6 +1034,7 @@ var ew_model = {
         return obj;
     },
 
+    // Extract common tags from the list and updater the object
     processTags: function(obj, name)
     {
         if (!obj || !obj.tags) return;
@@ -1073,6 +1077,7 @@ var ew_model = {
         return list;
     },
 
+    // Send signal about updates model, assume TreeView interface
     notifyComponents: function(interest)
     {
         var comps = this.components[interest] || [];
@@ -1085,6 +1090,7 @@ var ew_model = {
         }
     },
 
+    // Register list of models to watch for updates
     registerInterest: function(component, interest)
     {
         var list = (interest instanceof Array) ? interest : [interest];
@@ -1203,6 +1209,32 @@ var ew_model = {
                  { name: 'ap-northeast-1', url: 'https://ec2.ap-northeast-1.amazonaws.com' },
                  { name: 'us-gov-west-1', url: 'https://ec2.us-gov-west-1.amazonaws.com' },
             ];
+    },
+
+    getInstanceTypes: function(arch)
+    {
+        var types = [
+           { name: "t1.micro: Up to 2 EC2 Compute Units (for short periodic bursts), 613 MiB, No storage, Low I/O", id: "t1.micro", x86_64: true, i386: true, },
+           { name: "m1.small: 1 EC2 Compute Unit (1 virtual core with 1 EC2 Compute Unit), 1.7 GiB, 150 GiB instance storage,  Moderate I/O", id: "m1.small", x86_64: true, i386: true },
+           { name: "m1.medium: 2 EC2 Compute Units (1 virtual core with 2 EC2 Compute Units), 3.75 GiB, 400 GiB instance storage (1 x 400 GiB), Moderate I/O", id: "m1.medium", x86_64: true, i386: true },
+           { name: "m1.large: 4 EC2 Compute Units (2 virtual cores with 2 EC2 Compute Units each), 7.5 GiB, 840 GiB instance storage (2 x 420 GiB), High I/O", id: "m1.large", x86_64: true, },
+           { name: "m1.xlarge: 8 EC2 Compute Units (4 virtual cores with 2 EC2 Compute Units each), 15 GiB, 1680 GB instance storage (4 x 420 GiB), High I/O", id: "m1.xlarge", x86_64: true, },
+           { name: "c1.medium: 5 EC2 Compute Units (2 virtual cores with 2.5 EC2 Compute Units each), 1.7 GiB, 340 GiB instance storage (340 GiB), Moderate I/O", id: "c1.medium", x86_64: true, i386: true },
+           { name: "c1.xlarge: 20 EC2 Compute Units (8 virtual cores with 2.5 EC2 Compute Units each), 7 GiB, 1680 GiB instance storage (4 x 420 GiB), High I/O", id: "c1.xlarge", x86_64: true, },
+           { name: "m2.xlarge : 6.5 EC2 Compute Units (2 virtual cores with 3.25 EC2 Compute Units each), 17.1 GiB, 410 GiB instance storage (1 x 410 GiB), Moderate I/O", id: "m2.xlarge", x86_64: true, },
+           { name: "m2.2xlarge: 13 EC2 Compute Units (4 virtual cores with 3.25 EC2 Compute Units each), 34.2 GiB,  840 GiB instance storage (1 x 840 GiB), High I/O", id: "m2.2xlarge", x86_64: true, },
+           { name: "m2.4xlarge: 26 EC2 Compute Units (8 virtual cores with 3.25 EC2 Compute Units each), 68.4 GiB, 1680 GiB instance storage (2 x 840 GiB), High I/O", id: "m2.4xlarge", x86_64: true, },
+           { name: "cc1.4xlarge: 33.5 EC2 Compute Units (2 x Intel Xeon X5570, quad-core 'Nehalem' architecture), 23 GiB, 1690 GiB instance 64-bit storage (2 x 840 GiB), Very high (10 Gbps Ethernet)", id: "cc1.4xlarge", x86_64: true, },
+           { name: "cc2.8xlarge: 88 EC2 Compute Units (2 x Intel Xeon E5-2670, eight-core 'Sandy Bridge' architecture), 60.5 GiB, 3360 GiB instance (4 x 840 GiB), Very high (10 Gbps Ethernet", id: "cc2.8xlarge", x86_64: true, },
+           { name: "cg1.4xlarge: 33.5 EC2 Compute Units (2 x Intel Xeon X5570, quad-core 'Nehalem' architecture), plus 2 NVIDIA Tesla M2050 'Fermi' GPUs, 22 GiB, 1680 GiB instance (2 x 840 GiB), Very high (10 Gbps Ethernet)", id: "cg1.4xlarge", x86_64: true, }
+           ];
+
+        debug(arch)
+        var list = [];
+        for (var i in types) {
+            if (types[i][arch]) list.push(types[i]);
+        }
+        return list;
     },
 
 }

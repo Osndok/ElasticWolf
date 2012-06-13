@@ -61,7 +61,7 @@
       </popupset>
       <toolbar style="padding: 0px 3px; -moz-box-align: center">
         <hbox flex="10">
-          <textbox id="ew.instances.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" oninput="ew_InstancesTreeView.searchChanged(event);" />
+          <textbox id="ew.instances.search" size="15" value="" type="autocomplete" autocompletesearch="form-history" />
           <toolbarbutton image="images/refresh.png" oncommand="ew_InstancesTreeView.refresh()" tooltiptext="&ew.refresh.tip;" />
           <toolbarseparator />
           <toolbarbutton image="images/start.png" style="-moz-box-pack:center;" oncommand="ew_InstancesTreeView.startInstance();" id="instances.button.start" tooltiptext="&ew.instances.start.tip;" />

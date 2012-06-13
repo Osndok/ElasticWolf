@@ -498,6 +498,8 @@ var TreeView = {
             (function(v) { var me = v; tree.addEventListener('click', function(e) { e.stopPropagation();me.clicked(e); }, false); }(this));
             if (this.searchElement) {
                 var textbox = $(this.searchElement);
+                textbox.setAttribute("type", "autocomplete");
+                textbox.setAttribute("autocompletesearch", "form-history");
                 (function(v) { var me = v; textbox.addEventListener('keypress', function(e) { e.stopPropagation();me.searchChanged(e); }, false); }(this));
             }
         }

@@ -2,8 +2,8 @@
 var ew_session = {
     VERSION: "2.0",
     NAME: 'ElasticWolf',
-    URL: 'https://awsps.com/ElasticWolf',
-    EC2_API_VERSION: '2012-05-01',
+    URL: 'https://www.awsps.com/ElasticWolf/',
+    EC2_API_VERSION: '2012-06-01',
     ELB_API_VERSION: '2011-11-15',
     IAM_API_VERSION: '2010-05-08',
     CW_API_VERSION: '2010-08-01',
@@ -353,6 +353,7 @@ var ew_session = {
         window.openDialog("chrome://ew/content/dialogs/help.xul", null, "chrome,centerscreen,modal,resizable", this);
     },
 
+    // Create cert with private and public keys for given key name
     generateCertificate : function(name)
     {
         // Make sure we have directory
@@ -403,6 +404,7 @@ var ew_session = {
         return FileIO.toString(certfile)
     },
 
+    // Start command shell with given key pair and access key, setup environment variables to be used by AWS command line tools
     launchShell : function(keyPair, accessKey)
     {
         // Make sure we have directory
@@ -521,6 +523,7 @@ var ew_session = {
         return promptService.confirmEx(window, title, text, promptService.STD_YES_NO_BUTTONS| promptService.BUTTON_POS_0_DEFAULT, "", "", "", null, {}) == 0
     },
 
+    // Does not wait for response, once called it will ask for pin and quit if entered wrongly
     promptForPin: function() {
         var me = this;
         var pin = this.getPassword('ew.pin');
@@ -747,7 +750,7 @@ var ew_session = {
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4) {
                 var data = xmlhttp.responseText;
-                var d = data.match(new RegExp("\/" + this.NAME + "\/" + this.NAME + (isWindows(navigator.platform) ? "-win-" : "-osx-") + "([0-9]\.[0-9][0-9])\.zip"))
+                var d = data.match(new RegExp(this.NAME + (isWindows(navigator.platform) ? "-win-" : "-osx-") + "([0-9]\.[0-9][0-9])\.zip"))
                 if (d != null) {
                     debug(d);
                     if (parseFloat(d[1]) > parseFloat(this.VERSION)) {

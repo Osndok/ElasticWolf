@@ -1,5 +1,5 @@
 var ew_InstancesTreeView = {
-    model: ['instances', 'images', 'addresses'],
+    model: ['instances', 'images', 'addresses', 'enis', 'subnets', 'vpcs'],
     properties: [ 'state' ],
 
     filterChanged: function()

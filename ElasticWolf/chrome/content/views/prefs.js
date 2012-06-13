@@ -7,6 +7,7 @@ var ew_PrefsView = {
        $("ew.ec2_version").value = ew_session.EC2_API_VERSION;
        $("ew.iam_version").value = ew_session.IAM_API_VERSION;
        $("ew.elb_version").value = ew_session.ELB_API_VERSION;
+       $("ew.cw_version").value = ew_session.CW_API_VERSION;
        $("ew.home").value = ew_session.getHome();
        $("ew.profile").value = ew_session.getProfileHome();
        $("ew.key.home").value = ew_session.getKeyHome();
