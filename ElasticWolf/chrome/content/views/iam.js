@@ -539,9 +539,9 @@ var ew_KeypairTreeView = {
         name = name.trim();
         var me = this;
 
-        var file = ew_session.promptForDir("Choose where to store keys and certificate or Cancel to use " + ew_session.getKeyHome(), true)
+        var file = this.promptForDir("Choose where to store keys and certificate or Cancel to use " + ew_session.getKeyHome(), true)
         if (file) {
-            ew_session.setKeyHome(file);
+            this.setStrPrefs("ew.key.home", file);
         }
 
         // Create new certificate file using openssl and return cert value

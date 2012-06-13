@@ -78,11 +78,13 @@
 <!ENTITY ew.instances.monitoringState.label "Monitoring State">
 <!ENTITY ew.instances.privateIpAddress.label "Private IP">
 <!ENTITY ew.instances.ipAddress.label "IP Address">
+<!ENTITY ew.instances.elasticIp.label "Elastic IP">
+<!ENTITY ew.instances.tenancy.label "Tenancy">
 <!ENTITY ew.instances.keyName.label "Key">
 <!ENTITY ew.instances.reason.label "Reason">
 <!ENTITY ew.instances.amiLaunchIdx.label "Idx">
 <!ENTITY ew.instances.instanceType.label "Type">
-<!ENTITY ew.instances.rootDeviceType.label "Root Device Type">
+<!ENTITY ew.instances.rootDeviceType.label "Root Device">
 <!ENTITY ew.instances.launchTime.label "Local Launch Time">
 
 <!ENTITY ew.captions.kernels.akis.label "Kernel Images (AKIs)">
@@ -179,15 +181,15 @@
 <!ENTITY ew.dhcpopts.id.label "DHCP Options Set ID">
 <!ENTITY ew.dhcpopts.options.label "Options">
 
-<!ENTITY ew.captions.vpngateways.vpngateways.label "Your VPN Gateways">
-<!ENTITY ew.vpngateway.contextmenu.createvpnconnection.label "Create a VPN Connection">
-<!ENTITY ew.vpngateway.contextmenu.attachvpc.label "Attach a VPC to this VPN Gateway">
-<!ENTITY ew.vpngateway.contextmenu.delete.label "Delete this VPN Gateway">
-<!ENTITY ew.vpngateway.contextmenu.copyvgwid.label "Copy VPN Gateway ID to the Clipboard">
-<!ENTITY ew.vpngateways.id.label "ID">
-<!ENTITY ew.vpngateways.availabilityZone.label "Availability Zone">
-<!ENTITY ew.vpngateways.type.label "Type">
-<!ENTITY ew.vpngateways.state.label "State">
+<!ENTITY ew.captions.vpnGateways.label "Your VPN Gateways">
+<!ENTITY ew.vpnGateway.contextmenu.createvpnconnection.label "Create a VPN Connection">
+<!ENTITY ew.vpnGateway.contextmenu.attachvpc.label "Attach a VPC to this VPN Gateway">
+<!ENTITY ew.vpnGateway.contextmenu.delete.label "Delete this VPN Gateway">
+<!ENTITY ew.vpnGateway.contextmenu.copyvgwid.label "Copy VPN Gateway ID to the Clipboard">
+<!ENTITY ew.vpnGateways.id.label "ID">
+<!ENTITY ew.vpnGateways.availabilityZone.label "Availability Zone">
+<!ENTITY ew.vpnGateways.type.label "Type">
+<!ENTITY ew.vpnGateways.state.label "State">
 
 <!ENTITY ew.captions.customergateways.customergateways.label "Your Customer Gateways">
 <!ENTITY ew.customergateway.contextmenu.createvpnconnection.label "Create a VPN Connection">
@@ -210,7 +212,7 @@
 <!ENTITY ew.vpnconnections.cgwid.label "Customer Gateway ID">
 <!ENTITY ew.vpnconnections.vgwid.label "VPN Gateway ID">
 
-<!ENTITY ew.captions.vpngateways.attachments.label "Attachments for Selected VPN Gateway">
+<!ENTITY ew.captions.vpnGateways.attachments.label "Attachments for Selected VPN Gateway">
 <!ENTITY ew.vpnattachment.contextmenu.delete.label "Detach">
 <!ENTITY ew.vpnattachments.vgwId.label "VPN Gateway ID">
 <!ENTITY ew.vpnattachments.vpcId.label "VPC ID">
@@ -326,9 +328,9 @@
 
 <!ENTITY ew.createdhcpoptions.tip "Create a new DHCP Options Set">
 <!ENTITY ew.deletedhcpoptions.tip "Delete this DHCP Options Set">
-<!ENTITY ew.createvpngateway.tip "Create a new VPN Gateway">
-<!ENTITY ew.deletevpngateway.tip "Delete this VPN Gateway">
-<!ENTITY ew.attachvpngateway.tip "Attach this VPN Gateway to a VPC">
+<!ENTITY ew.createvpnGateway.tip "Create a new VPN Gateway">
+<!ENTITY ew.deletevpnGateway.tip "Delete this VPN Gateway">
+<!ENTITY ew.attachvpnGateway.tip "Attach this VPN Gateway to a VPC">
 <!ENTITY ew.createcustomergateway.tip "Create a new Customer Gateway">
 <!ENTITY ew.deletecustomergateway.tip "Delete this Customer Gateway">
 <!ENTITY ew.createvpnconnection.tip "Create a new VPN Connection">

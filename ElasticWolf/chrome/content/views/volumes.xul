@@ -7,7 +7,7 @@
             <groupbox orient="vertical" flex="2">
                 <caption label="&ew.captions.volumes.volumes.label;" />
                 <popupset>
-                    <menupopup id="ew.volumes.contextmenu" onpopupshowing="ew_VolumeTreeView.menuChanged();">
+                    <menupopup id="ew.volumes.contextmenu" >
                         <menuitem oncommand="ew_VolumeTreeView.displayDetails(event);" label="&ew.contextmenu.details.label;" />
                         <menuitem oncommand="ew_VolumeTreeView.tag(event);" label="Edit EC2 Tag" />
                         <menuseparator />

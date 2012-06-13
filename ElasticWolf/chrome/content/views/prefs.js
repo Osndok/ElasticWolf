@@ -37,7 +37,6 @@ var ew_PrefsView = {
 
    deactivate: function() {
        if (!this.rowCount) return;
-       ew_session.setKeyHome($("ew.key.home").value.toString());
        ew_session.setSSHCommand($("ew.ssh.command").value.toString());
        ew_session.setSSHArgs($("ew.ssh.args").value.toString());
        ew_session.setSSHUser($("ew.ssh.user").value.toString());
@@ -45,6 +44,7 @@ var ew_PrefsView = {
        ew_session.setRDPArgs($("ew.rdp.args").value.toString());
        ew_session.setOpenSSLCommand($("ew.openssl.command").value.toString());
        ew_session.setShellCommand($("ew.shell.command").value.toString());
+       this.setPrefs("ew.key.home");
        this.setPrefs("ew.pin");
        this.setPrefs('ew.path.java', ew_session.getDefaultJavaHome());
        this.setPrefs('ew.path.ec2');

@@ -6,7 +6,7 @@
         <groupbox orient="vertical" flex="1" id="eip.tree.holder">
             <caption label="IAM Users" />
             <popupset>
-                <menupopup id="ew.users.contextmenu" onpopupshowing="ew_UsersTreeView.menuChanged();">
+                <menupopup id="ew.users.contextmenu" >
                 <menuitem id="ew.users.contextmenu.add" oncommand="ew_UsersTreeView.addUser();" label="Add user" />
                 <menuitem id="ew.users.contextmenu.delete" oncommand="ew_UsersTreeView.deleteUser();" label="Delete user" />
                 <menuitem id="ew.users.contextmenu.addGroup" oncommand="ew_UsersTreeView.addGroup();" label="Add to Group" />

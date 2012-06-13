@@ -58,8 +58,8 @@ var ew_InstanceLauncher = {
     {
         var textbox = document.getElementById("ew.newinstances.min");
         var val = parseInt(textbox.value);
-        if (val <= 0 || isNaN(val)) {
-            alert("Minimum value must be a positive integer");
+        if (val <= 0 || isNaN(val) || val > 50) {
+            alert("Minimum value must be a positive integer between 1 and 50");
             textbox.select();
             return false;
         }
@@ -71,15 +71,15 @@ var ew_InstanceLauncher = {
         // Assumes validateMin has been called
         var maxtextbox = document.getElementById("ew.newinstances.max");
         var maxval = parseInt(maxtextbox.value);
-        if (maxval <= 0 || isNaN(maxval)) {
-            alert("Maximum value must be a positive integer");
+        if (maxval <= 0 || isNaN(maxval) || val > 50) {
+            alert("Maximum value must be a positive integer between 1 and 50");
             maxtextbox.select();
             return false;
         }
         var mintextbox = document.getElementById("ew.newinstances.min");
         var minval = parseInt(mintextbox.value);
         if (minval > maxval) {
-            alert("Maximum value may not be smaller than minimum value");
+            alert("Maximum value may not be smaller than minimum value between 1 and " + maxval);
             maxtextbox.select();
             return false;
         }

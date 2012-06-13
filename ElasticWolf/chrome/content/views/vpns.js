@@ -5,6 +5,7 @@ var ew_VpnConnectionTreeView = {
     menuChanged : function() {
         var image = this.getSelected();
         $("ew.vpnconnections.contextmenu").disabled = (image == null);
+        TreeView.menuChanged.call(this);
     },
 
     saveConnectionConfiguration : function (name, config) {
@@ -79,7 +80,8 @@ var ew_CustomerGatewayTreeView = {
 
     menuChanged : function() {
         var image = this.getSelected();
-        document.getElementById("ew.customergateways.contextmenu").disabled = (image == null);
+        $("ew.customergateways.contextmenu").disabled = (image == null);
+        TreeView.menuChanged.call(this);
     },
 
     createCustomerGateway : function () {
@@ -116,11 +118,11 @@ ew_CustomerGatewayTreeView.register();
 
 var ew_VpnGatewayTreeView = {
     model: ['vpnGateways', 'vpcs'],
-    searchElement: 'ew.vpngateways.search',
 
     menuChanged : function() {
         var image = this.getSelected();
-        $("ew.vpngateways.contextmenu").disabled = (image == null);
+        $("ew.vpnGateways.contextmenu").disabled = (image == null);
+        TreeView.menuChanged.call(this);
     },
 
     selectionChanged : function(event) {
@@ -169,11 +171,13 @@ ew_VpnGatewayTreeView.__proto__ = TreeView;
 ew_VpnGatewayTreeView.register();
 
 var ew_VpnAttachmentTreeView = {
+    name: "vpnattachments",
 
     menuChanged : function()
     {
         var image = this.getSelected();
         $("ew.vpnattachments.contextmenu").disabled = (image == null);
+        TreeView.menuChanged.call(this);
     },
 
     deleteVpnAttachment : function()

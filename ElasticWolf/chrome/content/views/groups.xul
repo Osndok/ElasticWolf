@@ -7,7 +7,7 @@
         <groupbox orient="vertical" flex="1" id="eip.tree.holder">
             <caption label="Groups" />
             <popupset>
-                <menupopup id="ew.groups.contextmenu" onpopupshowing="ew_GroupsTreeView.menuChanged();">
+                <menupopup id="ew.groups.contextmenu" >
                 <menuitem id="ew.groups.contextmenu.add" oncommand="ew_GroupsTreeView.addGroup();" label="Add group" />
                 <menuitem id="ew.groups.contextmenu.delete" oncommand="ew_GroupsTreeView.deleteGroup();" label="Delete group" />
                 <menuitem id="ew.users.contextmenu.rename" oncommand="ew_GroupsTreeView.renameGroup();" label="Rename group" />

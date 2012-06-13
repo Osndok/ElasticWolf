@@ -1,101 +1,101 @@
 var ew_menu = {
     // Order of te tabs should match order of tabpanels
     tabs: [
-            { tab: "ew.tabs.prefs",         views: [ { view: ew_PrefsView } ] },
+            { name: "ew.tabs.prefs",         views: [ { view: ew_PrefsView } ] },
 
-            { tab: "ew.tabs.credential",    views: [ { id: "ew.credentials.view", view: ew_CredentialsTreeView } ] },
+            { name: "ew.tabs.credential",    views: [ { id: "ew.credentials.view", view: ew_CredentialsTreeView } ] },
 
-            { tab: "ew.tabs.endpoint",      views: [ { id: "ew.endpoints.view", view: ew_EndpointsTreeView } ] },
+            { name: "ew.tabs.endpoint",      views: [ { id: "ew.endpoints.view", view: ew_EndpointsTreeView } ] },
 
-            { tab: "ew.tabs.policy",        views: [ { view: ew_PasswordPolicyView } ] },
+            { name: "ew.tabs.policy",        views: [ { view: ew_PasswordPolicyView } ] },
 
-            { tab: "ew.tabs.vmfa",          views: [ { id: "ew.vmfa.view", view: ew_VMFATreeView } ] },
+            { name: "ew.tabs.vmfa",          views: [ { id: "ew.vmfas.view", view: ew_VMFATreeView } ] },
 
-            { tab: "ew.tabs.password",      call: ew_UsersTreeView.changePassword },
+            { name: "ew.tabs.password",      call: ew_UsersTreeView.changePassword },
 
-            { tab: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: true }] } ], },
+            { name: "ew.tabs.instance",      views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: true }] } ], },
 
-            { tab: "ew.tabs.vpcinstance",   views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: false }] } ],
+            { name: "ew.tabs.vpcinstance",   views: [ { id: "ew.instances.view", view: ew_InstancesTreeView, filterList: [ { name: "vpcId", empty: false }] } ],
               owner: "ew.tabs.instance"  },
 
-            { tab: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
+            { name: "ew.tabs.image",         views: [ { id: "ew.images.view", view: ew_AMIsTreeView } ], },
 
-            { tab: "ew.tabs.access",        views: [ { id: "ew.accesskeys.view", view: ew_AccessKeyTreeView },
+            { name: "ew.tabs.access",        views: [ { id: "ew.accesskeys.view", view: ew_AccessKeyTreeView },
                                                      { id: "ew.keypairs.view", view: ew_KeypairTreeView, } ], },
 
-            { tab: "ew.tabs.cert",       views: [  { id: "ew.certs.view", view: ew_CertsTreeView } ] },
+            { name: "ew.tabs.cert",          views: [  { id: "ew.certs.view", view: ew_CertsTreeView } ] },
 
-            { tab: "ew.tabs.users",         views: [ { id: "ew.users.view", view: ew_UsersTreeView, }, ] },
+            { name: "ew.tabs.users",         views: [ { id: "ew.users.view", view: ew_UsersTreeView, }, ] },
 
-            { tab: "ew.tabs.groups",        views: [ { id: "ew.groups.view", view: ew_GroupsTreeView, },
+            { name: "ew.tabs.groups",        views: [ { id: "ew.groups.view", view: ew_GroupsTreeView, },
                                                      { id: "ew.groupUsers.view", view: ew_GroupUsersTreeView, }, ] },
 
-            { tab: "ew.tabs.securitygroup", views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: true }] },
+            { name: "ew.tabs.securitygroup", views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: true }] },
                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }], },
 
-            { tab: "ew.tabs.vpcgroup",      views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: false }] },
+            { name: "ew.tabs.vpcgroup",      views: [ { id: "ew.securitygroups.view", view: ew_SecurityGroupsTreeView, filterList: [ { name: "vpcId", empty: false }] },
                                                      { id: "ew.permissions.view", view: ew_PermissionsTreeView }],
               owner: "ew.tabs.securitygroup"
             },
 
-            { tab: "ew.tabs.eip",           views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView, filterList: [ { name: "domain", value: "standard" }] }], },
+            { name: "ew.tabs.eip",           views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView, filterList: [ { name: "domain", value: "standard" }] }], },
 
-            { tab: "ew.tabs.vpceip",        views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView, filterList: [ { name: "domain", value: "vpc" }] }],
+            { name: "ew.tabs.vpceip",        views: [ { id: "ew.eip.view", view: ew_ElasticIPTreeView, filterList: [ { name: "domain", value: "vpc" }] }],
               owner: "ew.tabs.eip"
             },
 
-            { tab: "ew.tabs.volume",        views: [ { id: "ew.volumes.view", view: ew_VolumeTreeView }], },
+            { name: "ew.tabs.volume",        views: [ { id: "ew.volumes.view", view: ew_VolumeTreeView }], },
 
-            { tab: "ew.tabs.snapshot",      views: [ { id: "ew.snapshots.view", view: ew_SnapshotTreeView }], },
+            { name: "ew.tabs.snapshot",      views: [ { id: "ew.snapshots.view", view: ew_SnapshotTreeView }], },
 
-            { tab: "ew.tabs.loadbalancer",  views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView, filterList: [ { name: "vpcId", empty: true }] },
+            { name: "ew.tabs.loadbalancer",  views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView, filterList: [ { name: "vpcId", empty: true }] },
                                                      { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }], },
 
-            { tab: "ew.tabs.vpcelb",        views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView, filterList: [ { name: "vpcId", empty: false }] },
+            { name: "ew.tabs.vpcelb",        views: [ { id: "ew.loadbalancer.view", view: ew_LoadbalancerTreeView, filterList: [ { name: "vpcId", empty: false }] },
                                                      { id: "ew.instancehealth.view", view: ew_InstanceHealthTreeView }],
               owner: "ew.tabs.loadbalancer"
             },
 
-            { tab: "ew.tabs.bundletask",    views: [ { id: "ew.bundleTasks.view", view: ew_BundleTasksTreeView } ], },
+            { name: "ew.tabs.bundletask",    views: [ { id: "ew.bundleTasks.view", view: ew_BundleTasksTreeView } ], },
 
-            { tab: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
+            { name: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
                                                      { id: "ew.rsvdInst.view", view: ew_ReservedInstancesTreeView } ], },
 
-            { tab: "ew.tabs.vpc",           views: [ { id: "ew.vpcs.view", view: ew_VpcTreeView }, ] },
+            { name: "ew.tabs.vpc",           views: [ { id: "ew.vpcs.view", view: ew_VpcTreeView }, ] },
 
-            { tab: "ew.tabs.dhcp",          views: [ { id: "ew.dhcpOptions.view", view: ew_DhcpoptsTreeView } ], },
+            { name: "ew.tabs.dhcp",          views: [ { id: "ew.dhcpOptions.view", view: ew_DhcpoptsTreeView } ], },
 
-            { tab: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
+            { name: "ew.tabs.lease",         views: [ { id: "ew.offerings.view", view: ew_LeaseOfferingsTreeView },
                                                      { id: "ew.reservedInstances.view", view: ew_ReservedInstancesTreeView } ], },
 
-            { tab: "ew.tabs.subnet",        views: [ { id: "ew.subnets.view", view: ew_SubnetsTreeView },
+            { name: "ew.tabs.subnet",        views: [ { id: "ew.subnets.view", view: ew_SubnetsTreeView },
                                                      { id: "ew.subnetroutes.view", view: ew_SubnetRoutesTreeView },
                                                      { id: "ew.subnetacls.view", view: ew_SubnetAclRulesTreeView } ], },
 
-            { tab: "ew.tabs.routing",       views: [ { id: "ew.routetables.view", view: ew_RouteTablesTreeView },
+            { name: "ew.tabs.routing",       views: [ { id: "ew.routetables.view", view: ew_RouteTablesTreeView },
                                                      { id: "ew.routes.view", view: ew_RoutesTreeView },
                                                      { id: "ew.route.associations.view", view: ew_RouteAssociationsTreeView }, ], },
 
-            { tab: "ew.tabs.igw",           views: [ { id: "ew.internetgateways.view", view : ew_InternetGatewayTreeView } ], },
+            { name: "ew.tabs.igw",           views: [ { id: "ew.internetgateways.view", view : ew_InternetGatewayTreeView } ], },
 
-            { tab: "ew.tabs.acl",           views: [ { id: "ew.acls.view", view: ew_NetworkAclsTreeView } ,
+            { name: "ew.tabs.acl",           views: [ { id: "ew.acls.view", view: ew_NetworkAclsTreeView } ,
                                                      { id: "ew.acls.associations.view", view: ew_NetworkAclAssociationsTreeView },
                                                      { id: "ew.acls.rules.view", view: ew_NetworkAclRulesTreeView }], },
 
-            { tab: "ew.tabs.eni",           views: [ { id: "ew.enis.view", view: ew_NetworkInterfacesTreeView },] },
+            { name: "ew.tabs.eni",           views: [ { id: "ew.enis.view", view: ew_NetworkInterfacesTreeView },] },
 
-            { tab: "ew.tabs.vgw",           views: [ { id: "ew.vpngateways.view", view: ew_VpnGatewayTreeView },
+            { name: "ew.tabs.vgw",           views: [ { id: "ew.vpnGateways.view", view: ew_VpnGatewayTreeView },
                                                      { id: "ew.vpnattachments.view", view: ew_VpnAttachmentTreeView } ], },
 
-            { tab: "ew.tabs.vpn",           views: [ { id: "ew.vpnconnections.view", view: ew_VpnConnectionTreeView } ] },
+            { name: "ew.tabs.vpn",           views: [ { id: "ew.vpnconnections.view", view: ew_VpnConnectionTreeView } ] },
 
-            { tab: "ew.tabs.cgw",           views: [ { id: "ew.customergateways.view", view: ew_CustomerGatewayTreeView },] },
+            { name: "ew.tabs.cgw",           views: [ { id: "ew.customergateways.view", view: ew_CustomerGatewayTreeView },] },
 
-            { tab: "ew.tabs.availzone",     views: [ { id: "ew.azones.view", view: ew_AvailZoneTreeView }], },
+            { name: "ew.tabs.availzone",     views: [ { id: "ew.azones.view", view: ew_AvailZoneTreeView }], },
 
-            { tab: "ew.tabs.s3",            views: [ { id: "ew.s3.view", view: ew_S3BucketsTreeView }], },
+            { name: "ew.tabs.s3",            views: [ { id: "ew.s3.view", view: ew_S3BucketsTreeView }], },
 
-            { tab: "ew.tabs.alarm",         views: [ { id: "ew.alarms.view", view: ew_AlarmsTreeView }], },
+            { name: "ew.tabs.alarm",         views: [ { id: "ew.alarms.view", view: ew_AlarmsTreeView }], },
     ],
 
     init: function() {
@@ -104,17 +104,21 @@ var ew_menu = {
             // Because owner refers to the real panel need to skip it
             if (this.tabs[i].owner) continue;
             for (var v in this.tabs[i].views) {
-                var tree = $(this.tabs[i].views[v].id);
-                if (tree) {
-                    this.tabs[i].views[v].view.init(tree, this.tabs[i]);
+                var id = this.tabs[i].views[v].id;
+                if (!id) continue;
+                var tree = $(id);
+                if (!tree) {
+                    debug('view not found ' + id);
+                    continue;
                 }
+                this.tabs[i].views[v].view.init(tree, this.tabs[i]);
             }
         }
     },
 
     get: function(name) {
         for (var i in this.tabs) {
-            if (this.tabs[i].tab == name) return this.tabs[i];
+            if (this.tabs[i].name == name) return this.tabs[i];
         }
         return null;
     },

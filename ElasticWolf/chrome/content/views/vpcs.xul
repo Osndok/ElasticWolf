@@ -7,7 +7,7 @@
             <groupbox orient="vertical" flex="1">
                 <caption label="&ew.captions.vpcs.vpcs.label;" />
                 <popupset>
-                    <menupopup id="ew.vpcs.contextmenu" onpopupshowing="ew_VpcTreeView.menuChanged();">
+                    <menupopup id="ew.vpcs.contextmenu" >
                         <menuitem oncommand="ew_VpcTreeView.tag(event);" label="Add Tag" />
                         <menuseparator />
                         <menuitem oncommand="ew_VpcTreeView.createSubnet();" label="&ew.vpc.contextmenu.createsubnet.label;" />

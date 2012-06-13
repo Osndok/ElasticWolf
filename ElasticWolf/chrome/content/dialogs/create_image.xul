@@ -41,7 +41,6 @@
         this.retVal = window.arguments[2];
 
         document.getElementById("ew.instanceid").value = this.id;
-        this.getAmiName().select();
     }
   ]]>
   </script>

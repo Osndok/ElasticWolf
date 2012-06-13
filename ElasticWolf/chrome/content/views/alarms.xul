@@ -6,7 +6,7 @@
         <groupbox orient="vertical" flex="1" id="eip.tree.holder">
             <caption label="Cloud Watch Alarms" />
             <popupset>
-                <menupopup id="ew.alarms.contextmenu" onpopupshowing="ew_AlarmsTreeView.menuChanged();">
+                <menupopup id="ew.alarms.contextmenu">
                 </menupopup>
             </popupset>
 

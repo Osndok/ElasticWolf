@@ -39,7 +39,7 @@
         if (!name) return;
         var me = this;
         this.session.controller.addLaunchPermission(image.id, name, function() { me.refresh(); });
-        if (this.list.value == "all") this.image.isPublic = 'public';
+        if (this.list.value == "all") this.image.status = 'public';
     }
 
     function remove()
@@ -48,7 +48,7 @@
         if (!confirm("Revoke launch permissions for " + name + " on AMI " + this.image.id + "?")) return;
         var me = this;
         this.session.controller.revokeLaunchPermission(this.image.id, this.list.value, function() { me.refresh()});
-        if (this.list.value == "all") this.image.isPublic = 'private';
+        if (this.list.value == "all") this.image.status = 'private';
     }
 
     function reset()

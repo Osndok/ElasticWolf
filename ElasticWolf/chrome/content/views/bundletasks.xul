@@ -6,8 +6,7 @@
     <groupbox flex="1" orient="vertical">
       <caption label="&ew.captions.bundleTasks.label;" />
       <popupset>
-        <menupopup id="ew.bundleTasks.contextmenu"
-          onpopupshown="ew_BundleTasksTreeView.menuChanged();">
+        <menupopup id="ew.bundleTasks.contextmenu" >
           <menuitem oncommand="ew_BundleTasksTreeView.displayDetails();" label="&ew.contextmenu.details.label;" />
           <menuseparator />
           <menuitem id="bundleTasks.context.register" oncommand="ew_BundleTasksTreeView.registerNewImage();" label="&ew.images.contextmenu.register.label;" />

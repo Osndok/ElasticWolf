@@ -53,7 +53,7 @@ var ew_session = {
         // Use last used credentials
         this.selectCredentials(this.getActiveCredentials());
         this.selectEndpoint(this.getActiveEndpoint());
-        this.selectTab(this.getCurrentTab());
+        this.selectTab(this.getStrPrefs("ew.tab.current"));
 
         // Parse command line
         this.cmdLine = window.arguments[0].QueryInterface(Components.interfaces.nsICommandLine);
@@ -121,7 +121,7 @@ var ew_session = {
         if (this.disabled) return;
 
         if (ew_menu.select(name)) {
-            this.setCurrentTab(name);
+            this.setStrPrefs("ew.tab.current", name);
         }
     },
 
@@ -372,7 +372,9 @@ var ew_session = {
 
         // Create openssl config file
         var confdata = "[req]\nprompt=no\ndistinguished_name=n\nx509_extensions=c\n[c]\nsubjectKeyIdentifier=hash\nauthorityKeyIdentifier=keyid:always,issuer\nbasicConstraints=CA:true\n[n]\nCN=EC2\nOU=EC2\nemailAddress=ec2@amazonaws.com\n"
-        FileIO.write(FileIO.open(conffile), confdata)
+        if (!FileIO.write(FileIO.open(conffile), confdata)) {
+            return alert('Unable to create file ' + conffile + ", check permissions, aborting");
+        }
 
         // Create private and cert files
         this.setEnv("OPENSSL_CONF", conffile);
@@ -411,8 +413,11 @@ var ew_session = {
         if (!this.makeKeyHome()) return 0
 
         // Save access key into file
+        var file = this.getCredentialFile(name);
         if (!accessKey) accessKey = { id: this.accessCode, secret: this.secretKey };
-        FileIO.write(FileIO.open(this.getCredentialFile(name)), "AWSAccessKeyId=" + accessKey.id + "\nAWSSecretKey=" + accessKey.secret + "\n")
+        if (!FileIO.write(FileIO.open(file), "AWSAccessKeyId=" + accessKey.id + "\nAWSSecretKey=" + accessKey.secret + "\n")) {
+            return alert('Unable to create credentials file ' + file + ", please check directory permissions");
+        }
 
         // Setup environment
         if (keyPair) {
@@ -1308,24 +1313,30 @@ var ew_session = {
         this.setStrPrefs("ew.endpoint.url", value);
     },
 
-    getCurrentTab : function()
-    {
-        return this.getStrPrefs("ew.tab.current", '');
-    },
-
-    setCurrentTab : function(value)
-    {
-        this.setStrPrefs("ew.tab.current", value);
-    },
-
     getKeyHome : function()
     {
         return this.getStrPrefs("ew.key.home", this.getHome() + this.getDirSeparator() + this.getAppName());
     },
 
-    setKeyHome : function(value)
+    makeKeyHome: function()
     {
-        this.setStrPrefs("ew.key.home", value);
+        while (true) {
+            var msg, path = this.getKeyHome();
+            if (DirIO.mkpath(path)) {
+                // Can we create files here?
+                var file = DirIO.makepath(path, "test");
+                var rc = FileIO.write(FileIO.open(file), "");
+                FileIO.remove(file);
+                if (rc) return 1;
+                msg = "Directory " + path + " is not writable, please choose another place where to keep my files:"
+            } else {
+                msg = 'Unable to create directory ' + path + ", please choose another directory where to keep my files:"
+            }
+            path = ew_session.promptForDir(msg);
+            if (!path) return 0;
+            this.setStrPrefs("ew.key.home", path);
+        }
+        return 1
     },
 
     getLastUsedAccount : function()
@@ -1563,15 +1574,6 @@ var ew_session = {
 
         debug("BATCH:" + file + "\n" + batch)
         return args;
-    },
-
-    makeKeyHome: function()
-    {
-        if (!DirIO.mkpath(this.getKeyHome())) {
-            alert("Error creating directory " + this.getKeyHome());
-            return 0
-        }
-        return 1
     },
 
     getLastEC2PrivateKeyFile : function()

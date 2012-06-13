@@ -143,7 +143,7 @@
                 </columns>
                 <rows flex="1">
                     <row>
-                        <textbox id="ew.newinstances.userdata" multiline="true" size="140" rows="1" wrap="false" style="font-family: monospace;" />
+                        <textbox id="ew.newinstances.userdata" multiline="true" size="140" rows="2" wrap="false" style="font-family: monospace;" />
                         <hbox pack="end" flex="1">
                             <button label="Open File" oncommand="ew_InstanceLauncher.loadUserDataFromFile(false);" />
                             <button label="Open Binary File" oncommand="ew_InstanceLauncher.loadUserDataFromFile(true);" />

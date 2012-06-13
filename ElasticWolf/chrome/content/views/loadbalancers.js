@@ -28,7 +28,8 @@ var ew_LoadbalancerTreeView = {
     },
 
     create: function() {
-        var retVal = {ok:null, vpc: ew_session.getCurrentTab(name).match("vpc") };
+        var tab = ew_menu.getCurrent();
+        var retVal = {ok:null, vpc: tab && tab.name.match("vpc") };
         window.openDialog("chrome://ew/content/dialogs/create_loadbalancer.xul",null,"chrome,centerscreen,modal,resizable",ew_session,retVal);
         var me = this;
         if (retVal.ok) {

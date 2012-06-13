@@ -1,7 +1,7 @@
 var ew_AMIsTreeView = {
     model : ['images','securityGroups','instances', 'keypairs', 'vpcs', 'subnets', 'availabilityZones' ],
     favorites: "ew.images.favorites",
-    properties: ['ownerAlias', 'isPublic', 'state'],
+    properties: ['ownerAlias', 'status', 'state'],
 
     menuChanged : function(event)
     {
@@ -30,12 +30,6 @@ var ew_AMIsTreeView = {
         var type = $("ew.images.type").value;
         $("amis.context.fadd").disabled = type == "fav";
         $("amis.context.fdelete").disabled = type != "fav";
-    },
-
-    imageTypeChanged : function()
-    {
-        $("ew.images.search").value = "";
-        this.invalidate();
     },
 
     manageFavorites: function(remove) {

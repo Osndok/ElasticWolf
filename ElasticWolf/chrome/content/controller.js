@@ -693,13 +693,9 @@ var ew_controller = {
             var imageState = getNodeValue(item, "imageState");
             var owner = getNodeValue(item, "imageOwnerId");
             var isPublic = getNodeValue(item, "isPublic");
-
-            // This value might not exist, but getNodeValue
-            // returns "" in case the element is not defined.
             var platform = getNodeValue(item, "platform");
             var aki = getNodeValue(item, "kernelId");
             var ari = getNodeValue(item, "ramdiskId");
-
             var rdt = getNodeValue(item, "rootDeviceType");
             var ownerAlias = getNodeValue(item, "imageOwnerAlias");
             var name = getNodeValue(item, "name");
@@ -709,15 +705,21 @@ var ew_controller = {
             ami = new AMI(imageId, imageLocation, imageState, owner, (isPublic == 'true' ? 'public' : 'private'), platform, aki, ari, rdt, ownerAlias, name, description, snapshotId, tags);
         }
 
-        if (responseObj.callback && ami) responseObj.callback(ami);
+        if (responseObj.callback) responseObj.callback(ami);
     },
 
     createImage : function(instanceId, amiName, amiDescription, noReboot, callback)
     {
-        var noRebootVal = "false";
-        if (noReboot == true) noRebootVal = "true";
+        var noRebootVal = noReboot ? "true" : "false";
 
-        ew_session.queryEC2("CreateImage", [ [ "InstanceId", instanceId ], [ "Name", amiName ], [ "Description", amiDescription ], [ "NoReboot", noRebootVal ] ], this, false, "onComplete", callback);
+        ew_session.queryEC2("CreateImage", [ [ "InstanceId", instanceId ], [ "Name", amiName ], [ "Description", amiDescription ], [ "NoReboot", noRebootVal ] ], this, false, "onCompleteCreateImage", callback);
+    },
+
+    onCompleteCreateImage: function(responseObj)
+    {
+        var xmlDoc = responseObj.xmlDoc;
+        var imageId = getNodeValue(xmlDoc, "imageId");
+        if (responseObj.callback) responseObj.callback(imageId);
     },
 
     describeImages : function( callback)
@@ -2602,7 +2604,7 @@ var ew_controller = {
     getLoginProfile : function(name, callback)
     {
         var params = [];
-        if (name) params.push(["UserName", user])
+        if (name) params.push(["UserName", name])
         ew_session.queryIAM("GetLoginProfile", params, this, false, "onCompleteGetLoginProfile", callback);
     },
 
@@ -2612,7 +2614,7 @@ var ew_controller = {
 
         var name = getNodeValue(xmlDoc, "UserName");
         var date = getNodeValue(xmlDoc, "CreateDate");
-        ew_model.update('users', getParam(params, 'UserName'), 'loginProfileDate', date)
+        ew_model.update('users', name, 'loginProfileDate', date)
 
         if (responseObj.callback) responseObj.callback(name, date);
     },

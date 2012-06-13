@@ -2,11 +2,6 @@ var ew_InstancesTreeView = {
     model: ['instances', 'images', 'addresses', 'networkInterfaces', 'subnets', 'vpcs'],
     properties: [ 'state' ],
 
-    filterChanged: function()
-    {
-        this.invalidate();
-    },
-
     filter: function(list)
     {
         if (!list) return list;
@@ -15,6 +10,7 @@ var ew_InstancesTreeView = {
 
         var nlist = new Array();
         for(var i in list) {
+            list[i].validate();
             if ((noTerm && list[i].state == "terminated") || (noStop && list[i].state == "stopped")) continue;
             nlist.push(list[i])
         }
@@ -81,10 +77,9 @@ var ew_InstancesTreeView = {
 
         window.openDialog("chrome://ew/content/dialogs/create_image.xul", null, "chrome,centerscreen,modal,resizable", instance.id, ew_session, retVal);
         if (retVal.ok) {
-            var wrap = function(id) {
-                alert("A new EBS-backed AMI is being created and will\nbe available in a moment.\n\nThe AMI ID is: "+id);
-            }
-            ew_session.controller.createImage(instance.id, retVal.amiName, retVal.amiDescription, retVal.noReboot, wrap);
+            ew_session.controller.createImage(instance.id, retVal.amiName, retVal.amiDescription, retVal.noReboot, function(id) {
+                alert("A new AMI is being created and will be available in a moment.\n\nThe AMI ID is: "+id);
+            });
         }
     },
 
@@ -93,9 +88,7 @@ var ew_InstancesTreeView = {
         if (isWindows(instance.platform)) {
             ew_session.controller.getConsoleOutput(instance.id, true, function(instanceId, timestamp, output) {
                 // Parse the response to determine whether the instance is ready to use
-                if (output.indexOf("Windows is Ready to use") >= 0) {
-                    ret = true;
-                }
+                ret = output.indexOf("Windows is Ready to use") >= 0;
             });
         } else {
             ret = true;
@@ -115,9 +108,7 @@ var ew_InstancesTreeView = {
             return;
         }
 
-        if (!this.isInstanceReadyToUse(instance)) {
-            return;
-        }
+        if (!this.isInstanceReadyToUse(instance)) return;
 
         // Determine if there is actually an EBS volume to attach to
         var volumes = ew_session.model.get('volumes');
@@ -127,7 +118,6 @@ var ew_InstancesTreeView = {
             if (fRet) {
                 fRet = ew_VolumeTreeView.createVolume();
             }
-
             if (fRet) {
                 volumes = ew_session.model.get('volumes');
             } else {
@@ -394,13 +384,6 @@ var ew_InstancesTreeView = {
         return this.instPassword;
     },
 
-    selectionChanged : function(event) {
-        var instance = this.getSelected();
-        if (instance == null) return;
-        instance.validate();
-        TreeView.selectionChanged.call(this, event);
-    },
-
     menuChanged  : function(event) {
         var instance = this.getSelected();
         var fDisabled = (instance == null);
@@ -451,8 +434,11 @@ var ew_InstancesTreeView = {
         if (instance == null) return;
 
         var count = prompt("How many more instances of "+instance.id+"?", "1");
-        if (count == null || count.trim().length == 0) return;
-        count = count.trim();
+        if (!count) return;
+        count = parseInt(count.trim());
+        if (isNan(count) || count < 0 || count > 50) {
+            return alert('Invalid number, must be between 1 and 50');
+        }
 
         var me = this;
         ew_session.controller.runMoreInstances(instance, count, function() { me.refresh()});
@@ -461,7 +447,7 @@ var ew_InstancesTreeView = {
     terminateInstance : function() {
         var instances = this.getSelectedAll();
         if (instances.length == 0) return;
-        if (!confirm("Terminate instances?")) return;
+        if (!confirm("Terminate " + instances.length + " instance(s)?")) return;
 
         var me = this;
         ew_session.controller.terminateInstances(instances, function() { me.refresh()});
@@ -469,9 +455,8 @@ var ew_InstancesTreeView = {
 
     stopInstance : function(force) {
         var instances = this.getSelectedAll();
-        if (instanceIds.length == 0) return;
-
-        if (!confirm("Stop instances?")) return;
+        if (instances.length == 0) return;
+        if (!confirm("Stop " + instances.length + " instance(s)?")) return;
 
         var me = this;
         ew_session.controller.stopInstances(instances, force, function() { me.refresh()});

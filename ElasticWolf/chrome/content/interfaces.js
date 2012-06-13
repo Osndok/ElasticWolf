@@ -3,7 +3,6 @@
 var TreeView = {
     name: '',
     model: '',
-    columns : [],
     tree: null,
     treeBox : null,
     treeList : new Array(),
@@ -14,6 +13,7 @@ var TreeView = {
     properties: [],
     refreshTimeout: 10000,
     refreshTimer: null,
+    menuActive: false,
     searchElement: null,
     searchTimer: null,
     filterList: null,
@@ -74,7 +74,7 @@ var TreeView = {
         return false;
     },
     getSelected : function()
-{
+    {
         return !this.selection || this.selection.currentIndex == -1 ? null : this.treeList[this.selection.currentIndex];
     },
     setSelected : function(index)
@@ -171,7 +171,7 @@ var TreeView = {
             col.columns.getColumnAt(i).element.setAttribute("sortDirection", "natural");
         }
         col.element.setAttribute("sortDirection", sortDirection);
-        this.sortView(document, this.columns, this.treeList);
+        this.sort();
         this.treeBox.invalidate();
         if (item) this.select(item);
     },
@@ -179,43 +179,36 @@ var TreeView = {
     {
         var item = this.getSelected();
         this.treeBox.invalidate();
-        this.sortView(document, this.columns, this.treeList);
-        if (item) this.select(item);
-    },
-    sortView: function(document, cols, list)
-    {
         var sortField = null;
         var ascending = null;
-        for (var i in cols) {
-            var col = cols[i];
-            if ($(col) != null) {
-                var direction = document.getElementById(col).getAttribute("sortDirection");
-                if (direction && direction != "natural") {
-                    ascending = (direction == "ascending");
-                    sortField = col.slice(col.indexOf(".") + 1);
-                    break;
-                }
+        for (var i = 0; i < this.tree.columns.count; i++) {
+            var col = this.tree.columns.getColumnAt(i);
+            var direction = col.element.getAttribute("sortDirection");
+            if (direction && direction != "natural") {
+                ascending = (direction == "ascending");
+                sortField = col.id.split(".").pop();
+                break;
             }
         }
+        if (!sortField) return;
 
-        if (sortField != null) {
-            var sortFunc = function(a, b) {
-                var aVal = a[sortField] || "";
-                var bVal = b[sortField] || "";
-                var aF = parseFloat(aVal);
-                if (!isNaN(aF) && aF.toString() == aVal) {
-                    aVal = aF;
-                    bVal = parseFloat(bVal);
-                } else {
-                    aVal = aVal.toString().toLowerCase();
-                    bVal = bVal.toString().toLowerCase();
-                }
-                if (aVal < bVal) return ascending ? -1 : 1;
-                if (aVal > bVal) return ascending ? 1 : -1;
-                return 0;
-            };
-            list.sort(sortFunc);
-        }
+        var sortFunc = function(a, b) {
+            var aVal = a[sortField] || "";
+            var bVal = b[sortField] || "";
+            var aF = parseFloat(aVal);
+            if (!isNaN(aF) && aF.toString() == aVal) {
+                aVal = aF;
+                bVal = parseFloat(bVal);
+            } else {
+                aVal = aVal.toString().toLowerCase();
+                bVal = bVal.toString().toLowerCase();
+            }
+            if (aVal < bVal) return ascending ? -1 : 1;
+            if (aVal > bVal) return ascending ? 1 : -1;
+            return 0;
+        };
+        this.treeList.sort(sortFunc);
+        if (item) this.select(item);
     },
     register : function()
     {
@@ -288,7 +281,8 @@ var TreeView = {
             clearTimeout(this.refreshTimer);
         }
         var me = this;
-        this.refreshTimer = setTimeout(function() { me.refresh() }, this.refreshTimeout);
+        // Ignore refresh timer if we have popup active
+        this.refreshTimer = setTimeout(function() { if (!me.menuActive) me.refresh() }, this.refreshTimeout);
         log('start timer ' + this.model)
     },
     stopRefreshTimer : function()
@@ -340,6 +334,11 @@ var TreeView = {
     },
     menuChanged: function()
     {
+        this.menuActive = true;
+    },
+    menuHidden: function()
+    {
+        this.menuActive = false;
     },
     selectionChanged: function(event)
     {
@@ -411,6 +410,10 @@ var TreeView = {
     },
     clicked: function(event)
     {
+        // Delay refresh if we are working with the list
+        if (this.refreshTimer) {
+            this.startRefreshTimer();
+        }
         if (ew_session.winDetails && event) {
             this.displayDetails();
         }
@@ -431,7 +434,7 @@ var TreeView = {
     getInputItems: function()
     {
         if (!this.tab) return [];
-        var panel = $(this.tab.tab);
+        var panel = $(this.tab.name);
         if (!panel) return [];
         var toolbars = panel.getElementsByTagName('toolbar');
         var types = ['textbox' ,'checkbox', 'menulist', 'listbox'];
@@ -480,12 +483,7 @@ var TreeView = {
         tree.view = this;
         this.tree = tree;
         this.tab = tab;
-        // Collect columns into array
-        for (var j = 0; j < tree.columns.length; j++) {
-            var col = tree.columns.getColumnAt(j);
-            this.columns.push(col.id);
-        }
-        // Search text box, one per attached toolbar
+        // Search text box, one per attached toolbar, need to keep reference for fast access to text
         if (!this.searchElement) {
             // Try naming convertion by name or model name
             var search = $("ew." + this.getName() + ".search");
@@ -496,11 +494,24 @@ var TreeView = {
             (function(v) { var me = v; tree.addEventListener('dblclick', function(e) { e.stopPropagation();me.displayDetails(e); }, false); }(this));
             (function(v) { var me = v; tree.addEventListener('select', function(e) { e.stopPropagation();me.selectionChanged(e); }, false); }(this));
             (function(v) { var me = v; tree.addEventListener('click', function(e) { e.stopPropagation();me.clicked(e); }, false); }(this));
+
+            // Install hanlders for search textbox
             if (this.searchElement) {
                 var textbox = $(this.searchElement);
-                textbox.setAttribute("type", "autocomplete");
-                textbox.setAttribute("autocompletesearch", "form-history");
-                (function(v) { var me = v; textbox.addEventListener('keypress', function(e) { e.stopPropagation();me.searchChanged(e); }, false); }(this));
+                if (textbox) {
+                    textbox.setAttribute("type", "autocomplete");
+                    textbox.setAttribute("autocompletesearch", "form-history");
+                    (function(v) { var me = v; textbox.addEventListener('keypress', function(e) { e.stopPropagation();me.searchChanged(e); }, false); }(this));
+                } else {
+                    debug('search textbox ' + this.searchElement + " not found")
+                }
+            }
+
+            // Install handlers for menu popups
+            var popup = $("ew." + this.getName() + ".contextmenu");
+            if (popup) {
+                (function(v) { var me = v; popup.addEventListener('popupshowing', function(e) { e.stopPropagation();me.menuChanged(e); }, false); }(this));
+                (function(v) { var me = v; popup.addEventListener('popuphidden', function(e) { e.stopPropagation();me.menuHidden(e); }, false); }(this));
             }
         }
     },
@@ -926,6 +937,15 @@ var DirIO = {
     path : function(dir)
     {
         return FileIO.path(dir);
+    },
+
+    makepath: function()
+    {
+        var path = [];
+        for (var i = 0; i < arguments.length; i++) {
+            if (arguments[i] != "") path.push(arguments[i]);
+        }
+        return path.join(this.sep);
     },
 
     split : function(str, join)

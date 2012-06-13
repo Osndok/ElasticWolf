@@ -253,13 +253,13 @@ function Endpoint(name, url)
     }
 }
 
-function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, rootDeviceType, ownerAlias, name, description, snapshotId, tags)
+function AMI(id, location, state, owner, status, arch, platform, aki, ari, rootDeviceType, ownerAlias, name, description, snapshotId, tags)
 {
     this.id = id;
     this.location = location;
     this.state = state;
     this.owner = owner;
-    this.isPublic = isPublic;
+    this.status = status;
     this.arch = arch;
     this.platform = platform;
     this.tags = tags;
@@ -273,7 +273,7 @@ function AMI(id, location, state, owner, isPublic, arch, platform, aki, ari, roo
     ew_model.processTags(this)
 
     this.toString = function() {
-        return this.id;
+        return (this.name ? this.name + ew_model.separator : "") + this.id + ew_model.separator + this.state + ew_model.separator + this.status + ew_model.separator + this.rootDeviceType;
     }
 }
 
@@ -976,6 +976,7 @@ var ew_model = {
                       subnetId: this.subnets,
                       instanceId: this.instances,
                       tableId: this.routeTables,
+                      imageId: this.images,
                       gatewayId: this.internetGateways,
                       cgwId: this.customerGateways,
                       vgwId: this.vpnGateways,
