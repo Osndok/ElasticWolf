@@ -821,9 +821,7 @@ var ew_model = {
 
         switch (name) {
         case "alarms":
-            if (!ew_session.isGovCloud()) {
-                ew_session.controller.describeAlarms();
-            }
+            ew_session.controller.describeAlarms();
             break;
         case "vmfas":
             ew_session.controller.listVirtualMFADevices();

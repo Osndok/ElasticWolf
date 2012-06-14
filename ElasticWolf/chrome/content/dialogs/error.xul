@@ -13,25 +13,25 @@
 
   <script type="application/x-javascript">
   function init() {
-      document.getElementById("ew.retrycancel.message").value = window.arguments[0];
-      document.getElementById("ew.retrycancel.faultCode").value = window.arguments[1];
-      document.getElementById("ew.retrycancel.requestId").value = window.arguments[2];
-      document.getElementById("ew.retrycancel.error").value = window.arguments[3];
+      document.getElementById("ew.message").value = window.arguments[0];
+      document.getElementById("ew.errCode").value = window.arguments[1].errCode;
+      document.getElementById("ew.errString").value = window.arguments[1].errString;
+      document.getElementById("ew.requestId").value = window.arguments[1].requestId;
   }
 
   function retry() {
-      window.arguments[4].value = true;
+      window.arguments[1].value = true;
       return true;
   }
 
   function cancel() {
-      window.arguments[4].value = false;
+      window.arguments[1].value = false;
       return true;
   }
   </script>
 
   <vbox flex="1">
-    <description id="ew.retrycancel.message">An Error Occurred</description>
+    <description id="ew.message">An Error Occurred</description>
     <spacer style="height: 10px" />
     <grid flex="1">
       <columns>
@@ -41,15 +41,15 @@
       <rows>
         <row>
           <label value="Request ID:" />
-          <label id="ew.retrycancel.requestId" value="" />
+          <label id="ew.requestId" value="" />
         </row>
         <row>
           <label value="Fault Code:" />
-          <label id="ew.retrycancel.faultCode" value="" />
+          <label id="ew.errCode" value="" />
         </row>
         <row>
           <label value="Details:" />
-          <textbox id="ew.retrycancel.error" multiline="true" cols="50" rows="3" wrap="true" style="font-family: monospace;" readonly="true"/>
+          <textbox id="ew.errString" multiline="true" cols="50" rows="3" wrap="true" style="font-family: monospace;" readonly="true"/>
         </row>
       </rows>
     </grid>

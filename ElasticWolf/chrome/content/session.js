@@ -1030,7 +1030,7 @@ var ew_session = {
                 if (callback) callback(filename);
             } else {
                 var rsp = this.handleResponseError(xmlhttp);
-                this.errorDialog("S3 responded with an error for "+ bucket + "/" + key + path, rsp.faultCode, rsp.requestId, rsp.faultString)
+                this.errorDialog("S3 responded with an error for "+ bucket + "/" + key + path, rsp);
             }
         };
         return true;
@@ -1132,8 +1132,9 @@ var ew_session = {
 
     handleResponseError : function(xmlhttp, action, handlerMethod, callback, params)
     {
-        var faultCode = "Unknown: " + xmlhttp.status;
-        var faultString = "An unknown error occurred, please check connectivity";
+        debug(xmlhttp.responseText)
+        var errCode = "Unknown: " + xmlhttp.status;
+        var errString = "An unknown error occurred, please check connectivity";
         var requestId = "";
         var xmlDoc = xmlhttp.responseXML;
         if (!xmlDoc) {
@@ -1142,14 +1143,14 @@ var ew_session = {
             }
         }
         if (xmlDoc) {
-            faultCode = getNodeValue(xmlDoc, "Code");
-            faultString = getNodeValue(xmlDoc, "Message");
+            errCode = getNodeValue(xmlDoc, "Code");
+            errString = getNodeValue(xmlDoc, "Message");
             requestId = getNodeValue(xmlDoc, "RequestID");
         }
-        return this.createResponse(xmlhttp, action, handlerMethod, callback, true, faultCode, faultString, requestId, params);
+        return this.createResponse(xmlhttp, action, handlerMethod, callback, true, errCode, errString, requestId, params);
     },
 
-    createResponse : function(xmlhttp, action, handlerMethod, callback, hasErrors, faultCode, faultString, requestId, params)
+    createResponse : function(xmlhttp, action, handlerMethod, callback, hasErrors, errCode, errString, requestId, params)
     {
         return { xmlhttp: xmlhttp,
                  xmlDoc: xmlhttp && xmlhttp.responseXML ? xmlhttp.responseXML : document.createElement('p'),
@@ -1158,8 +1159,8 @@ var ew_session = {
                  action: action,
                  method: handlerMethod,
                  requestId: requestId,
-                 faultCode: faultCode,
-                 faultString: faultString,
+                 errCode: errCode,
+                 errString: errString,
                  hasErrors: hasErrors,
                  params: params,
                  callback: callback, };
@@ -1168,11 +1169,11 @@ var ew_session = {
     retryRequest: function(rsp, action)
     {
         if (rsp.hasErrors) {
-            debug('error: action: ' + action + ', status: ' + rsp.status + ', errorCount: ' + this.errorCount)
+            debug('error: action: ' + action + ', status: ' + rsp.status + ', errorCount: ' + this.errorCount + ', errCode: ' + rsp.errCode + ', errString: ' + rsp.errString)
             // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
             this.errorCount++;
             if (this.errorCount < this.errorMax) {
-                if (!this.errorDialog("Server responded with an error for " + action, rsp.faultCode, rsp.requestId,  rsp.faultString)) {
+                if (!this.errorDialog("Server responded with an error for " + action, rsp)) {
                     this.errorCount = this.errorMax;
                     return false;
                 }
@@ -1186,11 +1187,11 @@ var ew_session = {
         return false;
     },
 
-    errorDialog : function(msg, code, rId, fStr)
+    errorDialog : function(msg, rsp)
     {
-        var retry = {value:null};
-        window.openDialog("chrome://ew/content/dialogs/retry_cancel.xul", null, "chrome,centerscreen,modal,resizable", msg, code, rId, fStr, retry);
-        return retry.value;
+        var rc = { value:null, errCode: rsp.errCode, errString: rsp.errString, requestId: rsp.requestId  };
+        window.openDialog("chrome://ew/content/dialogs/error.xul", null, "chrome,centerscreen,modal,resizable", msg, rc);
+        return rc.value;
     },
 
     queryVpnConnectionStylesheets : function(stylesheet)

@@ -2859,6 +2859,9 @@ var ew_controller = {
         var items = xmlDoc.evaluate("/monitoring:DescribeAlarmsResponse/monitoring:DescribeAlarmsResult/monitoring:MetricAlarms/monitoring:member",xmlDoc,this.getNsResolver(),XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,null);
         var alarms = new Array();
 
+        // Not in GovCloud yet
+        responseObj.hasErrors = false;
+
         for (var i = 0 ; i < items.snapshotLength; i++) {
             var item = items.snapshotItem(i);
             var arn = getNodeValue(item, "AlarmArn");
