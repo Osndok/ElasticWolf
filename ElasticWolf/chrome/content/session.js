@@ -446,11 +446,41 @@ var ew_session = {
         }
         debug(path)
         this.setEnv("PATH", path);
-        this.launchProcess(this.getShellCommand(), []);
+        this.launchProcess(this.getShellCommand(), this.getStrPrefs("ew.shell.args"));
     },
 
     launchProcess : function(cmd, args, block)
     {
+        // Split string to array
+        if (typeof args == "string") {
+            var tokens = [];
+            var sep = ' ';
+            var tok = '';
+
+            for ( var i = 0; i < args.length; i++) {
+                var ch = args[i];
+                if (ch == sep) {
+                    if (sep == ' ') {
+                        if (tok.length > 0) {
+                            tokens.push(tok);
+                        }
+                        tok = '';
+                    } else {
+                        sep = ' ';
+                    }
+                } else
+                if (sep == ' ' && (ch == '"' || ch == "'")) {
+                    sep = ch;
+                } else {
+                    tok += ch;
+                }
+            }
+            if (tok.length > 0) {
+                tokens.push(tok);
+            }
+            args = tokens;
+        }
+
         debug("launch: " + cmd + " " + args.join(" "));
 
         var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
@@ -1364,9 +1394,9 @@ var ew_session = {
         return this.getStrPrefs("ew.shell.command", shell);
     },
 
-    setShellCommand : function(value)
+    getShellArgs : function()
     {
-        this.setStrPrefs("ew.shell.command", value);
+        return this.getStrPrefs("ew.shell.args", "");
     },
 
     getRDPCommand : function()
@@ -1386,11 +1416,6 @@ var ew_session = {
         return this.getStrPrefs("ew.rdp.command", cmd);
     },
 
-    setRDPCommand : function(value)
-    {
-        this.setStrPrefs("ew.rdp.command", value);
-    },
-
     getRDPArgs : function()
     {
         var args = "-g 1440x900 -u administrator -p ${pass} -x l ${host}";
@@ -1405,11 +1430,6 @@ var ew_session = {
         return this.getStrPrefs("ew.rdp.command", args);
     },
 
-    setRDPArgs : function(value)
-    {
-        this.setStrPrefs("ew.rdp.args", value);
-    },
-
     getSSHCommand : function()
     {
         var cmd = '/usr/bin/xterm';
@@ -1421,11 +1441,6 @@ var ew_session = {
             cmd = 'c:\\\Windows\\System32\\cmd.exe'
         }
         return this.getStrPrefs("ew.ssh.command", cmd);
-    },
-
-    setSSHCommand : function(value)
-    {
-        this.setStrPrefs("ew.ssh.command", value);
     },
 
     getSSHArgs : function()
@@ -1453,21 +1468,6 @@ var ew_session = {
         return this.getStrPrefs("ew.ssh.args", args);
     },
 
-    setSSHArgs : function(value)
-    {
-        this.setStrPrefs("ew.ssh.args", value);
-    },
-
-    getSSHUser : function()
-    {
-        return this.getStrPrefs("ew.ssh.user", "");
-    },
-
-    setSSHUser : function(value)
-    {
-        this.setStrPrefs("ew.ssh.user", value);
-    },
-
     getOpenSSLCommand : function()
     {
         var cmd = "/usr/bin/openssl";
@@ -1475,11 +1475,6 @@ var ew_session = {
             cmd = this.getAppPath() + "\\bin\\openssl.exe"
         }
         return this.getStrPrefs("ew.openssl.command", cmd);
-    },
-
-    setOpenSSLCommand : function(value)
-    {
-        this.setStrPrefs("ew.openssl.command", value);
     },
 
     getDefaultJavaHome: function() {

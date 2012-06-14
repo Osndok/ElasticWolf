@@ -13,11 +13,12 @@ var ew_PrefsView = {
        $("ew.key.home").value = ew_session.getKeyHome();
        $("ew.ssh.command").value = ew_session.getSSHCommand();
        $("ew.ssh.args").value = ew_session.getSSHArgs();
-       $("ew.ssh.user").value = ew_session.getSSHUser();
        $("ew.rdp.command").value = ew_session.getRDPCommand();
        $("ew.rdp.args").value = ew_session.getRDPArgs();
        $("ew.openssl.command").value = ew_session.getOpenSSLCommand();
        $("ew.shell.command").value = ew_session.getShellCommand();
+       $("ew.shell.args").value = ew_session.getShellArgs();
+       this.getPrefs("ew.ssh.user");
        this.getPrefs("ew.pin");
        this.getPrefs('ew.path.java', ew_session.getDefaultJavaHome());
        this.getPrefs('ew.path.ec2');
@@ -37,13 +38,14 @@ var ew_PrefsView = {
 
    deactivate: function() {
        if (!this.rowCount) return;
-       ew_session.setSSHCommand($("ew.ssh.command").value.toString());
-       ew_session.setSSHArgs($("ew.ssh.args").value.toString());
-       ew_session.setSSHUser($("ew.ssh.user").value.toString());
-       ew_session.setRDPCommand($("ew.rdp.command").value.toString());
-       ew_session.setRDPArgs($("ew.rdp.args").value.toString());
-       ew_session.setOpenSSLCommand($("ew.openssl.command").value.toString());
-       ew_session.setShellCommand($("ew.shell.command").value.toString());
+       this.setPrefs("ew.ssh.command");
+       this.setPrefs("ew.ssh.args");
+       this.setPrefs("ew.ssh.user");
+       this.setPrefs("ew.rdp.command");
+       this.setPrefs("ew.rdp.args");
+       this.setPrefs("ew.openssl.command");
+       this.setPrefs("ew.shell.command");
+       this.setPrefs("ew.shell.args");
        this.setPrefs("ew.key.home");
        this.setPrefs("ew.pin");
        this.setPrefs('ew.path.java', ew_session.getDefaultJavaHome());

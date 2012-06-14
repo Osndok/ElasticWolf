@@ -65,6 +65,12 @@
                     </hbox>
                 </row>
                 <row>
+                    <label control="ew.shell.args" value="SHELL Arguments:" />
+                    <hbox>
+                        <textbox id="ew.shell.args" size="60" />
+                    </hbox>
+                </row>
+                <row>
                     <label control="ew.rdp.command" value="RDP Command:" />
                     <hbox>
                         <textbox id="ew.rdp.command" size="60" /> <button label="Browse" oncommand="ew_PrefsView.browse('ew.rdp.command', true)" />

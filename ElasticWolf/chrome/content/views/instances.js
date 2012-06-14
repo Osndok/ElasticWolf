@@ -761,7 +761,7 @@ var ew_InstancesTreeView = {
             params.push(["key", keyFile])
         }
 
-        if (args.indexOf("${login}") >= 0 && ew_session.getSSHUser() == "") {
+        if (args.indexOf("${login}") >= 0 && ew_session.getStrPrefs("ew.ssh.user") == "") {
             var login = prompt("Please provide SSH user name:");
             if (login && login != "") {
                 params.push(["login", login])
@@ -770,9 +770,6 @@ var ew_InstancesTreeView = {
 
         // Common substitution
         args = ew_session.getArgsProcessed(args, params, hostname);
-
-        // Finally, split args into an array
-        args = tokenise(args);
 
         ew_session.launchProcess(cmd, args);
 

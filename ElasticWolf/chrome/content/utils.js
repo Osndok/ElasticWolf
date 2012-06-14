@@ -320,42 +320,6 @@ function quotepath(path)
     return path && path.indexOf(' ') > 0 ? '"' + path + '"' : path;
 }
 
-//Poor-man's tokeniser.
-//Splits a string into tokens on spaces.
-//Spaces are ignored for strings wrapped in " or '.
-//To insert a " or ', wrap inside ' or ", respectively.
-//"a b" c'd e'f => [a b,cd ef]
-//"c'd" => [c'd]
-function tokenise(s)
-{
-    var tokens = [];
-    var sep = ' ';
-    var tok = '';
-
-    for ( var i = 0; i < s.length; i++) {
-        var ch = s[i];
-        if (ch == sep) {
-            if (sep == ' ') {
-                if (tok.length > 0) {
-                    tokens.push(tok);
-                }
-                tok = '';
-            } else {
-                sep = ' ';
-            }
-        } else
-        if (sep == ' ' && (ch == '"' || ch == "'")) {
-             sep = ch;
-        } else {
-            tok += ch;
-        }
-    }
-    if (tok.length > 0) {
-        tokens.push(tok);
-    }
-    return tokens;
-}
-
 function readPublicKey(file)
 {
     var body = ""

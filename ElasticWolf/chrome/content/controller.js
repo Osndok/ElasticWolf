@@ -7,6 +7,7 @@ var ew_controller = {
         return ew_session.getNsResolver();
     },
 
+    // Use this to flag that errors in sync calls will be handled in the callback, no need for error message right away
     handleErrors: function(action, method)
     {
         this.errorHandlers[action + ":" + method] = true;
