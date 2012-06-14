@@ -561,7 +561,17 @@ function BundleTask(id, instanceId, state, startTime, updateTime, s3bucket, s3pr
     }
 }
 
-function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc, offering, tenancy)
+function RecurringCharge(frequency, amount)
+{
+    this.frequency = frequency
+    this.amount = amount
+
+    this.toString = function() {
+        return this.frequency + ew_model.separator + this.amount
+    }
+}
+
+function LeaseOffering(id, type, az, duration, fPrice, uPrice, rPrices, desc, offering, tenancy)
 {
     this.id = id;
     this.instanceType = type;
@@ -569,6 +579,7 @@ function LeaseOffering(id, type, az, duration, fPrice, uPrice, desc, offering, t
     this.duration = duration;
     this.fixedPrice = fPrice;
     this.usagePrice = uPrice;
+    this.recurringCharges = rPrices;
     this.description = desc;
     this.offering = offering;
     this.tenancy = tenancy;

@@ -237,6 +237,7 @@
 <!ENTITY ew.offerings.duration.label "Duration (years)">
 <!ENTITY ew.offerings.fixedPrice.label "One-time Payment/Instance (US$)">
 <!ENTITY ew.offerings.usagePrice.label "Usage Price/Instance (US$)">
+<!ENTITY ew.offerings.recurringPrice.label "Recurring Charges/Instance (US$)">
 <!ENTITY ew.offerings.description.label "Description">
 <!ENTITY ew.offerings.totalPrice.label "Total One-time Payment (Due Now)">
 <!ENTITY ew.offerings.captions.review.label "Review, Specify Number of Instances, and click Continue">

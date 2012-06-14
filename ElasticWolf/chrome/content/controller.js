@@ -784,8 +784,12 @@ var ew_controller = {
             var desc = getNodeValue(items.snapshotItem(i), "productDescription");
             var otype = getNodeValue(items.snapshotItem(i), "offeringType");
             var tenancy = getNodeValue(items.snapshotItem(i), "instanceTenancy");
-
-            list.push(new LeaseOffering(id, type, az, duration, fPrice, uPrice, desc, otype, tenancy));
+            var objs = this.getItems(items.snapshotItem(i), "recurringCharges", "item", ["frequency", "amount"]);
+            var recurring = [];
+            for (var j = 0; j < objs.length; j++) {
+                recurring.push(new RecurringCharge(objs[j].frequency, objs[j].amount))
+            }
+            list.push(new LeaseOffering(id, type, az, duration, fPrice, uPrice, recurring, desc, otype, tenancy));
         }
 
         ew_model.set('offerings', list);
