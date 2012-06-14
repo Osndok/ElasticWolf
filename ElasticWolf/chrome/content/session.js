@@ -534,7 +534,7 @@ var ew_session = {
         var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
         fp.init(window, msg, save ? nsIFilePicker.modeSave : nsIFilePicker.modeOpen);
         fp.displayDirectory = FileIO.open(this.getKeyHome());
-        fp.defaultString = filename || ""
+        fp.defaultString = filename || "";
         if (fp.show() != nsIFilePicker.returnCancel) {
             return fp.file.path;
         }
@@ -1596,6 +1596,16 @@ var ew_session = {
             home = env.get("HOME");
         }
         return home
+    },
+
+    getFileContents: function(path)
+    {
+        return FileIO.toString(path);
+    },
+
+    getBinaryFileContents: function(path, base64)
+    {
+        return FileIO.readBinary(FileIO.open(path), base64);
     },
 
     getEnv : function(name)

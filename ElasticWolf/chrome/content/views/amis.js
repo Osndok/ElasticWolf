@@ -105,7 +105,7 @@ var ew_AMIsTreeView = {
     {
         var image = this.getSelected();
         if (image == null) return;
-        var retVal = { ok : null, tag: "" };
+        var retVal = { ok : null, tag: "", max: ew_InstancesTreeView.max };
 
         window.openDialog("chrome://ew/content/dialogs/create_instances.xul", null, "chrome,centerscreen,modal,resizable", image, ew_session, retVal);
         if (retVal.ok) {
@@ -117,7 +117,6 @@ var ew_AMIsTreeView = {
                                                retVal.subnetId, retVal.ipAddress, function(list) {
                 if (retVal.tag != "") {
                     var tags = ew_session.parseTags(retVal.tag);
-                    debug(list, tags)
                     ew_session.setTags(list, tags, function() { ew_InstancesTreeView.refresh() });
                 } else {
                     ew_InstancesTreeView.refresh();

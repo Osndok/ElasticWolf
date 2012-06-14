@@ -1,6 +1,6 @@
 var ew_InstanceLauncher = {
     image : null,
-    ew_session : null,
+    session : null,
     retVal : null,
     securityGroups: null,
     unusedSecGroupsList : null,
@@ -14,75 +14,61 @@ var ew_InstanceLauncher = {
 
     launch : function()
     {
-        if (!this.validateMin()) return false;
-        if (!this.validateMax()) return false;
+        var minbox = document.getElementById("ew.min");
+        var minval = parseInt(minbox.value);
+        if (isNaN(minval) || minval <= 0 || minval > this.retVal.max) {
+            alert("Minimum value must be a positive integer between 1 and " + this.retVal.max);
+            minbox.select();
+            return false;
+        }
+        // Assumes validateMin has been called
+        var maxbox = document.getElementById("ew.max");
+        var maxval = parseInt(maxbox.value);
+        if (isNaN(maxval) || maxval <= 0 || maxval > this.retVal.max) {
+            alert("Maximum value must be a positive integer between 1 and " + this.retVal.max);
+            maxbox.select();
+            return false;
+        }
+        if (minval > maxval) {
+            alert("Maximum value may not be smaller than minimum value between 1 and " + maxval);
+            minbox.select();
+            return false;
+        }
 
         this.retVal.imageId = this.image.id;
-        this.retVal.kernelId = document.getElementById("ew.newinstances.aki").value;
-        this.retVal.ramdiskId = document.getElementById("ew.newinstances.ari").value;
-        this.retVal.instanceType = document.getElementById("ew.newinstances.instancetypelist").selectedItem.value;
-        this.retVal.minCount = document.getElementById("ew.newinstances.min").value.trim();
-        this.retVal.maxCount = document.getElementById("ew.newinstances.max").value.trim();
-        this.retVal.tag = document.getElementById("ew.newinstances.tag").value.trim();
-        this.retVal.name = document.getElementById("ew.newinstances.name").value.trim();
+        this.retVal.kernelId = document.getElementById("ew.aki").value;
+        this.retVal.ramdiskId = document.getElementById("ew.ari").value;
+        this.retVal.instanceType = document.getElementById("ew.instancetypelist").selectedItem.value;
+        this.retVal.minCount = document.getElementById("ew.min").value.trim();
+        this.retVal.maxCount = document.getElementById("ew.max").value.trim();
+        this.retVal.tag = document.getElementById("ew.tag").value.trim();
+        this.retVal.name = document.getElementById("ew.name").value.trim();
         this.retVal.securityGroups = this.used;
 
-        var subnet = document.getElementById("ew.newinstances.subnetId").value;
+        var subnet = document.getElementById("ew.subnetId").value;
         if (subnet == "" && this.vpcMenu.value != "") {
             alert("No subnet selected for VPC. Please select a subnet to continue.");
             return false;
         }
         this.retVal.subnetId = subnet;
-        this.retVal.ipAddress = document.getElementById("ew.newinstances.ipAddress").value.trim();
+        this.retVal.ipAddress = document.getElementById("ew.ipAddress").value.trim();
 
         // This will be an empty string if <none> is selected
-        this.retVal.keyName = document.getElementById("ew.newinstances.keypairlist").selectedItem.value;
+        this.retVal.keyName = document.getElementById("ew.keypairlist").selectedItem.value;
 
         // This will be an empty string if <any> is selected
         this.retVal.placement = { "availabilityZone" : this.azMenu.value, "tenancy": this.tnMenu.value };
 
-        this.retVal.userData = document.getElementById("ew.newinstances.userdata").value;
+        this.retVal.userData = document.getElementById("ew.userdata").value;
         if (this.retVal.userData == "") {
             this.retVal.userData = null;
         }
-        this.retVal.properties = document.getElementById("ew.newinstances.properties").value;
+        this.retVal.properties = document.getElementById("ew.properties").value;
         if (this.retVal.properties == "") {
             this.retVal.properties = null;
         }
         this.retVal.ok = true;
 
-        return true;
-    },
-
-    validateMin : function()
-    {
-        var textbox = document.getElementById("ew.newinstances.min");
-        var val = parseInt(textbox.value);
-        if (val <= 0 || isNaN(val) || val > 50) {
-            alert("Minimum value must be a positive integer between 1 and 50");
-            textbox.select();
-            return false;
-        }
-        return true;
-    },
-
-    validateMax : function()
-    {
-        // Assumes validateMin has been called
-        var maxtextbox = document.getElementById("ew.newinstances.max");
-        var maxval = parseInt(maxtextbox.value);
-        if (maxval <= 0 || isNaN(maxval) || val > 50) {
-            alert("Maximum value must be a positive integer between 1 and 50");
-            maxtextbox.select();
-            return false;
-        }
-        var mintextbox = document.getElementById("ew.newinstances.min");
-        var minval = parseInt(mintextbox.value);
-        if (minval > maxval) {
-            alert("Maximum value may not be smaller than minimum value between 1 and " + maxval);
-            maxtextbox.select();
-            return false;
-        }
         return true;
     },
 
@@ -169,17 +155,17 @@ var ew_InstanceLauncher = {
 
         // Reset subnets
         this.subnetMenu.removeAllItems();
-        document.getElementById("ew.newinstances.ipAddress").disabled = true;
+        document.getElementById("ew.ipAddress").disabled = true;
 
         if (sel.value != null && sel.value != '') {
-            var subnets = this.ew_session.model.get('subnets');
+            var subnets = this.session.model.get('subnets');
             for ( var i in subnets) {
                 if (subnets[i].vpcId == sel.value && (az == "" || az == subnets[i].availabilityZone)) {
                     this.subnetMenu.appendItem(subnets[i].toString(), subnets[i].id)
                 }
             }
             this.subnetMenu.selectedIndex = 0;
-            document.getElementById("ew.newinstances.ipAddress").disabled = false;
+            document.getElementById("ew.ipAddress").disabled = false;
         }
 
         this.buildGroupList();
@@ -188,53 +174,34 @@ var ew_InstanceLauncher = {
 
     loadUserDataFromFile : function(fBinary)
     {
-        var nsIFilePicker = Components.interfaces.nsIFilePicker;
-        var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(nsIFilePicker);
-        fp.init(window, "Load user data", nsIFilePicker.modeLoad);
-        fp.appendFilters(nsIFilePicker.filterAll);
-
-        var res = fp.show();
-        if (res == nsIFilePicker.returnOK) {
-            var userdataFile = fp.file;
-            var inputStream = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream);
-            // Open the file for read (01)
-            inputStream.init(userdataFile, 0x01, 0400, null);
-            var sis = null;
-            var contents = null;
-            if (fBinary) {
-                sis = Components.classes["@mozilla.org/binaryinputstream;1"].createInstance(Components.interfaces.nsIBinaryInputStream);
-                sis.setInputStream(inputStream);
-                contents = sis.readByteArray(sis.available());
-                contents = "Base64:" + Base64.encode(contents);
-            } else {
-                sis = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
-                sis.init(inputStream);
-                contents = sis.read(sis.available());
-            }
-
-            inputStream.close();
-
-            document.getElementById("ew.newinstances.userdata").value = contents;
+        var file = this.session.promptForFile("Load user data");
+        if (!file) return;
+        var data = "";
+        if (fBinary) {
+            data = "Base64:" + this.session.getBinaryFileContents(file, true);
+        } else {
+            data = this.session.getFileContents(file)
         }
+        document.getElementById("ew.userdata").value = data;
     },
 
     init : function()
     {
         this.image = window.arguments[0];
-        this.ew_session = window.arguments[1];
+        this.session = window.arguments[1];
         this.retVal = window.arguments[2];
 
         // Get the list of keypair names visible to this user.
         // This will trigger a DescribeKeyPairs if the model
         // doesn't have any keypair info yet. If there are no keypairs,
         // this dialog shouldn't be initialized any further.
-        var keypairs = this.ew_session.model.get('keypairs');
+        var keypairs = this.session.model.get('keypairs');
         if (keypairs == null) {
             alert("Please create a keypair before launching an instance");
             return false;
         }
 
-        var keypairMenu = document.getElementById("ew.newinstances.keypairlist");
+        var keypairMenu = document.getElementById("ew.keypairlist");
         keypairMenu.appendItem("<none>", null);
         for ( var i in keypairs) {
             keypairMenu.appendItem(keypairs[i].name, keypairs[i].name);
@@ -242,59 +209,59 @@ var ew_InstanceLauncher = {
         // If the user created at least one EC2 Keypair, select it.
         keypairMenu.selectedIndex = (keypairs.length > 0) ? 1 : 0;
 
-        var typeMenu = document.getElementById("ew.newinstances.instancetypelist");
+        var typeMenu = document.getElementById("ew.instancetypelist");
         // Add the instance sizes based on AMI architecture
-        var types = this.ew_session.model.getInstanceTypes(this.image.arch);
+        var types = this.session.model.getInstanceTypes(this.image.arch);
         for (var i in types) {
             typeMenu.appendItem(types[i].name, types[i].id);
         }
         typeMenu.selectedIndex = 0;
 
-        var textBox = document.getElementById("ew.newinstances.ami");
+        var textBox = document.getElementById("ew.ami");
         textBox.value = this.image.id;
 
-        textBox = document.getElementById("ew.newinstances.ami.tag");
+        textBox = document.getElementById("ew.ami.tag");
         textBox.value = this.image.tag || "";
 
-        textBox = document.getElementById("ew.newinstances.ami.location");
+        textBox = document.getElementById("ew.ami.location");
         textBox.value = this.image.location.split('/').pop();
 
-        textBox = document.getElementById("ew.newinstances.min");
+        textBox = document.getElementById("ew.min");
         textBox.focus();
 
         // availability zones
-        this.azMenu = document.getElementById("ew.newinstances.azId");
+        this.azMenu = document.getElementById("ew.azId");
         this.azMenu.appendItem("<any>", null);
-        var availZones = this.ew_session.model.get('availabilityZones');
+        var availZones = this.session.model.get('availabilityZones');
         for ( var i in availZones) {
             this.azMenu.appendItem(availZones[i].name + " (" + availZones[i].state + ")", availZones[i].name);
         }
         this.azMenu.selectedIndex = 0;
 
-        this.tnMenu = document.getElementById("ew.newinstances.tenancy");
+        this.tnMenu = document.getElementById("ew.tenancy");
 
         // vpcs
-        this.vpcMenu = document.getElementById("ew.newinstances.vpcId");
-        this.subnetMenu = document.getElementById("ew.newinstances.subnetId");
+        this.vpcMenu = document.getElementById("ew.vpcId");
+        this.subnetMenu = document.getElementById("ew.subnetId");
 
-        document.getElementById("ew.newinstances.ipAddress").disabled = true;
+        document.getElementById("ew.ipAddress").disabled = true;
 
         // Grab handles to the unused and used security group lists.
-        this.unusedSecGroupsList = document.getElementById("ew.newinstances.secgroups.unused");
-        this.usedSecGroupsList = document.getElementById("ew.newinstances.secgroups.used");
+        this.unusedSecGroupsList = document.getElementById("ew.secgroups.unused");
+        this.usedSecGroupsList = document.getElementById("ew.secgroups.used");
 
         // Get the list of security groups visible to this user. This will trigger a DescribeSecurityGroups
         // if the model doesn't have any info yet.
-        this.securityGroups = this.ew_session.model.get('securityGroups');
+        this.securityGroups = this.session.model.get('securityGroups');
         this.buildGroupList();
 
         var aki = this.image.aki;
         var ari = this.image.ari;
 
         // Populate the AKI and ARI lists
-        var akiList = document.getElementById("ew.newinstances.aki");
-        var ariList = document.getElementById("ew.newinstances.ari");
-        var images = this.ew_session.model.get('images');
+        var akiList = document.getElementById("ew.aki");
+        var ariList = document.getElementById("ew.ari");
+        var images = this.session.model.get('images');
         var akiRegex = regExs["aki"];
         var ariRegex = regExs["ari"];
         akiList.appendItem("");
@@ -320,7 +287,7 @@ var ew_InstanceLauncher = {
         }
 
         // Populate VPCs
-        var vpcs = this.ew_session.model.get('vpcs');
+        var vpcs = this.session.model.get('vpcs');
         this.vpcMenu.appendItem("", "");
         for (var i in vpcs) {
             this.vpcMenu.appendItem(vpcs[i].toString(), vpcs[i].id);

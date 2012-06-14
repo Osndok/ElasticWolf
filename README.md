@@ -37,7 +37,9 @@ clients for accessing Linux instances.
 
 ## Testing on On Windows
 
-   * Download Git for Windows from http://code.google.com/p/msysgit/downloads/list
+   * Download Git for Windows from http://code.google.com/p/msysgit/downloads/list 
+     or
+     Explorer integration of Git from http://code.google.com/p/gitextensions/
 
    * Use Git UI to manage repository or
 

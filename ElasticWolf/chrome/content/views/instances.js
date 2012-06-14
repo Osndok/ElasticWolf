@@ -1,6 +1,7 @@
 var ew_InstancesTreeView = {
     model: ['instances', 'images', 'addresses', 'networkInterfaces', 'subnets', 'vpcs'],
     properties: [ 'state' ],
+    max: 50,
 
     filter: function(list)
     {
@@ -436,8 +437,8 @@ var ew_InstancesTreeView = {
         var count = prompt("How many more instances of "+instance.id+"?", "1");
         if (!count) return;
         count = parseInt(count.trim());
-        if (isNan(count) || count < 0 || count > 50) {
-            return alert('Invalid number, must be between 1 and 50');
+        if (isNan(count) || count < 0 || count > this.max) {
+            return alert('Invalid number, must be between 1 and ' + this.max);
         }
 
         var me = this;

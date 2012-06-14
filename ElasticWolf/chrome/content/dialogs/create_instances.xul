@@ -2,8 +2,13 @@
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://ew/locale/ew.dtd">
 
-<dialog id="ew.dialog.newinstances" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" buttons="accept,cancel" ondialogaccept="return ew_InstanceLauncher.launch();"
-    ondialogcancel="return true;" onload="ew_InstanceLauncher.init();" title="Launch new instance(s)" buttonlabelaccept="Launch">
+<dialog id="ew.dialog.newinstances" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    buttons="accept,cancel"
+    ondialogaccept="return ew_InstanceLauncher.launch();"
+    ondialogcancel="return true;"
+    onload="return ew_InstanceLauncher.init();"
+    title="Launch new instance(s)"
+    buttonlabelaccept="Launch">
 
     <script type="application/x-javascript" src="chrome://ew/content/utils.js" />
     <script type="application/x-javascript" src="chrome://ew/content/dialogs/create_instances.js" />
@@ -21,64 +26,64 @@
             </columns>
             <rows flex="1">
                 <row>
-                    <label control="ew.newinstances.ami" value="AMI ID:" />
-                    <label id="ew.newinstances.ami" readonly="true" />
+                    <label control="ew.ami" value="AMI ID:" />
+                    <label id="ew.ami" readonly="true" />
                     <spacer style="width:30px;" />
-                    <label control="ew.newinstances.tag" value="Instance Name:" />
-                    <textbox id="ew.newinstances.name" size="40" value="" />
+                    <label control="ew.tag" value="Instance Name:" />
+                    <textbox id="ew.name" size="40" value="" />
                 </row>
                 <row>
-                    <label control="ew.newinstances.ami.tag" value="AMI Tag:" />
-                    <label id="ew.newinstances.ami.tag" readonly="true" />
+                    <label control="ew.ami.tag" value="AMI Tag:" />
+                    <label id="ew.ami.tag" readonly="true" />
                     <spacer style="width:30px;" />
-                    <label control="ew.newinstances.instancetypelist" value="Instance Type:" />
-                    <menulist id="ew.newinstances.instancetypelist" crop="end" sizetopopup="none" style="max-width: 350px;"/>
+                    <label control="ew.instancetypelist" value="Instance Type:" />
+                    <menulist id="ew.instancetypelist" crop="end" sizetopopup="none" style="max-width: 350px;"/>
                 </row>
                 <row>
-                    <label control="ew.newinstances.ami.location" value="AMI Manifest:" />
-                    <label id="ew.newinstances.ami.location" readonly="true" />
+                    <label control="ew.ami.location" value="AMI Manifest:" />
+                    <label id="ew.ami.location" readonly="true" />
                     <spacer style="width:30px;" />
-                    <label control="ew.newinstances.tenancy" value="Instance Tenancy:" />
-                    <menulist id="ew.newinstances.tenancy" size="30" >
-                         <menupopup id="ew.newinstances.tenancy">
+                    <label control="ew.tenancy" value="Instance Tenancy:" />
+                    <menulist id="ew.tenancy" size="30" >
+                         <menupopup id="ew.tenancy">
                             <menuitem label="Default" value="default"/>
                             <menuitem label="Dedicated" value="dedicated"/>
                          </menupopup>
                     </menulist>
                 </row>
                 <row>
-                    <label control="ew.newinstances.aki" value="AKI ID:" />
-                    <menulist id="ew.newinstances.aki" size="40" value="" editable="true" />
+                    <label control="ew.aki" value="AKI ID:" />
+                    <menulist id="ew.aki" size="40" value="" editable="true" />
                     <spacer style="width:30px;" />
-                    <label control="ew.newinstances.tag" value="Instance Tag(s):" />
-                    <textbox id="ew.newinstances.tag" size="40" value="" />
+                    <label control="ew.tag" value="Instance Tag(s):" />
+                    <textbox id="ew.tag" size="40" value="" />
                 </row>
                 <row>
-                    <label control="ew.newinstances.ari" value="ARI ID:" />
-                    <menulist id="ew.newinstances.ari" size="40" value="" editable="true" />
+                    <label control="ew.ari" value="ARI ID:" />
+                    <menulist id="ew.ari" size="40" value="" editable="true" />
                     <spacer style="width:30px;" />
-                    <label control="ew.newinstances.properties" value="Additional Info:" />
-                    <textbox id="ew.newinstances.properties" size="40" />
+                    <label control="ew.properties" value="Additional Info:" />
+                    <textbox id="ew.properties" size="40" />
                 </row>
                 <row>
-                    <label control="ew.newinstances.azId" value="Availability Zone:" />
-                    <menulist id="ew.newinstances.azId" oncommand="ew_InstanceLauncher.vpcIdSelected();" />
+                    <label control="ew.azId" value="Availability Zone:" />
+                    <menulist id="ew.azId" oncommand="ew_InstanceLauncher.vpcIdSelected();" />
                     <spacer style="width:30px;" />
-                    <label control="ew.newinstances.min" value="Start Instances:" />
+                    <label control="ew.min" value="Start Instances:" />
                     <hbox>
-                        <label control="ew.newinstances.min" value="Min:" />
-                        <textbox id="ew.newinstances.min" size="10" value="1" />
-                        <label control="ew.newinstances.max" value="Max:" />
-                        <textbox id="ew.newinstances.max" size="10" value="1" />
+                        <label control="ew.min" value="Min:" />
+                        <textbox id="ew.min" size="10" value="1" />
+                        <label control="ew.max" value="Max:" />
+                        <textbox id="ew.max" size="10" value="1" />
                     </hbox>
                 </row>
                 <row>
-                    <label control="ew.newinstances.keypairlist" value="KeyPair:" />
-                    <menulist id="ew.newinstances.keypairlist" />
+                    <label control="ew.keypairlist" value="KeyPair:" />
+                    <menulist id="ew.keypairlist" />
                 </row>
             </rows>
         </grid>
-        <groupbox flex="1" id="ew.newinstances.vpc.box">
+        <groupbox flex="1" id="ew.vpc.box">
             <caption label="&ew.captions.newinstances.vpc.label;" />
             <grid flex="1">
                 <columns flex="1">
@@ -87,21 +92,21 @@
                 </columns>
                 <rows flex="1">
                     <row>
-                       <label control="ew.newinstances.vpcId" value="VPC: " />
-                       <menulist id="ew.newinstances.vpcId" oncommand="ew_InstanceLauncher.vpcIdSelected();" />
+                       <label control="ew.vpcId" value="VPC: " />
+                       <menulist id="ew.vpcId" oncommand="ew_InstanceLauncher.vpcIdSelected();" />
                     </row>
                     <row>
-                       <label control="ew.newinstances.subnetId" value="Subnet: " />
-                       <menulist id="ew.newinstances.subnetId" />
+                       <label control="ew.subnetId" value="Subnet: " />
+                       <menulist id="ew.subnetId" />
                     </row>
                     <row>
-                       <label control="ew.newinstances.ipAddress" value="IP Address: " />
-                       <textbox id="ew.newinstances.ipAddress" size="40" editable="true" />
+                       <label control="ew.ipAddress" value="IP Address: " />
+                       <textbox id="ew.ipAddress" size="40" editable="true" />
                     </row>
                 </rows>
             </grid>
         </groupbox>
-        <groupbox flex="1" id="ew.newinstances.secgroups.box">
+        <groupbox flex="1" id="ew.secgroups.box">
             <caption label="&ew.captions.images.launchsecgroups.label;" />
             <grid flex="1">
                 <columns flex="1">
@@ -111,12 +116,12 @@
                 </columns>
                 <rows flex="1">
                     <row>
-                        <label control="ew.newinstances.secgroups.unused" value="Available Groups" />
+                        <label control="ew.secgroups.unused" value="Available Groups" />
                         <spacer flex="1" />
-                        <label control="ew.newinstances.secgroups.used" value="Launch in" />
+                        <label control="ew.secgroups.used" value="Launch in" />
                     </row>
                     <row>
-                        <listbox flex="1" rows="3" id="ew.newinstances.secgroups.unused" seltype="multiple">
+                        <listbox flex="1" rows="3" id="ew.secgroups.unused" seltype="multiple">
                             <listcols>
                                 <listcol flex="1" />
                             </listcols>
@@ -125,7 +130,7 @@
                             <button image="../images/right.png" oncommand="ew_InstanceLauncher.addSecurityGroup();" />
                             <button image="../images/left.png" oncommand="ew_InstanceLauncher.removeSecurityGroup();" />
                         </vbox>
-                        <listbox flex="1" rows="3" id="ew.newinstances.secgroups.used" seltype="multiple">
+                        <listbox flex="1" rows="3" id="ew.secgroups.used" seltype="multiple">
                             <listcols>
                                 <listcol flex="1" />
                             </listcols>
@@ -143,7 +148,7 @@
                 </columns>
                 <rows flex="1">
                     <row>
-                        <textbox id="ew.newinstances.userdata" multiline="true" size="140" rows="2" wrap="false" style="font-family: monospace;" />
+                        <textbox id="ew.userdata" multiline="true" size="140" rows="2" wrap="false" style="font-family: monospace;" />
                         <hbox pack="end" flex="1">
                             <button label="Open File" oncommand="ew_InstanceLauncher.loadUserDataFromFile(false);" />
                             <button label="Open Binary File" oncommand="ew_InstanceLauncher.loadUserDataFromFile(true);" />

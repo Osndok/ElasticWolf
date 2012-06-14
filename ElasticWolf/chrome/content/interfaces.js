@@ -629,6 +629,8 @@ var FileIO = {
     suniconvIID : Components.interfaces.nsIScriptableUnicodeConverter,
     bufstreamCID: "@mozilla.org/network/buffered-input-stream;1",
     bufstreamIID: Components.interfaces.nsIBufferedInputStream,
+    binstreamCID: "@mozilla.org/binaryinputstream;1",
+    binstreamIID: Components.interfaces.nsIBinaryInputStream,
 
     exists : function(path)
     {
@@ -706,6 +708,27 @@ var FileIO = {
         }
         catch (e) {
             debug("FileIO: read: " + e)
+            return false;
+        }
+    },
+
+    readBinary: function(file, base64)
+    {
+        try {
+            var fStream = Components.classes[this.finstreamCID].createInstance(this.finstreamIID);
+            var bStream = Components.classes[this.binstreamCID].createInstance(this.binstreamIID);
+            fStream.init(file, 1, 0, false);
+            bStream.setInputStream(fStream);
+            var data = bStream.readByteArray(bStream.available());
+            bStream.close();
+            fStream.close();
+            if (base64) {
+                data = Base64.encode(data);
+            }
+            return data;
+        }
+        catch(e) {
+            debug("FileIO: readBinary: " + e)
             return false;
         }
     },

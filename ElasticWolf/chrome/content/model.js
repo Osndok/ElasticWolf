@@ -1244,7 +1244,6 @@ var ew_model = {
            { name: "cg1.4xlarge: 33.5 EC2 Compute Units (2 x Intel Xeon X5570, quad-core 'Nehalem' architecture), plus 2 NVIDIA Tesla M2050 'Fermi' GPUs, 22 GiB, 1680 GiB instance (2 x 840 GiB), Very high (10 Gbps Ethernet)", id: "cg1.4xlarge", x86_64: true, }
            ];
 
-        debug(arch)
         var list = [];
         for (var i in types) {
             if (types[i][arch]) list.push(types[i]);
