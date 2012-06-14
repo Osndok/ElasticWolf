@@ -45,7 +45,7 @@ var ew_CredentialsTreeView = {
     {
         var cred = ew_session.getActiveCredentials();
         for (var i in list) {
-            list[i].status = list[i].name == cred.name ? "Current" : "";
+            list[i].status = cred && list[i].name == cred.name ? "Current" : "";
         }
         return TreeView.filter.call(this, list);
     },

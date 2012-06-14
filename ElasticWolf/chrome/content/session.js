@@ -333,11 +333,12 @@ var ew_session = {
 
     refreshEndpoints: function()
     {
+        var me = this;
         // Merge with saved list of regions
         this.controller.describeRegions(function(regions) {
             for (var i in regions) {
-                if (this.getEndpoint(regions[i].name) == null) {
-                    this.endpoints.push(regions[i]);
+                if (me.getEndpoint(regions[i].name) == null) {
+                    me.endpoints.push(regions[i]);
                 }
             }
         });

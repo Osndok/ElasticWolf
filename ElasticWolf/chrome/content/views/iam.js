@@ -5,9 +5,9 @@ var ew_UsersTreeView = {
         var item = this.getSelected();
         $("ew.users.contextmenu.delete").disabled = !item;
         $("ew.users.contextmenu.addGroup").disabled = !item;
-        $("ew.users.contextmenu.addPassword").disabled = !item || item.loginProfileDate;
-        $("ew.users.contextmenu.changePassword").disabled = !item || !item.loginProfileDate;
-        $("ew.users.contextmenu.deletePassword").disabled = !item || !item.loginProfileDate;
+        $("ew.users.contextmenu.addPassword").disabled = !item || (item.loginProfileDate && !ew_session.isGovCloud());
+        $("ew.users.contextmenu.changePassword").disabled = !item || (!item.loginProfileDate && !ew_session.isGovCloud());
+        $("ew.users.contextmenu.deletePassword").disabled = !item || (!item.loginProfileDate && !ew_session.isGovCloud());
         $("ew.users.contextmenu.createKey").disabled = !item;
         $("ew.users.contextmenu.deleteKey").disabled = !item || !item.keys || !item.keys.length;
         $("ew.users.contextmenu.createVMFA").disabled = !item;
@@ -30,7 +30,8 @@ var ew_UsersTreeView = {
     updateUser: function(item)
     {
         var me = this;
-        if (!item.loginProfileDate) {
+        // GovCloud does not support this yet
+        if (!item.loginProfileDate && !ew_session.isGovCloud()) {
             ew_session.controller.getLoginProfile(item.name, function(list) { me.menuChanged() })
         }
         if (!item.groups) {
