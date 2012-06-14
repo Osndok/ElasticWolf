@@ -254,6 +254,7 @@
 <!ENTITY ew.rsvdInst.remaining.label "Days Remaining">
 <!ENTITY ew.rsvdInst.fixedPrice.label "One-time Payment/Instance (US$)">
 <!ENTITY ew.rsvdInst.usagePrice.label "Usage Price/Instance (US$)">
+<!ENTITY ew.rsvdInst.recurringPrice.label "Recurring Charges/Instance (US$)">
 <!ENTITY ew.rsvdInst.count.label "Number of Instances">
 <!ENTITY ew.rsvdInst.description.label "Description">
 <!ENTITY ew.rsvdInst.state.label "State">

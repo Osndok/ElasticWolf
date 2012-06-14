@@ -589,7 +589,7 @@ function LeaseOffering(id, type, az, duration, fPrice, uPrice, rPrices, desc, of
     }
 }
 
-function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state, tenancy)
+function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, rPrices, count, desc, state, tenancy)
 {
     this.id = id;
     this.instanceType = type;
@@ -599,6 +599,7 @@ function ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, 
     this.duration = duration;
     this.fixedPrice = fPrice;
     this.usagePrice = uPrice;
+    this.recurringCharges = rPrices;
     this.count = count;
     this.description = desc;
     this.state = state;

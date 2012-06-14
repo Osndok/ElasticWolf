@@ -24,12 +24,16 @@ var ew_controller = {
         eval("this." + responseObj.method + "(responseObj)");
     },
 
+    // Common controller response callback when there is no need to parse result but only to call user callback
     onComplete : function(responseObj)
     {
         if (responseObj.callback) responseObj.callback(responseObj);
     },
 
-    getItems : function(item, parentNode, itemsNode, columns)
+    // Parse XML node parentNode and extract all items by itemNode tag name, if item node has multiple fields, columns may be used to restrict which
+    // fields needs to be extracted and put into Javascript object as properties. If callback specified, the final object will be passed through the
+    // callback as parameters which shoulkd return valid object or value to be included in the list
+    getItems : function(item, parentNode, itemsNode, columns, callback)
     {
         var list = [];
         var tagSet = item.getElementsByTagName(parentNode)[0];
@@ -41,40 +45,31 @@ var ew_controller = {
                     if (columns instanceof Array) {
                         var obj = {};
                         for (var j in columns) {
-                            var val = getNodeValue(items[i], columns[j])
+                            var val = getNodeValue(items[i], columns[j]);
                             if (val) obj[columns[j]] = val;
                         }
-                        list.push(obj)
+                        list.push(callback ? callback(obj) : obj);
                     } else {
-                        var val = getNodeValue(items[i], columns)
-                        if (val) list.push(val);
+                        var val = getNodeValue(items[i], columns);
+                        if (val) list.push(callback ? callback(val) : val);
                     }
                 } else {
-                    list.push(items[i]);
+                    list.push(callback ? callback(items[i]) : items[i]);
                 }
             }
         }
         return list;
     },
 
+    // Retrieve all tags from the response XML structure
     getTags : function(item)
     {
-        var list = [];
-        var items = this.getItems(item, "tagSet", "item", ["key", "value"]);
-        for (var i = 0; i < items.length; i++) {
-            list.push(new Tag(items[i].key, items[i].value));
-        }
-        return list;
+        return this.getItems(item, "tagSet", "item", ["key", "value"], function(obj) { return new Tag(obj.key, obj.value)});
     },
 
     getGroups : function(item)
     {
-        var list = [];
-        var items = this.getItems(item, "groupSet", "item", ["groupId", "groupName"]);
-        for (var i = 0; i < items.length; i++) {
-            list.push(new Group(items[i].groupId, items[i].groupName));
-        }
-        return list;
+        return this.getItems(item, "groupSet", "item", ["groupId", "groupName"], function(obj) { return new Group(obj.groupId, obj.groupName)});
     },
 
     registerImageInRegion : function(manifestPath, region, callback)
@@ -784,12 +779,9 @@ var ew_controller = {
             var desc = getNodeValue(items.snapshotItem(i), "productDescription");
             var otype = getNodeValue(items.snapshotItem(i), "offeringType");
             var tenancy = getNodeValue(items.snapshotItem(i), "instanceTenancy");
-            var objs = this.getItems(items.snapshotItem(i), "recurringCharges", "item", ["frequency", "amount"]);
-            var recurring = [];
-            for (var j = 0; j < objs.length; j++) {
-                recurring.push(new RecurringCharge(objs[j].frequency, objs[j].amount))
-            }
-            list.push(new LeaseOffering(id, type, az, duration, fPrice, uPrice, recurring, desc, otype, tenancy));
+            var rPrices = this.getItems(items.snapshotItem(i), "recurringCharges", "item", ["frequency", "amount"], function(obj) { return new RecurringCharge(obj.frequency, obj.amount)});
+
+            list.push(new LeaseOffering(id, type, az, duration, fPrice, uPrice, rPrices, desc, otype, tenancy));
         }
 
         ew_model.set('offerings', list);
@@ -822,8 +814,9 @@ var ew_controller = {
             var desc = getNodeValue(item, "productDescription");
             var state = getNodeValue(item, "state");
             var tenancy = getNodeValue(item, "instanceTenancy");
+            var rPrices = this.getItems(item, "recurringCharges", "item", ["frequency", "amount"], function(obj) { return new RecurringCharge(obj.frequency, obj.amount)});
 
-            list.push(new ReservedInstance(id, type, az, start, duration, fPrice, uPrice, count, desc, state, tenancy));
+            list.push(new ReservedInstance(id, type, az, start, duration, fPrice, uPrice, rPrices, count, desc, state, tenancy));
         }
 
         ew_model.set('reservedInstances', list);
