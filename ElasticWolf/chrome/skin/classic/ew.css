@@ -85,6 +85,10 @@ treechildren::-moz-tree-cell(credentials_current) {
     background-color: #C3DDC3;
 }
 
+treechildren::-moz-tree-cell(endpoints_current) {
+    background-color: #C3DDC3;
+}
+
 treechildren::-moz-tree-cell(accesskeys_current) {
     background-color: #C3DDC3;
 }

@@ -261,8 +261,13 @@ var TreeView = {
     },
     refresh : function(force)
     {
-        ew_model.refresh(this.getModelName(this.model));
-        this.refreshAll(force);
+        var name = this.getModelName(this.model)
+        if (name) {
+            ew_model.refresh(name);
+            this.refreshAll(force);
+        } else {
+            this.invalidate();
+        }
     },
     refreshAll: function(force)
     {
@@ -390,7 +395,7 @@ var TreeView = {
     },
     deactivate: function()
     {
-        this.false = true;
+        this.visible = false;
         this.stopRefreshTimer();
         this.savePreferences();
     },

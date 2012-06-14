@@ -16,9 +16,9 @@ var ew_CredentialsTreeView = {
         TreeView.activate.call(this);
     },
 
-    refresh: function()
+    getList: function()
     {
-        this.display(ew_session.getCredentials());
+        return ew_session.getCredentials()
     },
 
     deleteCredentials : function()
@@ -55,12 +55,15 @@ var ew_CredentialsTreeView = {
         var cred = this.getSelected();
         if (!cred) return;
         ew_session.switchCredentials(cred);
-        this.refresh();
+        this.invalidate();
     },
 };
 ew_CredentialsTreeView.__proto__ = TreeView;
 
 var ew_EndpointsTreeView = {
+   name: "endpoints",
+   properties: ["status"],
+
    activate : function() {
        this.refresh();
        var name = ew_session.getLastUsedEndpoint();
@@ -74,7 +77,7 @@ var ew_EndpointsTreeView = {
        this.invalidate();
    },
 
-   getData: function() {
+   getList: function() {
        return ew_session.getEndpoints();
    },
 
@@ -82,6 +85,7 @@ var ew_EndpointsTreeView = {
        var item = this.getSelected();
        if (!item) return;
        ew_session.ew_switchEndpoints(item.name);
+       this.invalidate();
    },
 
    deleteEndpoint : function() {
@@ -98,6 +102,15 @@ var ew_EndpointsTreeView = {
        var endpoint = new Endpoint(null, url)
        ew_session.addEndpoint(endpoint.name, endpoint);
        this.refresh();
+   },
+
+   filter: function(list)
+   {
+       var endpoint = ew_session.getActiveEndpoint();
+       for (var i in list) {
+           list[i].status = endpoint && list[i].url == endpoint.url ? "Current" : "";
+       }
+       return TreeView.filter.call(this, list);
    },
 }
 

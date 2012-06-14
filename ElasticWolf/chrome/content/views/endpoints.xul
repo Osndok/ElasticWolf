@@ -25,6 +25,7 @@
         <treecols>
           <treecol id="endpoint.name" label="Endpoint Name" flex="1" persist="width ordinal hidden" />
           <treecol id="endpoint.url" label="Endpoint URL" flex="1" persist="width ordinal hidden" />
+          <treecol id="endpoint.status" label="State" flex="1" persist="width ordinal hidden" />
         </treecols>
         <treechildren context="ew.endpoint.context" />
       </tree>
