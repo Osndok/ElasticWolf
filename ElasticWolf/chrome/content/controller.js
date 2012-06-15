@@ -1,27 +1,26 @@
 // controller: slightly higher level of abstraction over the EC2 API
 var ew_controller = {
-    errorHandlers: {},
+    session: null,
 
     getNsResolver : function()
     {
-        return ew_session.getNsResolver();
+        var me = this.session;
+        return function(prefix) {
+            var ns = { 's':  "http://schemas.xmlsoap.org/soap/envelope/",
+                       'monitoring': "http://monitoring.amazonaws.com/doc/" + me.CW_API_VERSION + "/",
+                       'ec2': "http://ec2.amazonaws.com/doc/" + me.EC2_API_VERSION + "/" };
+            return ns[prefix] || null;
+        }
     },
 
-    // Use this to flag that errors in sync calls will be handled in the callback, no need for error message right away
-    handleErrors: function(action, method)
-    {
-        this.errorHandlers[action + ":" + method] = true;
-    },
-
+    // Call the method
     onResponseComplete : function(responseObj)
     {
-        // In sync mode handle errors in the caller
-        if (responseObj.isSync && responseObj.hasErrors) {
-            // Some handlers can manage errors in the callback
-            if (!this.errorHandlers[responseObj.action + ":" + responseObj.method]) return;
+        if (this[responseObj.method]) {
+            this[responseObj.method](responseObj);
+        } else {
+           alert('Error calling handler ' + responseObj.method + ' for ' + responseObj.action);
         }
-        // In async mode callback must always be called
-        eval("this." + responseObj.method + "(responseObj)");
     },
 
     // Common controller response callback when there is no need to parse result but only to call user callback
@@ -1414,7 +1413,6 @@ var ew_controller = {
 
     getS3BucketWebsite : function(bucket, callback)
     {
-        this.handleErrors("GET", "onCompleteGetS3BucketWebsite");
         ew_session.queryS3("GET", bucket, "", "?website", {}, null, this, false, "onCompleteGetS3BucketWebsite", callback);
     },
 
@@ -2774,7 +2772,6 @@ var ew_controller = {
 
     getAccountPasswordPolicy: function(callback)
     {
-        this.handleErrors("GetAccountPasswordPolicy", "onCompleteGetPasswordPolicy");
         ew_session.queryIAM("GetAccountPasswordPolicy", [], this, false, "onCompleteGetPasswordPolicy", callback);
     },
 
@@ -2783,6 +2780,7 @@ var ew_controller = {
         var xmlDoc = responseObj.xmlDoc;
         var obj = {};
 
+        // It is ok not to have a policy
         if (!responseObj.hasErrors) {
             obj.MinimumPasswordLength = getNodeValue(xmlDoc, 'MinimumPasswordLength');
             obj.RequireUppercaseCharacters = getNodeValue(xmlDoc, 'RequireUppercaseCharacters');
@@ -2858,7 +2856,7 @@ var ew_controller = {
         var alarms = new Array();
 
         // Not in GovCloud yet
-        responseObj.hasErrors = false;
+        //responseObj.hasErrors = false;
 
         for (var i = 0 ; i < items.snapshotLength; i++) {
             var item = items.snapshotItem(i);

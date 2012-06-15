@@ -4,29 +4,21 @@
 
 <dialog id="ew.dialog.retrycancel"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-  buttons="accept,cancel"
-  ondialogaccept="return retry();"
-  ondialogcancel="return cancel();"
+  buttons="accept"
+  ondialogaccept="return true;"
   onload="init();"
-  title="Retry or Cancel?"
-  buttonlabelaccept="Retry">
+  title="Error">
 
   <script type="application/x-javascript">
   function init() {
-      document.getElementById("ew.message").value = window.arguments[0];
-      document.getElementById("ew.errCode").value = window.arguments[1].errCode;
-      document.getElementById("ew.errString").value = window.arguments[1].errString;
-      document.getElementById("ew.requestId").value = window.arguments[1].requestId;
+      setup(window.arguments[0], window.arguments[1]);
   }
-
-  function retry() {
-      window.arguments[1].value = true;
-      return true;
-  }
-
-  function cancel() {
-      window.arguments[1].value = false;
-      return true;
+  function setup(msg, rc) {
+      document.getElementById("ew.message").value = msg;
+      document.getElementById("ew.errCode").value = rc.errCode;
+      document.getElementById("ew.errString").value = rc.errString;
+      document.getElementById("ew.requestId").value = rc.requestId;
+      document.getElementById("ew.action").value = rc.action;
   }
   </script>
 
@@ -39,6 +31,10 @@
         <column />
       </columns>
       <rows>
+        <row>
+          <label value="Action:" />
+          <label id="ew.action" value="" />
+        </row>
         <row>
           <label value="Request ID:" />
           <label id="ew.requestId" value="" />

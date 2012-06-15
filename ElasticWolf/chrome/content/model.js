@@ -508,7 +508,7 @@ function RouteTable(id, vpcId, routes, associations, tags)
     ew_model.processTags(this);
 
     this.toString = function() {
-        var str = this.id
+        var str = this.id || "";
         if (this.routes && this.routes.length > 0) {
             str += " ("
             for (var i in this.routes) {

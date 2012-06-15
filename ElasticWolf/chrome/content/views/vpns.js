@@ -25,7 +25,7 @@ var ew_VpnConnectionTreeView = {
 
         var devices = [];
         var opts = ew_session.queryVpnConnectionStylesheets(null);
-        var formats = opts.xmlDoc.evaluate("/CustomerGatewayConfigFormats/Format", opts.xmlDoc, ew_session.getNsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+        var formats = opts.xmlDoc.evaluate("/CustomerGatewayConfigFormats/Format", opts.xmlDoc, ew_session.controller.getNsResolver, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
         for (var i = 0; i < formats.snapshotLength; i++) {
             var platform = getNodeValue(formats.snapshotItem(i), "Platform");
             var filename = getNodeValue(formats.snapshotItem(i), "Filename");

@@ -25,8 +25,8 @@ var ew_session = {
     elbURL: "",
     cwURL: "",
     iamURL: "",
-    accessCode: null,
-    secretKey: null,
+    accessCode: "",
+    secretKey: "",
     errorCount: 0,
     errorMax: 3,
     timers: {},
@@ -42,8 +42,9 @@ var ew_session = {
 
         ew_menu.init();
 
-        this.controller = ew_controller;
         this.model = ew_model;
+        this.controller = ew_controller;
+        ew_controller.session = this;
 
         this.loadCredentials();
         this.getEndpoints();
@@ -774,8 +775,15 @@ var ew_session = {
         return String(this.serviceURL).indexOf("ec2.us-gov") > -1;
     },
 
+    isEnabled: function()
+    {
+        return this.getBoolPrefs("ew.http.enabled", true) && !this.disabled && this.accessCode != "" && this.secretKey != "";
+    },
+
     checkForUpdates: function()
     {
+        if (!this.isEnabled()) return null;
+
         ver = parseFloat(this.VERSION) + 0.01
         var url = this.getAppUrl()
         var xmlhttp = this.getXmlHttp();
@@ -802,17 +810,6 @@ var ew_session = {
         xmlhttp.send(null);
     },
 
-    getNsResolver : function()
-    {
-        var me = this;
-        return function(prefix) {
-            var ns = { 's':  "http://schemas.xmlsoap.org/soap/envelope/",
-                       'monitoring': "http://monitoring.amazonaws.com/doc/" + me.CW_API_VERSION + "/",
-                       'ec2': "http://ec2.amazonaws.com/doc/" + me.EC2_API_VERSION + "/" };
-            return ns[prefix] || null;
-        }
-    },
-
     getXmlHttp : function()
     {
         var xmlhttp = null;
@@ -828,37 +825,108 @@ var ew_session = {
 
     queryEC2 : function (action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion)
     {
-        if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
+        if (!this.isEnabled()) return null;
 
         if (this.serviceURL == null || this.serviceURL == "") {
             this.setEndpoint(ew_session.getActiveEndpoint());
         }
 
-        var rsp = null;
-        while (this.getBoolPrefs("ew.http.enabled", true)) {
-            try {
-                rsp = this.queryEC2Impl(action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion);
-                if (!this.retryRequest(rsp, action)) {
-                    break;
-                }
-            } catch (e) {
-                alert ("An error occurred while calling "+ action + "\n" + e);
-                rsp = null;
-                break;
-            }
+        try {
+            return this.queryEC2Impl(action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion);
+        } catch (e) {
+            debug(e)
+            this.errorDialog("An error occurred while calling "+ action, { errString: e });
         }
-        return rsp;
+        return null;
     },
 
-    sigParamCmp : function(x, y)
+    queryELB : function (action, params, handlerObj, isSync, handlerMethod, callback)
     {
-        if (x[0].toLowerCase() < y[0].toLowerCase ()) {
-            return -1;
+        if (this.elbURL == null || this.elbURL == "") {
+            this.setEndpoint(ew_session.getActiveEndpoint());
         }
-        if (x[0].toLowerCase() > y[0].toLowerCase()) {
-           return 1;
+        return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.elbURL, this.ELB_API_VERSION);
+    },
+
+    queryIAM : function (action, params, handlerObj, isSync, handlerMethod, callback)
+    {
+        return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.iamURL, this.IAM_API_VERSION);
+    },
+
+    queryCloudWatch : function (action, params, handlerObj, isSync, handlerMethod, callback)
+    {
+        return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.cwURL, this.CW_API_VERSION);
+    },
+
+    downloadS3 : function (method, bucket, key, path, params, file, callback, progresscb)
+    {
+        if (!this.isEnabled()) return null;
+
+        var req = this.queryS3Prepare(method, bucket, key, path, params, null);
+        return this.download(req.url, req.headers, file, callback, progresscb);
+    },
+
+    uploadS3: function(bucket, key, path, params, filename, callback, progresscb)
+    {
+        if (!this.isEnabled()) return null;
+
+        var file = FileIO.streamOpen(filename);
+        if (!file) {
+            alert('Cannot open ' + filename)
+            return false;
         }
-        return 0;
+        var length = file[1].available();
+        params["Content-Length"] = length;
+
+        var req = this.queryS3Prepare("PUT", bucket, key, path, params, null);
+
+        var xmlhttp = this.getXmlHttp();
+        if (!xmlhttp) {
+            log("Could not create xmlhttp object");
+            return null;
+        }
+        xmlhttp.open(req.method, req.url, true);
+        for (var p in req.headers) {
+            xmlhttp.setRequestHeader(p, req.headers[p]);
+        }
+        xmlhttp.send(file[1]);
+
+        var timer = setInterval(function() {
+            try {
+                var a = length - file[1].available();
+                if (progresscb) progresscb(filename, Math.round(a / length * 100));
+            }
+            catch(e) {
+                debug(e)
+                this.errorDialog("Error uploading " + filename, { errString: e })
+            }
+        }, 300);
+
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState != 4) return;
+            FileIO.streamClose(file);
+            clearInterval(timer);
+            if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
+                if (progresscb) progresscb(filename, 100);
+                if (callback) callback(filename);
+            } else {
+                var rsp = this.createResponseError(xmlhttp);
+                this.errorDialog("S3 responded with an error for "+ bucket + "/" + key + path, rsp);
+            }
+        };
+        return true;
+    },
+
+    queryS3 : function (method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback)
+    {
+        if (!this.isEnabled()) return null;
+
+        try {
+            return this.queryS3Impl(method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback);
+        } catch (e) {
+            alert ("An error occurred while calling "+ method + " " + bucket + "/" + key + path + "\n" + e);
+        }
+        return null;
     },
 
     queryEC2Impl : function (action, params, handlerObj, isSync, handlerMethod, callback, apiURL, apiVersion, sigVersion)
@@ -884,7 +952,12 @@ var ew_session = {
         var queryParams = "";
 
         if (this.sigVersion == "1") {
-            sigValues.sort(this.sigParamCmp);
+            function sigParamCmp(x, y) {
+                if (x[0].toLowerCase() < y[0].toLowerCase ()) return -1;
+                if (x[0].toLowerCase() > y[0].toLowerCase()) return 1;
+                return 0;
+            }
+            sigValues.sort(sigParamCmp);
             for (var i = 0; i < sigValues.length; i++) {
                 strSig += sigValues[i][0] + sigValues[i][1];
                 queryParams += (i ? "&" : "") + sigValues[i][0] + "=" + encodeURIComponent(sigValues[i][1]);
@@ -915,24 +988,6 @@ var ew_session = {
         xmlhttp.setRequestHeader("Connection", "close");
 
         return this.sendRequest(xmlhttp, queryParams, isSync, action, handlerMethod, handlerObj, callback, params);
-    },
-
-    queryELB : function (action, params, handlerObj, isSync, handlerMethod, callback)
-    {
-        if (this.elbURL == null || this.elbURL == "") {
-            this.setEndpoint(ew_session.getActiveEndpoint());
-        }
-        return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.elbURL, this.ELB_API_VERSION);
-    },
-
-    queryIAM : function (action, params, handlerObj, isSync, handlerMethod, callback)
-    {
-        return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.iamURL, this.IAM_API_VERSION);
-    },
-
-    queryCloudWatch : function (action, params, handlerObj, isSync, handlerMethod, callback)
-    {
-        return this.queryEC2(action, params, handlerObj, isSync, handlerMethod, callback, this.cwURL, this.CW_API_VERSION);
     },
 
     queryS3Prepare : function(method, bucket, key, path, params, content)
@@ -992,12 +1047,11 @@ var ew_session = {
 
     queryS3Impl : function(method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback)
     {
-
         var req = this.queryS3Prepare(method, bucket, key, path, params, content);
 
         var xmlhttp = this.getXmlHttp();
         if (!xmlhttp) {
-            log("Could not create xmlhttp object");
+            debug("Could not create xmlhttp object");
             return null;
         }
         xmlhttp.open(req.method, req.url, !isSync);
@@ -1007,84 +1061,6 @@ var ew_session = {
         }
 
         return this.sendRequest(xmlhttp, content, isSync, method, handlerMethod, handlerObj, callback, [bucket, key, path]);
-    },
-
-    downloadS3 : function (method, bucket, key, path, params, file, callback, progresscb)
-    {
-        if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
-        var req = this.queryS3Prepare(method, bucket, key, path, params, null);
-        return this.download(req.url, req.headers, file, callback, progresscb);
-    },
-
-    uploadS3: function(bucket, key, path, params, filename, callback, progresscb)
-    {
-        if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
-
-        var file = FileIO.streamOpen(filename);
-        if (!file) {
-            alert('Cannot open ' + filename)
-            return false;
-        }
-        var length = file[1].available();
-        params["Content-Length"] = length;
-
-        var req = this.queryS3Prepare("PUT", bucket, key, path, params, null);
-
-        var xmlhttp = this.getXmlHttp();
-        if (!xmlhttp) {
-            log("Could not create xmlhttp object");
-            return null;
-        }
-        xmlhttp.open(req.method, req.url, true);
-        for (var p in req.headers) {
-            xmlhttp.setRequestHeader(p, req.headers[p]);
-        }
-        xmlhttp.send(file[1]);
-
-        var timer = setInterval(function() {
-            try {
-                var a = length - file[1].available();
-                if (progresscb) progresscb(filename, Math.round(a / length * 100));
-            }
-            catch(e) {
-                alert("Error uploading " + filename + "\n" + e)
-            }
-        }, 300);
-
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState != 4) return;
-            FileIO.streamClose(file);
-            clearInterval(timer);
-            if (xmlhttp.status >= 200 && xmlhttp.status < 300) {
-                if (progresscb) progresscb(filename, 100);
-                if (callback) callback(filename);
-            } else {
-                var rsp = this.handleResponseError(xmlhttp);
-                this.errorDialog("S3 responded with an error for "+ bucket + "/" + key + path, rsp);
-            }
-        };
-        return true;
-    },
-
-    queryS3 : function (method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback)
-    {
-        if (this.disabled || this.accessCode == null || this.accessCode == "") return null;
-
-        var rsp = null;
-
-        while (this.getBoolPrefs("ew.http.enabled", true)) {
-            try {
-                rsp = this.queryS3Impl(method, bucket, key, path, params, content, handlerObj, isSync, handlerMethod, callback);
-                if (!this.retryRequest(rsp, method + " " + bucket + "/" + key + path)) {
-                    break;
-                }
-            } catch (e) {
-                alert ("An error occurred while calling "+ method + " " + bucket + "/" + key + path + "\n" + e);
-                rsp = null;
-                break;
-            }
-        }
-        return rsp;
     },
 
     showBusy : function(fShow)
@@ -1118,8 +1094,7 @@ var ew_session = {
                 if (xhr.readyState == 4) {
                     me.showBusy(false);
                     me.stopTimer(timerKey);
-                    var rsp = me.handleResponse(xhr, isSync, action, handlerMethod, handlerObj, callback, params);
-                    me.retryRequest(rsp, action);
+                    me.handleResponse(xhr, isSync, action, handlerMethod, handlerObj, callback, params);
                 }
             }
         }
@@ -1130,14 +1105,18 @@ var ew_session = {
             debug(e)
             this.showBusy(false);
             this.stopTimer(timerKey);
-            return this.createResponse(null, action, handlerMethod, callback, true, "Send Request Error", e, "", params);
+            var rsp = this.createResponse(null, action, handlerMethod, callback, true, "Send Request Error", e, "", params);
+            this.handleError(rsp, action);
+            return false;
         }
+
         if (isSync) {
             this.showBusy(false);
             this.stopTimer(timerKey);
-            return this.handleResponse(xmlhttp, isSync, action, handlerMethod, handlerObj, callback, params);
+            this.handleResponse(xmlhttp, isSync, action, handlerMethod, handlerObj, callback, params);
+            return false;
         }
-        return { hasErrors: false };
+        return true;
     },
 
     handleResponse : function(xmlhttp, isSync, action, handlerMethod, handlerObj, callback, params)
@@ -1147,7 +1126,7 @@ var ew_session = {
 
         var rc = xmlhttp.status >= 200 && xmlhttp.status < 300 ?
                  this.createResponse(xmlhttp, action, handlerMethod, callback, false, "", "", "", params) :
-                 this.handleResponseError(xmlhttp, action, handlerMethod, callback, params);
+                 this.createResponseError(xmlhttp, action, handlerMethod, callback, params);
 
         rc.isSync = isSync;
         // If context object is not specified call the callback directly
@@ -1157,10 +1136,11 @@ var ew_session = {
         if (callback) {
             callback(rc);
         }
+        this.handleError(rc);
         return rc;
     },
 
-    handleResponseError : function(xmlhttp, action, handlerMethod, callback, params)
+    createResponseError : function(xmlhttp, action, handlerMethod, callback, params)
     {
         debug(xmlhttp.responseText)
         var errCode = "Unknown: " + xmlhttp.status;
@@ -1196,32 +1176,33 @@ var ew_session = {
                  callback: callback, };
     },
 
-    retryRequest: function(rsp, action)
+    handleError: function(rsp)
     {
         if (rsp.hasErrors) {
-            debug('error: action: ' + action + ', status: ' + rsp.status + ', errorCount: ' + this.errorCount + ', errCode: ' + rsp.errCode + ', errString: ' + rsp.errString)
+            debug('error: action: ' + rsp.action + ', status: ' + rsp.status + ', errorCount: ' + this.errorCount + ', errCode: ' + rsp.errCode + ', errString: ' + rsp.errString)
             // Prevent from showing error dialog on every error until success, this happens in case of wrong credentials or endpoint and until all views not refreshed
             this.errorCount++;
             if (this.errorCount < this.errorMax) {
-                if (!this.errorDialog("Server responded with an error for " + action, rsp)) {
-                    this.errorCount = this.errorMax;
-                    return false;
-                }
-            } else {
-                return false;
+                this.errorDialog("Server responded with an error for " + rsp.action, rsp)
             }
-            return true;
+            return;
         }
-
         this.errorCount = 0;
-        return false;
     },
 
+    // Show non modal error popup
     errorDialog : function(msg, rsp)
     {
-        var rc = { value:null, errCode: rsp.errCode, errString: rsp.errString, requestId: rsp.requestId  };
-        window.openDialog("chrome://ew/content/dialogs/error.xul", null, "chrome,centerscreen,modal,resizable", msg, rc);
-        return rc.value;
+        if (!rsp) rsp = {};
+        var rc = { value:null, action: rsp.action || "", errCode: rsp.errCode || "", errString: rsp.errString || "", requestId: rsp.requestId || "" };
+        // Reuse the same window
+        if (!this.winError || !this.winError.setup) {
+            this.winError = window.openDialog("chrome://ew/content/dialogs/error.xul", null, "chrome,centerscreen,resizable", msg, rc);
+        } else
+        if (this.winError.setup) {
+            this.winError.focus();
+            this.winError.setup.call(this.winError, msg, rc);
+        }
     },
 
     queryVpnConnectionStylesheets : function(stylesheet)
@@ -1255,6 +1236,8 @@ var ew_session = {
 
     download: function(url, headers, filename, callback, progresscb)
     {
+        if (!this.isEnabled()) return null;
+
         debug('download: ' + url + '| ' + JSON.stringify(headers) + '| ' + filename)
 
         try {
