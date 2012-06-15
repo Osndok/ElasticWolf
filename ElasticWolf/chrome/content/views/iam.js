@@ -561,7 +561,7 @@ if (!ew_session.getKeyHome()) {
         }
         // For signing in command line tools we need at least one certificate
         if (uploadCert) {
-            ew_CertTreeView.upload(body);
+            ew_CertsTreeView.upload(body);
         }
 
         // Import new public key as new keypair
